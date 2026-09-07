@@ -148,3 +148,8 @@
   .sound-bars i { animation:none!important; }
   #sound-toggle[aria-pressed=true] .sound-bars i:nth-child(even) { height:12px; }
 }
+
+/* Portrait phones: the pinboard ring sits near the left screen edge, so its label hangs to the right of the ring instead of centring on it. */
+@media(max-width:760px) and (orientation:portrait){
+  .hotspot-board .marker-label,.hotspot-board:hover .marker-label,.hotspot-board:focus-visible .marker-label { left:0; transform:none; }
+}

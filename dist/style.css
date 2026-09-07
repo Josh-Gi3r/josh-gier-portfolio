@@ -14,3 +14,6 @@
 
 .room-video.ready{clip-path:polygon(78.5% 0,88% 0,88% 38%,78.5% 38%)}
 .room-video.ready~.window-rain{opacity:.07}
+
+/* Portrait phones: fill the height with a crop of the room centred on the desk and TV instead of a letterboxed strip. Hotspots, screen masks, illumination and the window video are positioned inside the plane, so they follow the crop. */
+@media(max-width:760px) and (orientation:portrait){.room-plane{width:calc(64vh*1.7768);height:64vh;top:40%;left:calc(50% - 11.9vh)}.room-vignette{background:linear-gradient(#0e120fd9,transparent 20%,transparent 44%,#0e120fee 74%)}}
