@@ -1,0 +1,98 @@
+{
+  "bedroom": "exec-732f0f3e-01f6-4dd5-9173-d1dba6243356.png",
+  "room-tv": "exec-35577122-0ce5-486c-ba68-1746d78d8928.png",
+  "room-computer": "exec-7bf52bed-1a82-444b-8a9b-2ad10a3fa018.png",
+  "bosch-hero": "exec-bf42b160-226f-4ae5-b6bd-96035721490f.png",
+  "bosch-maker": "exec-51ae54c2-74eb-4ce4-9a6a-b95ee9836f10.png",
+  "bosch-interior": "exec-40024950-6dff-4758-a7b2-57a89e122395.png",
+  "bosch-detail": "exec-66c5868a-fa21-46b4-b283-5231cee97abf.png",
+  "bosch-social": "exec-d1576204-763d-4f83-9222-0e6d8f4acd3b.png",
+  "bosch-journey": "exec-b396205f-2667-423f-a36d-7f11b87987b6.png",
+  "bosch-board": "exec-bfccabda-7c80-4974-9f25-99e943b49589.png",
+  "revolut-hero": "exec-27c63706-4e9b-4959-a8f9-417ff54a3fe1.png",
+  "revolut-social": "exec-b06e693d-0558-49c3-af8a-9a70de3c99d3.png",
+  "revolut-creator": "exec-e2d20b52-407f-4caa-bf2b-e34b2cfe639d.png",
+  "revolut-payment": "exec-bcdc2a9b-89b6-4ecf-b6c2-6f8f3aa64f40.png",
+  "revolut-journey": "exec-fa35d1bc-a2f4-479f-9c36-eb60f0f5a3fc.png",
+  "revolut-board": "exec-83e0acb0-00db-4a1d-ad50-18d4e65671fc.png",
+  "lego-hero": "exec-eb134903-ead2-4762-85d5-faf3a52a3639.png",
+  "lego-detail": "exec-cb8a707a-ae21-4e34-8201-910bd92f17dc.png",
+  "lego-interior": "exec-95cdfc41-0adb-4530-bb7f-03a0fe6e2e60.png",
+  "lego-social": "exec-ff76f8c4-1d4f-40c1-a519-618eb636f718.png",
+  "lego-journey": "exec-f6d722bd-077b-47f2-b6b7-f0fd1d4cdf72.png",
+  "lego-board": "exec-7ae0e654-f605-4638-b87c-b4225365b9a2.png",
+  "tiger-hero": "exec-46505c35-8c97-42e8-95e2-bc938711743e.png",
+  "tiger-artist": "exec-1b02f1d2-bfb7-4bcb-8483-f160d627770c.png",
+  "tiger-social": "exec-8d321915-7b1d-4bf6-a7ae-3631011779f7.png",
+  "tiger-ar": "exec-3d0eaa69-b4c4-4e5f-aa31-bc3f5623e2ad.png",
+  "tiger-billboard": "exec-6045f5d8-17ea-4228-a99d-349c9218a6fb.png",
+  "tiger-board": "exec-2a67ca9c-9b58-465a-b938-72bca61afca2.png",
+  "veve-hero": "exec-d0fc8756-715c-48b8-88ee-a75a7d930399.png",
+  "veve-detail": "exec-0ee890b7-8442-4f6e-b169-b6f00ea7054b.png",
+  "veve-ar": "exec-fed23e4f-a151-4979-b656-e28d26b35acd.png",
+  "veve-social": "exec-02e1ee0c-87d5-4317-a8c6-d6da4d059a8d.png",
+  "veve-journey": "exec-f9207e73-ae8f-4970-83ad-5e87ee943331.png",
+  "veve-board": "exec-cc7494a0-2cc6-43db-88bb-a34894f640b7.png",
+  "revision_2": {
+    "generated": {
+      "lego-sculpture": "exec-1369d925-5566-40f1-ab45-95d8bf0d41de.png",
+      "revolut-metal": "exec-7338a451-c31a-475e-8a8c-8f1f729f9543.png"
+    },
+    "logos": {
+      "lego.svg": {
+        "url": "https://assets.lego.com/logos/v8.5.0/brand-lego.svg",
+        "source": "Official LEGO asset"
+      },
+      "veve.svg": {
+        "url": "https://www.veve.me/",
+        "source": "Exact SVG extracted from official Navigation:logo element"
+      },
+      "tiger.svg": {
+        "url": "https://www.tigerbeer.com/media/22tajsyr/main-logo.svg",
+        "source": "Official Tiger Beer asset, linked by agegate"
+      },
+      "cbre.svg": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/CBRE_Group.svg",
+        "page": "https://commons.wikimedia.org/wiki/File:CBRE_Group.svg",
+        "source": "Wikimedia SVG, sourced from CBRE"
+      },
+      "ntt.svg": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/59/NTT_logo.svg",
+        "page": "https://commons.wikimedia.org/wiki/File:NTT_logo.svg",
+        "source": "Wikimedia NTT Group Dynamic Loop logo, source group.ntt"
+      },
+      "github.svg": {
+        "url": "https://brand.github.com/GitHub_Logos.zip",
+        "page": "https://brand.github.com/foundations/logo",
+        "source": "Official archive member GitHub Logos/SVG/GitHub_Lockup_Black.svg"
+      }
+    },
+    "productSources": {
+      "4sight": [
+        "Josh-Gi3r/4Sight:components/landing/hero.tsx",
+        "Josh-Gi3r/4Sight:public/brand/heroes/worldcup.jpg",
+        "Josh-Gi3r/4Sight:public/brand/logo.png"
+      ],
+      "nextcurrency": [
+        "Josh-Gi3r/nextcurrency-news:client/src/pages/Home.tsx",
+        "Josh-Gi3r/nextcurrency-news:client/public/brand/ncn-lockup.png",
+        "Josh-Gi3r/nextcurrency-news:client/public/covers/"
+      ],
+      "lamuse": [
+        "Josh-Gi3r/louis-platform:src/app/app/page.tsx",
+        "Josh-Gi3r/louis-platform:public/images/brand/"
+      ],
+      "openSource": "Source repository README showcase assets, publicProjects in review-data/repository-inventory.json"
+    },
+    "otherLogos": {
+      "revolut": "https://github.com/simple-icons/simple-icons/blob/develop/icons/revolut.svg",
+      "bosch": "https://github.com/simple-icons/simple-icons/blob/develop/icons/bosch.svg"
+    },
+    "notes": [
+      "Generated campaign art is labeled reconstruction. Logos and typeset copy are separate assets/layers.",
+      "Interactive product previews are reconstructed using verified source layouts and brand assets. Financial and workflow examples are illustrative.",
+      "No private repository source code, credentials or customer data copied into the public experience.",
+      "Original rejected LEGO/Revolut imagery remains in source history, is no longer used in case galleries."
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "created_at": "2026-09-06T22:45:10.509942+00:00",
+  "source_commit": "2f2fe5af98fa0a6d8635a1b025b8f505a83ed93d",
+  "source_files": 122,
+  "original_source_bytes": 17817295,
+  "production_entry": "dist/index.html",
+  "source_files_unchanged": true,
+  "full_git_history_included": false,
+  "audio_backup": [
+    {
+      "name": "night-owl.mp3",
+      "status": "saved",
+      "bytes": 3106316,
+      "content_type": "audio/mpeg",
+      "path": "media-backup/night-owl.mp3",
+      "sha256": "00d4a95a54e6833726baf3fc5bbf3fbb5a3da32a7fb3acfbf0e3975c71a23609"
+    },
+    {
+      "name": "window-rain.mp3",
+      "status": "saved",
+      "bytes": 1307420,
+      "content_type": "audio/mpeg",
+      "path": "media-backup/window-rain.mp3",
+      "sha256": "068f9edd20cde974e181b977a3d21154e52643ff6384e198ea6470df103cc110"
+    }
+  ],
+  "note": "Original entry point still uses published external audio URLs. AGENT_HANDOVER.md explains optional local-audio configuration."
+}

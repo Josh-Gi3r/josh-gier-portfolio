@@ -1,0 +1,175 @@
+/* One image plane, one set of source coordinates. No independent stretching. */
+.screen-clip-definitions { position:absolute; width:0; height:0; pointer-events:none; }
+.device-stage {
+  position:relative;
+  width:100%; max-width:1360px;
+  aspect-ratio:8 / 5;
+  margin:0 auto;
+  overflow:clip;
+  background:#10150f;
+  box-shadow:0 15px 65px #0006;
+}
+.device-plane {
+  position:absolute;
+  width:125%; aspect-ratio:1672 / 941;
+  left:-12.5%; top:0;
+}
+.device-image {
+  position:absolute; inset:0;
+  display:block; width:100%; height:100%; max-width:none;
+}
+.device-screen {
+  position:absolute; overflow:clip; isolation:isolate;
+  container-type:size;
+}
+/* The curved edge follows the photograph. Light and scanlines continue right
+   to that edge, with a safe area for text and controls inside the glass. */
+.device-screen::after {
+  content:''; position:absolute; inset:0; z-index:20; pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg,#0000000b 0px,#0000000b 1px,transparent 1px,transparent 3px),
+    radial-gradient(ellipse at 45% 45%,transparent 60%,#0208156b 100%),
+    linear-gradient(125deg,#b8d8ff16,transparent 35%,transparent 70%,#0611211f);
+  box-shadow:inset 0 0 22px 5px #0007;
+}
+.tv-screen { background:#060a0e; }
+.tv-channel { position:absolute; inset:0; overflow:clip; background:#060a0e; animation:channelIn .25s steps(3,end); }
+.tv-channel-image { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.tv-channel-shade { position:absolute; inset:0; background:linear-gradient(transparent 32%,#07100c80 70%,#07100ce8); }
+.tv-osd {
+  position:absolute; top:8%; left:7%; right:7%; z-index:3;
+  display:flex; justify-content:space-between; pointer-events:none;
+  color:#e3ecd2; font:clamp(12px,1.9cqw,15px) var(--mono); text-shadow:0 1px 5px #000;
+}
+.tv-feature {
+  position:absolute; inset:0; z-index:2;
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end;
+  padding:10% 8% 19%; color:#fff; text-shadow:0 2px 8px #0008;
+}
+.tv-feature strong { font:700 clamp(27px,5.8cqw,52px)/1.04 Arial,sans-serif; letter-spacing:-.03em; max-width:90%; }
+.tv-brand { margin-bottom:14px; }
+.tv-brand .brand-logo { height:clamp(27px,4.8cqw,38px); max-width:145px; filter:drop-shadow(0 1px 6px #0007); }
+.tv-brand:has(img[src*="revolut"]),.tv-brand:has(img[src*="bosch"]) { background:white; padding:7px 12px; }
+.tv-feature small { margin-top:18px; padding-bottom:5px; border-bottom:1px solid #fff8; font:clamp(11px,1.8cqw,14px) var(--mono); letter-spacing:1px; }
+.tv-feature:hover small { color:var(--amber); border-color:var(--amber); }
+.tv-controls {
+  position:absolute; left:0; right:0; bottom:0; z-index:3;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 8% 4%; background:#060c10d9; border-top:1px solid #ffffff21;
+  font:clamp(12px,1.8cqw,14px) var(--mono);
+}
+.tv-controls button { min-width:44px; min-height:36px; padding:4px 13px; font-size:24px; line-height:1; border:1px solid #a9b8a866; }
+.tv-controls button:hover { background:#b7c6a929; }
+
+/* A responsive 1990s desktop inside the physical glass. Layout uses available
+   screen space rather than viewport breakpoints or absolute row coordinates. */
+.computer-screen { background:#087c7c; }
+.desktop {
+  position:absolute; inset:0;
+  display:grid;
+  grid-template-rows:30px 27px 49px minmax(0,1fr) 32px;
+  padding:5% 4% 4%;
+  background:#087c7c; color:#fff;
+  font:14px Tahoma,Verdana,Arial,sans-serif;
+}
+.desktop-menubar {
+  display:flex; align-items:center; gap:15px; padding:4px 7px;
+  border:2px solid #c0c0c0; background:linear-gradient(90deg,#000080,#1084c0);
+  white-space:nowrap; min-width:0;
+}
+.desktop-menubar strong { font-size:14px; }
+.desktop-count { margin-left:auto; font-size:12px; font-weight:400; }
+.desktop-location { display:flex; gap:9px; align-items:center; padding:3px 6px; background:#c0c0c0; color:#111; font-size:12px; min-width:0; }
+.desktop-location strong { flex:1; min-width:0; padding:2px 7px; border:1px solid #888; background:white; font-weight:400; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.desktop-collections { display:flex; align-items:center; gap:8px; min-width:0; }
+.desktop-collections button { display:flex; align-items:center; gap:7px; padding:7px; border:1px solid transparent; font:13px Tahoma,Arial,sans-serif; white-space:nowrap; }
+.desktop-collections button[aria-pressed=true] { background:#00008066; border:1px dotted #fff; }
+.desktop-collections svg { flex-shrink:0; width:25px; height:22px; color:#ffda6e; }
+.desktop-collections svg path:first-child { opacity:1; fill:#f4cf64; }
+.desktop-projects {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  gap:8px; min-height:0; padding:8px 3px 12px; overflow:auto;
+}
+.desktop-project {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:7px; min-width:0; min-height:0; padding:7px 4px;
+  border:1px solid transparent; text-align:center; font:14px/1.2 Tahoma,Arial,sans-serif;
+}
+.desktop-project:hover,.desktop-project:focus-visible { background:#00008055; border:1px dotted #e8f7ed; outline-offset:-2px; }
+.desktop-project-art { display:grid; place-items:center; width:100%; max-width:118px; height:clamp(25px,11cqh,65px); flex-shrink:1; min-height:0; overflow:hidden; filter:drop-shadow(2px 3px #00232166); }
+.desktop-project-art>img { width:100%; height:100%; max-height:100%; object-fit:contain; }
+.desktop-project-art>span svg { width:48px; height:40px; max-height:100%; }
+.desktop-project-art .brand-logo { background:#fff; padding:5px; height:100%; max-height:44px; }
+.desktop-project strong { font-weight:400; text-shadow:1px 1px #003c3c; }
+.desktop-project small { color:#bbdfdb; font:12px Tahoma,Arial,sans-serif; }
+.desktop-status { display:flex; align-items:center; gap:12px; padding:3px 4px; background:#c0c0c0; color:#111; border-top:2px solid #fff; font-size:12px; min-width:0; }
+.desktop-start { padding:1px 8px; font:700 14px Tahoma,Arial,sans-serif; border:2px solid; border-color:#fff #555 #555 #fff; background:#c0c0c0; color:#111; white-space:nowrap; }
+.desktop-status>a { margin-left:auto; padding:2px 6px; border:1px solid; border-color:#fff #555 #555 #fff; white-space:nowrap; }
+.desktop-start-menu { position:absolute; bottom:calc(4% + 32px); left:4%; z-index:12; width:190px; padding:5px; background:#c0c0c0; color:#111; border:2px solid; border-color:#fff #555 #555 #fff; box-shadow:3px 3px #0004; }
+.desktop-start-menu[hidden] { display:none; }
+.desktop-start-menu>a { display:block; padding:10px 12px; font:13px Tahoma,Arial,sans-serif; }
+.desktop-start-menu>a:hover { background:#000080; color:white; }
+
+@container (max-width:600px) {
+  .desktop { grid-template-rows:27px 38px minmax(0,1fr) 29px; font-size:12px; }
+  .desktop-location { display:none; }
+  .desktop-menubar strong,.desktop-count { font-size:12px; }
+  .desktop-collections { gap:3px; justify-content:space-between; }
+  .desktop-collections button { gap:4px; padding:5px 3px; font-size:12px; }
+  .desktop-collections svg { width:18px; height:16px; }
+  .desktop-projects { gap:3px; padding:3px 0 6px; }
+  .desktop-project { font-size:12px; padding:3px 1px; gap:5px; }
+  .desktop-project-art { max-width:86px; }
+  .desktop-project small { display:none; }
+  .desktop-status { gap:6px; }
+  .desktop-status>span { display:none; }
+  .desktop-start-menu { bottom:calc(4% + 29px); }
+  .tv-feature { padding-bottom:23%; }
+  .tv-feature strong { font-size:clamp(20px,5.8cqw,34px); max-width:100%; text-wrap:balance; }
+  .tv-brand { margin-bottom:9px; }
+  .tv-feature small { margin-top:10px; }
+  .tv-controls { padding-top:7px; }
+}
+@container (max-width:340px) {
+  .desktop-count { display:none; }
+  .desktop-collections svg { width:14px; height:14px; }
+  .desktop-collections button { gap:3px; padding:5px 2px; }
+  .desktop-project-art { max-width:62px; }
+  .desktop-start-menu { width:175px; }
+  .desktop-start-menu>a { padding:7px 9px; }
+  .tv-feature strong { font-size:20px; }
+  .tv-feature { padding-bottom:25%; }
+  .tv-brand .brand-logo { height:24px; }
+}
+@container (max-height:240px) {
+  .desktop { grid-template-rows:25px 30px minmax(0,1fr) 26px; padding:4% 4% 3%; }
+  .desktop-projects { padding:0; gap:0; }
+  .desktop-project { gap:2px; padding:2px 1px; }
+  .desktop-project-art { height:18px; flex:0 0 18px; }
+  .desktop-project-art .brand-logo { padding:2px; max-height:18px; }
+  .desktop-project strong { font-size:11px; line-height:1.1; }
+  .desktop-start-menu { bottom:calc(3% + 26px); }
+}
+
+/* Small screens change the crop, never the aspect ratio of the photograph. */
+@media (max-width:760px) {
+  .device-stage { width:calc(100% + 40px); max-width:none; margin:0 -20px; aspect-ratio:1.18; }
+  .device-plane { width:194%; left:-47%; top:-8%; }
+}
+
+/* Room screens are projectively mapped by screens.js and clipped in the source
+   image's coordinate system. The lettering and scanlines follow the same map. */
+.room-screen-mask { position:absolute; inset:0; pointer-events:none; visibility:hidden; }
+.screens-fitted .room-screen-mask { visibility:visible; }
+.screen-effect { position:absolute; left:0; top:0; width:400px; height:300px; overflow:clip; transform-origin:0 0; pointer-events:none; color:#c8ecd9; }
+.computer-idle { display:grid; place-content:center; background:radial-gradient(ellipse,#17352b85,#09211f33); font:28px var(--mono); text-shadow:0 0 6px #aef5e8; }
+.computer-idle span { opacity:.72; }
+.computer-idle i { animation:blink 1s steps(2,end) infinite; font-style:normal; }
+.tv-idle { background:#54616c42; }
+.tv-idle>span { position:absolute; top:31%; left:15%; font:22px/1.6 var(--mono); text-shadow:0 0 8px #fff9; opacity:.7; }
+.noise { position:absolute; inset:-15%; opacity:.22; background:repeating-linear-gradient(0deg,#ced9dc22 0px,#8f9ba066 1px,#17272988 2px,transparent 4px); animation:static .13s steps(3,end) infinite; }
+.room-plane:has(.hotspot-tv:hover) .tv-idle,.room-plane:has(.hotspot-tv:focus-visible) .tv-idle { background:url('/assets/tiger-hero.webp') center / cover; }
+.room-plane:has(.hotspot-tv:hover) .noise,.room-plane:has(.hotspot-tv:focus-visible) .noise { opacity:.07; }
+.room-plane:has(.hotspot-computer:hover) .computer-idle,.room-plane:has(.hotspot-computer:focus-visible) .computer-idle { background:radial-gradient(ellipse,#638959b3,#12302199); }
+@media(prefers-reduced-motion:reduce) { .noise,.computer-idle i,.tv-channel { animation:none; } }

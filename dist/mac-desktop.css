@@ -1,0 +1,139 @@
+/* Classic Macintosh: striped title bars, compact file icons and balloon help. */
+.mac-desktop {
+  --mac-ink:#24242b; --mac-paper:#f9f9f3; --mac-chrome:#deded8;
+  position:absolute; inset:0; padding:5% 5% 4%; color:var(--mac-ink);
+  background-color:#8996a9;
+  background-image:repeating-conic-gradient(#6e7c9229 0% 25%,transparent 0% 50%);
+  background-size:4px 4px;
+  display:grid; grid-template-rows:28px minmax(0,1fr); gap:12px;
+  font:14px/1.25 Geneva,Arial,sans-serif;
+}
+.mac-menubar { position:relative; z-index:6; display:flex; align-items:center; gap:17px; padding:0 12px; background:#f6f6ed; border:1px solid var(--mac-ink); border-radius:5px 5px 0 0; box-shadow:0 1px #fff8 inset; white-space:nowrap; }
+.mac-menubar b { font-size:15px; }
+.mac-menu-divider { height:14px; border-left:1px solid #999; }
+.mac-menu-name { font-size:13px; }
+.mac-menubar details { position:relative; }
+.mac-menubar summary { cursor:pointer; list-style:none; font-weight:bold; }
+.mac-menubar summary::-webkit-details-marker { display:none; }
+.mac-system-menu summary { font-size:21px; line-height:1; padding:2px 4px; }
+.mac-menubar details[open] summary { background:#343c62; color:white; }
+.mac-menubar details>div { position:absolute; top:calc(100% + 5px); left:-5px; width:195px; padding:6px 0; color:#222; background:#f9f9f3; border:1px solid #222; box-shadow:2px 2px #222; }
+.mac-system-menu a { display:block; padding:8px 14px; font-size:14px; }
+.mac-system-menu a:hover { background:#363e68; color:white; }
+.mac-help-menu { margin-left:auto; }
+.mac-help-menu summary { padding:4px 7px; }
+.mac-menubar .mac-help-menu>div { left:auto; right:-5px; width:min(300px,75cqw); padding:16px; white-space:normal; }
+.mac-help-menu p { font:14px/1.45 Geneva,Arial,sans-serif; margin:10px 0 0; }
+.mac-window { display:grid; grid-template-rows:27px 39px minmax(0,1fr) 30px; min-height:0; background:var(--mac-paper); border:1px solid #222; box-shadow:2px 2px #222; }
+.mac-titlebar { display:flex; align-items:center; gap:12px; padding:4px 8px; min-height:26px; position:relative; background:repeating-linear-gradient(0deg,#d6d6d0 0 1px,#f5f5ed 1px 3px); border-bottom:1px solid #38383e; }
+.mac-titlebar strong { padding:0 10px; margin:0 auto; background:#ededE6; font:bold 15px/1.2 Geneva,Arial,sans-serif; text-align:center; }
+.mac-close-box,.mac-zoom-box { flex:0 0 13px; width:13px; height:13px; min-height:0; min-width:0; padding:0; border:1px solid #333; background:#d6d6cf; box-shadow:inset 1px 1px #fff,inset -1px -1px #888; font:13px/11px Arial,sans-serif; text-align:center; }
+.mac-titlebar .mac-close-box:hover { background:#8d94af; }
+.mac-folders { display:flex; justify-content:center; gap:6px; padding:4px 8px; border-bottom:1px solid #8e8e92; box-shadow:0 1px #fff inset; background:#e4e4df; }
+.mac-folders button { display:flex; align-items:center; gap:7px; padding:3px 12px; font:14px/1.2 Geneva,Arial,sans-serif; color:#292932; border:1px solid transparent; }
+.mac-folders svg { width:23px; height:19px; flex-shrink:0; }
+.mac-folders button:hover { border-color:#8e91a1; }
+.mac-folders button[aria-pressed=true] { background:#f7f7f1; border-color:#555; box-shadow:inset 1px 1px white,inset -1px -1px #c2c2bd; }
+.mac-files { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(2,minmax(0,1fr)); gap:9px 14px; padding:12px 10px; min-height:0; }
+.mac-item { position:relative; min-width:0; min-height:0; }
+.mac-project { display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; gap:5px; padding:3px 2px; text-align:center; color:#272731; }
+.mac-file-icon { width:clamp(32px,8cqw,68px); height:auto; max-height:16cqh; flex:0 0 auto; filter:drop-shadow(1px 1px #0003); }
+.mac-project strong { max-width:100%; padding:1px 4px; font:500 clamp(13px,2cqw,17px)/1.17 Geneva,Arial,sans-serif; }
+.mac-project small { font:clamp(12px,1.8cqw,14px)/1.2 Geneva,Arial,sans-serif; color:#60616d; max-width:95%; }
+.mac-project:hover strong,.mac-project:focus-visible strong { background:#383d64; color:white; }
+.mac-project:hover .mac-file-icon { filter:drop-shadow(1px 1px #0005) brightness(.9); }
+.mac-project:focus-visible { outline:1px dotted #333; outline-offset:0; }
+.mac-info-trigger { position:absolute; right:3px; top:3px; width:22px; height:22px; border:1px solid #b2b2bd; border-radius:50%; padding:0; color:#55586d; background:#f8f8f1; font:bold italic 14px/1 Georgia,serif; opacity:0; }
+.mac-item:hover .mac-info-trigger,.mac-item:focus-within .mac-info-trigger { opacity:1; }
+.mac-info-trigger:hover { background:#e0e1ee; color:#222; }
+.mac-status { display:flex; align-items:center; gap:8px; padding:3px 8px; border-top:1px solid #8e8e92; background:#deded9; font:12px/1.2 Geneva,Arial,sans-serif; }
+.mac-status>a { margin-left:auto; font-size:12px; padding:3px 5px; border:1px solid #8a8a8d; background:#eeeeE8; box-shadow:1px 1px #fff inset; }
+.mac-pagination { display:flex; align-items:center; gap:9px; margin:auto; }
+.mac-pagination button { width:24px; height:21px; padding:0; border:1px solid #666; background:#eeeeE8; box-shadow:1px 1px #fff inset,-1px -1px #b1b1ac inset; color:#333; font-size:11px; }
+.mac-pagination button:active { background:#b7b8c3; box-shadow:none; }
+.mac-pagination button:disabled { opacity:.28; }
+.mac-balloon { position:absolute; z-index:10; width:min(344px,calc(100% - 24px)); padding:14px 17px 12px; border:1px solid #24242b; border-radius:9px; background:#ffffdf; color:#222; box-shadow:2px 3px #20223155; }
+.mac-balloon[hidden] { display:none; }
+.mac-balloon::before { content:''; position:absolute; left:var(--nub); width:12px; height:12px; background:#ffffdf; transform:rotate(45deg); }
+.mac-balloon[data-placement=below]::before { top:-7px; border-left:1px solid #24242b; border-top:1px solid #24242b; }
+.mac-balloon[data-placement=above]::before { bottom:-7px; border-right:1px solid #24242b; border-bottom:1px solid #24242b; }
+.mac-balloon-heading { padding-right:18px; font:bold 15px/1.3 Geneva,Arial,sans-serif; }
+.mac-balloon-content { margin-top:8px; }
+.mac-balloon-content p { margin:0; font:14px/1.4 Geneva,Arial,sans-serif; }
+.mac-balloon-preview { float:right; width:90px; height:66px; margin:0 0 5px 11px; object-fit:cover; object-position:top; border:1px solid #aaa98b; }
+.mac-balloon-close { position:absolute; right:6px; top:6px; padding:0; width:23px; height:23px; color:#66664e; font:20px/1 Arial,sans-serif; }
+.mac-balloon-open { display:inline-block; margin-top:9px; font:bold 12px/1.2 Geneva,Arial,sans-serif; text-decoration:underline; text-underline-offset:3px; }
+.mac-info-dialog { padding:0; width:min(520px,calc(100vw - 36px)); max-height:90dvh; background:#f8f8f2; color:#282830; border:1px solid #222; box-shadow:3px 3px #111; font-family:Geneva,Arial,sans-serif; }
+.mac-info-dialog::backdrop { background:#070b13b0; }
+.mac-info-dialog .mac-titlebar { min-height:34px; }
+.mac-info-dialog .mac-close-box { width:20px; height:20px; flex-basis:20px; }
+.mac-info-dialog .mac-titlebar strong { font-size:16px; }
+.mac-info-body { padding:22px; }
+.mac-info-preview { width:100%; max-height:270px; object-fit:contain; object-position:top; border:1px solid #b5b6b7; background:#ecece6; margin-bottom:20px; }
+.mac-info-body>.mac-file-icon { width:64px; height:68px; max-height:none; margin-bottom:18px; }
+.mac-info-kind { display:block; font:bold 14px/1.3 Geneva,Arial,sans-serif; }
+.mac-info-body p { font:16px/1.6 Geneva,Arial,sans-serif; margin:10px 0 20px; }
+.mac-info-open { display:inline-block; padding:8px 20px; border:1px solid #222; border-radius:3px; background:#dddeda; box-shadow:inset 1px 1px #fff,inset -1px -1px #aaa,0 0 0 2px #f8f8f2,0 0 0 3px #222; font:15px Geneva,Arial,sans-serif; }
+@container(max-width:600px) {
+ .mac-desktop { grid-template-rows:24px minmax(0,1fr); gap:7px; }
+ .mac-menubar { gap:10px; padding:0 7px; }
+ .mac-menubar b { font-size:13px; }
+ .mac-menu-name { font-size:12px; }
+ .mac-window { grid-template-rows:23px 31px minmax(0,1fr) 27px; }
+ .mac-titlebar { min-height:23px; padding:3px 6px; }
+ .mac-titlebar strong { font-size:13px; }
+ .mac-folders { gap:1px; padding:2px 4px; }
+ .mac-folders button { font-size:13px; padding:3px 7px; gap:4px; }
+ .mac-folders svg { width:17px; height:15px; }
+ .mac-files { gap:3px 5px; padding:5px; }
+ .mac-project { gap:3px; }
+ .mac-project strong { font-size:13px; }
+ .mac-project small { font-size:12px; }
+ .mac-status { padding:2px 5px; gap:4px; }
+ .mac-pagination { gap:5px; }
+ .mac-balloon-preview { display:none; }
+}
+@media(max-width:760px) {
+ .mac-files { grid-template-columns:1fr; grid-template-rows:none; grid-auto-rows:minmax(0,1fr); padding:3px 7px; gap:1px; }
+ .mac-project { display:grid; grid-template-columns:29px minmax(0,1fr); grid-template-rows:auto auto; align-content:center; justify-items:start; gap:0 9px; padding:2px 24px 2px 0; text-align:left; }
+ .mac-project .mac-file-icon { grid-row:1/3; width:28px; max-height:none; }
+ .mac-project strong { font-size:14px; line-height:1.15; padding:1px 2px; }
+ .mac-project small { font-size:12px; line-height:1.2; padding-left:2px; max-width:100%; }
+ .mac-info-trigger { opacity:1; top:50%; transform:translateY(-50%); right:1px; width:26px; height:26px; border-radius:2px; }
+ .mac-folders svg { display:none; }
+ .mac-folders { justify-content:space-evenly; }
+ .mac-folders button { font-size:13px; padding:3px 5px; }
+ .mac-menu-divider,.mac-menu-name { display:none; }
+ .mac-menubar b { font-size:14px; }
+ .mac-status>a { font-size:12px; padding:3px; }
+ .mac-status>span { white-space:nowrap; }
+ .mac-pagination>span { display:none; }
+ .mac-help-menu p { font-size:13px; }
+ .mac-balloon { display:none; }
+}
+@media(hover:none) { .mac-info-trigger { opacity:1; } }
+.supplied-card { aspect-ratio:1.7; overflow:hidden; background:#e5e7e1; }
+.supplied-card>img { width:100%; height:100%; object-fit:cover; object-position:top; }
+.supplied-card.phone-card { display:flex; justify-content:center; gap:12px; padding:12px; }
+.supplied-card.phone-card>img { width:auto; max-width:48%; object-fit:contain; border-radius:12px; }
+.supplied-product { margin:0; border:1px solid #485247; background:#e8ebe4; }
+.supplied-product>div { display:flex; justify-content:center; gap:25px; }
+.supplied-product button { position:relative; display:block; padding:0; width:100%; }
+.supplied-product button>img { width:100%; height:auto; }
+.supplied-product button>span { position:absolute; bottom:16px; right:16px; background:#142c23ed; border:1px solid #ffffff65; color:#fff; padding:10px 15px; font:14px Arial,sans-serif; }
+.supplied-product figcaption { padding:14px 20px; background:#152118; color:#c1cebd; font:13px/1.5 Arial,sans-serif; }
+.supplied-phones>div { padding:35px; }
+.supplied-phones button { max-width:370px; }
+.supplied-phones button>img { border-radius:24px; box-shadow:0 14px 30px #26231820; }
+.interactive-product-detail { margin-top:20px; }
+.interactive-product-detail>summary { list-style:none; cursor:pointer; padding:16px 20px; border:1px solid #6b786b; font:15px Arial,sans-serif; color:#e4e9df; background:#172218; }
+.interactive-product-detail>summary::after { content:'+'; float:right; font-size:20px; }
+.interactive-product-detail[open]>summary::after { content:'−'; }
+.interactive-product-detail>summary::-webkit-details-marker { display:none; }
+.interactive-product-detail .product-browser { margin-top:0; }
+@media(max-width:760px) {
+ .supplied-phones>div { padding:16px; gap:12px; }
+ .supplied-product button>span { bottom:7px; right:7px; padding:7px; font-size:12px; }
+ .supplied-phones button>span { left:7px; text-align:center; }
+ .supplied-phones button>img { border-radius:12px; }
+}

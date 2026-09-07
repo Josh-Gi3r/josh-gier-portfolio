@@ -1,0 +1,755 @@
+{
+  "reviewDate": "2026-09-06",
+  "scope": "Repository inventory for Josh's marketing, product, commercial and open-source portfolio. Does not certify runtime behaviour or authorize publication of private repositories.",
+  "counts": {
+    "repositories": 88,
+    "publicProjects": 15,
+    "publicProfileRepositories": 1,
+    "MIT": 13,
+    "Apache2": 2
+  },
+  "repositories": [
+    {
+      "name": "agora",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "reservoir.marketplace-v2-fork",
+      "visibility": "private",
+      "branch": "root"
+    },
+    {
+      "name": "v2-marketplace",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "SILVERVOLT",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "JEDSTAR-Gaming-Consolidate",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "GENESISMINT",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "GENISISM",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "kdarena",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "Musky_Balzac",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "Balzback_Home",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "BIGBALZ_ARCHIVE",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "BIGBALZ",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "PUMPBALZ-FRONTEND",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "CtrlAltElite_HOMEPAGE",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "Balzy-Predictions",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "Balzay-Predictions",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "ConnectMap",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "WhaleFlow-Radar",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "BIGBALZ_PUBLIC",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "ConnectMap_PUBLIC",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "WhaleFlow-Radar_PUBLIC",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "Balzy-Predictions_PUBLIC",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "Yours",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "LIONSHARE",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "pumpbalz_updates",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "pumpbalz_update_test",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "Yours.ai",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "base_pumpfun_backend",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "BIGBALZ-maintenance",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "yours-branding",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "faf-backend",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "BALZBACK-TG-BOT",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "BALZBACK",
+      "visibility": "private",
+      "branch": "claude/session-011CUYnDSWZpw3R2LuwbA98r"
+    },
+    {
+      "name": "balz-support-tg-bot",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "yours-intelligence-legacy",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "esportz-fun-astro",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "balz-bot-system",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "esportz-razer-mockup",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "creator_services_platform",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "Acacia-asset-management",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "openbook-DEFAULT",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "sera-payroll",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "seraFX_TGAPP",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "sera_ambassador",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "sera-labs",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "sera-labs-app",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "sera-docsend",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "sera-docs",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "sera-docsend-V2",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "sera-docsend3",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "STABLECOIN_MARKETMAKING",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "EFFEX_TRADE",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "4Sight",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "POCKET-T",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "antisniper",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "marketmaking-research",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "BALZ_SmartContract",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "sera-linkshare",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "whale-tracker",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "network-graph",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "launch-board",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "docshare",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "stablecoin-payroll",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "linkhub",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "tg-dex-miniapp",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "prediction-fx-terminal",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "ambassador-kit",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "creator-storefront",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "Josh-Gi3r",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "stablecoin-intelligence",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "keip-landing",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "office-layout-generator",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "office-layout-editor",
+      "visibility": "private",
+      "branch": "master"
+    },
+    {
+      "name": "atlas-demo-repair-r1",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "yours-brand",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "yours-thumbnail",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "yours-site",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "yours-intelligence",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "yours-app",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "campaign_tracker",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "louis-platform",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "effex-private",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "savills-os-design-system",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "buzz",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "buzz-preview-studio",
+      "visibility": "public",
+      "branch": "main"
+    },
+    {
+      "name": "nextcurrency-news",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "lamuse-app",
+      "visibility": "private",
+      "branch": "main"
+    },
+    {
+      "name": "blueballs",
+      "visibility": "public",
+      "branch": "main"
+    }
+  ],
+  "publicProjects": [
+    {
+      "name": "POCKET-T",
+      "repository": "https://github.com/Josh-Gi3r/POCKET-T",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Remote access to Mac terminal sessions and coding agents from a phone or browser, with persistent sessions and agent-aware controls.",
+      "statusNotes": "Documented self-hostable application; runtime not tested in this portfolio inventory.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "3c5c6193f3351f0f2049e58cee540a2a299955a2",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "0da369cadf6a8ec3599a2137ed69888d82b1fcc2",
+      "existingAssetReferences": [
+        "branding/lockup/lockup-stacked-on-dark.svg",
+        "docs/media/hero.png"
+      ]
+    },
+    {
+      "name": "whale-tracker",
+      "repository": "https://github.com/Josh-Gi3r/whale-tracker",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Configurable front-end dashboard for large on-chain transactions, with a simulated default data source and a provider adapter boundary.",
+      "statusNotes": "Front-end template; default transactions/statistics are simulated.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "a2f54a828802ff18361c462a3e9fa3a717723a0d",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b9bba2ebe6ad377cdaacfe0dde000f5d9c8cfe80",
+      "existingAssetReferences": [
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "network-graph",
+      "repository": "https://github.com/Josh-Gi3r/network-graph",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Interactive relationship map with shortest-path introductions, search, company grouping and connection filters.",
+      "statusNotes": "Interactive client-side tool with fictional sample data; enrichment and persistence are incomplete.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "037ba5fd3621c58d0b6183670ba07d9b9ef84f19",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b9bba2ebe6ad377cdaacfe0dde000f5d9c8cfe80",
+      "existingAssetReferences": [
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "launch-board",
+      "repository": "https://github.com/Josh-Gi3r/launch-board",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Configurable product-launch directory and submission front end, with a pluggable submission backend.",
+      "statusNotes": "Starter; catalogue/votes are demo state and only the configured submission path persists.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "9c1712a3bc6477dc67615a121e28d8d809723113",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b9bba2ebe6ad377cdaacfe0dde000f5d9c8cfe80",
+      "existingAssetReferences": [
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "docshare",
+      "repository": "https://github.com/Josh-Gi3r/docshare",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Self-hosted document sharing, per-slide narration, controlled links and page-engagement analytics.",
+      "statusNotes": "Substantial application with documented unfinished functions; uploaded narration and page/time analytics are the supported claims.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "1d8d2b65ea4bfd2621363e4fe0d7abda78017ed9",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b9bba2ebe6ad377cdaacfe0dde000f5d9c8cfe80",
+      "existingAssetReferences": [
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "stablecoin-payroll",
+      "repository": "https://github.com/Josh-Gi3r/stablecoin-payroll",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Payroll, HR and EOR reference application with MY/SG calculation engines and operator/client/employee workflows.",
+      "statusNotes": "Reference application; stablecoin settlement and several integrations are simulated or unfinished.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "f84cbf3feeeec213fdb5432f181446d1dad199d0",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "7d3ab8fb06f41434d2a341c36e68dcdf0a5adfbd",
+      "existingAssetReferences": [
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "linkhub",
+      "repository": "https://github.com/Josh-Gi3r/linkhub",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Self-hosted team profiles, company link pages, branded QR codes, digital cards and click analytics.",
+      "statusNotes": "Self-hostable application; wallet passes and authentication require deployment configuration.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "54cceb63852a8208fa2dc273d22437ee1b7db2ac",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b9bba2ebe6ad377cdaacfe0dde000f5d9c8cfe80",
+      "existingAssetReferences": [
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "tg-dex-miniapp",
+      "repository": "https://github.com/Josh-Gi3r/tg-dex-miniapp",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Telegram-native FX, wallet, transfer and P2P client with configurable settlement infrastructure.",
+      "statusNotes": "Integration-dependent client; settlement venue and configured release state matter.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "8bd121e34d8a9b03cfb4519491f2b07764ede1c6",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b9bba2ebe6ad377cdaacfe0dde000f5d9c8cfe80",
+      "existingAssetReferences": [
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "prediction-fx-terminal",
+      "repository": "https://github.com/Josh-Gi3r/prediction-fx-terminal",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Self-custodial web/mobile/Telegram finance reference terminal spanning FX, swaps, selected yield and prediction-market surfaces.",
+      "statusNotes": "Reference terminal with gated and mock surfaces; do not conflate with the current private 4Sight release.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "88606b173ea2316547da00cbd99ae0b96480fbd6",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b9bba2ebe6ad377cdaacfe0dde000f5d9c8cfe80",
+      "existingAssetReferences": [
+        "./docs/hero.png",
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "ambassador-kit",
+      "repository": "https://github.com/Josh-Gi3r/ambassador-kit",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Configurable ambassador operations, application flow, contribution records, XP, tiers, community rewards and content tools.",
+      "statusNotes": "Application with mixed automated and manual ingestion; some reward and anti-gaming systems remain incomplete.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "43cc4e8c022a88f551a64d693c0a01d576559117",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b9bba2ebe6ad377cdaacfe0dde000f5d9c8cfe80",
+      "existingAssetReferences": [
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "creator-storefront",
+      "repository": "https://github.com/Josh-Gi3r/creator-storefront",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Creator profiles, bookable services and a database-backed fan-token marketplace reference application.",
+      "statusNotes": "Reference marketplace with simulated token settlement and documented implementation defects.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "400baf5a74aef8e020d77270b76edb5c0ac69c4e",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b9bba2ebe6ad377cdaacfe0dde000f5d9c8cfe80",
+      "existingAssetReferences": [
+        "./docs/hero.png"
+      ]
+    },
+    {
+      "name": "stablecoin-intelligence",
+      "repository": "https://github.com/Josh-Gi3r/stablecoin-intelligence",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Open-source stablecoin research and data platform with profiles, scoring methodology, comparison, directories, API and MCP access.",
+      "statusNotes": "Public codebase; current NextCurrency product and this public release need an explicit relationship.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "8af2426ad58ab76ddc39d405c64b69df077e1a67",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "4f528870f0abc4c838162e0fb56143c270501912",
+      "existingAssetReferences": []
+    },
+    {
+      "name": "buzz",
+      "repository": "https://github.com/Josh-Gi3r/buzz",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Community fork of Block Buzz with Josh's Live Preview Studio for responsive artifact preview and local review.",
+      "statusNotes": "Fork contribution; responsive URL preview and local review documented; generation not certified in this inventory.",
+      "license": "Apache-2.0",
+      "readme": {
+        "path": "README.md",
+        "blob": "7f34e8f0753f51d7e42019f74a1a92cdeee997e4",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "862ee3c28647e7a58801a75236855c269c1448ae",
+      "existingAssetReferences": [
+        "docs/assets/screenshots/channel-agents.png",
+        "docs/assets/showcase/02-live-wedding-desktop.png",
+        "docs/assets/showcase/01-agent-build-chat.png",
+        "docs/assets/showcase/03-live-wedding-mobile-review.png",
+        "docs/assets/showcase/04-pricing-deck-review.png",
+        "docs/assets/showcase/05-wedding-film-review.png"
+      ]
+    },
+    {
+      "name": "buzz-preview-studio",
+      "repository": "https://github.com/Josh-Gi3r/buzz-preview-studio",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Related experimental Buzz fork adding the Preview Studio artifact library, viewer and review workflow.",
+      "statusNotes": "Experimental related fork; resolve canonical portfolio destination with buzz.",
+      "license": "Apache-2.0",
+      "readme": {
+        "path": "README.md",
+        "blob": "63524403c9ebf8d1e5c90281540db93263cac660",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "862ee3c28647e7a58801a75236855c269c1448ae",
+      "existingAssetReferences": [
+        "docs/assets/preview-studio-hero.png",
+        "docs/assets/preview-studio-demo.gif"
+      ]
+    },
+    {
+      "name": "blueballs",
+      "repository": "https://github.com/Josh-Gi3r/blueballs",
+      "visibility": "public",
+      "branch": "main",
+      "description": "Neobank reference software combining product interfaces, tenant-isolated APIs, double-entry ledger, sandbox and FX runtime.",
+      "statusNotes": "Reference infrastructure, API and sandbox; provider catalogue entries are not partnerships or live integrations.",
+      "license": "MIT",
+      "readme": {
+        "path": "README.md",
+        "blob": "2e5eff8c4492f1e7279b35b5faae7b3ce8753670",
+        "review": "Overview, feature headings and relevant status passages reviewed; not an exhaustive source-code audit."
+      },
+      "licenseBlob": "b7764b74c7fe189c223b89744c15d117d9464727",
+      "existingAssetReferences": [
+        "public/blueballs-mark.svg",
+        "docs/assets/readme/home-hero.png",
+        "docs/assets/readme/products.png",
+        "docs/assets/readme/fx.png",
+        "docs/assets/readme/cards.png",
+        "docs/assets/readme/developers.png",
+        "docs/assets/readme/sandbox.png"
+      ]
+    }
+  ],
+  "additionalReadmeChecks": [
+    {
+      "name": "campaign_tracker",
+      "result": "Root README.md returned 404; product scope unresolved."
+    },
+    {
+      "name": "JEDSTAR-Gaming-Consolidate",
+      "result": "README contains only the repository title; historical product context requires other files."
+    },
+    {
+      "name": "SILVERVOLT",
+      "result": "README contains only the repository title; historical product context requires other files."
+    },
+    {
+      "name": "louis-platform",
+      "result": "README identifies LaMusé and documents a merchant-to-consumer prototype journey; do not duplicate as an unrelated product."
+    }
+  ]
+}

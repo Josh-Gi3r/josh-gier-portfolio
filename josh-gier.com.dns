@@ -1,0 +1,6 @@
+$ORIGIN josh-gier.com.
+$TTL 300
+@ IN A 162.159.143.30
+@ IN A 172.66.3.26
+_openai-site-verification IN TXT "openai-site-verification=1_q4mPZ0uDGHP03JdLtCQuV4Sqz6NRzJ74HC1LfqP7E"
+_cf-custom-hostname IN TXT "e67cad15-5dc6-4847-8592-3bbc112e460b"

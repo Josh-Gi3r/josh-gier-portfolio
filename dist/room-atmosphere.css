@@ -1,0 +1,150 @@
+@font-face { font-family:ChicagoRoom; src:url('/assets/chicago-12.woff2') format('woff2'); font-display:swap; }
+:root { --room-label-font:ChicagoRoom,Geneva,sans-serif; }
+/* The invitation stays on its object. The three effects run at different times. */
+.tv-idle { --cue-delay:.6s; }
+.computer-idle { --cue-delay:3.6s; }
+.board-illumination { --cue-delay:6.6s; }
+.hotspot { cursor:pointer; }
+.hotspot::before,.hotspot::after { content:none; }
+.hotspot-tv { --marker-x:50%; --marker-y:62%; }
+.hotspot-computer { --marker-x:79%; --marker-y:73%; }
+/* The board spans x=661..1005, y=53..253 in the 1672×941 photograph. */
+.hotspot-board { left:39.53%; top:5.63%; width:20.58%; height:21.9%; --marker-x:17%; --marker-y:67%; }
+.interaction-marker { position:absolute; left:var(--marker-x); top:var(--marker-y); width:20px; height:20px; transform:translate(-50%,-50%); pointer-events:none; }
+.marker-ring { display:block; position:absolute; inset:1px; border:1.5px solid #f4efdb; border-radius:50%; background:#151a1820; box-shadow:0 0 10px #fff4d52b; transition:transform .2s ease,background .2s ease,box-shadow .2s ease; }
+.hotspot:hover .marker-ring,.hotspot:focus-visible .marker-ring { transform:scale(1.18); background:#ebc47b; box-shadow:0 0 0 4px #fff0c226,0 0 18px #f6d79169; }
+.hotspot:focus-visible { outline:none; }
+.hotspot:focus-visible .marker-ring { outline:2px solid #f4efdb; outline-offset:5px; }
+.marker-label { position:absolute; top:50%; left:calc(100% + 9px); transform:translate(-4px,-50%); font:16px/1.1 var(--room-label-font); font-synthesis:none; padding:6px 9px; background:#14191fed; border:1px solid #f5f1e430; color:#f5f1e4; white-space:nowrap; opacity:0; transition:opacity .15s ease,transform .15s ease; }
+.hotspot:hover .marker-label,.hotspot:focus-visible .marker-label { opacity:1; transform:translate(0,-50%); }
+/* TV and computer identify themselves in their own screens. */
+.hotspot-tv .marker-label,.hotspot-computer .marker-label { display:none; }
+
+/* Light the original board image, clipped to its actual four corners. This keeps
+   the photographs, pins, cork and wooden frame visible as the illumination rises. */
+.board-illumination { position:absolute; inset:0; width:100%; height:100%; object-fit:fill; pointer-events:none; clip-path:polygon(39.53% 6.91%,60.11% 5.63%,59.87% 26.04%,39.83% 26.89%); filter:brightness(1.85) sepia(.13) saturate(1.08); opacity:0; animation:board-illumination 9s ease-in-out var(--cue-delay) infinite; }
+.room-plane:has(.hotspot-board:hover) .board-illumination,.room-plane:has(.hotspot-board:focus-visible) .board-illumination { animation:none; opacity:.72; transition:opacity .3s ease; }
+@keyframes board-illumination { 0%,4%,29%,100% { opacity:0; } 12%,18% { opacity:.62; } }
+
+/* All glitch layers are children of the already calibrated screen planes. */
+.tv-idle::after,.computer-idle::after { content:''; position:absolute; inset:-12% 0; z-index:10; pointer-events:none; opacity:0; }
+.tv-idle::after { background:linear-gradient(transparent 21%,#b6d6ea80 22%,#e9f4f1b3 25%,#b9d8e84d 43%,transparent 59%); animation:tv-tracking 9s linear var(--cue-delay) infinite; }
+.computer-idle::after { background:linear-gradient(transparent 33%,#bceadb9e 34%,#fcf1dfa8 36%,transparent 39%,transparent 64%,#b7b6e980 65%,#c8f5f059 67%,transparent 69%); animation:monitor-tracking 9s steps(1,end) var(--cue-delay) infinite; }
+@keyframes tv-tracking { 0%,.7%,6.5%,100% { opacity:0; transform:translateY(-15%); } 1.8% { opacity:.7; transform:translateY(-9%); } 3.6% { opacity:.42; transform:translateY(24%); } 5.5% { opacity:.1; transform:translateY(57%); } }
+@keyframes monitor-tracking { 0%,1%,5%,100% { opacity:0; transform:translate(0,0); } 1.6% { opacity:.55; transform:translate(-5px,-30px); } 2.5% { opacity:.22; transform:translate(6px,12px); } 3.4% { opacity:.5; transform:translate(-3px,38px); } 4.2% { opacity:.08; transform:translate(0,-10px); } }
+.tv-idle { background:#54616c42; }
+.tv-idle>span { top:31%; left:15%; bottom:auto; font:22px/1.6 var(--mono); letter-spacing:0; text-shadow:0 0 8px #fff9; opacity:.7; }
+.room-plane:has(.hotspot-tv:hover) .tv-idle,.room-plane:has(.hotspot-tv:focus-visible) .tv-idle { background:url('/assets/tiger-hero.webp') center/cover; }
+.room-plane:has(.hotspot-tv:hover) .noise,.room-plane:has(.hotspot-tv:focus-visible) .noise { opacity:.07; }
+.room-plane:has(.hotspot-computer:hover) .computer-idle,.room-plane:has(.hotspot-computer:focus-visible) .computer-idle { filter:brightness(1.1); }
+.room-plane:has(.hotspot-computer:hover) .idle-file:first-child span,.room-plane:has(.hotspot-computer:focus-visible) .idle-file:first-child span { background:#344268; color:#fff; }
+/* The screen remains a small working desktop. UI follows the calibrated glass. */
+.computer-idle {
+  display: block;
+  place-content: normal;
+  background: #7f879c;
+  color: #191b21;
+  font-family: var(--room-label-font);
+  text-shadow: none;
+}
+.computer-idle span { opacity: 1; }
+.idle-mac-menu {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 27px;
+  padding: 3px 14px;
+  border-bottom: 2px solid #25252b;
+  background: #e8e8dc;
+  font: 18px/1.1 var(--room-label-font);
+}
+.idle-mac-menu > span:first-child { margin-right: 9px; }
+.idle-mac-app { float: right; }
+.idle-mac-window {
+  position: absolute;
+  left: 20px;
+  top: 60px;
+  width: 282px;
+  height: 202px;
+  border: 2px solid #24252a;
+  background: #eeeede;
+  box-shadow: 3px 3px #23252a;
+}
+.idle-titlebar {
+  height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  background: repeating-linear-gradient(#e8e8dc 0 3px, #646775 3px 4px);
+  border: 3px solid #e8e8dc;
+  border-bottom: 1px solid #222;
+}
+.idle-titlebar b { font: 18px/1 var(--room-label-font); background: #e8e8dc; padding: 1px 10px; }
+.idle-titlebar i { display: block; width: 11px; height: 11px; border: 1px solid #25252a; box-shadow: 0 0 0 3px #e8e8dc; background: #e8e8dc; animation: none; }
+.idle-window-meta { display: flex; justify-content: space-between; padding: 5px 10px; border-bottom: 1px solid #575969; font: 13px/1 var(--room-label-font); }
+.idle-files { display: grid; grid-template-columns: repeat(3, 1fr); align-content: center; height: 125px; padding: 0 9px; gap: 4px; background: #f5f3e7; }
+.idle-file { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+.idle-file span { font: 13px/1 var(--room-label-font); white-space: nowrap; }
+.idle-file svg { filter: none; }
+.idle-window-scroll { height: 19px; display: flex; border-top: 1px solid #25252a; background: #c3c4c5; }
+.idle-window-scroll span { width: 19px; text-align: center; font: 10px/18px monospace; border-right: 1px solid #25252a; }
+.idle-window-scroll span:last-child { border-left: 1px solid #25252a; border-right: 0; }
+.idle-window-scroll i { width: 65%; background: #ebebdf; border-right: 1px solid #25252a; margin-right: auto; animation: none; }
+.idle-mac-disk { position: absolute; right: 12px; top: 49px; display: flex; align-items: center; flex-direction: column; gap: 7px; width: 72px; }
+.idle-mac-disk span { font: 12px/1 var(--room-label-font); white-space: nowrap; color: #f2f0e4; }
+
+.transitioning .hotspot,.away .hotspot { visibility:hidden; }
+.room-title h1 { font-weight:500; }
+.room-instruction { line-height:1.7; }
+.room-controls {
+  position:fixed; z-index:40; right:36px; bottom:12px;
+  display:flex; gap:15px; align-items:center;
+  padding:7px 10px; background:#101718e8; border:1px solid #ffffff23;
+  color:#e1e2d4; font:13px/1.4 Arial,sans-serif;
+}
+.room-controls button { display:flex; gap:9px; align-items:center; padding:4px 2px; min-height:30px; font:inherit; }
+.room-controls button:hover,.sound-credits summary:hover { color:var(--amber); }
+.room-controls button[aria-pressed=true] { color:var(--amber); }
+.room-controls #motion-toggle>span { color:var(--amber); }
+.sound-bars { display:flex; align-items:center; gap:2px; height:16px; width:18px; }
+.sound-bars i { display:block; width:2px; height:3px; background:currentColor; }
+#sound-toggle[aria-pressed=true] .sound-bars i { animation:sound-level .85s ease-in-out infinite alternate; }
+.sound-bars i:nth-child(2) { animation-delay:-.5s!important; }
+.sound-bars i:nth-child(3) { animation-delay:-.2s!important; }
+.sound-bars i:nth-child(4) { animation-delay:-.65s!important; }
+@keyframes sound-level { to { height:14px; } }
+.sound-credits { position:relative; }
+.sound-credits summary { list-style:none; cursor:pointer; color:#adb6b0; font-size:12px; padding:9px 0; }
+.sound-credits summary::-webkit-details-marker { display:none; }
+.sound-credits>div { position:absolute; bottom:calc(100% + 17px); right:-10px; width:290px; padding:20px; background:#121b1c; border:1px solid #b6c1b74d; box-shadow:0 10px 35px #0008; }
+.sound-credits strong { color:#e7d4a7; font-size:14px; }
+.sound-credits p { font:14px/1.6 Arial,sans-serif; margin:8px 0 17px; color:#c8ceca; }
+.sound-credits p:last-child { margin-bottom:0; }
+.sound-credits a { text-decoration:underline; text-underline-offset:3px; }
+.away #motion-toggle { display:none; }
+.away .room-controls { right:20px; }
+@media(max-width:760px) {
+  .room-controls { right:12px; bottom:10px; gap:12px; padding:5px 8px; }
+  .away .room-controls { right:12px; }
+  .room-title h1 { font-size:clamp(31px,8.7vw,42px); letter-spacing:-1.1px; }
+  .room-title { right:16px; }
+  .room-footer { display:none; }
+  .sound-credits>div { width:min(290px,calc(100vw - 26px)); }
+}
+
+@media(max-width:760px) {
+  .interaction-marker { width:18px; height:18px; }
+  .hotspot { min-width:44px; min-height:44px; }
+  .marker-label { font-size:14px; }
+  .hotspot-board .marker-label { opacity:1; top:auto; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); }
+  .hotspot-board:hover .marker-label,.hotspot-board:focus-visible .marker-label { transform:translateX(-50%); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .tv-idle::after,.computer-idle::after { display:none; }
+  .board-illumination { animation:none; }
+  .marker-ring,.marker-label { transition:none; }
+  .sound-bars i { animation:none!important; }
+  #sound-toggle[aria-pressed=true] .sound-bars i:nth-child(even) { height:12px; }
+}

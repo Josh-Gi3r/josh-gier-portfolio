@@ -1,0 +1,182 @@
+@font-face {
+  font-family: 'Chicago Study';
+  src: url('/assets/chicago-12.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* A room-only study. None of these rules are loaded by the published entrypoint. */
+.room-study { --room-label-font: 'Chicago Study', Geneva, sans-serif; }
+.room-study .hotspot { cursor: pointer; }
+.room-study .hotspot::before,
+.room-study .hotspot::after,
+.room-study .computer-idle::after,
+.room-study .tv-idle::after { content: none; animation: none; }
+.room-study .hotspot-tv { --marker-x: 39%; --marker-y: 87%; --marker-delay: .6s; }
+.room-study .hotspot-computer { --marker-x: 79%; --marker-y: 73%; --marker-delay: 3.6s; }
+.room-study .hotspot-board { --marker-x: 14%; --marker-y: 82%; --marker-delay: 6.6s; }
+.interaction-marker {
+  position: absolute;
+  left: var(--marker-x);
+  top: var(--marker-y);
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+  color: #f5f1e4;
+  pointer-events: none;
+}
+.marker-ring {
+  position: absolute;
+  inset: 2px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: #12171d42;
+  box-shadow: 0 0 0 1px #0b101859;
+  transition: transform 180ms ease, background 180ms ease;
+}
+.marker-ring::before {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: currentColor;
+}
+.marker-ring::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0;
+  animation: marker-invitation 9s ease-out var(--marker-delay) infinite;
+}
+@keyframes marker-invitation {
+  0% { transform: scale(1); opacity: 0; }
+  1% { opacity: .7; }
+  14% { transform: scale(2.1); opacity: 0; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+.marker-label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 9px);
+  padding: 7px 9px 6px;
+  background: #14191fec;
+  color: #f5f1e4;
+  border: 1px solid #f5f1e439;
+  border-radius: 1px;
+  font: 400 16px/1.1 var(--room-label-font);
+  font-synthesis: none;
+  white-space: nowrap;
+  text-shadow: none;
+  opacity: 0;
+  transform: translate(-4px, -50%);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+.hotspot-tv .marker-label,
+.hotspot-computer .marker-label { left: auto; right: calc(100% + 9px); transform: translate(4px, -50%); }
+.room-study .hotspot:hover .marker-label,
+.room-study .hotspot:focus-visible .marker-label { opacity: 1; transform: translate(0, -50%); }
+.room-study .hotspot:hover .marker-ring,
+.room-study .hotspot:focus-visible .marker-ring { transform: scale(.82); background: #ebe9df35; }
+.room-study .hotspot:focus-visible .marker-ring { outline: 2px solid #f5f1e4; outline-offset: 4px; }
+.room-study .room-plane:has(.hotspot:hover) .marker-ring::after,
+.room-study .room-plane:has(.hotspot:focus-visible) .marker-ring::after { animation: none; }
+
+/* The screen remains a small working desktop. UI follows the calibrated glass. */
+.room-study .computer-idle {
+  display: block;
+  place-content: normal;
+  background: #7f879c !important;
+  color: #191b21;
+  font-family: var(--room-label-font);
+  text-shadow: none;
+}
+.room-study .computer-idle span { opacity: 1; }
+.study-mac-menu {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 27px;
+  padding: 3px 14px;
+  border-bottom: 2px solid #25252b;
+  background: #e8e8dc;
+  font: 18px/1.1 var(--room-label-font);
+}
+.study-mac-menu > span:first-child { margin-right: 9px; }
+.study-mac-app { float: right; }
+.study-mac-window {
+  position: absolute;
+  left: 20px;
+  top: 60px;
+  width: 282px;
+  height: 202px;
+  border: 2px solid #24252a;
+  background: #eeeede;
+  box-shadow: 3px 3px #23252a;
+}
+.study-titlebar {
+  height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  background: repeating-linear-gradient(#e8e8dc 0 3px, #646775 3px 4px);
+  border: 3px solid #e8e8dc;
+  border-bottom: 1px solid #222;
+}
+.study-titlebar b { font: 18px/1 var(--room-label-font); background: #e8e8dc; padding: 1px 10px; }
+.study-titlebar i { display: block; width: 11px; height: 11px; border: 1px solid #25252a; box-shadow: 0 0 0 3px #e8e8dc; background: #e8e8dc; animation: none; }
+.study-window-meta { display: flex; justify-content: space-between; padding: 5px 10px; border-bottom: 1px solid #575969; font: 13px/1 var(--room-label-font); }
+.study-files { display: grid; grid-template-columns: repeat(3, 1fr); align-content: center; height: 125px; padding: 0 9px; gap: 4px; background: #f5f3e7; }
+.study-file { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+.study-file span { font: 13px/1 var(--room-label-font); white-space: nowrap; }
+.study-file svg { filter: none; }
+.study-window-scroll { height: 19px; display: flex; border-top: 1px solid #25252a; background: #c3c4c5; }
+.study-window-scroll span { width: 19px; text-align: center; font: 10px/18px monospace; border-right: 1px solid #25252a; }
+.study-window-scroll span:last-child { border-left: 1px solid #25252a; border-right: 0; }
+.study-window-scroll i { width: 65%; background: #ebebdf; border-right: 1px solid #25252a; margin-right: auto; animation: none; }
+.study-mac-disk { position: absolute; right: 12px; top: 49px; display: flex; align-items: center; flex-direction: column; gap: 7px; width: 72px; }
+.study-mac-disk span { font: 12px/1 var(--room-label-font); white-space: nowrap; color: #f2f0e4; }
+.room-study .tv-idle,
+.room-study .room-plane:has(.hotspot-tv:hover) .tv-idle,
+.room-study .room-plane:has(.hotspot-tv:focus-visible) .tv-idle { background: #18345155; }
+.room-study .tv-idle > span { top: 15%; left: 15%; font: 20px/1.5 var(--room-label-font); letter-spacing: 1px; color: #ced7e4; opacity: .7; text-shadow: 0 0 4px #b6c4e661; }
+.room-study .tv-idle small { font: inherit; }
+.room-study .noise { opacity: .07; animation: none; }
+.room-study .window-rain { opacity: .12; }
+
+.study-return { position: fixed; z-index: 60; left: 32px; bottom: 28px; background: #14191fec; border: 1px solid #ffffff45; padding: 13px 17px; font: 16px var(--room-label-font); }
+.study-destination { position: fixed; z-index: 60; bottom: 28px; right: 32px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.study-destination > span { font: 20px var(--room-label-font); color: #f4f0e7; }
+.study-destination a { padding: 11px 15px; border: 1px solid #ffffff45; background: #14191fec; font: 14px var(--room-label-font); }
+.study-return[hidden], .study-destination[hidden] { display: none; }
+.study-zoomed .hotspot,
+.study-zoomed .site-header,
+.study-zoomed #home,
+.study-zoomed .room-footer,
+.study-zoomed .room-controls { visibility: hidden; pointer-events: none; }
+.study-zoomed .room-vignette { opacity: .35; transition: opacity 800ms ease; }
+.study-zoomed .room-plane { filter: none; }
+
+@media (max-width:760px) {
+  .interaction-marker { width: 19px; height: 19px; }
+  .marker-label { opacity: 1; padding: 5px 7px; font-size: 14px; }
+  .hotspot-board .marker-label { left: 50%; top: auto; bottom: calc(100% + 5px); transform: translateX(-50%); }
+  .hotspot-computer .marker-label { right: auto; left: calc(100% + 5px); transform: translate(0, -50%); }
+  .hotspot-tv .marker-label { right: calc(100% + 5px); transform: translate(0, -50%); }
+  .room-study .hotspot-board:hover .marker-label,
+  .room-study .hotspot-board:focus-visible .marker-label { transform: translateX(-50%); }
+  .room-study .hotspot { min-width: 44px; min-height: 44px; }
+  .study-return { left: 15px; bottom: 16px; font-size: 14px; }
+  .study-destination { right: 15px; bottom: 16px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .marker-ring::after { animation: none; }
+  .marker-label, .marker-ring { transition: none; }
+  .room-plane { transition: none; }
+}
