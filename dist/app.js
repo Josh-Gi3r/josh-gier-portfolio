@@ -1,5 +1,5 @@
 import {renderMacDesktop,installMacDesktop} from './mac-desktop.js?v=5';
-import {installSound} from './sound.js?v=4';
+import {installSound} from './sound.js?v=5';
 import {deviceFrame,installScreenGeometry} from './screens.js';
 import {campaigns,products} from './catalog.js?v=5';
 import {brandLogo,campaignArt,campaignCollection,productCardArt,renderShowcase,handleDemoClick} from './showcases.js?v=5';

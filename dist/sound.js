@@ -1,4 +1,6 @@
-// One opt-in control owns both tracks. No audio request or playback before a tap.
+// One control owns both tracks. Browsers refuse audio before a user gesture, so sound
+// starts on the visitor's first tap, click or key press anywhere in the room unless
+// they previously switched it off. No audio request or playback before that gesture.
 export function installSound() {
   const button=document.querySelector('#sound-toggle');
   const music=document.querySelector('#sound-music');
@@ -7,6 +9,10 @@ export function installSound() {
   const tracks=[music,rain];
   const levels=[.38,.055];
   let context, gains, wanted=false, token=0;
+  const memory={
+    get(){try{return localStorage.getItem('jg-sound');}catch{return null;}},
+    set(value){try{localStorage.setItem('jg-sound',value);}catch{}}
+  };
 
   function state(value) {
     button.dataset.state=value;
@@ -32,6 +38,7 @@ export function installSound() {
     tracks.forEach(track=>track.pause());
     if(context)context.suspend().catch(()=>{});
     state('off');
+    memory.set('off');
   }
   async function start() {
     const attempt=++token;
@@ -49,6 +56,7 @@ export function installSound() {
         gain.gain.linearRampToValueAtTime(levels[i],context.currentTime+.8);
       });
       state('on');
+      memory.set('on');
     } catch {
       if(attempt!==token)return;
       wanted=false;
@@ -59,6 +67,18 @@ export function installSound() {
     }
   }
   button.addEventListener('click',()=>wanted?stop():start());
+  // Start on the first gesture anywhere, which is what the autoplay policy allows.
+  // The Sound button keeps its own click handling; a gesture on it is left alone.
+  if(memory.get()!=='off'){
+    const armed=['pointerdown','keydown'];
+    const firstGesture=event=>{
+      armed.forEach(type=>document.removeEventListener(type,firstGesture,true));
+      if(button.contains(event.target))return;
+      if(event.type==='keydown'&&['Shift','Control','Alt','Meta','Tab'].includes(event.key))return;
+      if(!wanted)start();
+    };
+    armed.forEach(type=>document.addEventListener(type,firstGesture,true));
+  }
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){token++;tracks.forEach(track=>track.pause());if(context)context.suspend().catch(()=>{});}
     else if(wanted)start();
