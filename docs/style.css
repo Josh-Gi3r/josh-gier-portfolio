@@ -108,7 +108,7 @@
 }
 
 @media(max-width:760px) and (orientation:portrait){
-  /* the wordmark tagline duplicates the hero eyebrow directly below it and wraps to two lines */
+  /* Narrow and tall, phone or resized window: no free band at the bottom. */
   .wordmark span{display:none}
   /* portrait has no free band at the bottom: park the links in the header instead */
   .room-footer{position:fixed;top:14px;left:auto;right:14px;bottom:auto;justify-content:flex-end;z-index:22}

@@ -9,7 +9,7 @@ export const openSource=[
   source:'https://github.com/Josh-Gi3r/POCKET-T',
   url:'https://pocket-t.ai',
   state:'MVP · open source, MIT',
-  summary:'Every Mac terminal mirrored to a phone or browser over a Cloudflare tunnel, with no SSH, VPN or port forwarding, and real input going back into the PTY.',
+  summary:'Every Mac terminal mirrored to a phone or browser over a Cloudflare tunnel, with no SSH, VPN or port forwarding, real input going back into the PTY, and the session held in tmux so it survives a logout.',
   problem:'A coding agent runs for hours and the developer leaves the desk. Pocket-T keeps the session reachable from a phone, with the agent’s output readable, its cost visible and its destructive actions waiting for an approval.',
   approach:'Persist the session in tmux so nothing depends on the laptop staying awake, then detect the agent running inside it and render that session as something usable on a phone screen.',
   features:[
@@ -48,26 +48,34 @@ export const openSource=[
   source:'https://github.com/Josh-Gi3r/whale-tracker',
   url:null,
   state:'Front-end demo · simulated data · MIT',
-  summary:'A configurable front end for watching large onchain transactions, shipped with a simulated data source and a provider adapter boundary so a real feed can be dropped in.',
+  summary:'A brandable front end for watching large onchain transactions: a searchable, filterable activity feed with configurable thresholds, and a provider adapter boundary so a real data feed replaces the simulated one without the interface changing.',
   problem:'Every team that wants a large-transaction feed rebuilds the same dashboard before choosing a data provider. This is the dashboard, with the provider left as a seam rather than a dependency.',
   approach:'Ship the interface complete and the data source replaceable. The default provider is simulated and labelled, and a real feed connects through the adapter without touching the front end.',
   features:[
-   'A dashboard for large onchain transactions',
-   'Filters across the activity feed',
-   'A provider adapter boundary for the data source',
+   'A dashboard for large onchain transaction activity',
+   'A searchable, filterable activity feed',
+   'Configurable thresholds and views',
+   'Brandable presentation, so the dashboard carries the operator’s own identity',
+   'A provider adapter boundary that keeps the data source out of the interface',
    'A simulated default data source, labelled as simulated',
-   'Configurable thresholds and views'
+   'A brand-stripped, credential-free MIT release'
   ],
   how:[
    ['Open the dashboard','Large-transaction activity is laid out for scanning rather than for querying.'],
-   ['Filter the feed','Narrow the activity by the filters that matter to the watchlist.'],
-   ['Swap in real data','The default provider is simulated. A live feed connects through the adapter boundary without changes to the interface.']
+   ['Filter the feed','Search the activity and narrow it by the thresholds and filters that matter to the watchlist.'],
+   ['Brand it','Presentation is configurable, so the dashboard ships under the operator’s own identity rather than a template’s.'],
+   ['Swap in real data','The default provider is simulated and says so. A live feed connects through the adapter boundary without changes to the interface.'],
+   ['How it was built','A written scope with its invariants, then an agent team on named, bounded roles building in parallel lanes, with an adversarial verification pass before anything merged.']
   ],
   role:'Product scope, the dashboard experience and the provider adapter boundary, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged for release.',
   commercial:'Released under MIT as a working front end for anyone who has the data and does not want to build the surface.',
-  craft:['Front-end dashboard','Provider adapter boundary','Simulated default data','MIT'],
-  stack:['Web front end','Pluggable data provider adapter'],
-  evidence:['Simulated data source labelled as simulated in the product'],
+  craft:['Front-end dashboard','Provider adapter boundary','Configurable thresholds','Simulated default data','MIT'],
+  stack:['Web front end','Pluggable data-provider adapter','Configurable threshold and filter model','Simulated transaction feed'],
+  evidence:[
+   'The supplied transaction feed is simulated and identified as simulated in the product',
+   'Released under MIT among the brand-stripped templates indexed on the public profile',
+   'Built by an agent team on named, bounded roles with an adversarial verification pass before merge'
+  ],
   gallery:[],
   relatedSource:null
  },
@@ -81,27 +89,34 @@ export const openSource=[
   source:'https://github.com/Josh-Gi3r/network-graph',
   url:null,
   state:'Demo · fictional sample network · MIT',
-  summary:'An interactive relationship map that finds the shortest path to an introduction, with search, company grouping and connection filters over a fictional sample network.',
+  summary:'An interactive relationship and introduction-path map: select two contacts, reveal the path that connects them, group the stakeholders around them by company, and filter by connection type over a fictional sample network.',
   problem:'A warm introduction is usually two people away and nobody can see which two. The map makes the path explicit instead of leaving it to memory.',
   approach:'Treat the network as a graph and make the shortest path the primary action, with search and grouping as the way in rather than as an afterthought.',
   features:[
-   'An interactive relationship map',
-   'Shortest-path introductions between two people',
+   'An interactive relationship and introduction-path map',
+   'Select two contacts and reveal the path that connects them',
+   'Shortest-path routing across the network',
    'Search across people and companies',
-   'Company grouping and clustering',
-   'Connection filters',
+   'Stakeholders grouped and clustered by company',
+   'Connection filters by relationship type',
    'A fictional sample network shipped as the default data'
   ],
   how:[
    ['Explore the map','People and company clusters are laid out as a graph you can move through.'],
    ['Search and filter','Find a person or a company and narrow the map by connection type.'],
-   ['Find the path','Ask for the shortest route to an introduction and follow it person by person.']
+   ['Group by company','Stakeholders cluster into the organisations they belong to, so an account reads as one block rather than as scattered names.'],
+   ['Find the path','Select two contacts and the map returns the shortest route between them, person by person.'],
+   ['How it was built','A written scope with its invariants, then an agent team on named, bounded roles building in parallel lanes, with an adversarial verification pass before anything merged.']
   ],
   role:'Product scope, the graph model and the shortest-path interaction, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged for release.',
   commercial:'Released under MIT so a team can point it at their own relationship data and keep it self-hosted.',
-  craft:['Interactive graph UI','Shortest-path routing','Search and filtering','MIT'],
-  stack:['Web front end','Graph traversal and shortest path'],
-  evidence:['Ships with a fictional sample network as the default data'],
+  craft:['Interactive graph UI','Shortest-path routing','Company clustering','Search and filtering','MIT'],
+  stack:['Web front end','Interactive graph rendering','Graph traversal and shortest-path routing','Search and filter model','Fictional sample dataset'],
+  evidence:[
+   'Ships with a fictional sample network as the default data',
+   'Released under MIT among the brand-stripped templates indexed on the public profile',
+   'Built by an agent team on named, bounded roles with an adversarial verification pass before merge'
+  ],
   gallery:[],
   relatedSource:null
  },
@@ -115,26 +130,34 @@ export const openSource=[
   source:'https://github.com/Josh-Gi3r/launch-board',
   url:null,
   state:'Reusable starter · MIT',
-  summary:'A configurable product-launch directory and submission front end, with the submission backend left as a pluggable adapter.',
+  summary:'A rebrandable product-directory and launch-submission starter: a searchable, filterable directory, a listing page for every product and a submission form, with the submission backend left as a pluggable adapter.',
   problem:'A launch directory is the same product every time: a filterable list, a listing page and a submission form. The only thing that changes is where submissions go.',
   approach:'Build the directory once and expose the submission path as an adapter, so the starter works with whatever backend the team already runs.',
   features:[
-   'A filterable directory of submitted products',
-   'A listing page for each product',
-   'A submission form',
+   'A searchable, filterable directory of submitted products',
+   'A listing page for each product, with its details and links',
+   'A submission form built into the starter',
    'A pluggable submission backend adapter',
-   'Configurable categories and filters'
+   'Configurable categories and filters',
+   'Rebrandable presentation, so the directory carries the community’s own identity',
+   'A community discovery flow set out in the source as the next step'
   ],
   how:[
-   ['Browse the directory','Filter submitted products and open a listing.'],
+   ['Browse the directory','Search and filter submitted products down to the ones worth opening.'],
+   ['Inspect a listing','Each product has its own page with its details and its links.'],
    ['Submit a launch','The submission form is part of the starter rather than a bolt-on.'],
-   ['Connect a backend','The submission adapter points at whatever store or service the team already uses.']
+   ['Connect a backend','The submission adapter points at whatever store or service the team already uses.'],
+   ['How it was built','A written scope with its invariants, then an agent team on named, bounded roles building in parallel lanes, with an adversarial verification pass before anything merged.']
   ],
-  role:'Product scope, the directory experience and the submission adapter, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged as a starter.',
+  role:'Product scope, the directory experience and the submission adapter, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged as a rebrandable starter with the community discovery flow written up as the next step.',
   commercial:'Released under MIT as a starter, so the directory is a configuration exercise rather than a build.',
-  craft:['Directory and listing UI','Submission adapter','Configurable filters','MIT'],
-  stack:['Web front end','Pluggable submission backend'],
-  evidence:['Shipped as a reusable starter with the submission backend left configurable'],
+  craft:['Directory and listing UI','Submission adapter','Configurable filters','Rebrandable presentation','MIT'],
+  stack:['Web front end','Pluggable submission backend adapter','Configurable category and filter model','Directory and listing pages'],
+  evidence:[
+   'Shipped as a rebrandable starter with the submission backend left configurable',
+   'Released under MIT among the brand-stripped templates indexed on the public profile',
+   'Built by an agent team on named, bounded roles with an adversarial verification pass before merge'
+  ],
   gallery:[],
   relatedSource:null
  },
@@ -257,22 +280,33 @@ export const openSource=[
   approach:'Take the shipped private product, strip the brand and the credentials, and release the client with the settlement layer as configuration rather than as a hard dependency.',
   features:[
    'A Telegram-native FX, wallet, transfer and peer-to-peer client',
-   'A three-leg escrow pattern designed around a protocol limitation',
+   'Quote and review states on the way through a trade',
+   'A three-leg escrow burst designed around a protocol limitation',
+   'An offline maker’s vault that releases only after the taker’s payment is verified onchain',
    'EIP-712 signing on ethers 6',
+   'A grounded FX assistant relayed to Anthropic, OpenAI or Gemini',
+   'A bounded trade-on-behalf agent',
+   'Seven numbered invariants and the owner’s working rules recorded for the agents that come next',
    'Configurable settlement infrastructure',
    'Brand-stripped and credential-free'
   ],
   how:[
    ['Open the mini-app','Wallet, currency and peer-to-peer surfaces run inside Telegram.'],
-   ['Follow the flows','Swap, transfer and peer-to-peer journeys are complete rather than sketched.'],
+   ['Follow the flows','Swap, transfer and peer-to-peer journeys are complete rather than sketched, with quote and review states on the way through.'],
+   ['Read the escrow','The three-leg escrow burst releases an offline maker’s vault only after the taker’s payment is verified onchain.'],
+   ['Ask before signing','A grounded FX assistant, relayed to Anthropic, OpenAI or Gemini, and a bounded trade-on-behalf agent sit inside the same client.'],
    ['Point it at your settlement','The settlement integration is configuration, so the client can sit on a different order book or rail.'],
-   ['Read the escrow','The three-leg escrow burst releases an offline maker’s vault only after the taker’s payment is verified onchain.']
+   ['Built on','React 19, the Telegram SDK, tRPC 11, Drizzle on MySQL and ethers 6 with EIP-712 signing, with Vitest suites behind it.']
   ],
-  role:'Wrote the escrow design and the invariants in the private product, then released the brand-stripped, credential-free copy under MIT.',
+  role:'Wrote the escrow design, the seven numbered invariants and the working rules recorded for future agents in the private product, then released the brand-stripped, credential-free copy under MIT with the settlement layer left as configuration.',
   commercial:'Released under MIT as the reference client for anyone building a Telegram-native money product, with the hard parts already decided.',
-  craft:['React 19 + Telegram SDK','tRPC 11 + Drizzle','ethers 6 with EIP-712 signing','Configurable settlement','MIT'],
-  stack:['React 19','Telegram SDK','tRPC 11','Drizzle','ethers 6','EIP-712'],
-  evidence:['Brand-stripped, credential-free release of a product live on testnet'],
+  craft:['React 19 + Telegram SDK','tRPC 11 + Drizzle on MySQL','ethers 6 with EIP-712 signing','Three-leg escrow burst','Configurable settlement','MIT'],
+  stack:['React 19','Telegram SDK','tRPC 11','Drizzle','MySQL','ethers 6','EIP-712','Vitest'],
+  evidence:[
+   'The brand-stripped, credential-free copy of the Sera Telegram money-changer',
+   'Seven numbered invariants and the owner’s working rules recorded for the agents that come next',
+   'The private product it was extracted from runs as a live bot on Sepolia with Vitest suites'
+  ],
   gallery:[],
   relatedSource:null
  },
@@ -357,26 +391,36 @@ export const openSource=[
   source:'https://github.com/Josh-Gi3r/creator-storefront',
   url:null,
   state:'Reference app · simulated token ledger · MIT',
-  summary:'A creator marketplace reference application: profiles, bookable services and a database-backed fan-token marketplace, with the token ledger simulated and labelled.',
+  summary:'A creator marketplace reference application and the MIT copy of the Creator Services product: creator setup, storefronts, service discovery, bookings, a creator dashboard and a fan-token marketplace on a simulated ledger.',
   problem:'Creator commerce needs a storefront, a booking flow and some form of holder economy, and most reference builds ship one of the three. This one carries all three and is honest about which part is simulated.',
   approach:'Build the marketplace end to end and keep the token ledger in the database rather than onchain, so the application can be read and run without a live economy behind it.',
   features:[
-   'Creator profiles and storefronts',
+   'Creator setup and profile storefronts',
+   'Service discovery across creators',
    'Bookable services with a defined scope',
    'A booking and fulfilment workflow',
+   'A creator dashboard for the work coming in',
    'A database-backed fan-token marketplace',
-   'A simulated token ledger, labelled as simulated'
+   'A simulated token ledger, labelled as simulated',
+   'The brand-stripped, credential-free copy of the Creator Services product'
   ],
   how:[
-   ['Browse the creators','Profiles and storefronts state what is on offer.'],
+   ['Set up as a creator','A creator builds a profile and a storefront and states what is on offer.'],
+   ['Find the work','Buyers discover creators and services across the marketplace rather than through a direct message.'],
    ['Book a service','A defined service moves through a booking and fulfilment workflow.'],
-   ['Read the token model','The fan-token marketplace runs on a database-backed ledger that is simulated rather than onchain.']
+   ['Run the dashboard','The creator dashboard carries the commissions that have come in and what is still outstanding on them.'],
+   ['Read the token model','The fan-token marketplace runs on a database-backed ledger that is simulated rather than onchain, and the product says so.'],
+   ['Where it came from','It is the generalised, brand-stripped copy of the Creator Services product, released under MIT.']
   ],
-  role:'Product scope, the marketplace and booking experience and the simulated token ledger, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged for release.',
+  role:'Product scope, the marketplace and booking experience and the simulated token ledger, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then brand-stripped and packaged for release as the MIT copy of Creator Services.',
   commercial:'Released under MIT as the reference build for creator commerce, with the token layer replaceable by a real one.',
-  craft:['Marketplace UX','Bookable services','Simulated token ledger','MIT'],
-  stack:['Full-stack web application','Database-backed token ledger'],
-  evidence:['Token ledger simulated and labelled as simulated in the product'],
+  craft:['Marketplace UX','Creator storefronts','Bookable services','Creator dashboard','Simulated token ledger','MIT'],
+  stack:['Full-stack web application','Database-backed marketplace','Database-backed token ledger','Service and booking model','Creator dashboard'],
+  evidence:[
+   'The token ledger is simulated and labelled as simulated in the product',
+   'The brand-stripped, credential-free MIT copy of the Creator Services product',
+   'Built by an agent team on named, bounded roles with an adversarial verification pass before merge'
+  ],
   gallery:[],
   relatedSource:null
  },

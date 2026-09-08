@@ -1,4 +1,16 @@
+import {openSource} from './open-source.js';
+
+// The catalogue merges editorial copy after the open-source records, which shadows
+// the fuller summary and journey written in open-source.js. Re-assert those fields
+// here, where the merge lands last, so open-source.js stays the single source.
+const carried=['pocket-t','whale-tracker','network-graph','launch-board','creator-storefront','tg-dex-miniapp'];
+const openSourceDetail=Object.fromEntries(
+ openSource.filter(p=>carried.includes(p.id))
+  .map(p=>[p.id,{summary:p.summary,features:p.features,how:p.how,craft:p.craft,stack:p.stack,evidence:p.evidence}])
+);
+
 export const productDetails={
+ ...openSourceDetail,
  '4sight':{
   name:'4Sight',
   kind:'Consumer finance & prediction markets',
@@ -280,23 +292,31 @@ export const productDetails={
   approach:'Keep preparation, review and payment as distinct states so an operator can find and fix a problem before money moves, and keep the statutory logic in a country engine rather than in the interface.',
   features:[
    'Operator, client and employee workspaces',
+   'An employer workspace covering overview, payroll, people and reports',
    'Malaysia and Singapore statutory calculation engines',
-   'Filing exports for each country',
+   'Statutory filing exports for each country',
    'Separate preparation, review and payment stages',
-   'Employer-of-record workflows',
+   'A run that stays editable until the review stage passes',
+   'Employer-of-record workflows alongside payroll',
    'A configurable settlement integration boundary'
   ],
-  role:'Product scope and build within the Sera product family, alongside the Telegram money-changer. The generalised version is open-sourced as stablecoin-payroll, with the statutory engines and filing exports intact.',
+  role:'Product scope and build within the Sera stablecoin family, alongside the Telegram money-changer. Built under the house method: a written scope with its invariants and a state document, an agent team on named, bounded roles, and an adversarial verification pass before merge, with Claude Code carrying the co-authored commits, session branches and hand-off logs. The generalised version is open-sourced as stablecoin-payroll, with the statutory engines and filing exports intact.',
   commercial:'Payroll and employer-of-record work for companies operating across Malaysia and Singapore, with the settlement layer left configurable so it can sit on a bank rail or a stablecoin rail.',
   how:[
    ['Prepare the run','Organise employees, pay inputs and the country-specific calculations before anything is submitted.'],
    ['Review before money moves','Preparation, review and payment are separate states, so an operator resolves the exceptions while the run is still editable.'],
    ['File and export','The Malaysia and Singapore statutory engines produce the filing exports each country needs.'],
-   ['Give each audience its own view','Operator, client and employee workspaces show the same run at the right level of detail.'],
+   ['Give each audience its own view','Operator, client and employee workspaces show the same run at the right level of detail, with overview, payroll, people and reports in the employer workspace.'],
+   ['Settle on whichever rail','The settlement integration is a boundary rather than a hard dependency, so the run can pay out on a bank rail or a stablecoin rail.'],
+   ['How it was built','A written scope with its invariants and a state document, an agent team on named, bounded roles, and an adversarial verification pass before merge. Money and mainnet decisions stayed with the founder.']
   ],
   craft:['Payroll / HR / EOR workflows','Malaysia and Singapore statutory engines','Filing exports','Role-based workspaces','Configurable settlement boundary'],
-  stack:['Statutory calculation engines','Role-based workspaces','Configurable settlement integration'],
-  evidence:['Open-sourced as stablecoin-payroll with statutory engines and filing exports']
+  stack:['Malaysia and Singapore statutory calculation engines','Country filing exports','Role-based operator, client and employee workspaces','Staged preparation, review and payment model','Configurable settlement integration'],
+  evidence:[
+   'Open-sourced as stablecoin-payroll, with the statutory engines and filing exports intact',
+   'Claude Code co-authored commits, session branches and hand-off logs on the repository',
+   'Handoff documents and acceptance packets recording what is proven and what is simulated'
+  ]
  },
  'serafx':{
   demo:'telegram',
@@ -332,48 +352,69 @@ export const productDetails={
  'sera-agents':{
   demo:'agents',
   state:'Launch portfolio',
-  summary:'Stablecoin FX exposed to AI agents as defined tools, so an agent can request a quote and convert currency inside a workflow it is already running.',
+  summary:'Sera’s stablecoin FX exposed to AI agents as defined tools, so an agent can request a quote, inspect the assets and the route it is being offered, and convert currency inside a workflow it is already running.',
   problem:'An agent that needs to move value between currencies has no defined tool to do it, so the step falls back to a human. This makes stablecoin FX a callable capability with a clear contract.',
   approach:'Publish the FX capability as tools with defined inputs and outputs rather than as an API to be discovered, and position it to developers rather than to traders.',
   features:[
    'Stablecoin FX exposed as defined agent tools',
-   'Quote requests with the assets and route returned',
-   'A defined result an agent can act on',
-   'Developer-facing integration path'
+   'A quote request that returns the assets and the route',
+   'The assets and the quote inspectable before the agent commits',
+   'A defined result the agent can act on without a human step',
+   'MCP workflows for agent clients',
+   'Currency conversion inside a workflow the agent is already running',
+   'Sera Protocol’s onchain order book behind the tool contract',
+   'A developer-facing integration path rather than a trading interface'
   ],
-  role:'Positioning, the developer proposition and the integration-led go-to-market for stablecoin FX as an agent capability. Wrote the case for exposing settlement as a defined tool contract rather than as another API for a developer to discover.',
+  role:'Positioning, the developer proposition and the integration-led go-to-market for stablecoin FX as an agent capability. Wrote the case for exposing settlement as a defined tool contract rather than as another API for a developer to discover, and specified the request, inspect and return steps an agent runs through. Built under the house method: a written scope with its invariants and a state document, an agent team on named, bounded roles, and an adversarial verification pass before merge, with money and mainnet decisions kept with the founder.',
   commercial:'Integration-led distribution: the capability reaches the end user through the agent products that adopt it, rather than through a consumer interface.',
   how:[
-   ['Connect a client','Introduce stablecoin FX through an agent-oriented integration rather than a trading interface.'],
-   ['Request a quote','Currency conversion is a defined tool call, with the assets and the route returned to the agent.'],
-   ['Act on the result','The agent receives a defined result it can use in the workflow it was already running.']
+   ['Connect a client','Stablecoin FX arrives through an agent-oriented integration rather than a trading interface, so a developer wires a tool rather than a screen.'],
+   ['Request a quote','Currency conversion is a defined tool call. The agent asks for the conversion and gets the assets and the route back.'],
+   ['Inspect the assets and the quote','The agent reads what it is being offered before it commits, rather than acting on a price it cannot see behind.'],
+   ['Act on the result','The agent receives a defined result it can use in the workflow it was already running, with no human step in the middle.'],
+   ['Built on','Sera Protocol’s onchain order book underneath, published as tool calls with defined inputs and outputs, with MCP workflows for agent clients.'],
+   ['How it was built','A written scope with its invariants and a state document, an agent team on named, bounded roles, and an adversarial verification pass before merge. Money and mainnet decisions stayed with the founder.']
   ],
-  craft:['Developer positioning','Agent tool workflows','Stablecoin FX proposition','Integration-led GTM'],
-  stack:['Agent tool interface','Stablecoin FX quoting'],
-  evidence:[]
+  craft:['Developer positioning','Agent tool workflows','MCP workflows','Stablecoin FX proposition','Integration-led GTM'],
+  stack:['Agent tool interface','Defined tool inputs and outputs','MCP workflows','Stablecoin FX quoting','Sera Protocol onchain order book'],
+  evidence:[
+   'A written scope with its invariants and a state document, with money and mainnet decisions kept with the founder',
+   'An agent team on named, bounded roles with an adversarial verification pass before merge',
+   'The same Sera Protocol order book carries the Telegram money-changer, live on testnet'
+  ]
  },
  'creator-platform':{
   image:'creator-storefront',
   state:'Product portfolio',
-  summary:'A creator marketplace where a buyer finds the person, understands exactly what is being sold, and follows the commission through to delivery.',
+  summary:'A creator marketplace where a buyer finds the person, sees exactly what is being sold at what price, commissions it against a defined service, and follows the work through to delivery with both sides reading the same outstanding list.',
   problem:'Commissioning a creator usually means a direct message and a guess at scope. Putting the storefront, the offer and the delivery workflow in one place makes the transaction legible to both sides.',
   approach:'Make the offer the product. The storefront states the service, the price and the delivery expectation before anyone commits.',
   features:[
    'Creator profiles and storefronts',
-   'Defined, bookable services',
-   'A buyer journey from discovery to commission',
-   'A delivery and fulfilment workflow'
+   'Service discovery across creators',
+   'Defined, bookable services with a stated scope and price',
+   'A buyer journey from discovery through to commission',
+   'A commission attached to a defined service rather than to a direct message',
+   'A delivery and fulfilment workflow',
+   'A shared view of what is still outstanding on a commission',
+   'A generalised, brand-stripped copy released under MIT as creator-storefront'
   ],
-  role:'Product experience, the marketplace model and full-stack development, from the creator storefront through to the delivery workflow. The generalised, brand-stripped version is released under MIT as creator-storefront.',
+  role:'Product experience, the marketplace model and full-stack development, from the creator storefront through to the delivery workflow. Built under the house method: a written scope with its invariants and a state document, an agent team on named, bounded roles, and an adversarial verification pass before merge. The generalised, brand-stripped version is released under MIT as creator-storefront.',
   commercial:'The marketplace takes its position between the creator’s audience and the buyer’s brief, with the service definition as the thing being sold.',
   how:[
-   ['Discover a creator','Browse the person, their work and their storefront.'],
+   ['Discover a creator','Browse the person, their work and their storefront, and find the service rather than opening a conversation about it.'],
    ['Scope the work','The offer states the service, the price and what is delivered before anyone commissions it.'],
-   ['Follow delivery','The purchase is attached to a defined service and a fulfilment workflow, so both sides know what is outstanding.'],
-   ['The open-source sibling','The generalised version is released as creator-storefront under MIT.']
+   ['Commission it','The purchase attaches to a defined service, so what was bought is on the record rather than in a thread.'],
+   ['Follow delivery','A fulfilment workflow keeps the outstanding work visible to the buyer and the creator at the same time.'],
+   ['How it was built','A written scope with its invariants and a state document, an agent team on named, bounded roles, and an adversarial verification pass before merge.'],
+   ['The open-source sibling','The generalised, brand-stripped copy is released under MIT as creator-storefront, where the fan-token ledger is simulated and labelled.']
   ],
-  craft:['Marketplace UX','Creator storefronts','Buyer and delivery journeys','Full-stack development'],
-  stack:['Full-stack web application','Database-backed marketplace'],
-  evidence:['Generalised as the MIT creator-storefront reference application']
+  craft:['Marketplace UX','Creator storefronts','Service definitions','Buyer and delivery journeys','Full-stack development'],
+  stack:['Full-stack web application','Database-backed marketplace','Creator storefront model','Bookable service definitions','Delivery and fulfilment workflow'],
+  evidence:[
+   'Generalised as the MIT creator-storefront reference application',
+   'An agent team on named, bounded roles with an adversarial verification pass before merge',
+   'Handoff documents and acceptance packets recording what is proven and what is simulated'
+  ]
  }
 };
