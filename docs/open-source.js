@@ -1,548 +1,457 @@
 export const openSource=[
-  {
-    "id": "pocket-t",
-    "name": "Pocket-T",
-    "image": "pocket-t",
-    "color": "#8debc7",
-    "summary": "Remote terminal access designed around coding agents.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/POCKET-T",
-    "url": "https://pocket-t.ai",
-    "state": "Open source · MIT",
-    "problem": "Remote access to Mac terminal sessions and coding agents from a phone or browser, with persistent sessions and agent-aware controls.",
-    "approach": "Remote terminal access designed around coding agents.",
-    "features": [
-      "Pair a phone or browser with a Mac terminal",
-      "Resume persistent tmux sessions",
-      "Review agent output, approvals and cost"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Pair a phone or browser with a Mac terminal"
-      ],
-      [
-        "Use the workflow",
-        "Resume persistent tmux sessions"
-      ],
-      [
-        "Inspect and reuse",
-        "Review agent output, approvals and cost"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "whale-tracker",
-    "name": "Whale Tracker",
-    "image": "whale-tracker",
-    "color": "#869cd2",
-    "summary": "A configurable front-end dashboard for large on-chain transactions.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/whale-tracker",
-    "url": null,
-    "state": "Front-end demo · simulated data · MIT",
-    "problem": "Configurable front-end dashboard for large on-chain transactions, with a simulated default data source and a provider adapter boundary.",
-    "approach": "A configurable front-end dashboard for large on-chain transactions.",
-    "features": [
-      "Explore the transaction dashboard",
-      "Filter the simulated activity feed",
-      "Replace the demo provider with a data adapter"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Explore the transaction dashboard"
-      ],
-      [
-        "Use the workflow",
-        "Filter the simulated activity feed"
-      ],
-      [
-        "Inspect and reuse",
-        "Replace the demo provider with a data adapter"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "network-graph",
-    "name": "Network Graph",
-    "image": "network-graph",
-    "color": "#50bfc3",
-    "summary": "An interactive relationship map with shortest-path introductions.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/network-graph",
-    "url": null,
-    "state": "Demo · fictional sample network · MIT",
-    "problem": "Interactive relationship map with shortest-path introductions, search, company grouping and connection filters.",
-    "approach": "An interactive relationship map with shortest-path introductions.",
-    "features": [
-      "Explore people and company clusters",
-      "Search relationships and filter the map",
-      "Find a shortest path for an introduction"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Explore people and company clusters"
-      ],
-      [
-        "Use the workflow",
-        "Search relationships and filter the map"
-      ],
-      [
-        "Inspect and reuse",
-        "Find a shortest path for an introduction"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "launch-board",
-    "name": "Launch Board",
-    "image": "launch-board",
-    "color": "#efb34f",
-    "summary": "A reusable product directory and launch submission front end.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/launch-board",
-    "url": null,
-    "state": "Reusable starter · MIT",
-    "problem": "Configurable product-launch directory and submission front end, with a pluggable submission backend.",
-    "approach": "A reusable product directory and launch submission front end.",
-    "features": [
-      "Browse and filter submitted products",
-      "Open a product listing",
-      "Connect a submission adapter to a backend"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Browse and filter submitted products"
-      ],
-      [
-        "Use the workflow",
-        "Open a product listing"
-      ],
-      [
-        "Inspect and reuse",
-        "Connect a submission adapter to a backend"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "docshare",
-    "name": "Docshare",
-    "image": "docshare",
-    "color": "#8058e9",
-    "summary": "Self-hosted document sharing with narration and viewer analytics.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/docshare",
-    "url": null,
-    "state": "Open source · MIT",
-    "problem": "Self-hosted document sharing, per-slide narration, controlled links and page-engagement analytics.",
-    "approach": "Self-hosted document sharing with narration and viewer analytics.",
-    "features": [
-      "Upload PDF or PowerPoint documents",
-      "Add per-slide audio and create controlled share links",
-      "Review document and page engagement"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Upload PDF or PowerPoint documents"
-      ],
-      [
-        "Use the workflow",
-        "Add per-slide audio and create controlled share links"
-      ],
-      [
-        "Inspect and reuse",
-        "Review document and page engagement"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "stablecoin-payroll",
-    "name": "Stablecoin Payroll",
-    "image": "stablecoin-payroll",
-    "color": "#93bbad",
-    "summary": "An open-source payroll, HR and EOR reference application.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/stablecoin-payroll",
-    "url": null,
-    "state": "Reference app · mock settlement · MIT",
-    "problem": "Payroll, HR and EOR reference application with MY/SG calculation engines and operator/client/employee workflows.",
-    "approach": "An open-source payroll, HR and EOR reference application.",
-    "features": [
-      "Prepare employee and pay inputs",
-      "Review country-specific payroll calculations",
-      "Track the operator, client and employee workflows"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Prepare employee and pay inputs"
-      ],
-      [
-        "Use the workflow",
-        "Review country-specific payroll calculations"
-      ],
-      [
-        "Inspect and reuse",
-        "Track the operator, client and employee workflows"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "linkhub",
-    "name": "Linkhub",
-    "image": "linkhub",
-    "color": "#e87146",
-    "summary": "Team link pages, digital business cards and branded sharing.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/linkhub",
-    "url": null,
-    "state": "Open source · MIT",
-    "problem": "Self-hosted team profiles, company link pages, branded QR codes, digital cards and click analytics.",
-    "approach": "Team link pages, digital business cards and branded sharing.",
-    "features": [
-      "Build a personal or company link page",
-      "Share a branded QR code or digital card",
-      "Review click activity across the team"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Build a personal or company link page"
-      ],
-      [
-        "Use the workflow",
-        "Share a branded QR code or digital card"
-      ],
-      [
-        "Inspect and reuse",
-        "Review click activity across the team"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "tg-dex-miniapp",
-    "name": "Telegram FX Mini-app",
-    "image": "tg-dex-miniapp",
-    "color": "#8dbfe7",
-    "summary": "A Telegram-native finance reference client with configurable settlement.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/tg-dex-miniapp",
-    "url": null,
-    "state": "Reference client · MIT",
-    "problem": "Telegram-native FX, wallet, transfer and P2P client with configurable settlement infrastructure.",
-    "approach": "A Telegram-native finance reference client with configurable settlement.",
-    "features": [
-      "Open a wallet and currency workspace in Telegram",
-      "Explore swap, transfer and P2P flows",
-      "Connect the configured settlement integration"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Open a wallet and currency workspace in Telegram"
-      ],
-      [
-        "Use the workflow",
-        "Explore swap, transfer and P2P flows"
-      ],
-      [
-        "Inspect and reuse",
-        "Connect the configured settlement integration"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "prediction-fx-terminal",
-    "name": "Prediction & FX Terminal",
-    "image": null,
-    "color": "#86a5ec",
-    "summary": "The open-source reference terminal related to the later 4Sight product.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/prediction-fx-terminal",
-    "url": null,
-    "state": "Reference app · feature-gated · MIT",
-    "problem": "Self-custodial web/mobile/Telegram finance reference terminal spanning FX, swaps, selected yield and prediction-market surfaces.",
-    "approach": "The open-source reference terminal related to the later 4Sight product.",
-    "features": [
-      "Explore market and finance surfaces",
-      "Follow the wallet and transaction journey",
-      "Inspect the reference source and feature gates"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Explore market and finance surfaces"
-      ],
-      [
-        "Use the workflow",
-        "Follow the wallet and transaction journey"
-      ],
-      [
-        "Inspect and reuse",
-        "Inspect the reference source and feature gates"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "ambassador-kit",
-    "name": "Ambassador Kit",
-    "image": "ambassador-kit",
-    "color": "#bda9e9",
-    "summary": "A configurable toolkit for running ambassador programmes.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/ambassador-kit",
-    "url": null,
-    "state": "Open source · MIT",
-    "problem": "Configurable ambassador operations, application flow, contribution records, XP, tiers, community rewards and content tools.",
-    "approach": "A configurable toolkit for running ambassador programmes.",
-    "features": [
-      "Apply and complete the programme quiz",
-      "Record contributions and award XP",
-      "Review tiers, rewards and community progress"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Apply and complete the programme quiz"
-      ],
-      [
-        "Use the workflow",
-        "Record contributions and award XP"
-      ],
-      [
-        "Inspect and reuse",
-        "Review tiers, rewards and community progress"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "creator-storefront",
-    "name": "Creator Storefront",
-    "image": "creator-storefront",
-    "color": "#dd9b7e",
-    "summary": "A creator marketplace reference application for profiles, services and bookings.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/creator-storefront",
-    "url": null,
-    "state": "Reference app · simulated token ledger · MIT",
-    "problem": "Creator profiles, bookable services and a database-backed fan-token marketplace reference application.",
-    "approach": "A creator marketplace reference application for profiles, services and bookings.",
-    "features": [
-      "Browse creator profiles and services",
-      "Follow a booking workflow",
-      "Explore the simulated fan-token marketplace"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Browse creator profiles and services"
-      ],
-      [
-        "Use the workflow",
-        "Follow a booking workflow"
-      ],
-      [
-        "Inspect and reuse",
-        "Explore the simulated fan-token marketplace"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "stablecoin-intelligence",
-    "name": "Stablecoin Intelligence",
-    "image": null,
-    "color": "#92b5a5",
-    "summary": "An open-source stablecoin research and data platform.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/stablecoin-intelligence",
-    "url": null,
-    "state": "Open source · MIT",
-    "problem": "Open-source stablecoin research and data platform with profiles, scoring methodology, comparison, directories, API and MCP access.",
-    "approach": "An open-source stablecoin research and data platform.",
-    "features": [
-      "Explore asset profiles and reserve information",
-      "Compare stablecoins and read the scoring methodology",
-      "Use the public API or MCP research interface"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Explore asset profiles and reserve information"
-      ],
-      [
-        "Use the workflow",
-        "Compare stablecoins and read the scoring methodology"
-      ],
-      [
-        "Inspect and reuse",
-        "Use the public API or MCP research interface"
-      ]
-    ],
-    "role": "Product experience, implementation and open-source packaging.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "MIT",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": null
-  },
-  {
-    "id": "buzz",
-    "name": "Buzz / Preview Studio",
-    "image": "buzz",
-    "color": "#e7c573",
-    "summary": "My Live Preview Studio contribution to a community fork of Block Buzz.",
-    "kind": "Open-source software",
-    "collection": "Open source",
-    "source": "https://github.com/Josh-Gi3r/buzz",
-    "url": null,
-    "state": "Open-source fork contribution · Apache-2.0",
-    "problem": "Community fork of Block Buzz with Josh's Live Preview Studio for responsive artifact preview and local review.",
-    "approach": "My Live Preview Studio contribution to a community fork of Block Buzz.",
-    "features": [
-      "Build or select an artifact in the workspace",
-      "Review the responsive desktop and mobile preview",
-      "Keep comments and artifact review together"
-    ],
-    "how": [
-      [
-        "Explore",
-        "Build or select an artifact in the workspace"
-      ],
-      [
-        "Use the workflow",
-        "Review the responsive desktop and mobile preview"
-      ],
-      [
-        "Inspect and reuse",
-        "Keep comments and artifact review together"
-      ]
-    ],
-    "role": "Live Preview Studio contribution to the Block Buzz fork.",
-    "commercial": "Available to inspect, run and adapt under the repository license.",
-    "craft": [
-      "Apache-2.0",
-      "Source available",
-      "Reusable software"
-    ],
-    "gallery": [],
-    "relatedSource": "https://github.com/Josh-Gi3r/buzz-preview-studio"
-  }
+ {
+  id:'pocket-t',
+  name:'Pocket-T',
+  image:'pocket-t',
+  color:'#8debc7',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/POCKET-T',
+  url:'https://pocket-t.ai',
+  state:'MVP · open source, MIT',
+  summary:'Every Mac terminal mirrored to a phone or browser over a Cloudflare tunnel, with no SSH, VPN or port forwarding, and real input going back into the PTY.',
+  problem:'A coding agent runs for hours and the developer leaves the desk. Pocket-T keeps the session reachable from a phone, with the agent’s output readable, its cost visible and its destructive actions waiting for an approval.',
+  approach:'Persist the session in tmux so nothing depends on the laptop staying awake, then detect the agent running inside it and render that session as something usable on a phone screen.',
+  features:[
+   'Every Mac terminal mirrored to a phone or browser',
+   'A Cloudflare tunnel, with no SSH, VPN or port forwarding',
+   'Bidirectional input into the real PTY',
+   'Sessions persist in a private tmux server and survive logout or a daemon restart',
+   'CLI agents detected: Claude Code, Codex, OpenClaw, Aider and Gemini CLI',
+   'A detected agent session renders as chat bubbles with a live USD cost meter',
+   'Approval cards for destructive tools pushed to the phone',
+   'Fly.io self-hosting'
+  ],
+  how:[
+   ['Pair a device','Open the browser or phone client and connect to the Mac over a Cloudflare tunnel. No SSH, no VPN, no port forwarding.'],
+   ['Pick up the session','Sessions live in a private tmux server, so a shell and any agent inside it survive logout or a daemon restart.'],
+   ['Read the agent, not the scrollback','When a CLI agent is detected, Claude Code, Codex, OpenClaw, Aider or Gemini CLI, the session renders as chat bubbles with a live USD cost meter.'],
+   ['Approve from the phone','Approval cards for destructive tools are pushed to the device, so the agent waits rather than guesses.'],
+   ['Built on','A Rust shell shim, a TypeScript daemon and relay and a Svelte PWA, running over tmux and cloudflared, with Fly.io self-hosting.'],
+   ['The evidence','A CI workflow, tests, a changelog, security and self-hosting documentation, a branding kit and a website.']
+  ],
+  role:'Wrote the product scope and built the shim, daemon, relay and client: a Rust shell shim, a TypeScript daemon and relay and a Svelte PWA over tmux and cloudflared, with Fly.io self-hosting. Shipped with a CI workflow, tests, a changelog, security and self-hosting documentation, a branding kit and a website.',
+  commercial:'Released under MIT so a developer can self-host the relay and adapt it to their own coding-agent workflow, with nothing routed through a third party they did not choose.',
+  craft:['Rust shell shim','TypeScript daemon and relay','Svelte PWA','tmux + cloudflared','Fly.io self-host','MIT'],
+  stack:['Rust','TypeScript','Svelte','tmux','cloudflared','Fly.io'],
+  evidence:['CI workflow and tests','Changelog','Security and self-hosting documentation','Branding kit and website'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'whale-tracker',
+  name:'Whale Tracker',
+  image:'whale-tracker',
+  color:'#869cd2',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/whale-tracker',
+  url:null,
+  state:'Front-end demo · simulated data · MIT',
+  summary:'A configurable front end for watching large onchain transactions, shipped with a simulated data source and a provider adapter boundary so a real feed can be dropped in.',
+  problem:'Every team that wants a large-transaction feed rebuilds the same dashboard before choosing a data provider. This is the dashboard, with the provider left as a seam rather than a dependency.',
+  approach:'Ship the interface complete and the data source replaceable. The default provider is simulated and labelled, and a real feed connects through the adapter without touching the front end.',
+  features:[
+   'A dashboard for large onchain transactions',
+   'Filters across the activity feed',
+   'A provider adapter boundary for the data source',
+   'A simulated default data source, labelled as simulated',
+   'Configurable thresholds and views'
+  ],
+  how:[
+   ['Open the dashboard','Large-transaction activity is laid out for scanning rather than for querying.'],
+   ['Filter the feed','Narrow the activity by the filters that matter to the watchlist.'],
+   ['Swap in real data','The default provider is simulated. A live feed connects through the adapter boundary without changes to the interface.']
+  ],
+  role:'Product scope, the dashboard experience and the provider adapter boundary, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged for release.',
+  commercial:'Released under MIT as a working front end for anyone who has the data and does not want to build the surface.',
+  craft:['Front-end dashboard','Provider adapter boundary','Simulated default data','MIT'],
+  stack:['Web front end','Pluggable data provider adapter'],
+  evidence:['Simulated data source labelled as simulated in the product'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'network-graph',
+  name:'Network Graph',
+  image:'network-graph',
+  color:'#50bfc3',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/network-graph',
+  url:null,
+  state:'Demo · fictional sample network · MIT',
+  summary:'An interactive relationship map that finds the shortest path to an introduction, with search, company grouping and connection filters over a fictional sample network.',
+  problem:'A warm introduction is usually two people away and nobody can see which two. The map makes the path explicit instead of leaving it to memory.',
+  approach:'Treat the network as a graph and make the shortest path the primary action, with search and grouping as the way in rather than as an afterthought.',
+  features:[
+   'An interactive relationship map',
+   'Shortest-path introductions between two people',
+   'Search across people and companies',
+   'Company grouping and clustering',
+   'Connection filters',
+   'A fictional sample network shipped as the default data'
+  ],
+  how:[
+   ['Explore the map','People and company clusters are laid out as a graph you can move through.'],
+   ['Search and filter','Find a person or a company and narrow the map by connection type.'],
+   ['Find the path','Ask for the shortest route to an introduction and follow it person by person.']
+  ],
+  role:'Product scope, the graph model and the shortest-path interaction, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged for release.',
+  commercial:'Released under MIT so a team can point it at their own relationship data and keep it self-hosted.',
+  craft:['Interactive graph UI','Shortest-path routing','Search and filtering','MIT'],
+  stack:['Web front end','Graph traversal and shortest path'],
+  evidence:['Ships with a fictional sample network as the default data'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'launch-board',
+  name:'Launch Board',
+  image:'launch-board',
+  color:'#efb34f',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/launch-board',
+  url:null,
+  state:'Reusable starter · MIT',
+  summary:'A configurable product-launch directory and submission front end, with the submission backend left as a pluggable adapter.',
+  problem:'A launch directory is the same product every time: a filterable list, a listing page and a submission form. The only thing that changes is where submissions go.',
+  approach:'Build the directory once and expose the submission path as an adapter, so the starter works with whatever backend the team already runs.',
+  features:[
+   'A filterable directory of submitted products',
+   'A listing page for each product',
+   'A submission form',
+   'A pluggable submission backend adapter',
+   'Configurable categories and filters'
+  ],
+  how:[
+   ['Browse the directory','Filter submitted products and open a listing.'],
+   ['Submit a launch','The submission form is part of the starter rather than a bolt-on.'],
+   ['Connect a backend','The submission adapter points at whatever store or service the team already uses.']
+  ],
+  role:'Product scope, the directory experience and the submission adapter, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged as a starter.',
+  commercial:'Released under MIT as a starter, so the directory is a configuration exercise rather than a build.',
+  craft:['Directory and listing UI','Submission adapter','Configurable filters','MIT'],
+  stack:['Web front end','Pluggable submission backend'],
+  evidence:['Shipped as a reusable starter with the submission backend left configurable'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'docshare',
+  name:'Docshare',
+  image:'docshare',
+  color:'#8058e9',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/docshare',
+  url:null,
+  state:'Open source · MIT',
+  summary:'Self-hosted document sharing with per-slide narration, controlled links, team folders and page-level engagement analytics. The MIT release of the internal deck tool built for Sera.',
+  problem:'A deck sent as a file loses the presenter’s explanation and tells the sender nothing about what the reader actually looked at. Docshare keeps the narration attached to the slide and reports the pages.',
+  approach:'Treat a shared document as a tracked surface rather than an attachment: narration per slide, a controlled link per recipient, and engagement reported page by page.',
+  features:[
+   'Self-hosted PDF and PowerPoint sharing',
+   'Per-slide audio narration',
+   'Controlled share links',
+   'Team folders',
+   'Page-level engagement analytics'
+  ],
+  how:[
+   ['Upload the document','Start from a PDF or PowerPoint deck.'],
+   ['Add the narration','Record per-slide audio so the explanation travels with the file.'],
+   ['Share on a controlled link','Team folders keep the material organised and the link keeps control of who sees it.'],
+   ['Read the engagement','Page-level analytics show what the reader actually spent time on.'],
+   ['How it was built','The internal deck tool was built entirely by the Manus dev-agent against a 50-version task ledger written by the owner, and this is its MIT release.']
+  ],
+  role:'Wrote the 50-version task ledger the Manus dev-agent built the internal deck tool against, alongside the ambassador programme and the team link page. This is the generalised MIT release of that tool.',
+  commercial:'Released under MIT so a team can host its own document sharing and engagement reporting, with control over the deployment and the data.',
+  craft:['Per-slide narration','Controlled share links','Page engagement analytics','Manus dev-agent build','MIT'],
+  stack:['React','tRPC','Drizzle on MySQL'],
+  evidence:['Built against a 50-version task ledger written by the owner','Live as Sera’s internal deck-sharing tool'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'stablecoin-payroll',
+  name:'Stablecoin Payroll',
+  image:'stablecoin-payroll',
+  color:'#93bbad',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/stablecoin-payroll',
+  url:null,
+  state:'Reference app · mock settlement · MIT',
+  summary:'The MIT release of the APAC payroll and employer-of-record product: Malaysia and Singapore statutory engines, filing exports and separate operator, client and employee workflows, with settlement mocked.',
+  problem:'Payroll across two APAC countries means two sets of statutory rules and two filing formats, and most reference applications skip both. The statutory engines and the filing exports are the part that was kept.',
+  approach:'Keep the country logic in the engine and the money out of the reference build. Settlement is mocked so the application can be run and read without a live payment rail.',
+  features:[
+   'A payroll, HR and employer-of-record reference application',
+   'Malaysia and Singapore statutory calculation engines',
+   'Filing exports for each country',
+   'Operator, client and employee workflows',
+   'Separate preparation, review and payment stages',
+   'Mock settlement in place of a live payment rail'
+  ],
+  how:[
+   ['Prepare the run','Enter employees and pay inputs and let the country engine do the statutory work.'],
+   ['Review the calculations','Preparation, review and payment are separate stages, so exceptions surface before anything is filed.'],
+   ['Export the filings','The Malaysia and Singapore engines produce the exports each jurisdiction expects.'],
+   ['Read it as a reference','Settlement is mocked, so the application runs end to end without a live payment rail.']
+  ],
+  role:'Product scope and build within the Sera product family, then generalised, brand-stripped and released under MIT with the statutory engines and filing exports intact.',
+  commercial:'Released under MIT as a working reference for anyone building payroll or employer-of-record software for Malaysia and Singapore.',
+  craft:['Malaysia and Singapore statutory engines','Filing exports','Role-based workflows','Mock settlement','MIT'],
+  stack:['Statutory calculation engines','Role-based workspaces','Mock settlement adapter'],
+  evidence:['Statutory engines and filing exports carried into the MIT release','Settlement mocked and labelled as mocked'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'linkhub',
+  name:'Linkhub',
+  image:'linkhub',
+  color:'#e87146',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/linkhub',
+  url:null,
+  state:'Open source · MIT',
+  summary:'Self-hosted team profiles and company link pages with wallet passes, branded QR codes, digital business cards and click analytics. The MIT release of Sera’s team link page.',
+  problem:'A team hands out links, cards and QR codes from five different tools and can never say which one was used. One self-hosted page carries all of it and reports the clicks.',
+  approach:'One page per person and one per company, with every share format generated from the same record so nothing drifts.',
+  features:[
+   'Personal and company link pages',
+   'Digital business cards',
+   'Wallet passes',
+   'Branded QR codes',
+   'Click analytics across the team',
+   'Self-hosted deployment'
+  ],
+  how:[
+   ['Build the page','Set up a personal or company link page from one record.'],
+   ['Share it in any format','A branded QR code, a digital card or a wallet pass, all generated from that same record.'],
+   ['Read the clicks','Click analytics show what the team is actually sharing and what people open.']
+  ],
+  role:'Specified the team link page with wallet passes and had it built the same way as the ambassador programme, with Manus dev-agent commits and Claude Code branches against a written task ledger. This is its MIT release.',
+  commercial:'Released under MIT so a company can self-host its team pages, cards and passes rather than rent them per seat.',
+  craft:['Team and company link pages','Wallet passes and QR codes','Click analytics','MIT'],
+  stack:['React','tRPC','Drizzle on MySQL'],
+  evidence:['Live as Sera’s team link page','Generalised MIT template with the back-ends retained'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'tg-dex-miniapp',
+  name:'Telegram FX Mini-app',
+  image:'tg-dex-miniapp',
+  color:'#8dbfe7',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/tg-dex-miniapp',
+  url:null,
+  state:'Reference client · MIT',
+  summary:'The brand-stripped MIT release of the Sera Telegram money-changer: a Telegram-native FX, wallet, transfer and peer-to-peer client with the settlement infrastructure left configurable.',
+  problem:'A Telegram mini-app that touches money has to solve escrow, signing and settlement before it can show a single screen. This release carries those decisions so the next build starts from them.',
+  approach:'Take the shipped private product, strip the brand and the credentials, and release the client with the settlement layer as configuration rather than as a hard dependency.',
+  features:[
+   'A Telegram-native FX, wallet, transfer and peer-to-peer client',
+   'A three-leg escrow pattern designed around a protocol limitation',
+   'EIP-712 signing on ethers 6',
+   'Configurable settlement infrastructure',
+   'Brand-stripped and credential-free'
+  ],
+  how:[
+   ['Open the mini-app','Wallet, currency and peer-to-peer surfaces run inside Telegram.'],
+   ['Follow the flows','Swap, transfer and peer-to-peer journeys are complete rather than sketched.'],
+   ['Point it at your settlement','The settlement integration is configuration, so the client can sit on a different order book or rail.'],
+   ['Read the escrow','The three-leg escrow burst releases an offline maker’s vault only after the taker’s payment is verified onchain.']
+  ],
+  role:'Wrote the escrow design and the invariants in the private product, then released the brand-stripped, credential-free copy under MIT.',
+  commercial:'Released under MIT as the reference client for anyone building a Telegram-native money product, with the hard parts already decided.',
+  craft:['React 19 + Telegram SDK','tRPC 11 + Drizzle','ethers 6 with EIP-712 signing','Configurable settlement','MIT'],
+  stack:['React 19','Telegram SDK','tRPC 11','Drizzle','ethers 6','EIP-712'],
+  evidence:['Brand-stripped, credential-free release of a product live on testnet'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'prediction-fx-terminal',
+  name:'Prediction & FX Terminal',
+  image:null,
+  color:'#86a5ec',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/prediction-fx-terminal',
+  url:null,
+  state:'Reference app · feature-gated · MIT',
+  summary:'The open-source ancestor of 4Sight: a self-custodial finance terminal spanning FX, swaps, selected yield and prediction-market surfaces across web, mobile and Telegram.',
+  problem:'A self-custodial app that does more than one thing has to solve funding, custody and settlement once and then reuse them everywhere. This terminal is where those decisions were made before 4Sight was built on them.',
+  approach:'One wallet and one funding journey underneath every surface, with anything not released held behind a feature gate rather than removed.',
+  features:[
+   'A self-custodial wallet and funding journey',
+   'Stablecoin swap and FX surfaces',
+   'Selected yield surfaces',
+   'Prediction-market surfaces',
+   'Web, mobile and Telegram clients from one codebase',
+   'Feature gates on everything not released'
+  ],
+  how:[
+   ['Fund the wallet','A self-custodial wallet and one funding journey sit underneath every surface.'],
+   ['Move between surfaces','FX, swaps, selected yield and prediction markets share the same transaction model.'],
+   ['Read the gates','Everything not released is held behind an explicit feature gate, so the source states what is on and what is off.']
+  ],
+  role:'Product scope, the transaction model and the build. This is the open-source ancestor named in 4Sight’s own record, released under MIT.',
+  commercial:'Released under MIT so the funding, custody and settlement decisions behind 4Sight can be read and reused rather than rediscovered.',
+  craft:['Next.js + React','viem / wagmi','Self-custodial wallet','Feature-gated release','MIT'],
+  stack:['Next.js','React','viem','wagmi'],
+  evidence:['Named as 4Sight’s open-source ancestor','Feature gates make the released surface explicit'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'ambassador-kit',
+  name:'Ambassador Kit',
+  image:'ambassador-kit',
+  color:'#bda9e9',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/ambassador-kit',
+  url:null,
+  state:'Open source · MIT',
+  summary:'The MIT template of the ambassador programme running live for Sera: an XP engine across eleven components fed by scraped X and Telegram activity, with decay for inactivity, ranks, badges and a tier-gated AI content studio.',
+  problem:'Ambassador programmes pay on screenshots and reward whoever posts most. This one scores real activity across eleven components, decays it when someone stops, and gates the rewards by rank.',
+  approach:'Make the score the product. Activity is scraped rather than self-reported, contribution types are weighted separately, and inactivity costs XP.',
+  features:[
+   'An XP engine across eleven components',
+   'XP fed by scraped X and Telegram activity',
+   'Decay for inactivity',
+   'L1 and L2 ranks and badges',
+   'An application flow and contribution records',
+   'A cohort scored on content quality and real reach',
+   'An AI content studio of 180 models, gated by tier'
+  ],
+  how:[
+   ['Apply and join','An application flow and quiz bring an ambassador into the programme with a record attached.'],
+   ['Earn on real activity','The XP engine scores eleven components from scraped X and Telegram activity rather than from submitted screenshots.'],
+   ['Keep it or lose it','Inactivity decays the score, and L1 and L2 ranks and badges reflect where someone actually stands.'],
+   ['Unlock the studio','An AI content studio of 180 models is gated by tier, so the reward is capability rather than a payout.'],
+   ['Built on','React, tRPC and Drizzle on MySQL, with Apify and node-cron for the scraping and OpenRouter, fal.ai and LiteLLM behind the studio.']
+  ],
+  role:'Built the programme for Sera against a written build bible and scraping spec, with Manus dev-agent commits and Claude Code branches, including the Token2049 Evangelist cohort scored on content quality and real reach. The MIT template keeps the AI back-ends.',
+  commercial:'Live for Sera, and released under MIT so another community can run the same scoring model without rebuilding the engine.',
+  craft:['React + tRPC','Drizzle on MySQL','Apify + node-cron scraping','OpenRouter, fal.ai, LiteLLM','MIT'],
+  stack:['React','tRPC','Drizzle','MySQL','Apify','node-cron','OpenRouter','fal.ai','LiteLLM'],
+  evidence:['Live for Sera','Built against a written build bible and scraping spec','MIT template with the AI back-ends retained'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'creator-storefront',
+  name:'Creator Storefront',
+  image:'creator-storefront',
+  color:'#dd9b7e',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/creator-storefront',
+  url:null,
+  state:'Reference app · simulated token ledger · MIT',
+  summary:'A creator marketplace reference application: profiles, bookable services and a database-backed fan-token marketplace, with the token ledger simulated and labelled.',
+  problem:'Creator commerce needs a storefront, a booking flow and some form of holder economy, and most reference builds ship one of the three. This one carries all three and is honest about which part is simulated.',
+  approach:'Build the marketplace end to end and keep the token ledger in the database rather than onchain, so the application can be read and run without a live economy behind it.',
+  features:[
+   'Creator profiles and storefronts',
+   'Bookable services with a defined scope',
+   'A booking and fulfilment workflow',
+   'A database-backed fan-token marketplace',
+   'A simulated token ledger, labelled as simulated'
+  ],
+  how:[
+   ['Browse the creators','Profiles and storefronts state what is on offer.'],
+   ['Book a service','A defined service moves through a booking and fulfilment workflow.'],
+   ['Read the token model','The fan-token marketplace runs on a database-backed ledger that is simulated rather than onchain.']
+  ],
+  role:'Product scope, the marketplace and booking experience and the simulated token ledger, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged for release.',
+  commercial:'Released under MIT as the reference build for creator commerce, with the token layer replaceable by a real one.',
+  craft:['Marketplace UX','Bookable services','Simulated token ledger','MIT'],
+  stack:['Full-stack web application','Database-backed token ledger'],
+  evidence:['Token ledger simulated and labelled as simulated in the product'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'stablecoin-intelligence',
+  name:'Stablecoin Intelligence',
+  image:null,
+  color:'#92b5a5',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/stablecoin-intelligence',
+  url:null,
+  state:'Open source · MIT',
+  summary:'The open-source ancestor of the NextCurrency research hub: stablecoin profiles, a documented safety-grade methodology, comparison, directories, a public API and an MCP server.',
+  problem:'A price tells you nothing about whether a stablecoin is safe. This platform publishes the grading methodology alongside the grade, so the judgement can be argued with rather than taken on trust.',
+  approach:'Document the methodology in the product, and expose the same data to people and to machines through a REST API and an MCP server.',
+  features:[
+   'Stablecoin profiles with backing and reserve information',
+   'A documented safety-grade methodology',
+   'Asset comparison',
+   'Market indices and directories',
+   'A public REST API',
+   'An MCP server for AI assistants',
+   'Unavailable data rendered as unavailable, with no invented zeroes'
+  ],
+  how:[
+   ['Research an asset','Open its profile and read the backing and reserve information behind the grade.'],
+   ['Compare the market','Put assets side by side and read the scoring methodology that produced the difference.'],
+   ['Query it as data','A public REST API and an MCP server give an AI assistant the same view a reader gets.'],
+   ['Trust the gaps','Where data is unavailable it renders as unavailable, with no invented zeroes.']
+  ],
+  role:'Wrote the specification, the data model and the grading methodology, and released the brand-stripped copy under MIT. It is the open-source ancestor named in the NextCurrency research hub’s own record.',
+  commercial:'Released under MIT so an issuer, regulator or research team can self-host the grading platform and audit the methodology.',
+  craft:['React + Vite','tRPC + Drizzle on Postgres','Scheduled market ingestion','REST API + MCP server','MIT'],
+  stack:['React','Vite','tRPC','Drizzle','Postgres','REST API','MCP server'],
+  evidence:['Named as the NextCurrency research hub’s open-source ancestor','Grading methodology published inside the product'],
+  gallery:[],
+  relatedSource:null
+ },
+ {
+  id:'buzz',
+  name:'Buzz / Preview Studio',
+  image:'buzz',
+  color:'#e7c573',
+  kind:'Open-source software',
+  collection:'Open source',
+  source:'https://github.com/Josh-Gi3r/buzz',
+  url:null,
+  state:'Feature layer on Block’s Buzz (2026 beta) · Apache-2.0',
+  summary:'A feature layer on Block’s Buzz, the Nostr-based workspace where agents are first-class identities: a Live Preview Studio for proofing what agents build, and an Institution Studio that provisions fintech specialist agent teams.',
+  problem:'Teams working with agents inside Buzz need a proofing room for the websites, decks and films those agents produce, and a way to stand up a specialist team rather than a single generalist agent.',
+  approach:'Add the two missing rooms as an isolated fork layer, and track every upstream modification in a ledger so the fork stays reviewable against Block’s codebase.',
+  features:[
+   'A Live Preview Studio inside the desktop app',
+   'Preview at desktop, tablet and mobile widths',
+   'Local comments with approve or request-changes decisions',
+   'An Institution Studio that provisions a named agent team',
+   'Named roles: Product Architect, Ledger and Banking, FX and Treasury, Policy and Compliance, and QA and Release',
+   'Teams provisioned from Blueballs domain packs',
+   'Fork code isolated under preview-studio'
+  ],
+  how:[
+   ['Build something with agents','Agents inside Buzz produce websites, decks and films as first-class identities in the workspace.'],
+   ['Proof it at every width','The Live Preview Studio shows the same artefact at desktop, tablet and mobile widths in the desktop app.'],
+   ['Decide in place','Local comments and an approve or request-changes decision sit next to the preview rather than in another tool.'],
+   ['Provision a specialist team','The Institution Studio stands up Product Architect, Ledger and Banking, FX and Treasury, Policy and Compliance, and QA and Release as one team, from Blueballs domain packs.'],
+   ['Built on','A Rust workspace of 31 crates with Tauri 2 and React desktop and mobile clients, with the fork code isolated under preview-studio.'],
+   ['The evidence','14 fork end-to-end specs, a FORK_PATCHES ledger tracking every upstream modification, pinned-SHA evidence documents and a feature truth matrix. The README states which flows are production and which are fixture-driven.']
+  ],
+  role:'Designed and built the Live Preview Studio and the Institution Studio as an isolated feature layer on the fork, keeping a FORK_PATCHES ledger of every upstream modification, 14 fork end-to-end specs, pinned-SHA evidence documents and a feature truth matrix.',
+  commercial:'Contributed to the open-source fork, so responsive proofing and provisioned fintech agent teams are available to anyone running Buzz.',
+  craft:['Rust workspace · 31 crates','Tauri 2','React desktop and mobile clients','FORK_PATCHES ledger','Apache-2.0'],
+  stack:['Rust','Tauri 2','React','Nostr'],
+  evidence:['14 fork end-to-end specs','A FORK_PATCHES ledger tracking every upstream modification','Pinned-SHA evidence documents','A feature truth matrix','A README stating which flows are production and which are fixture-driven'],
+  gallery:[],
+  relatedSource:'https://github.com/Josh-Gi3r/buzz-preview-studio'
+ }
 ];

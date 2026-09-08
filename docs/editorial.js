@@ -1,118 +1,140 @@
-// Editorial revisions change the narrative, not the evidence or attribution.
+// Campaign and product copy. Sourced from Josh Gier's CV and portfolio documents.
 export const campaignCopy = {
   tiger: {
-    summary:'Digital activation for Tiger Beer’s Year of the Tiger campaign in Malaysia, connecting installations, creators, AR experiences and retail.',
-    brief:'Give Malaysian consumers a clear way to take part in the Year of the Tiger campaign, share their experience and visit its physical activations.',
-    role:'At Aier, my scope covered digital and technology activation, localisation, social distribution, AR and QR journeys, creative adaptation and reporting within the wider campaign.',
-    strategy:'Link each physical activation to a digital action: share a goal, scan an installation, send an AR greeting or explore a retail offer.',
-    execution:[['Audience participation','Connected the “My Year, My Goals” invitation and campaign ambassador activity to a clear action for consumers.'],['Connected experiences','Supported the digital journeys around murals, Pavilion KL installations, outdoor media and AR greetings.'],['Local delivery and reporting','Adapted content for the audience, coordinated social distribution and brought participation into campaign reporting.']]
+    title:'The Year We ROAR Together',
+    summary:'Campaign technology, social distribution and measurement for Heineken Malaysia’s Lunar New Year campaign.',
+    brief:'A physical activation leaves no measurement of its own. Each touchpoint, the Pavilion KL installation, eight commissioned murals and retail, needed a digital journey and had to be reported like a media placement.',
+    role:'I owned campaign technology, social distribution and measurement for the lead agency’s integrated campaign.',
+    strategy:'Turn a seasonal alcohol promotion into participatory culture for non-Muslim Malaysians aged 21 and over, after two years in which the audience had not been able to gather.',
+    execution:[['Campaign technology','Built at RM500K: AR and QR journeys from the 3D installation, each mural location and retail into digital participation and redemption, with every touchpoint tracked to scan and share.'],['Social video','RM350K. TikTok carried installation reveals and artist-process edits, Instagram carried the Add Yours participation mechanic, and paid amplification went behind the highest-participation assets.'],['Artists and creators','RM300K to three commissioned muralists and local culture and nightlife creators driving participation at each location, alongside Son Heung-min ambassador content.'],['Production and measurement','RM350K on production, PR with trade-partner activation and measurement, so participation reported like media.']]
   },
   lego: {
-    summary:'Digital production, creator amplification and ecommerce support for LEGO’s adult-audience campaign.',
-    brief:'Give adults a reason to return to LEGO through creativity, concentration and the satisfaction of building.',
-    role:'At Aier, I worked on digital production, technology activation, audience adaptation, localisation, creator amplification and the journey from campaign content to ecommerce.',
-    strategy:'Show the building experience and the finished object. Adapt that story to adult interests and gifting occasions, then connect it to relevant products.',
-    execution:[['Audience and market adaptation','Adapted the adult-creativity message for local audiences, interests and gifting occasions.'],['Creator and social content','Supported demonstrations, product details and finished-build content across creators and social formats.'],['Ecommerce conversion','Connected campaign content to product discovery, ecommerce and retargeting.']]
+    title:'Adults Welcome and Find Your Flow',
+    summary:'Creators, video distribution, localisation and the ecommerce journey for LEGO’s adult repositioning.',
+    brief:'LEGO’s research showed that 91% of adults experienced stress at least annually and that most could not disengage from work. Any LEGO advertising was read as a toy advertisement, and the adult work was held to a rule of no children and no play.',
+    role:'I owned creators, video distribution, localisation and the ecommerce journey as activation partner to the lead agency.',
+    strategy:'Position building as creative mindfulness and a premium hobby for 25 to 45 year old professionals with screen fatigue, design and automotive enthusiasts, gift buyers and lapsed fans.',
+    execution:[['Creators','US$300K for build rituals and testimonials in place of product demonstrations, briefed on the flow-state proposition and repurposed as paid.'],['Video distribution','US$220K on the hero film, sequenced on YouTube from story to product demonstration so the demonstration reached only audiences who had completed the story, with TikTok and Reels carrying the ritual content.'],['Ecommerce','US$160K: product-page messaging matched to the film so the proposition held from ad to cart, collection landing pages built for search, dynamic product ads on view-content and cart audiences, browse and cart abandonment flows, and SEM on adult-set and gift intent.'],['Localisation','US$120K on localisation and market cut-downs.']]
   },
   veve: {
-    title:'Taking digital collecting to mainstream fans',
-    summary:'Go-to-market, acquisition and retention for a mobile collectibles product, built around licensed characters, release campaigns and AR.',
-    brief:'Bring entertainment fans into digital collecting and give them a clear path from discovering a release to buying and returning.',
-    role:'I directed go-to-market and social strategy, release campaigns, content planning, creator and community activation, paid and organic distribution, product education and retention.',
-    strategy:'Start with the characters people already care about. Build anticipation for each release, explain how to collect and use AR to make the collection worth sharing.',
-    execution:[['Release marketing','Coordinated announcements, countdowns, creators and community conversations around the release calendar.'],['Acquisition and onboarding','Used product education to guide new collectors through registration and purchase.'],['Retention','Connected AR sharing and collection identity to the next release and repeat participation.']]
+    title:'Licensed collectibles taken mainstream',
+    summary:'Go-to-market and social strategy, drop campaigns, creators, paid app acquisition and collector lifecycle for VeVe’s licensed-IP releases.',
+    brief:'Take licensed digital collectibles beyond crypto-native buyers to fans of the underlying IP, with collector education carrying the product marketing.',
+    role:'I owned GTM and social strategy, drop campaigns, creators, paid app acquisition and the collector lifecycle for the platform’s licensed-IP releases.',
+    strategy:'Run every release as the same sequence on Instagram and TikTok, tease, reveal, countdown, drop and sold-out, with scarcity and urgency built into the content calendar from the start.',
+    execution:[['Creators per drop','US$250K across collector and fandom creators per IP drop and the drop content itself, with in-app AR sharing designed as the organic distribution loop so collectors published the product themselves.'],['Paid acquisition','US$200K on app install campaigns and drop amplification, timed to each release with creative pulled from the highest-performing organic drop content.'],['Collector lifecycle','US$120K on Discord scarcity management and push and email lifecycle to bring collectors back for the next drop, with US$80K on production.']]
   },
   bosch: {
-    title:'Y’a Pas Photo: from participation to CRM',
-    summary:'Campaign technology, content operations and audience capture for Bosch Professional’s participation programme.',
-    brief:'Help tradespeople enter the programme, share their work and engage with Bosch through a trackable registration process.',
-    role:'At Aier, I worked on campaign technology, registration, content operations, CRM capture, amplification, tracking and digital delivery.',
-    strategy:'Use real projects by tradespeople as the campaign’s creative material. Make entry straightforward and connect participation to registration, CRM and follow-up.',
-    execution:[['Entry journey','Connected photo and video participation to the registration process.'],['Campaign operations','Supported submissions, content handling, campaign technology and first-party data capture.'],['Amplification and follow-up','Used participant stories in social distribution, with tracking and retargeting supporting follow-up.']]
+    title:'Y’a Pas Photo',
+    summary:'The participation platform, creator mechanics, paid distribution and CRM for Bosch Professional’s advocacy programme in France.',
+    brief:'French tradespeople trusted other tradespeople’s work far more than feature advertising. The mechanic was built on their own posts: a professional publishes a job photo or video on their own account to enter recurring draws for cordless tools.',
+    role:'I owned the participation platform, creator mechanics, paid distribution and CRM for the programme.',
+    strategy:'Turn a hashtag contest into a programme that can run edition after edition, with the first-party data staying with Bosch and VIPros.',
+    execution:[['Participation platform','Built at €350K: registration, consent, submission validation and segmentation by trade.'],['Creator mechanics','€180K to four to eight tradesperson creators to seed the mechanic with utility-led content and hashtag participation, with the best submissions moderated and reposted as campaign assets.'],['Paid distribution','€100K to trade interest and lookalike audiences built from participants, with retargeting of partial entries.'],['CRM and operations','€70K: participant records captured, follow-up run for repeat entry each edition, and the base turned into an advocacy audience for later campaigns.']]
   },
   revolut: {
-    title:'Making Revolut an everyday choice in France',
-    summary:'French-market go-to-market, localisation and digital acquisition support, connecting campaign messaging to app activation.',
-    brief:'Extend consideration beyond travel and encourage everyday use of Revolut in France.',
-    role:'At Aier, my scope included French-market go-to-market, localisation, digital production, paid and social activation, product messaging, campaign-to-app conversion and reporting.',
-    strategy:'Connect familiar daily situations to specific product benefits, then measure the journey beyond an install through verification, funding and first use.',
-    execution:[['Local relevance','Adapted messaging and digital creative to French audiences and product use cases.'],['Acquisition delivery','Coordinated the paid-social, creator and campaign-technology workstreams within Aier’s scope.'],['App activation','Connected acquisition activity to identity verification, first funding, referrals and repeat-use reporting.']]
+    title:'French-market acquisition for the digital bank',
+    summary:'Acquisition for Revolut in France, re-bought against funded accounts rather than installs.',
+    brief:'Revolut had awareness among French travellers but was not their primary account. The lead agency owned the awareness layer, and the €1.2M activation scope was first judged on installs.',
+    role:'I owned the French-market acquisition scope from creative through funded account, as AI-native activation partner to the lead agency.',
+    strategy:'Installs were the wrong buying event. The funnel leaked hardest between install and KYC, and again between KYC and first top-up, so the programme was re-bought against funded accounts with cost per install kept as a diagnostic and dropped as a target.',
+    execution:[['Creative','Rebuilt around fees, transfers and everyday use for 20 to 40 year old digitally confident professionals and fee-frustrated bank customers.'],['Paid social','€450K. TikTok carried problem-and-solution videos with three to five new hooks a week against a control, winners scaled and losers cut at 48 hours. Meta ran Reels and Stories on whitelisted creator handles, prospecting to broad and lookalike audiences with installed and funded users excluded. Retargeting split by funnel stage on seven-day windows: viewers to install, installs to KYC, KYC to first top-up.'],['Creators and search','€200K to six to fifteen finance, travel and lifestyle creators on unique codes, paid on funded accounts, with every asset whitelisted so the best organic content could run as paid. €150K on search and app store against brand and generic French banking terms.'],['Measurement','€220K built before launch: landing pages, pixels and server-side events, UTMs on every placement and code, abandoned-KYC sequences and activation cohorts. Budget moved weekly to the creators and placements returning the lowest funded-account CAC. €180K on production and localisation.']]
+  },
+  pif: {
+    title:'Savvy Games Group investment communications',
+    summary:'Narrative adaptation, paid and social distribution, newsroom operations and stakeholder follow-up for Saudi Arabia’s Public Investment Fund.',
+    brief:'The investment around Savvy Games Group had to be presented as long-term economic, technology and employment strategy, not as a gaming story.',
+    role:'I owned narrative adaptation, paid and social distribution, newsroom operations and stakeholder follow-up for the institutional communications team.',
+    strategy:'Games industry executives, investors, publishers, Saudi talent, international media and government stakeholders each needed a different reading of the same facts. Write the thesis once and adapt it per audience.',
+    execution:[['Narrative adaptation','US$120K adapting the investment thesis and executive narrative for each audience, with X and Instagram cut-downs of the institutional material.'],['Paid distribution','US$130K on LinkedIn against industry, investor and publisher job titles, sequenced around announcement moments.'],['PR and newsroom','US$150K: the media kit and press distribution to trade and business media, with the ecosystem story built around the studios, jobs and GDP targets.'],['Stakeholder follow-up','US$100K on stakeholder briefing, follow-up sequences, enquiry capture, and sentiment and placement reporting.']]
   },
   jedstar: {
-    title:'Launching JEDSTAR and KRED',
-    summary:'Venture creation, positioning and launch execution across a gaming ecosystem, community growth, presale demand and partnerships.',
-    role:'I worked across venture creation, brand architecture, product positioning, presale go-to-market, paid acquisition, KOL procurement, community, PR, partnerships and investor communications.',
-    strategy:'Develop the product proposition and audience together. Coordinate the launch calendar so acquisition, community and partnerships support the same commercial milestones.',
-    execution:[['Brand and product architecture','Defined the ecosystem, the role of each product and the launch narrative.'],['Acquisition and community','Coordinated paid media, KOL procurement, content, community operations and PR around launch milestones.'],['Commercial execution','Connected audience growth to the KRED presale, partner agreements and investor communications.']]
+    title:'Ecosystem, presale and launch built from zero',
+    summary:'Brand, product proposition, community, presale and investor go-to-market for a four-part gaming and token ecosystem.',
+    brief:'The product was built before the token was sold. A four-part ecosystem was specified from scratch: JED as the launch token and community asset, KRED as the in-economy token for gaming spend and rewards, STARDOME as the player-facing platform and Agora as the community and governance layer.',
+    role:'Engaged from inception to build the brand, product proposition, community, presale and investor go-to-market.',
+    strategy:'Release presale tranches and product milestones on the same sequence, and never sell the presale on price.',
+    execution:[['Brand and tokenomics','Wrote the brand identity, the naming across the four products and the token narrative inside the US$500K brand and product scope, and designed supply, allocation, vesting schedules and whitelist mechanics before any go-to-market activity.'],['KOL programme','US$400K: crypto and gaming creators on negotiated deliverables across X, YouTube and Telegram, waved against presale milestones.'],['Community and paid','US$300K: presale sequencing across X, Telegram and Discord with whitelist mechanics, a moderator and ambassador structure, and paid acquisition behind the highest-converting community sources.'],['Investor go-to-market','Roadmap and financing announcements through crypto media and Medium, a partnership pipeline built alongside, and investor materials and outreach for the raise.']]
   },
   coliseum: {
-    title:'Building and growing a gaming platform',
-    role:'My work covered product go-to-market, positioning, localisation, community acquisition, tournaments, attribution, reporting and commercial partnerships.',
-    strategy:'Use local communities to acquire players, tournaments to drive participation and the platform to sustain repeat use. Offer brands relevant audiences through campaigns and sponsorships.',
-    execution:[['Product and launch','Connected the product, positioning and onboarding to the interests of gaming communities.'],['Audience growth','Ran local content, moderation, tournament campaigns and community acquisition across markets.'],['Brand partnerships','Packaged audience reach and engagement into advertising, sponsorship and partner programmes.']]
+    title:'Coliseum after the acquisition',
+    summary:'Marketing, growth, revenue and operations for Coliseum across Asia Pacific, Europe, the United States and Latin America.',
+    brief:'At acquisition, the four-million-member community was not converting into product users.',
+    role:'From July 2024 I ran marketing, growth, revenue and operations across four regions, with 30+ staff and a US$1M+ operating budget.',
+    strategy:'The gaming platform and its local-language communities gather the audience; the agency side sells brands access to that audience. Convert the members into product users first, then sell the reach.',
+    execution:[['Acquisition','Moved spend from paid media into local-language creator clips and referral loops, and optimised US$1M+ of paid by source, language and market. Member acquisition cost fell from US$1.20 to US$0.40.'],['Product','Rebuilt onboarding from a multi-step registration to three steps, cutting friction 90%, and built quests, cohorts and reactivation into the product.'],['Community operations','Local-language Facebook groups on content pillars and moderator SLAs, with Telegram captains running the seven groups.'],['Commercial','Sold branded-community programmes and campaigns to brands, publishers and guild networks on seven-figure agreements, and built the investor narrative and materials for the raise.']]
   },
   ygg: {
-    title:'Taking Web3 gaming into Southeast Asia',
-    summary:'Regional positioning, local community growth and partnership development for YGG SEA and W3GG.',
-    role:'My scope covered positioning, localisation, community acquisition, creators, partnerships, scholarships, investor communications and fundraising support.',
-    strategy:'Build each market through local operators and creators, with a consistent regional proposition for partners and investors.',
-    execution:[['Market localisation','Adapted audience messaging and content to individual Southeast Asian markets.'],['Community and partnerships','Coordinated creators, local operators, community acquisition and ecosystem relationships.'],['Regional expansion','Used market traction to support partnerships and investor communications.']]
+    title:'Southeast Asia market entry for YGG’s first subDAO',
+    summary:'Country positioning, local-language community operations, creators and the fundraise narrative, as the embedded growth team.',
+    brief:'YGG’s first regional subDAO entered four Southeast Asian markets, where translated central content does not build a guild.',
+    role:'I owned country positioning, local-language community operations, creators and the fundraise narrative, as the embedded growth team.',
+    strategy:'Hire country leaders to run Indonesia, Malaysia, Vietnam and Thailand in local language, and build the positioning market by market.',
+    execution:[['Community operations','US$450K: local-language Discord and Telegram guilds with a moderator and captain structure, scholarship onboarding and retention, and partner guild relationships in each country.'],['Creators','US$350K to local gaming creators and guild leaders as the acquisition layer, briefed per market and tracked to guild sign-ups.'],['Paid and events','US$400K: amplification on X, Facebook, Discord and Telegram against gaming audiences, alongside regional tournaments.'],['Fundraise narrative','Packaged community scale and market access for the fundraise and for partner guilds and game studios.']]
   },
   saitama: {
-    title:'Running a global community launch',
-    summary:'Creator procurement, paid amplification and community operations across markets and time zones.',
-    role:'I worked on positioning, KOL procurement, campaign waves, X and Telegram programming, Spaces, AMAs, paid amplification, community activation and reporting.',
-    strategy:'Keep creators, announcements, education and community teams on a coordinated launch schedule, with consistent messaging across markets.',
-    execution:[['Positioning and content','Established the proposition and consistent community messaging.'],['Creator delivery','Coordinated KOL procurement, campaign waves, regional handoffs and amplification.'],['Community operations','Scheduled announcements, education, events and AMAs around the launch calendar.']]
+    title:'Community hypergrowth for a token launch',
+    summary:'Positioning, KOL programme, clipping network, Telegram and Spaces operations and PR, as the project’s growth agency.',
+    brief:'In Saitama’s market, KOLs were paid on a screenshot of the post and success was measured on trading volume. This programme paid on wallet actions and measured on holders.',
+    role:'I owned positioning, the KOL programme, the clipping network, Telegram and Spaces operations and PR, as the project’s growth agency.',
+    strategy:'Time each wave to a product or listing milestone so every push carries a substantive announcement, then move spend to the tiers producing the cheapest holders.',
+    execution:[['KOL programme','US$1M in tiered waves: micro creators at US$2K to 12K for volume and reach, mid to macro creators at US$15K to 50K for validation, contracted on deliverables and paid against tracked links and wallet actions, with validation following volume.'],['Clipping network','More than 5,000 accounts on X and Instagram turned each announcement into short-form within hours and kept the account in the timeline between waves.'],['Community operations','US$200K of paid and production covering Telegram moderation and referral mechanics, X Spaces and AMAs with founder access, and launch moments coordinated around the clock across time zones.'],['Attribution','Holders attributed by wave, creator and link, with spend reallocated to the cheapest tiers.']]
   },
   cult: {
-    title:'Launching a decentralised funding proposition',
-    summary:'Launch positioning, product education and creator activation for Cult DAO.',
-    role:'My work covered manifesto-led positioning, launch content, community seeding, token education, micro-KOL activation and amplification.',
-    strategy:'Explain the funding model through a clear manifesto, then use education and relevant community distribution to support participation.',
-    execution:[['Explain the model','Translated the funding proposition into a coherent manifesto and accessible educational content.'],['Launch distribution','Coordinated social content, micro-KOL activity and relevant community outreach.'],['Ongoing participation','Maintained content and community activity around launch milestones.']]
+    title:'Manifesto-led fair launch',
+    summary:'Positioning, manifesto material, micro-KOL seeding and crypto media for a launch with no venture round and no presale.',
+    brief:'Cult DAO launched fairly, with no venture round and no presale. The narrative had to carry distribution on its own.',
+    role:'I owned positioning, the manifesto material, micro-KOL seeding and crypto media, as the launch’s growth partner.',
+    strategy:'Make a complex decentralised funding model legible, then let ideologically aligned communities distribute it.',
+    execution:[['Positioning','US$100K on the positioning, the manifesto material and the education that made the funding model legible.'],['Community seeding','US$100K through ideologically aligned micro-creators and meme formats built for organic spread on X and Telegram.'],['Crypto media','US$50K of earned coverage on the model and the manifesto.']]
   },
   bubblemaps: {
-    title:'Turning on-chain analysis into product demand',
-    summary:'Product education, investigation-led content and launch distribution for Bubblemaps and BMT.',
-    role:'My scope included category positioning, investigation content, product education, pre-launch community, KOL activity and launch amplification.',
-    strategy:'Demonstrate the product through the wallet relationships it reveals. Use those investigations to attract researchers and communities before the launch.',
-    execution:[['Product education','Explained wallet relationships and visual analysis through practical use cases.'],['Pre-launch demand','Connected investigation-led content to community growth and KOL distribution.'],['Launch communications','Coordinated launch amplification and reporting within the broader programme.']]
+    title:'BMT token launch on Binance Wallet',
+    summary:'Category education, pre-launch community, KOL programme and launch communications for the BMT token generation event.',
+    brief:'Onchain visual intelligence was unknown as a category when BMT launched on Binance Wallet.',
+    role:'I owned category education, the pre-launch community, the KOL programme and launch communications for the token generation event.',
+    strategy:'Build the launch on category education first and demand proof second.',
+    execution:[['Education','The first US$150K on wallet-map explainers and real investigations that demonstrated the product, indexed ahead of launch.'],['Credibility','US$175K seeding onchain investigators and analyst creators first to establish authority, then a broader creator roster contracted for coordinated launch-day content.'],['Launch operations','US$175K: the pre-launch community grown on the education content and converted at the Binance Wallet TGE with coordinated posting, paid amplification and immediate publication of the demand proof.']]
   },
   immortal: {
-    title:'Growing a Web3 chess product',
-    summary:'Positioning, acquisition and player engagement through chess creators, grandmaster partnerships and tournaments.',
-    role:'My work covered positioning, acquisition, grandmaster and creator partnerships, tournament campaigns, community, PR and fundraising support.',
-    strategy:'Lead with the chess experience. Use credible players and competitive events to introduce the product and encourage repeat play.',
-    execution:[['Player proposition','Explained the game and its features in terms relevant to chess audiences.'],['Creators and competition','Coordinated grandmaster and creator partnerships with tournament campaigns.'],['Product adoption','Connected acquisition and community activity to onboarding and return play.']]
+    title:'Web3 chess for chess players',
+    summary:'Positioning, grandmaster and creator partnerships, tournament campaigns and community operations, as the client’s growth agency.',
+    brief:'Web3 chess had to be positioned as a competitive gaming proposition for chess players. That positioning opened the grandmaster and creator partnerships.',
+    role:'I owned positioning, grandmaster and creator partnerships, tournament campaigns and community operations, as the client’s growth agency.',
+    strategy:'Lead with the chess. Credible players introduce the product, and tournaments do the acquiring.',
+    execution:[['Grandmasters and creators','US$300K on YouTube and Twitch for matches, commentary and coaching content, with clips cut for X and short-form.'],['Tournaments','US$180K as the acquisition mechanic: registration, brackets and prize communications, with player acquisition run against chess and gaming audiences and onboarding and reactivation flows measured on registered players.'],['Community','US$120K on AMAs, Discord operations and a Token2049 activation for the industry audience.']]
   },
   sera: {
-    title:'Taking stablecoin FX infrastructure to market',
-    summary:'Product positioning, issuer acquisition, institutional partnerships and enterprise demand for Sera Protocol and MYRT.',
-    role:'I worked across positioning, issuer onboarding, liquidity and exchange go-to-market, institutional partnerships, launches, pipeline development, content, PR and enterprise sales.',
-    strategy:'Develop issuer and liquidity relationships alongside demand from payment companies and enterprises. Give each launch a defined buyer, use case and adoption path.',
-    execution:[['Product positioning','Translated non-custodial FX, gasless transactions and spread-based pricing into buyer-specific messages.'],['Partner and issuer development','Connected issuer onboarding, liquidity, networks and enterprise partnerships.'],['Product launches','Brought MYRT, Sera for Agents and same-peg swaps to their respective audiences.']]
+    title:'Taking onchain FX settlement to market',
+    summary:'Asia Pacific sales, partnerships, liquidity, product go-to-market and marketing for an onchain FX settlement protocol, from zero to 30 signed agreements in the first year.',
+    brief:'Sera sells settlement to payment companies, wallets and OTC trading desks. Their treasury and product heads already had a bank or OTC route that worked well enough and no budget line for onchain settlement.',
+    role:'Head of Growth. I own Asia Pacific sales, partnerships, liquidity, product go-to-market and marketing, report to the CEO, run a commercial team of four with engineering support, and hold pipeline, pricing and the commercial plan.',
+    strategy:'Price on the spread only, with no fixed fee, and ask first for a pilot on a single corridor so the buyer has a number of their own before any commercial commitment.',
+    execution:[['Pipeline','Mapped 70+ issuer and counterparty relationships and tiered them by corridor volume and readiness to integrate. Every pursuit qualified on MEDDPICC through six stages with exit criteria, each account on a dated mutual action plan, pipeline coverage held at three times the signing target.'],['The commercial case','Built on the corridors the account already settled, comparing spread and settlement time against the route in use, and taken to the treasury and product heads who owned that cost.'],['Liquidity','Market makers and institutional liquidity providers offered terms for inventory commitments and rebalancing with the spread as their only return, each run from term sheet to funded on one fixed sequence, including the reserve backing MYRT.'],['Demand generation','NextCurrency built as the trade title for stablecoin payments and the largest single source of issuer SQLs, with sourced pipeline reported separately from influenced each month.']]
   },
   effex: {
-    title:'Building an audience for stablecoin intelligence',
-    summary:'Product positioning, launch content and audience development for a stablecoin research platform.',
-    role:'My scope covered the product proposition, launch and content distribution, social growth and audience development.',
-    strategy:'Answer the market’s practical questions through research and social content, then direct that audience into the intelligence product.',
-    execution:[['Product proposition','Organised market information around the questions readers needed to answer.'],['Audience acquisition','Used social content to introduce the platform and reach relevant market participants.'],['Research and product discovery','Connected content distribution to deeper research and product exploration.']]
+    title:'NextCurrency, a trade title for stablecoin payments',
+    summary:'Owned content as Sera’s primary pipeline source: daily coverage, permanent reference pages and a scoring layer that turns readers into scored accounts.',
+    brief:'Sera’s target accounts, the stablecoin issuers and the banks and payment service providers around them, responded to coverage of their own market and rarely to cold outreach.',
+    role:'I specified and run NextCurrency: the editorial system, agent architecture, publishing workflow, search structure, paid distribution, audience growth and the CRM handoff.',
+    strategy:'Position NextCurrency as a trade title for stablecoin payments, distinct from crypto media, so issuers, regulators and banks read it.',
+    execution:[['Publishing cadence','Daily site coverage, three to five X posts a day across news, analysis threads and charts, two long-form breakdowns a week and short vertical explainers, with regulatory and issuer events live within hours of the news breaking.'],['Search structure','A permanent page for each issuer, regulator and corridor, grouped into clusters on issuance, regulation, licensing and settlement. On that structure the site ranks organically and is cited in AI-generated answers.'],['Paid and partners','Paid X and LinkedIn reach decision-makers by title at target issuers and PSPs, timed to launches and integrations, with integration partners co-marketing at go-live and founder-led distribution on X.'],['Measurement','Measured on sourced pipeline and issuer SQLs, with the leads whose first touch was the content reported separately from influenced pipeline each month.']]
   },
   cbre: {
-    title:'Scaling a regional technology business',
-    summary:'Regional business leadership across technology, analytics, product marketing and enterprise sales, including the global NTT transaction.',
-    role:'My responsibilities covered portfolio positioning, account segmentation, account-based marketing, executive engagement, sales enablement, solution development, stakeholder alignment, negotiation and account expansion.',
-    strategy:'Build the commercial case around each account’s operating priorities. Align the buying committee, product capabilities and delivery plan before negotiating the engagement.',
-    execution:[['Regional business growth','Scaled the technology and analytics team and its operating capability across APAC.'],['Enterprise demand','Developed strategic opportunities through account segmentation, executive engagement, product marketing and sales enablement.'],['Complex sales','Originated and progressed enterprise opportunities through solution development, negotiation and coordinated delivery.']]
+    title:'From two people to a US$100M business',
+    summary:'Full P&L for CBRE’s APAC enterprise technology business, and the US$1B NTT client sourced, pitched and closed in Japan.',
+    brief:'The business sold software subscriptions, implementations and consulting and programme work, three revenue types with different timing and margin, into seven markets from one regional P&L.',
+    role:'I held the full P&L: US$100M of annual revenue with EBITDA, pricing, budgets and the forecast; 50+ direct staff and 250+ in delivery across seven markets, built from two people; product development and commercialisation for APAC and EMEA; the sales organisation, the partner ecosystem and the regional demand engine.',
+    strategy:'North Asia and the other non-English markets could not be sold from Singapore. Each needed its own sales organisation, with partners for implementation and resale.',
+    execution:[['Forecast and P&L','Built bottom-up from the Salesforce pipeline, each deal weighted by stage, at three times coverage. Commit, best case and upside reviewed weekly by market and product, discounts run inside approval thresholds, bookings reconciled to revenue monthly.'],['Sales organisation','Designed the territories and partner coverage, recruited local sellers in each market, set quota and ramp per territory, wrote the playbooks and ran the first enterprise pursuits alongside each seller until deals closed in-country.'],['NTT','Opened the account at executive level in Japan without speaking Japanese, specified and customised a CBRE application to NTT’s global portfolio requirements, built the executive business case on cost and utilisation, multi-threaded the pursuit across product, consulting, delivery and finance, and negotiated with procurement and legal through to signature.'],['Strategic accounts','Standard Chartered, HSBC and UOB bought portfolio and workplace transformation across their APAC footprints; Google, Microsoft and LinkedIn bought workplace and organisational transformation for their APAC offices; the Ministry of Health and other agencies bought the digital and organisational transformation of facilities and portfolio workflows.']]
   },
   aier: {
-    title:'Building Aier Studios to US$1.2M ARR',
-    summary:'Founded and grew a product and marketing company, leading client acquisition, a 25-person team and delivery across more than 30 markets.',
-    role:'As founder, I owned positioning, sales, product and marketing delivery, paid acquisition, creators, community, CRM, hiring and commercial operations.',
-    strategy:'Build a team that could take responsibility from brief to delivery, and connect campaigns, product development and account growth to recurring revenue.',
-    execution:[['Client acquisition','Developed the positioning, originated opportunities and closed client and partner engagements.'],['Team and delivery','Hired and coordinated product, marketing, creative, community and commercial teams across markets.'],['Revenue and operations','Managed pricing, delivery, account growth and commercial operations to build recurring revenue.']]
+    title:'The studio, the platform and the exit',
+    summary:'Founded an AI-native marketing and technology studio, built the platform that ran every client account, and sold it to Coliseum for US$3M.',
+    brief:'Research, production, campaign build and reporting consumed most of the studio’s billable hours and repeated from account to account. They were specified as one platform.',
+    role:'Founder and Chief Executive Officer with full P&L: 25 full-time staff, campaign teams of up to 40, a network of more than 5,000 clippers, 30+ markets and US$9M+ of client campaign budgets under management.',
+    strategy:'Take retained work only, on monthly fees above a set minimum, bill media spend separately and measure margin on fees alone.',
+    execution:[['The retainer model','Seven-figure contracts structured as monthly recurring fees, taking the retainer base to US$1.2M ARR. The quarterly performance review was the expansion meeting, and accounts below margin were repriced or exited.'],['The platform','Research and audience agents, creative production for copy, video and asset matrices by placement, campaign build and media execution across Meta, Google, TikTok and YouTube, creator briefing and tracking, and one reporting layer for CAC, ROAS and cohort retention. Sequenced by billable hours saved: production first in 2022, media execution and creator tracking second, reporting and attribution third.'],['The operating standard','One standard on every account: a creator rate card, a brief template, a campaign QA checklist and a weekly reallocation model. Every creator, channel and market was tied to a tracked link, code, wallet action or cohort before budget was released.'],['The exit','Cost per creative asset fell about 60%, brief-to-live time halved, gross margin held above 50% and net revenue retention above 110%. Coliseum acqui-hired the company for US$3M with the client roster intact, and the platform’s campaign-execution layer became the foundation of Concord (concord.ad), which raised a US$3M seed in June 2026.']]
   }
 };
 

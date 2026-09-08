@@ -17,3 +17,37 @@
 
 /* Portrait phones: fill the height with a crop of the room centred on the desk and TV instead of a letterboxed strip. Hotspots, screen masks, illumination and the window video are positioned inside the plane, so they follow the crop. */
 @media(max-width:760px) and (orientation:portrait){.room-plane{width:calc(64vh*1.7768);height:64vh;top:40%;left:calc(50% - 11.9vh)}.room-vignette{background:linear-gradient(#0e120fd9,transparent 20%,transparent 44%,#0e120fee 74%)}}
+
+
+/* Document cards in the About & CV page */
+.doc-downloads{margin:45px 0 0}
+.doc-downloads .eyebrow{color:#9cab8e;font-size:12px;letter-spacing:1px}
+.doc-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
+.doc-card{display:flex;flex-direction:column;gap:7px;padding:22px 24px 20px;border:1px solid var(--line);background:#ffffff05;color:#c3cfb8;transition:border-color .25s,background .25s,transform .25s}
+.doc-kind{font:12px/1 var(--mono);letter-spacing:1.5px;color:#8d9a84;transition:color .25s}
+.doc-card strong{font:400 26px/1.15 var(--serif);letter-spacing:-.5px;color:#e6ebd1;transition:color .25s}
+.doc-card small{font-size:14px;line-height:1.6;color:#a8b69c}
+.doc-card b{margin-top:8px;font:12px/1 var(--mono);letter-spacing:.5px;font-weight:400;color:#9fae95;transition:color .25s}
+.doc-card:hover{border-color:var(--amber);background:#ffffff0d;transform:translateY(-2px)}
+.doc-card:hover strong,.doc-card:hover b,.doc-card:hover .doc-kind{color:var(--amber)}
+.doc-card:focus-visible{outline:1px solid var(--amber);outline-offset:3px}
+@media(max-width:760px){.doc-row{grid-template-columns:1fr;gap:12px}.doc-card{padding:18px 18px 16px}.doc-card strong{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.doc-card{transition:none}.doc-card:hover{transform:none}}
+
+/* Document downloads, inside the room controls */
+.doc-menu{position:relative}
+.doc-menu>summary{display:flex;gap:7px;align-items:center;padding:4px 2px;min-height:30px;font:inherit;cursor:pointer;list-style:none;transition:color .2s}
+.doc-menu>summary::-webkit-details-marker{display:none}
+.doc-menu>summary:hover,.doc-menu[open]>summary{color:var(--amber)}
+.doc-menu>summary span{transition:transform .25s}
+.doc-menu[open]>summary span{transform:translateY(2px)}
+.doc-menu>div{position:absolute;right:0;bottom:calc(100% + 12px);width:236px;display:flex;flex-direction:column;gap:2px;padding:13px 13px 11px;background:#0f1617f7;border:1px solid #ffffff2b;backdrop-filter:blur(10px);box-shadow:0 14px 40px #0009;animation:appear .18s var(--ease)}
+.doc-menu>div strong{font:12px/1 var(--mono);letter-spacing:1px;text-transform:uppercase;color:#8d9a84;font-weight:400;margin-bottom:7px}
+.doc-menu>div a{display:flex;flex-direction:column;gap:3px;padding:8px 9px;color:#e1e2d4;border:1px solid transparent;transition:background .2s,border-color .2s,color .2s}
+.doc-menu>div a span{font:400 14px/1.15 var(--sans);letter-spacing:-.2px}
+.doc-menu>div a small{font:12px/1 var(--mono);color:#8d9a84;transition:color .2s}
+.doc-menu>div a:hover{background:#ffffff0f;border-color:var(--amber);color:var(--amber)}
+.doc-menu>div a:hover small{color:#b3c0a7}
+.doc-menu>div a:focus-visible{outline:1px solid var(--amber);outline-offset:2px}
+@media(max-width:760px){.doc-menu>div{width:208px;right:-52px}.doc-menu>div a small{display:none}}
+@media(prefers-reduced-motion:reduce){.doc-menu>summary span,.doc-menu>div a{transition:none}.doc-menu>div{animation:none}}
