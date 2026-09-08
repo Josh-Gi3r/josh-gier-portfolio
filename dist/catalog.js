@@ -37,6 +37,7 @@ const changes={
  tiger:{logo:'tiger-logo',budget:['RM600K–1.5M','Modelled Aier workstream scope'],budgetNote:'Planning range in the supplied portfolio; not a verified spend total.'},
  veve:{logo:'veve-logo'},
  jedstar:{image:'jedstar-cover',hero:'jedstar-cover'},
+ coliseum:{image:'coliseum-cover',hero:'coliseum-cover',gallery:['coliseum-evidence']},
  cbre:{logo:'cbre-logo',image:'cbre-cover',hero:'cbre-cover'},
  sera:{image:'sera-cover',hero:'sera-cover',metrics:[['40+','Stablecoins supported'],['59+','Issuer pipeline']],metricNote:'Product coverage and issuer pipeline supplied in the portfolio; pipeline is not the number of completed integrations.'},
  aier:{image:'aier-cover',hero:'aier-cover',metrics:[['US$1.2M','ARR built'],['US$1M+','Paid acquisition managed'],['25','Team members'],['30+','Markets']]},
