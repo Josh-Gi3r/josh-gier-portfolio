@@ -130,7 +130,9 @@
   .away .room-controls { right:12px; }
   .room-title h1 { font-size:clamp(31px,8.7vw,42px); letter-spacing:-1.1px; }
   .room-title { right:16px; }
-  .room-footer { display:none; }
+  .room-footer { justify-content:flex-end; left:auto; right:14px; top:132px; bottom:auto; }
+  .room-footer > span:not(.footer-links) { display:none; }
+  .footer-links { border-left:0; padding-left:0; gap:22px; }
   .sound-credits>div { width:min(290px,calc(100vw - 26px)); }
 }
 

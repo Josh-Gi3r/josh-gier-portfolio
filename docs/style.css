@@ -87,3 +87,34 @@
 .about-github:focus-visible{outline:1px solid var(--amber);outline-offset:2px}
 @media(max-width:760px){.room-footer{gap:12px}.footer-links{gap:12px}.profile-link{gap:12px;padding:16px 4px}.profile-link strong,.profile-link.primary strong{font-size:19px}.profile-link small{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.profile-link,.profile-link b,.about-github,.footer-links a{transition:none}.profile-link:hover{padding-left:6px}.profile-link:hover b{transform:none}}
+
+/* Portrait rotate hint. A suggestion, never a gate. */
+.rotate-hint{position:fixed;z-index:45;left:12px;right:12px;bottom:118px;display:flex;align-items:center;gap:13px;padding:13px 14px;background:#101718f2;border:1px solid #ffffff2b;backdrop-filter:blur(10px);box-shadow:0 12px 36px #0008;animation:appear .4s var(--ease)}
+.rotate-icon{display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;border:1px solid var(--amber);color:var(--amber);font-size:17px;animation:rotnudge 2.6s ease-in-out infinite}
+.rotate-hint p{margin:0;flex:1;font:400 15px/1.25 var(--sans);color:#e6ebd1}
+.rotate-hint small{display:block;margin-top:3px;font:12px/1.4 var(--mono);color:#9dab90;letter-spacing:.3px}
+.rotate-hint button{width:30px;height:30px;flex-shrink:0;color:#9dab90;font-size:20px;line-height:1}
+.rotate-hint button:hover{color:var(--amber)}
+@keyframes rotnudge{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(-82deg)}92%{transform:rotate(-82deg)}}
+@media(prefers-reduced-motion:reduce){.rotate-icon{animation:none}.rotate-hint{animation:none}}
+@media(min-width:761px),(orientation:landscape){.rotate-hint{display:none!important}}
+
+@media(max-width:760px){
+  /* the original mobile rule hides every direct span in the footer; the profile links must survive it */
+  .room-footer>span.footer-links{display:flex}
+  .room-footer{justify-content:center;left:12px;right:12px;bottom:10px;gap:0}
+  /* keep the hint clear of the shortcuts row */
+  .rotate-hint{bottom:auto;top:178px}
+}
+
+@media(max-width:760px) and (orientation:portrait){
+  /* the wordmark tagline duplicates the hero eyebrow directly below it and wraps to two lines */
+  .wordmark span{display:none}
+  /* portrait has no free band at the bottom: park the links in the header instead */
+  .room-footer{position:fixed;top:14px;left:auto;right:14px;bottom:auto;justify-content:flex-end;z-index:22}
+  .room-footer>span.footer-strap{display:none}
+  .room-footer>span.footer-links{display:flex;gap:16px}
+  .footer-links a{font-size:12px}
+  /* the hint must never cover the hero copy */
+  .rotate-hint{top:178px;bottom:auto}
+}

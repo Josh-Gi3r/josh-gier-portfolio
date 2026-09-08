@@ -88,3 +88,19 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)video.pause
 window.addEventListener('hashchange',navigate);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.querySelector('dialog[open]')&&active!=='room')location.hash=active.startsWith('case/')?'campaigns':active.startsWith('product/')?'products':'room';});
 navigate();
+
+/* Portrait phones: suggest landscape once. Never block - iOS Safari cannot lock
+   orientation at all, so a rotate gate is a dead end that just loses the visitor. */
+(function(){
+ const el=document.getElementById('rotate-hint');if(!el)return;
+ const dismissed=()=>{try{return localStorage.getItem('jg-rotate')==='off'}catch(e){return false}};
+ const portrait=()=>window.matchMedia('(max-width:760px) and (orientation:portrait)').matches;
+ const show=()=>{el.hidden=!(portrait()&&!dismissed()&&!document.body.classList.contains('away'));};
+ const off=()=>{try{localStorage.setItem('jg-rotate','off')}catch(e){}el.hidden=true;};
+ document.getElementById('rotate-dismiss')?.addEventListener('click',off);
+ addEventListener('orientationchange',()=>setTimeout(show,120));
+ addEventListener('resize',show);
+ addEventListener('hashchange',()=>setTimeout(show,60));
+ setTimeout(show,1200);
+ setTimeout(()=>{if(!el.hidden)off();},14000);
+})();
