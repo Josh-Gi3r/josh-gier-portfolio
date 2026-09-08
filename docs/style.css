@@ -51,3 +51,39 @@
 .doc-menu>div a:focus-visible{outline:1px solid var(--amber);outline-offset:2px}
 @media(max-width:760px){.doc-menu>div{width:208px;right:-52px}.doc-menu>div a small{display:none}}
 @media(prefers-reduced-motion:reduce){.doc-menu>summary span,.doc-menu>div a{transition:none}.doc-menu>div{animation:none}}
+
+/* Room footer profile links */
+.room-footer{display:flex;justify-content:flex-start;align-items:center;gap:26px}
+.footer-links{display:flex;gap:18px;flex-shrink:0;padding-left:4px;border-left:1px solid #ffffff1f;padding-left:26px}
+.footer-links a{font:12px var(--mono);letter-spacing:1px;color:#9dab90;transition:color .2s}
+.footer-links a i{font-style:normal;opacity:.6;transition:opacity .2s}
+.footer-links a:hover{color:var(--amber)}
+.footer-links a:hover i{opacity:1}
+.footer-links a:focus-visible{outline:1px solid var(--amber);outline-offset:3px}
+
+/* Contact page profile links */
+.profile-links{margin:44px 0 0}
+.profile-links .eyebrow{color:#a3b692;font-size:12px;letter-spacing:1px}
+.profile-row{display:flex;flex-direction:column;gap:0;margin-top:14px;border-top:1px solid var(--line)}
+.profile-link{display:flex;align-items:center;gap:16px;padding:20px 6px;border-bottom:1px solid var(--line);color:#c3cfb8;transition:background .2s,color .2s,padding-left .2s}
+.profile-link img,.profile-link svg{width:20px;height:20px;flex-shrink:0;opacity:.75;transition:opacity .2s}
+.profile-link>span{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.profile-link strong{font:400 21px/1.2 var(--serif);letter-spacing:-.3px;color:#e6ebd1;transition:color .2s}
+.profile-link small{font-size:13px;color:#a2b193}
+.profile-link b{font-weight:400;font-size:20px;color:var(--amber);opacity:0;transition:opacity .2s,transform .2s}
+.profile-link.primary strong{font-size:25px}
+.profile-link.primary small{color:#b3c0a7}
+.profile-link:hover{background:#ffffff08;padding-left:14px}
+.profile-link:hover strong{color:var(--amber)}
+.profile-link:hover img,.profile-link:hover svg{opacity:1}
+.profile-link:hover b{opacity:1;transform:translate(3px,-2px)}
+.profile-link:focus-visible{outline:1px solid var(--amber);outline-offset:-2px}
+
+/* GitHub profile link in the About page */
+.about-github{display:inline-flex;align-items:center;gap:11px;margin-top:16px;padding:11px 16px;border:1px solid var(--line);color:#c3cfb8;transition:border-color .2s,color .2s,background .2s}
+.about-github img{width:18px;height:18px;opacity:.8}
+.about-github strong{font:400 15px/1 var(--mono);letter-spacing:.3px}
+.about-github:hover{border-color:var(--amber);color:var(--amber);background:#ffffff08}
+.about-github:focus-visible{outline:1px solid var(--amber);outline-offset:2px}
+@media(max-width:760px){.room-footer{gap:12px}.footer-links{gap:12px}.profile-link{gap:12px;padding:16px 4px}.profile-link strong,.profile-link.primary strong{font-size:19px}.profile-link small{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.profile-link,.profile-link b,.about-github,.footer-links a{transition:none}.profile-link:hover{padding-left:6px}.profile-link:hover b{transform:none}}
