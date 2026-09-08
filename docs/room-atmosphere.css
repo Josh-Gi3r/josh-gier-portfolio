@@ -155,3 +155,56 @@
 @media(max-width:760px) and (orientation:portrait){
   .hotspot-board .marker-label,.hotspot-board:hover .marker-label,.hotspot-board:focus-visible .marker-label { left:0; transform:none; }
 }
+
+/* ---- Mobile UX pass ---- */
+@media(max-width:760px){
+  /* the fixed controls bar sits over the last 50px of every scrolling view */
+  #view{padding-bottom:96px}
+  .tv-feature small,.channel-choice small{font-size:12px}
+  /* the creative tiles are the main content of a case study: give them real height */
+  .creative-tile img{min-height:180px}
+  .creative-tile>span{padding:13px 0 15px}
+}
+@media(max-width:760px) and (orientation:landscape){
+  /* short viewport: the controls bar eats a lot of a 390px-tall screen */
+  #view{padding-bottom:78px}
+  .rotate-hint{display:none}
+}
+
+/* Touch targets key off the POINTER, not the width: a landscape phone is 844px
+   wide, so every max-width breakpoint misses it. 44px is the Apple HIG minimum. */
+@media(pointer:coarse){
+  .site-header nav a{padding:12px 0;margin:-12px 0}
+  .wordmark{display:inline-block;padding:9px 0;margin:-9px 0}
+  .back-link{display:inline-flex;padding:14px 0;margin:-8px 0 12px}
+  .doc-menu>summary,.sound-credits>summary{min-height:44px;min-width:44px;padding:7px 6px}
+  .room-controls button{min-height:44px}
+  .rotate-hint button{width:44px;height:44px;margin:-7px -7px -7px 0}
+  .tv-controls button{min-width:44px;min-height:44px}
+  .room-shortcuts a{padding:11px 0;margin:-11px 0}
+  .index-filters button{min-height:44px;padding:11px 15px}
+  .creative-tile>span{padding:14px 0 16px}
+  .work-row{padding:24px 0}
+}
+@media(pointer:coarse){
+  /* my own links were genuinely too small */
+  .footer-links a{padding:14px 2px;margin:-14px 0}
+  /* the 90s Mac chrome must keep its size: grow only the hit area */
+  .mac-close-box,.mac-zoom-box,.mac-info-trigger,.doc-menu>summary,.sound-credits>summary{position:relative}
+  .mac-close-box::after,.mac-zoom-box::after,.mac-info-trigger::after{content:"";position:absolute;top:50%;left:50%;width:44px;height:44px;transform:translate(-50%,-50%)}
+  .mac-project button,.mac-tab,.mac-desktop button{min-height:40px}
+}
+@media(pointer:coarse){
+  .doc-menu>div a{padding:12px 10px}
+  .mac-project{min-height:46px}
+  .profile-link{padding:22px 6px}
+  .doc-card{padding:24px 22px}
+}
+@media(max-width:760px){
+  /* the control bar must stay on one line at 390px */
+  .room-controls{gap:10px;padding:4px 8px}
+  .room-controls button,.room-controls summary{font-size:12px;white-space:nowrap}
+  #motion-toggle{font-size:0}
+  #motion-toggle span{font-size:14px}
+  .sound-label{font-size:12px}
+}
