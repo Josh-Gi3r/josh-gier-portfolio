@@ -8,8 +8,11 @@ node --check docs/app.js
 node --check docs/data.js
 node --check docs/catalog.js
 node --test screen-geometry.test.js >/dev/null
+# Full DECODE, not a header read: truncated webp files keep a valid RIFF header
+# (they report the right dimensions to file(1) and to the browser) but render
+# as garbage. This is what shipped the broken JEDSTAR/CBRE/Coliseum covers.
 for img in docs/assets/*.webp; do
-  file -b "$img" | grep -q "Web/P" || { echo "NOT A VALID WEBP: $img"; exit 1; }
+  dwebp -quiet "$img" -o /dev/null 2>/dev/null || { echo "CORRUPT/TRUNCATED WEBP: $img"; exit 1; }
 done
 git push origin main
 echo "Deployed. Live at https://josh-gier.com within ~1 minute."
