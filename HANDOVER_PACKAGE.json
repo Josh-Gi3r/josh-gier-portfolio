@@ -3,7 +3,7 @@
   "source_commit": "2f2fe5af98fa0a6d8635a1b025b8f505a83ed93d",
   "source_files": 122,
   "original_source_bytes": 17817295,
-  "production_entry": "dist/index.html",
+  "production_entry": "docs/index.html",
   "source_files_unchanged": true,
   "full_git_history_included": false,
   "audio_backup": [

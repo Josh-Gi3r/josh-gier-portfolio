@@ -4,7 +4,7 @@ The three supplied screenshots showed a mismatched perspective on the room TV an
 
 ## Implementation
 
-- Screen boundaries are measured in the original 1672 × 941 photograph coordinates in `dist/screens.js`.
+- Screen boundaries are measured in the original 1672 × 941 photograph coordinates in `docs/screens.js`.
 - The close-up photo and glass share one aspect-preserving plane. Responsive CSS changes its crop; it does not independently stretch the photograph or place a second screen with unrelated percentages.
 - Curved SVG clipping paths follow the photographed glass edges. Scanlines, reflections and the active UI fill the same surface.
 - The room TV and monitor use four-corner projective mapping, including the text and scanlines. Their masks remain in the room photograph coordinate system.

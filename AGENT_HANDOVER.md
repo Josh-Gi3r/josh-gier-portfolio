@@ -4,7 +4,7 @@
 
 Josh wants the current portfolio put into his GitHub account so he can update it, and connected to **josh-gier.com**. He has paused design changes. Complete the repository and domain setup using the existing site. Do not restart the design or make additional standalone HTML mock-ups.
 
-The accompanying `Josh_Gier_Portfolio_Complete_v6.zip` contains the complete current site source and all 122 Git-tracked files. This is a working website, not a design brief. The production entry point is **`dist/index.html`**.
+The accompanying `Josh_Gier_Portfolio_Complete_v6.zip` contains the complete current site source and all 122 Git-tracked files. This is a working website, not a design brief. The production entry point is **`docs/index.html`**.
 
 The source snapshot is byte-for-byte from commit:
 
@@ -51,16 +51,16 @@ Existing Sites source Git endpoint:
 
 This endpoint is not Josh's GitHub and is not the website URL. It requires a fresh authorized Sites source credential. Its history remains available there if your environment can access it. Do not copy authentication tokens into the new repository, handover or remote URL.
 
-The existing `.openai/hosting.json` selects this project and `dist` as the static directory. **Do not create a second Site.** Use native Sites tools and the applicable hosting skill when operating in an environment that provides them.
+The existing `.openai/hosting.json` selects this project and `docs` as the static directory. **Do not create a second Site.** Use native Sites tools and the applicable hosting skill when operating in an environment that provides them.
 
 ## Run the site locally
 
-This is plain HTML, CSS and browser JavaScript. `dist/` is the authored source and deployed site; it is not disposable build output. No application backend, Railway service or database is required to run this portfolio. The showcased products' full codebases and databases are separate projects and are not part of this ZIP.
+This is plain HTML, CSS and browser JavaScript. `docs/` is the authored source and deployed site; it is not disposable build output. No application backend, Railway service or database is required to run this portfolio. The showcased products' full codebases and databases are separate projects and are not part of this ZIP.
 
 Unzip, open a terminal inside `josh-gier-portfolio`, and use:
 
 ```bash
-python3 -m http.server 4173 --directory dist
+python3 -m http.server 4173 --directory docs
 ```
 
 Then open `http://localhost:4173/`. Serve it from the domain root: assets use paths such as `/assets/bedroom.webp`. Opening the HTML using a `file://` URL or deploying it under an arbitrary subdirectory will not provide a reliable equivalent.
@@ -79,7 +79,7 @@ Use a Node version supported by the locked Vite dependency. Vite is only a devel
 1. Verify the authenticated account is Josh's `Josh-Gi3r` account. Check whether `josh-gier-portfolio` has already been created since this handover.
 2. Create that repository privately if absent and your available authenticated tool supports creation. If it already contains work, inspect it first; do not overwrite it or force-push unrelated history.
 3. If authorized Sites source access is available, cloning the existing Sites repository preserves the original history. Otherwise initialize a new repository from the complete ZIP snapshot and identify the original v6 SHA in the initial commit description.
-4. Include `dist/`, every asset, the lockfile, development files, provenance, licenses, review documentation, DNS documentation and this handover. Keep `node_modules`, local credentials and secret files excluded. The supplied `.gitignore` already excludes `node_modules/` and `.vite/`.
+4. Include `docs/`, every asset, the lockfile, development files, provenance, licenses, review documentation, DNS documentation and this handover. Keep `node_modules`, local credentials and secret files excluded. The supplied `.gitignore` already excludes `node_modules/` and `.vite/`.
 5. Push to `main`, configure the GitHub remote and verify representative files and large binary assets are present. Return the actual repository URL to Josh.
 6. Document how an edit reaches production. A GitHub push does **not** currently trigger a Sites deployment. Do not describe automatic deployment as working until an actual authenticated workflow has been configured and verified.
 
@@ -122,22 +122,22 @@ The hosting provider returned `custom-domains.chatgpt.site.` for subdomain CNAME
 
 | File or directory | Purpose |
 | --- | --- |
-| `dist/index.html` | Production room entry point, navigation, hotspots and audio elements |
-| `dist/app.js` | Main rendering, routing and interactions |
-| `dist/style.css` | Base layout and room styling |
-| `dist/room-atmosphere.css` | Circular invitations, screen glitches, board illumination and atmosphere controls |
-| `dist/screens.js`, `dist/screens.css` | Screen geometry and device framing; preserve the projective fitting |
-| `dist/mac-desktop.js`, `dist/mac-desktop.css` | Finder-style product browser, icons, purpose labels and hover/touch descriptions |
-| `dist/data.js`, `dist/catalog.js` | Base records and expanded campaign/product catalog |
-| `dist/product-details.js`, `dist/open-source.js` | Product explanations, open-source cases and source links |
-| `dist/showcases.js`, `dist/showcase.css`, `dist/editorial.js` | Case-study and product-preview presentation |
-| `dist/sound.js` | Shared opt-in music/rain playback and audio state |
-| `dist/cv.html` | Printable selected-experience CV |
-| `dist/assets/` | Local production images, logos, video, font and font license |
+| `docs/index.html` | Production room entry point, navigation, hotspots and audio elements |
+| `docs/app.js` | Main rendering, routing and interactions |
+| `docs/style.css` | Base layout and room styling |
+| `docs/room-atmosphere.css` | Circular invitations, screen glitches, board illumination and atmosphere controls |
+| `docs/screens.js`, `docs/screens.css` | Screen geometry and device framing; preserve the projective fitting |
+| `docs/mac-desktop.js`, `docs/mac-desktop.css` | Finder-style product browser, icons, purpose labels and hover/touch descriptions |
+| `docs/data.js`, `docs/catalog.js` | Base records and expanded campaign/product catalog |
+| `docs/product-details.js`, `docs/open-source.js` | Product explanations, open-source cases and source links |
+| `docs/showcases.js`, `docs/showcase.css`, `docs/editorial.js` | Case-study and product-preview presentation |
+| `docs/sound.js` | Shared opt-in music/rain playback and audio state |
+| `docs/cv.html` | Printable selected-experience CV |
+| `docs/assets/` | Local production images, logos, video, font and font license |
 | `asset-provenance.json`, `AUDIO_CREDITS.md` | Asset sources and attribution |
 | `screen-geometry.test.js` | Existing screen-fitting regression test |
 
-`dist/room-study.html`, `room-study-portable.html`, their supporting files and `review/room-circles/` are **earlier isolated review studies** retained in source. They are not the accepted production entry point. Do not switch the site to them or send Josh more separate mock-up HTML files.
+`docs/room-study.html`, `room-study-portable.html`, their supporting files and `review/room-circles/` are **earlier isolated review studies** retained in source. They are not the accepted production entry point. Do not switch the site to them or send Josh more separate mock-up HTML files.
 
 ## Preserve the agreed design and portfolio scope
 
@@ -153,11 +153,11 @@ The hosting provider returned `custom-domains.chatgpt.site.` for subdomain CNAME
 
 ## Audio and portability
 
-All production images, the room video and fonts are in the source snapshot. The published `dist/index.html` references two externally hosted MP3s: music and window rain. Their URLs, credits, licenses and modifications are documented in `AUDIO_CREDITS.md`.
+All production images, the room video and fonts are in the source snapshot. The published `docs/index.html` references two externally hosted MP3s: music and window rain. Their URLs, credits, licenses and modifications are documented in `AUDIO_CREDITS.md`.
 
 Both exact processed MP3 files have also been downloaded successfully and are included under `media-backup/`: `night-owl.mp3` and `window-rain.mp3`. `HANDOVER_PACKAGE.json` records their sizes and hashes. The original 122 source files retain their exact published contents; audio URLs have not been silently rewritten.
 
-To make the site independent of that audio host, copy the backup files to `dist/assets/audio/` and change only the two audio `src` attributes in `dist/index.html` to `/assets/audio/night-owl.mp3` and `/assets/audio/window-rain.mp3`. Preserve the credits, levels and opt-in behavior, and verify playback afterwards. This is an optional portability change, not a prerequisite to viewing the current site.
+To make the site independent of that audio host, copy the backup files to `docs/assets/audio/` and change only the two audio `src` attributes in `docs/index.html` to `/assets/audio/night-owl.mp3` and `/assets/audio/window-rain.mp3`. Preserve the credits, levels and opt-in behavior, and verify playback afterwards. This is an optional portability change, not a prerequisite to viewing the current site.
 
 The archive contains the portfolio's code and media, not the full source code or databases of every product it showcases. Its source links point to those separate repositories. Original uploaded research documents are summarized in the site's content and provenance; they are not silently represented as included in this package.
 
@@ -178,8 +178,8 @@ For the handover/import, verify file hashes and ZIP integrity. For deployment, c
 Existing local checks:
 
 ```bash
-node --check dist/app.js
-node --check dist/data.js
+node --check docs/app.js
+node --check docs/data.js
 node --test screen-geometry.test.js
 ```
 

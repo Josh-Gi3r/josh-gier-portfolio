@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  root: 'dist',
+  root: 'docs',
   server: {host: '0.0.0.0', allowedHosts: ['terminal.local']},
   plugins: [{
     name: 'responsive-review',

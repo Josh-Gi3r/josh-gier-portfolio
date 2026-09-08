@@ -7,7 +7,7 @@ The production portfolio is published from the repository's `gh-pages` branch to
 - Source branch: `main`
 - Live GitHub Pages branch: `gh-pages`
 - Custom domain: `josh-gier.com`
-- Production entry point on `main`: `dist/index.html`
+- Production entry point on `main`: `docs/index.html`
 - Production entry point on `gh-pages`: `index.html`
 
 When updating the portfolio, changes in `main/dist` must also be synced into the root of `gh-pages` for them to appear on the live site.

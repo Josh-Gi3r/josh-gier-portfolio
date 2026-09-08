@@ -10,7 +10,7 @@
 ## Computer
 
 - Replaced the Windows title bar, path, Start menu and mixed thumbnails with a classic Macintosh Finder treatment: patterned desktop, striped window titles, matching file icons, folder controls and restrained selection states.
-- All 25 records have a specific purpose label and a one- or two-sentence description in `dist/mac-desktop.js`.
+- All 25 records have a specific purpose label and a one- or two-sentence description in `docs/mac-desktop.js`.
 - Hover after 220 ms and keyboard focus reveal a balloon. Leaving dismisses it after 200 ms; the balloon itself is hoverable. Escape closes the balloon without leaving the computer. Clicking a project opens its case.
 - The information button opens a native modal styled as a Mac information window. This supplies the description and preview to touch users without relying on hover.
 - Pagination exposes every item in each collection, rather than showing only the first six. Phone widths use a compact list, with three items per page, or two below 370 pixels.

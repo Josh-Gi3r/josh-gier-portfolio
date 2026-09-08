@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {projectiveMatrix} from './dist/screens.js';
+import {projectiveMatrix} from './docs/screens.js';
 
 test('all four corners follow the photographed TV at multiple display scales',()=>{
   const source=[[0,0],[400,0],[400,300],[0,300]];

@@ -10,9 +10,9 @@ The computer uses a small Finder-style desktop, folder icons and compact menu/wi
 
 ## Open the prototype
 
-`dist/room-study-portable.html` embeds the room image, font, styles and interaction code. Download and open it in a browser. Hover an object; click to try the zoom; use Back to the room or Escape to return. The Open portfolio link leads to the existing published case-study section. The prototype contains only the room interaction. Music and rain remain opt-in and load from their credited online sources.
+`docs/room-study-portable.html` embeds the room image, font, styles and interaction code. Download and open it in a browser. Hover an object; click to try the zoom; use Back to the room or Escape to return. The Open portfolio link leads to the existing published case-study section. The prototype contains only the room interaction. Music and rain remain opt-in and load from their credited online sources.
 
-Regenerate with `python export-room-study.py`. The development route is `dist/room-study.html`.
+Regenerate with `python export-room-study.py`. The development route is `docs/room-study.html`.
 
 ## Visual checks
 
@@ -27,4 +27,4 @@ Browser transport occasionally timed out on pointer clicks; keyboard activation 
 
 ## Font attribution
 
-ChiKareGo2 is the Chicago 12pt recreation by Giles Booth distributed by [System.css](https://github.com/sakofchit/system.css), pinned to source commit `c95b95428021361eaa411ccb08fa3b1050cc606d`. The included MIT notice is in `dist/assets/chicago-font-license.txt` and embedded in the portable HTML. Only the font is reused; no framework or dependency is installed.
+ChiKareGo2 is the Chicago 12pt recreation by Giles Booth distributed by [System.css](https://github.com/sakofchit/system.css), pinned to source commit `c95b95428021361eaa411ccb08fa3b1050cc606d`. The included MIT notice is in `docs/assets/chicago-font-license.txt` and embedded in the portable HTML. Only the font is reused; no framework or dependency is installed.
