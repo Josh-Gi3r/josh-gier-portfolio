@@ -1,16 +1,15 @@
 const plane=document.querySelector('#room-plane');
 if(plane){
   const selectors=['.hotspot-tv','.hotspot-computer','.hotspot-board','.hotspot-games'];
-  const cueLength=2500;
-  const gap=360;
-  const firstDelay=520;
-  const overviewLength=4200;
-  const reminderDelay=8000;
+  const introDelay=120;
+  const overviewLength=1900;
+  const reminderDelay=6000;
+  const reminderLength=1300;
   let activeCue=null;
   let cueTimer=null;
   let reminderTimer=null;
   let overviewTimer=null;
-  let introTimers=[];
+  let introTimer=null;
   let introRan=false;
   let reminderIndex=0;
 
@@ -26,17 +25,11 @@ if(plane){
   };
 
   const clearOverview=()=>{
-    clearTimeout(overviewTimer);
-    overviewTimer=null;
+    if(overviewTimer){clearTimeout(overviewTimer);overviewTimer=null;}
     plane.classList.remove('room-cue-overview');
   };
 
-  const clearIntro=()=>{
-    introTimers.forEach(clearTimeout);
-    introTimers=[];
-  };
-
-  const showCue=(target,duration=cueLength)=>{
+  const showCue=(target,duration=reminderLength)=>{
     if(!target||!isRoom())return;
     clearOverview();
     clearCue();
@@ -47,17 +40,6 @@ if(plane){
       if(activeCue===target)activeCue=null;
       cueTimer=null;
     },duration);
-  };
-
-  const showOverview=()=>{
-    if(!isRoom())return;
-    clearCue();
-    plane.classList.add('room-cue-overview');
-    overviewTimer=setTimeout(()=>{
-      plane.classList.remove('room-cue-overview');
-      overviewTimer=null;
-      scheduleReminder();
-    },overviewLength);
   };
 
   const scheduleReminder=()=>{
@@ -76,41 +58,48 @@ if(plane){
       if(hotspots.length){
         const target=hotspots[reminderIndex%hotspots.length];
         reminderIndex+=1;
-        showCue(target,1900);
+        showCue(target,reminderLength);
       }
       scheduleReminder();
     },reminderDelay);
+  };
+
+  const showOverview=()=>{
+    if(!isRoom())return;
+    clearCue();
+    plane.classList.add('room-cue-overview');
+    overviewTimer=setTimeout(()=>{
+      plane.classList.remove('room-cue-overview');
+      overviewTimer=null;
+      scheduleReminder();
+    },overviewLength);
   };
 
   const runIntro=()=>{
     if(introRan||!isRoom())return;
     const hotspots=selectors.map(s=>plane.querySelector(s));
     if(hotspots.some(h=>!h)){
-      setTimeout(runIntro,120);
+      introTimer=setTimeout(runIntro,60);
       return;
     }
     introRan=true;
-    clearIntro();
-    hotspots.forEach((target,index)=>{
-      introTimers.push(setTimeout(()=>showCue(target),firstDelay+index*(cueLength+gap)));
-    });
-    const overviewAt=firstDelay+hotspots.length*(cueLength+gap)+250;
-    introTimers.push(setTimeout(showOverview,overviewAt));
+    introTimer=setTimeout(showOverview,introDelay);
   };
 
   const stopWhenAway=()=>{
     if(isRoom()){
-      if(!introRan)setTimeout(runIntro,300);
+      if(!introRan)runIntro();
       else scheduleReminder();
     }else{
+      clearTimeout(introTimer);
+      clearTimeout(reminderTimer);
       clearCue();
       clearOverview();
-      clearTimeout(reminderTimer);
     }
   };
 
-  // A person taking control gets immediate feedback and never has to wait for
-  // the ambient sequence to explain the object.
+  // The visitor should understand every destination immediately. Hover/focus
+  // remains instant confirmation once the short four-label overview is gone.
   plane.addEventListener('pointerover',e=>{
     if(e.target.closest('.hotspot')){
       clearCue();
@@ -124,8 +113,8 @@ if(plane){
     }
   });
 
-  addEventListener('hashchange',()=>setTimeout(stopWhenAway,80));
+  addEventListener('hashchange',()=>setTimeout(stopWhenAway,50));
   document.addEventListener('visibilitychange',stopWhenAway);
 
-  setTimeout(runIntro,180);
+  runIntro();
 }
