@@ -1,0 +1,68 @@
+/* Mobile-only refinement layer. Desktop (>= 761px) is intentionally untouched. */
+@media (max-width:760px) {
+  /* The desktop utilities tray is too prominent on phones. Keep only compact
+     atmosphere + document controls and remove soundtrack credits from mobile. */
+  .sound-credits { display:none !important; }
+
+  .room-controls {
+    left:auto;
+    right:12px;
+    bottom:max(10px, env(safe-area-inset-bottom));
+    width:auto;
+    max-width:calc(100vw - 24px);
+    gap:3px;
+    padding:4px 6px;
+    border-radius:999px;
+    background:rgba(15,22,23,.78);
+    border:1px solid rgba(255,255,255,.18);
+    box-shadow:0 8px 24px rgba(0,0,0,.28);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+
+  .away .room-controls { right:12px; }
+
+  /* Audio starts from the visitor's first gesture already. The equalizer is
+     enough visual feedback; do not occupy the page with Sound off/loading/on. */
+  #sound-toggle {
+    width:44px;
+    min-width:44px;
+    min-height:40px;
+    padding:0;
+    justify-content:center;
+  }
+  .sound-label { display:none; }
+  .sound-bars { width:20px; height:18px; justify-content:center; }
+
+  /* Motion remains available in the room, but as a quiet icon-only control. */
+  #motion-toggle {
+    width:40px;
+    min-width:40px;
+    min-height:40px;
+    padding:0;
+    justify-content:center;
+  }
+
+  /* Keep downloads accessible without making "Documents" a permanent headline. */
+  .doc-menu > summary {
+    min-height:40px;
+    padding:0 10px;
+    gap:5px;
+    font-size:0;
+    white-space:nowrap;
+  }
+  .doc-menu > summary::before {
+    content:'Docs';
+    font:12px/1 Arial,Helvetica,sans-serif;
+    letter-spacing:.1px;
+  }
+  .doc-menu > summary span { font-size:13px; }
+  .doc-menu > div {
+    right:-2px;
+    bottom:calc(100% + 10px);
+    width:min(260px,calc(100vw - 24px));
+  }
+
+  /* The smaller tray no longer needs the old 96px content reserve. */
+  #view { padding-bottom:72px; }
+}
