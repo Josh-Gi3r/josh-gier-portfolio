@@ -1,6 +1,6 @@
-/* Editorial cleanup layer.
-   The portfolio has accumulated copy from several builds and agents. This file
-   keeps the visible voice direct, specific and human without changing layout. */
+/* Portfolio-wide editorial cleanup.
+   Keep the voice direct, specific and human. State what happened; do not sound
+   defensive, over-explain the build process or narrate agent orchestration. */
 
 const exact = new Map([
   // Site chrome and section labels
@@ -8,13 +8,15 @@ const exact = new Map([
   ['THE PROJECT DIRECTORY','PROJECTS'],
   ['TAKE THE DOCUMENTS','CV & PORTFOLIO'],
   ['WHY IT EXISTS','THE PROBLEM'],
-  ['The user need.','What needed fixing.'],
+  ['The user need.','The problem.'],
   ['Every capability.','Key features.'],
   ['BUILT WITH','TECH'],
-  ['WHAT PROVES IT','PROOF'],
+  ['WHAT PROVES IT','BUILT & SHIPPED'],
+  ['PROOF','BUILT & SHIPPED'],
+  ['Proof','Built & shipped'],
   ['WHY OPEN SOURCE','OPEN SOURCE'],
   ['THE COMMERCIAL LOGIC','BUSINESS MODEL'],
-  ['The evidence','Proof'],
+  ['The evidence','Built & shipped'],
   ['How it was built','Build'],
   ['Built on','Tech'],
   ['Campaign formats.','Selected formats.'],
@@ -36,22 +38,31 @@ const exact = new Map([
   ['Products, open-source releases and experiments.','Products, open-source software and experiments.'],
   ['See what each does, how it works and my contribution.','Work I built, led or released, with the details behind each project.'],
   ['Every campaign, the revenue record and the product work in detail.','Campaigns, products and commercial results in one file.'],
+  ['Campaign / company source','Source'],
 
-  // The exact phrases that triggered this pass
-  ['The engineering is open to inspect.','Open-source work, with the code on GitHub.'],
-  ['Ninety repositories. The engineering is open to inspect.','Open-source products, prototypes and the code behind the work.'],
-  ['I build and share developer tools, document software, banking references and community systems. Each project explains its purpose, my contribution and where to inspect the source.','I open-source selected products and tools so you can see what I built, run them yourself and read the code.'],
+  // Phrases that sounded defensive or machine-written
+  ['The engineering is open to inspect.','Selected products are open source on GitHub.'],
+  ['Open-source work, with the code on GitHub.','Selected products are open source on GitHub.'],
+  ['Ninety repositories. The engineering is open to inspect.','Open-source products, prototypes and source code on GitHub.'],
+  ['Open-source products, prototypes and the code behind the work.','Open-source products, prototypes and source code on GitHub.'],
+  ['I build and share developer tools, document software, banking references and community systems. Each project explains its purpose, my contribution and where to inspect the source.','I open-source selected products and tools so you can run them, read the code and see exactly what I built.'],
+  ['I open-source selected products and tools so you can see what I built, run them yourself and read the code.','I open-source selected products and tools so you can run them, read the code and see exactly what I built.'],
 
-  // Product copy: remove abstract/process-heavy language where it obscures the point
+  // Product pages: say what the product is and what Josh did, not the internal agent process
   ['One graded view of 500+ stablecoins for issuers, regulators, banks and payment companies, published daily by an agent pipeline and readable as a public API or an MCP server.','Stablecoin news, research and safety grades for 500+ assets, with a public API and MCP server.'],
   ['Stablecoin information sits in scattered news, issuer disclosures, regulator notices and market datasets, and none of it grades an asset. NextCurrency reads that market, writes about it every day, publishes it, and turns the reader into a scored account.','Stablecoin information is scattered across issuers, regulators, market data and news. NextCurrency brings it together, grades 500+ assets and publishes daily reporting for people working in payments.'],
+  ['A publishing system and a research database built as one product: monitoring, drafting and publishing agents on one side, safety grades, indices and corridor data on the other, with the same content available to people and to machines.','NextCurrency combines a daily publication with a stablecoin research database. The same underlying data powers the site, safety grades, indices, API and MCP server.'],
   ['Wrote the specification, data model and agent architecture. Cut release one to monitoring, drafting and publishing, shipped scoring and the CRM handoff in release two, and ran the build in two-week sprints from discovery to live in under eight weeks. Model routing runs cheap extraction and expensive drafting on different models, and a golden-set eval scores every draft for factual grounding and named-entity accuracy against a hand-verified reference set before publication, with anything below threshold going to human review.','I defined the product, data model, editorial workflow and commercial attribution, launched it in under eight weeks and continue to run the publishing and growth system. Automated drafts are checked against a verified reference set before publication, with low-confidence work sent to human review.'],
   ['Daily coverage with no editorial headcount, at a draft rejection rate under 10%. It earns five figures of monthly recurring sponsorship revenue at software-level gross margin and is the largest single source of issuer sales-qualified leads for Sera.','NextCurrency earns five figures in monthly sponsorship revenue and is Sera’s largest source of issuer-qualified leads. Automated drafts have a rejection rate below 10%.'],
 
+  ['A consumer distribution surface for prediction and FX activity, with the wallet, the markets and the yield in one place rather than three. The preview on this page demonstrates the experience; it does not place orders or connect a wallet.','4Sight brings prediction markets, stablecoin swaps and yield into one consumer app. The preview is a demo and does not place orders or connect a wallet.'],
+
+  ['A shopper will not enquire about a piece they cannot picture on themselves, and a merchant with beautiful product photography still has no way to turn it into a conversation. Both sides of that gap are the product.','Shoppers want to see how a piece looks before they enquire. Merchants need those browsing and try-on moments to turn into real sales conversations.'],
+  ['Design the consumer and merchant journeys as one loop. Discovery and try-on create a qualified enquiry; the merchant studio receives it with the product context already attached.','LaMuse connects discovery, virtual try-on and the merchant inbox. An enquiry reaches the merchant with the product already attached.'],
   ['Product direction and the build on Next.js 16, React 19 and Prisma 7 on Postgres, with Auth.js, the OpenAI SDK and Playwright, and an Expo shell for the app stores. The repository carries a written control plane for Codex, Claude Code, Grok and a Buzz agent squad: named roles, per-agent inboxes, file ownership, handoff and review packets, and a rule that only the active driver may edit application code.','I led the product direction and build across the shopper experience, virtual try-on and merchant tools. The product runs on Next.js, React and Postgres, with an Expo shell for mobile and Playwright coverage for the core flows.'],
 
   ['A self-hostable neobank stack for teams building banking or embedded-finance products: a tenant-isolated API with 181 documented operations on a double-entry ledger, a provider-neutral FX runtime and Solidity atomic-settlement contracts.','An open-source neobank stack with a double-entry ledger, 181 documented API operations, FX support and atomic-settlement contracts.'],
-  ['Wrote the platform scope and the ledger invariants, and built it as a pnpm monorepo of twelve packages that runs on Node with SQLite or on Cloudflare Workers with Durable Objects. The Builder Agent runs on Cloudflare’s agents SDK with Kimi K2.6 on Workers AI, behind a daily quota, a rate limit and an operator kill switch. The Solidity atomic-settlement contracts are tested with Foundry and the API is documented through Redocly.','I defined the banking model and ledger rules, then built the twelve-package open-source stack for Node and Cloudflare Workers. It includes the banking API, FX runtime, sandbox builder, documented OpenAPI surface and Foundry-tested settlement contracts.'],
+  ['Wrote the platform scope and the ledger invariants, and built it as a pnpm monorepo of twelve packages that runs on Node with SQLite or on Cloudflare Workers with Durable Objects. The Builder Agent runs on Cloudflare’s agents SDK with Kimi K2.6 on Workers AI, behind a daily quota, a rate limit and an operator kill switch. The Solidity atomic-settlement contracts are tested with Foundry and the API is documented through Redocly.','I defined the banking model and ledger rules, then built the twelve-package open-source stack for Node and Cloudflare Workers. It includes the banking API, FX runtime, sandbox builder, documented OpenAPI interface and Foundry-tested settlement contracts.'],
   ['Released under MIT so a team can self-host the whole stack, read every operation and replace any provider. The governance files and adapter standards exist so that other people can build on it without asking.','Released under MIT. Teams can self-host it, extend the API and replace providers without being locked to a vendor.'],
 
   ['An autonomous marketing officer for a single small business: nineteen workspaces and twelve named AI staff roles that turn approved brand truth into campaigns, editable content, exact-version approvals, verified publishing, measured outcomes and governed learning, under human supervision.','A marketing operating system for small businesses: plan campaigns, create content, approve exact versions, publish and measure results with AI-assisted workflows under human control.'],
@@ -60,7 +71,13 @@ const exact = new Map([
   ['One small business gets the output of a marketing department and keeps the approval. Three satellite tools are live at runyours.ai subdomains, and live publishing and billing acceptance are still outstanding.','Designed as a subscription product for small businesses that need consistent marketing execution without building an internal team. Three supporting tools are already live; publishing and billing are still being completed.'],
 
   ['A workplace brain for corporate real estate consultants: a written brief goes in and a typed, reproducible space programme comes out, with a 40-screen consultant cockpit around it.','A workplace planning tool for corporate real estate teams. It turns a written brief into a repeatable space programme and lets consultants compare scenarios in one workspace.'],
-  ['Specified the engine and the cockpit and built them with six multi-agent workflow scripts with named roles. The engine runs on Python, FastAPI, Pydantic 2, SQLite and pytest; the cockpit on Vite, React and TypeScript with Playwright over a Protomaps basemap. Backed by 1,000+ backend and 200+ frontend tests, 12 ADRs including one for an MCP command contract, 27 audit documents and a CI continuation gate. A written retrospective records that breadth-first agent swarms produced a large, shallow application, and proposes a quality-first mode instead.','I defined the planning model and the consultant interface, then led the build across Python/FastAPI and React/TypeScript. The prototype has more than 1,200 automated tests and keeps the planning calculation separate from the AI adviser.'],
+  ['Specified the engine and the cockpit and built them with six multi-agent workflow scripts with named roles. The engine runs on Python, FastAPI, Pydantic 2, SQLite and pytest; the cockpit on Vite, React and TypeScript with Playwright over a Protomaps basemap. Backed by 1,000+ backend and 200+ frontend tests, 12 ADRs including one for an MCP command contract, 27 audit documents and a CI continuation gate. A written retrospective records that breadth-first agent swarms produced a large, shallow application, and proposes a quality-first mode instead.','I defined the planning model and consultant interface, then led the build across Python/FastAPI and React/TypeScript. The prototype has more than 1,200 automated tests and keeps the planning calculation separate from the AI adviser.'],
+
+  ['A brokerage operating system: 38 surfaces linking market intelligence, CRM, property work, content production, campaigns, deals, recruitment and staff development, with six scripted persona journeys from broker to leadership.','A brokerage operating system with 38 screens covering research, CRM, property work, content, campaigns, deals, recruitment and staff development.'],
+  ['Built for a named enterprise prospect as a working argument rather than a deck. Better property content attracts demand, helps agents win instructions, and gives the agency a stronger recruiting and operating proposition.','Built as a working prototype for a named enterprise prospect. It connects property content to enquiries, instructions, deals and the wider brokerage workflow.'],
+
+  ['An agent that needs to move value between currencies has no defined tool to do it, so the step falls back to a human. This makes stablecoin FX a callable capability with a clear contract.','AI agents that need to convert between stablecoins usually hand the step back to a person. Sera exposes FX as a defined tool with clear inputs and outputs.'],
+  ['Integration-led distribution: the capability reaches the end user through the agent products that adopt it, rather than through a consumer interface.','Sera for Agents is distributed through developer integrations rather than a separate consumer app.'],
 
   ['Product scope, the dashboard experience and the provider adapter boundary, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged for release.','I defined the product, dashboard and data-provider interface, then packaged the working front end for open-source release.'],
   ['Product scope, the graph model and the shortest-path interaction, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then packaged for release.','I defined the product, graph model and shortest-path interaction, then packaged it for open-source release.'],
@@ -70,6 +87,9 @@ const exact = new Map([
   ['Wrote the escrow design, the seven numbered invariants and the working rules recorded for future agents in the private product, then released the brand-stripped, credential-free copy under MIT with the settlement layer left as configuration.','I designed the escrow and signing flows, built the Telegram client, then released a brand-neutral MIT version with settlement left configurable.'],
   ['Built the programme for Sera against a written build bible and scraping spec, with Manus dev-agent commits and Claude Code branches, including the Token2049 Evangelist cohort scored on content quality and real reach. The MIT template keeps the AI back-ends.','I designed and built Sera’s ambassador programme, including activity scoring, rank progression and the content studio, then released a reusable MIT version.'],
   ['Product scope, the marketplace and booking experience and the simulated token ledger, built with an agent team on named, bounded roles with an adversarial verification pass before merge, then brand-stripped and packaged for release as the MIT copy of Creator Services.','I defined the marketplace, booking flow and creator dashboard, then packaged the product as an MIT reference app with the token ledger clearly marked as simulated.'],
+  ['A written scope with its invariants, then an agent team on named, bounded roles building in parallel lanes, with an adversarial verification pass before anything merged.','Built from a written product scope and released as a reviewed open-source project.'],
+  ['Built by an agent team on named, bounded roles with an adversarial verification pass before merge','Source and release history are public on GitHub'],
+  ['Seven numbered invariants and the owner’s working rules recorded for the agents that come next','Seven settlement and safety rules documented in the repository'],
 
   // Campaign copy that read like internal strategy language rather than portfolio copy
   ['Built NextCurrency as a stablecoin news, research and market-intelligence product that also acts as a commercial acquisition engine for Sera.','Built NextCurrency as a stablecoin news and market-intelligence publication that also generates qualified leads for Sera.'],
@@ -87,7 +107,12 @@ const regex = [
   [/^Inspect full image(\s*↗)?$/i,'View full image$1'],
   [/^Inspect the interface(\s*↗)?$/i,'View interface$1'],
   [/^Inspect developer experience(\s*↗)?$/i,'View developer experience$1'],
-  [/^Inspect FX experience(\s*↗)?$/i,'View FX experience$1']
+  [/^Inspect FX experience(\s*↗)?$/i,'View FX experience$1'],
+  [/grounded FX assistant/gi,'FX assistant'],
+  [/bounded trade-on-behalf agent/gi,'trade-on-behalf agent limited to defined actions'],
+  [/named, bounded roles/gi,'defined roles'],
+  [/adversarial verification pass/gi,'review pass'],
+  [/written control plane/gi,'documented delivery workflow']
 ];
 
 function rewrite(value){
@@ -117,8 +142,8 @@ function polishText(root){
   const scope=root.querySelectorAll?root:document;
   scope.querySelectorAll?.('[aria-label],[title]').forEach(el=>{
     for(const attr of ['aria-label','title']){
-      const value=el.getAttribute(attr); if(!value)continue;
-      const next=rewrite(value); if(next!==value)el.setAttribute(attr,next);
+      const value=el.getAttribute(attr);if(!value)continue;
+      const next=rewrite(value);if(next!==value)el.setAttribute(attr,next);
     }
   });
 }
