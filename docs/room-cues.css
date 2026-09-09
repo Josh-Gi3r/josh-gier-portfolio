@@ -1,6 +1,7 @@
 /* Coordinated room discovery cues.
    The photographed screens remain untouched. The room explains itself quickly:
-   all four destinations appear together, then the labels get out of the way. */
+   all four destinations appear together, then the labels get out of the way.
+   The hotspot circles remain visible so the room never becomes a set of hidden links. */
 
 .hotspot-tv .marker-label,
 .hotspot-computer .marker-label,
@@ -12,13 +13,18 @@
   pointer-events:none;
 }
 
-/* Idle state: no unexplained rings floating over the photograph. */
+/* Idle state: keep a quiet, recognisable button on every interactive object.
+   Labels are transient, but the circles remain so a first-time visitor can tell
+   immediately that the TV, computer, board and PlayStation are clickable. */
 .hotspot-tv .marker-ring,
 .hotspot-computer .marker-ring,
 .hotspot-board .marker-ring,
 .hotspot-games .marker-ring{
-  opacity:0;
-  transform:scale(.72);
+  opacity:.78;
+  transform:scale(1);
+  background:rgba(21,26,24,.10);
+  border-color:rgba(244,239,219,.88);
+  box-shadow:0 0 0 3px rgba(255,244,213,.05),0 0 11px rgba(255,244,213,.19);
   transition:opacity .14s ease,transform .18s ease,background .18s ease,box-shadow .18s ease;
 }
 
@@ -52,7 +58,7 @@
 
 /* First impression: all four destinations light together immediately. */
 .room-cue-overview .hotspot .marker-ring{
-  opacity:.94;
+  opacity:.98;
   transform:scale(1.02);
   background:#e7ba73;
   border-color:#fff0c8;
@@ -64,15 +70,15 @@
 }
 
 @keyframes room-cue-ring{
-  0%{background:rgba(21,26,24,.13);transform:scale(.82);box-shadow:0 0 8px rgba(255,244,213,.15)}
+  0%{background:rgba(21,26,24,.13);transform:scale(.9);box-shadow:0 0 8px rgba(255,244,213,.15)}
   55%{background:#f2c879;transform:scale(1.24);box-shadow:0 0 0 4px rgba(242,200,121,.28),0 0 25px rgba(242,200,121,.82)}
   100%{background:#e7ba73;transform:scale(1.14);box-shadow:0 0 0 7px rgba(231,186,115,.10),0 0 20px rgba(231,186,115,.62)}
 }
 
 @keyframes room-overview-ring{
-  0%{opacity:0;transform:scale(.72);box-shadow:none}
+  0%{opacity:.78;transform:scale(1);box-shadow:0 0 11px rgba(255,244,213,.19)}
   58%{opacity:1;transform:scale(1.16);box-shadow:0 0 0 5px rgba(242,200,121,.25),0 0 25px rgba(242,200,121,.76)}
-  100%{opacity:.94;transform:scale(1.02);box-shadow:0 0 0 5px rgba(231,186,115,.14),0 0 18px rgba(231,186,115,.56)}
+  100%{opacity:.98;transform:scale(1.02);box-shadow:0 0 0 5px rgba(231,186,115,.14),0 0 18px rgba(231,186,115,.56)}
 }
 
 /* TV and PlayStation live on the right side of the room, so their labels open
@@ -158,6 +164,14 @@
   .hotspot-computer .marker-label{
     left:calc(100% + 8px) !important;
     right:auto !important;
+  }
+
+  /* On phones the idle buttons need a touch more presence than desktop. */
+  .hotspot-tv .marker-ring,
+  .hotspot-computer .marker-ring,
+  .hotspot-board .marker-ring,
+  .hotspot-games .marker-ring{
+    opacity:.9;
   }
 
   .hotspot.is-cued .marker-ring{transform:scale(1.16);}
