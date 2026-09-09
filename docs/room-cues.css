@@ -1,7 +1,6 @@
 /* Coordinated room discovery cues.
-   The photographed screens remain untouched. The hotspot itself only becomes
-   visually prominent when its label is present, so visitors never see four
-   unexplained circles with no context. */
+   The photographed screens remain untouched. The room explains itself quickly:
+   all four destinations appear together, then the labels get out of the way. */
 
 .hotspot-tv .marker-label,
 .hotspot-computer .marker-label,
@@ -13,14 +12,14 @@
   pointer-events:none;
 }
 
-/* Idle state: keep the room clean. A ring without a label is ambiguous. */
+/* Idle state: no unexplained rings floating over the photograph. */
 .hotspot-tv .marker-ring,
 .hotspot-computer .marker-ring,
 .hotspot-board .marker-ring,
 .hotspot-games .marker-ring{
   opacity:0;
   transform:scale(.72);
-  transition:opacity .18s ease,transform .22s ease,background .2s ease,box-shadow .2s ease;
+  transition:opacity .14s ease,transform .18s ease,background .18s ease,box-shadow .18s ease;
 }
 
 .hotspot.is-cued .marker-label,
@@ -33,7 +32,8 @@
 
 .hotspot.is-cued .marker-ring,
 .hotspot:hover .marker-ring,
-.hotspot:focus-visible .marker-ring{
+.hotspot:focus-visible .marker-ring,
+.room-cue-overview .hotspot .marker-ring{
   opacity:1;
 }
 
@@ -45,28 +45,34 @@
 .hotspot.is-cued .marker-ring{
   background:#e7ba73;
   border-color:#fff0c8;
-  transform:scale(1.16);
-  box-shadow:0 0 0 6px rgba(231,186,115,.18),0 0 24px rgba(231,186,115,.72);
-  animation:room-cue-ring .62s cubic-bezier(.2,.75,.2,1) both;
+  transform:scale(1.14);
+  box-shadow:0 0 0 6px rgba(231,186,115,.18),0 0 22px rgba(231,186,115,.68);
+  animation:room-cue-ring .46s cubic-bezier(.2,.75,.2,1) both;
 }
 
-/* After the one-at-a-time introduction, hold a short overview so a first-time
-   visitor can map all four destinations at once. This is transient, not signage. */
+/* First impression: all four destinations light together immediately. */
 .room-cue-overview .hotspot .marker-ring{
-  opacity:.86;
-  transform:scale(.98);
-  background:rgba(231,186,115,.86);
+  opacity:.94;
+  transform:scale(1.02);
+  background:#e7ba73;
   border-color:#fff0c8;
-  box-shadow:0 0 0 4px rgba(231,186,115,.10),0 0 16px rgba(231,186,115,.46);
+  box-shadow:0 0 0 5px rgba(231,186,115,.14),0 0 18px rgba(231,186,115,.56);
+  animation:room-overview-ring .5s cubic-bezier(.2,.75,.2,1) both;
 }
 .room-cue-overview .hotspot .marker-label{
-  opacity:.94;
+  opacity:.98;
 }
 
 @keyframes room-cue-ring{
-  0%{background:rgba(21,26,24,.13);transform:scale(.82);box-shadow:0 0 10px rgba(255,244,213,.17)}
-  45%{background:#f2c879;transform:scale(1.3);box-shadow:0 0 0 4px rgba(242,200,121,.32),0 0 28px rgba(242,200,121,.88)}
-  100%{background:#e7ba73;transform:scale(1.16);box-shadow:0 0 0 8px rgba(231,186,115,.12),0 0 22px rgba(231,186,115,.65)}
+  0%{background:rgba(21,26,24,.13);transform:scale(.82);box-shadow:0 0 8px rgba(255,244,213,.15)}
+  55%{background:#f2c879;transform:scale(1.24);box-shadow:0 0 0 4px rgba(242,200,121,.28),0 0 25px rgba(242,200,121,.82)}
+  100%{background:#e7ba73;transform:scale(1.14);box-shadow:0 0 0 7px rgba(231,186,115,.10),0 0 20px rgba(231,186,115,.62)}
+}
+
+@keyframes room-overview-ring{
+  0%{opacity:0;transform:scale(.72);box-shadow:none}
+  58%{opacity:1;transform:scale(1.16);box-shadow:0 0 0 5px rgba(242,200,121,.25),0 0 25px rgba(242,200,121,.76)}
+  100%{opacity:.94;transform:scale(1.02);box-shadow:0 0 0 5px rgba(231,186,115,.14),0 0 18px rgba(231,186,115,.56)}
 }
 
 /* TV and PlayStation live on the right side of the room, so their labels open
@@ -107,17 +113,15 @@
   transform:translate(0,-50%);
 }
 
-/* When About & CV is introduced, let the existing board illumination join the
-   cue. No new artwork or screen treatment is added. */
-.room-plane:has(.hotspot-board.is-cued) .board-illumination{
+/* The existing board illumination joins the About cue. */
+.room-plane:has(.hotspot-board.is-cued) .board-illumination,
+.room-plane.room-cue-overview .board-illumination{
   animation:none;
-  opacity:.68;
-  transition:opacity .28s ease;
+  opacity:.65;
+  transition:opacity .22s ease;
 }
 
 @media(max-width:760px){
-  /* Undo the old permanent cork-board wording. Every object now follows the
-     same transient discovery pattern. */
   .hotspot-board .marker-label{
     opacity:0 !important;
     visibility:hidden !important;
@@ -156,17 +160,12 @@
     right:auto !important;
   }
 
-  .hotspot.is-cued .marker-ring{
-    transform:scale(1.2);
-  }
-
-  .room-cue-overview .hotspot .marker-ring{
-    opacity:.9;
-    transform:scale(1.02);
-  }
+  .hotspot.is-cued .marker-ring{transform:scale(1.16);}
+  .room-cue-overview .hotspot .marker-ring{transform:scale(1.04);}
 }
 
 @media(prefers-reduced-motion:reduce){
-  .hotspot.is-cued .marker-ring{animation:none;}
+  .hotspot.is-cued .marker-ring,
+  .room-cue-overview .hotspot .marker-ring{animation:none;}
   .marker-label{transition:none;}
 }
