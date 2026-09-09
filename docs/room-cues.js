@@ -1,13 +1,15 @@
 const plane=document.querySelector('#room-plane');
 if(plane){
   const selectors=['.hotspot-tv','.hotspot-computer','.hotspot-board','.hotspot-games'];
-  const cueLength=1850;
-  const gap=520;
-  const firstDelay=950;
-  const reminderDelay=11500;
+  const cueLength=2500;
+  const gap=360;
+  const firstDelay=520;
+  const overviewLength=4200;
+  const reminderDelay=8000;
   let activeCue=null;
   let cueTimer=null;
   let reminderTimer=null;
+  let overviewTimer=null;
   let introTimers=[];
   let introRan=false;
   let reminderIndex=0;
@@ -23,9 +25,39 @@ if(plane){
     activeCue=null;
   };
 
+  const clearOverview=()=>{
+    clearTimeout(overviewTimer);
+    overviewTimer=null;
+    plane.classList.remove('room-cue-overview');
+  };
+
   const clearIntro=()=>{
     introTimers.forEach(clearTimeout);
     introTimers=[];
+  };
+
+  const showCue=(target,duration=cueLength)=>{
+    if(!target||!isRoom())return;
+    clearOverview();
+    clearCue();
+    activeCue=target;
+    target.classList.add('is-cued');
+    cueTimer=setTimeout(()=>{
+      target.classList.remove('is-cued');
+      if(activeCue===target)activeCue=null;
+      cueTimer=null;
+    },duration);
+  };
+
+  const showOverview=()=>{
+    if(!isRoom())return;
+    clearCue();
+    plane.classList.add('room-cue-overview');
+    overviewTimer=setTimeout(()=>{
+      plane.classList.remove('room-cue-overview');
+      overviewTimer=null;
+      scheduleReminder();
+    },overviewLength);
   };
 
   const scheduleReminder=()=>{
@@ -36,7 +68,7 @@ if(plane){
         return;
       }
       const interactive=plane.querySelector('.hotspot:hover,.hotspot:focus-visible');
-      if(interactive){
+      if(interactive||plane.classList.contains('room-cue-overview')){
         scheduleReminder();
         return;
       }
@@ -44,22 +76,10 @@ if(plane){
       if(hotspots.length){
         const target=hotspots[reminderIndex%hotspots.length];
         reminderIndex+=1;
-        showCue(target,1600);
+        showCue(target,1900);
       }
       scheduleReminder();
     },reminderDelay);
-  };
-
-  const showCue=(target,duration=cueLength)=>{
-    if(!target||!isRoom())return;
-    clearCue();
-    activeCue=target;
-    target.classList.add('is-cued');
-    cueTimer=setTimeout(()=>{
-      target.classList.remove('is-cued');
-      if(activeCue===target)activeCue=null;
-      cueTimer=null;
-    },duration);
   };
 
   const runIntro=()=>{
@@ -72,34 +92,40 @@ if(plane){
     introRan=true;
     clearIntro();
     hotspots.forEach((target,index)=>{
-      const id=setTimeout(()=>showCue(target),firstDelay+index*(cueLength+gap));
-      introTimers.push(id);
+      introTimers.push(setTimeout(()=>showCue(target),firstDelay+index*(cueLength+gap)));
     });
-    const end=firstDelay+hotspots.length*(cueLength+gap)+1200;
-    introTimers.push(setTimeout(scheduleReminder,end));
+    const overviewAt=firstDelay+hotspots.length*(cueLength+gap)+250;
+    introTimers.push(setTimeout(showOverview,overviewAt));
   };
 
   const stopWhenAway=()=>{
     if(isRoom()){
-      if(!introRan)setTimeout(runIntro,500);
+      if(!introRan)setTimeout(runIntro,300);
       else scheduleReminder();
     }else{
       clearCue();
+      clearOverview();
       clearTimeout(reminderTimer);
     }
   };
 
-  // Hover and keyboard focus are immediate confirmation, independent of the
-  // ambient teaching sequence. A user taking control cancels the current cue.
+  // A person taking control gets immediate feedback and never has to wait for
+  // the ambient sequence to explain the object.
   plane.addEventListener('pointerover',e=>{
-    if(e.target.closest('.hotspot'))clearCue();
+    if(e.target.closest('.hotspot')){
+      clearCue();
+      clearOverview();
+    }
   });
   plane.addEventListener('focusin',e=>{
-    if(e.target.closest('.hotspot'))clearCue();
+    if(e.target.closest('.hotspot')){
+      clearCue();
+      clearOverview();
+    }
   });
 
   addEventListener('hashchange',()=>setTimeout(stopWhenAway,80));
   document.addEventListener('visibilitychange',stopWhenAway);
 
-  setTimeout(runIntro,220);
+  setTimeout(runIntro,180);
 }
