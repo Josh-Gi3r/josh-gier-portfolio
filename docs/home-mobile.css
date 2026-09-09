@@ -1,0 +1,64 @@
+/* Mobile home balance: keep the editorial copy low, but make navigation discoverable.
+   This layer intentionally affects only the room homepage on phones. */
+@media(max-width:760px){
+  body[data-view="room"]{min-height:calc(100svh + 210px)}
+  body[data-view="room"] #main{min-height:calc(100svh + 210px)}
+  body[data-view="room"] .home{min-height:calc(100svh + 210px)}
+
+  /* The previous 70–74svh start looked good editorially, but pushed every
+     shortcut completely below the fold. Bring the copy up only enough to let
+     the first navigation row peek into the initial view. */
+  body[data-view="room"] .room-title{
+    margin:64svh 20px 0;
+  }
+  body[data-view="room"] .room-title h1{
+    font-size:clamp(36px,10.5vw,43px);
+    line-height:1.01;
+    margin-bottom:12px;
+  }
+  body[data-view="room"] .room-title>p:last-child{
+    font-size:14px;
+    line-height:1.48;
+  }
+
+  /* Four destinations, readable at a glance. Two columns avoids tiny labels
+     while keeping the first row visible without forcing the hero copy upward. */
+  body[data-view="room"] .room-shortcuts{
+    position:relative;
+    left:auto;
+    right:auto;
+    bottom:auto;
+    margin:18px 20px 72px;
+    padding-top:0;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:0;
+    border-top:1px solid var(--line);
+  }
+  body[data-view="room"] .room-shortcuts a{
+    min-width:0;
+    padding:14px 12px 15px 0;
+    border-bottom:1px solid var(--line);
+    font-size:15px;
+    line-height:1.25;
+  }
+  body[data-view="room"] .room-shortcuts a:nth-child(even){
+    padding-left:16px;
+    border-left:1px solid var(--line);
+  }
+  body[data-view="room"] .room-shortcuts span{
+    display:block;
+    margin:0 0 4px;
+    font-size:11px;
+  }
+}
+
+@media(max-width:430px){
+  body[data-view="room"] .room-title{margin-top:65svh}
+}
+
+@media(max-width:370px){
+  body[data-view="room"] .room-title{margin-top:66svh}
+  body[data-view="room"] .room-title h1{font-size:36px}
+  body[data-view="room"] .room-shortcuts a{font-size:14px}
+}
