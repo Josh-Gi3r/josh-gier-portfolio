@@ -98,3 +98,16 @@
   .room-title{bottom:150px}
   .mobile-menu nav strong{font-size:24px}
 }
+
+/* Mobile home: do not squeeze the entire experience into one screen. Let the
+   room breathe, start the editorial copy near the lower edge of the first view,
+   and let the shortcuts sit naturally below it with a small, intentional scroll. */
+@media(max-width:760px){
+  body[data-view="room"]{min-height:calc(100svh + 320px)}
+  body[data-view="room"] #main{min-height:calc(100svh + 320px)}
+  body[data-view="room"] .home{position:absolute;inset:0 0 auto;min-height:calc(100svh + 320px)}
+  body[data-view="room"] .room-title{position:relative;left:auto;right:auto;bottom:auto;margin:70svh 20px 0}
+  body[data-view="room"] .room-shortcuts{position:relative;left:auto;right:auto;bottom:auto;margin:38px 20px 68px}
+}
+@media(max-width:430px){body[data-view="room"] .room-title{margin-top:72svh}}
+@media(max-width:370px){body[data-view="room"] .room-title{margin-top:74svh}}
