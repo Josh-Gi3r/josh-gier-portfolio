@@ -95,6 +95,7 @@
    section in normal document flow. Nothing is squeezed into one viewport. */
 @media(max-width:760px){
   body[data-view="room"]{
+    --mobile-room-height:max(100svh,620px);
     min-height:100%;
     overflow-x:hidden;
     background:#10120f;
@@ -111,7 +112,7 @@
   body[data-view="room"] .room{
     position:absolute;
     inset:0 0 auto;
-    height:max(100svh,620px);
+    height:var(--mobile-room-height);
     min-height:0;
     overflow:hidden;
   }
@@ -125,8 +126,10 @@
     position:relative;
     inset:auto;
     min-height:0;
-    padding-top:max(100svh,620px);
-    background:#10120f;
+    padding-top:var(--mobile-room-height);
+    /* Keep the room area transparent so the bedroom remains visible underneath;
+       switch to the dark editorial section exactly when the room ends. */
+    background:linear-gradient(to bottom,transparent 0,transparent var(--mobile-room-height),#10120f var(--mobile-room-height),#10120f 100%);
     pointer-events:none;
   }
 
@@ -195,7 +198,6 @@
 }
 
 @media(max-width:390px){
-  body[data-view="room"] .room{height:max(100svh,600px)}
-  body[data-view="room"] .home{padding-top:max(100svh,600px)}
+  body[data-view="room"]{--mobile-room-height:max(100svh,600px)}
   body[data-view="room"] .room-title h1{font-size:38px}
 }
