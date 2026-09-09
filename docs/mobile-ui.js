@@ -64,12 +64,18 @@ if(mq.matches){
       toggle.setAttribute('aria-label','Open menu');
     };
     const open=()=>{
+      if(!mq.matches)return;
       menu.hidden=false;
       document.body.classList.add('mobile-menu-open');
       toggle.setAttribute('aria-expanded','true');
       toggle.setAttribute('aria-label','Close menu');
       menu.querySelector('.mobile-menu-close')?.focus({preventScroll:true});
     };
+    const syncBreakpoint=()=>{
+      toggle.hidden=!mq.matches;
+      if(!mq.matches)close();
+    };
+
     toggle.addEventListener('click',()=>menu.hidden?open():close());
     menu.querySelector('.mobile-menu-close')?.addEventListener('click',close);
     menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));
@@ -83,5 +89,7 @@ if(mq.matches){
       if(menu.hidden||menu.contains(e.target)||toggle.contains(e.target))return;
       close();
     });
+    mq.addEventListener?.('change',syncBreakpoint);
+    syncBreakpoint();
   }
 }
