@@ -1,3 +1,5 @@
+import './games-entry.js?v=1';
+
 const mq=window.matchMedia('(max-width:760px)');
 if(mq.matches){
   const header=document.querySelector('.site-header');
@@ -5,6 +7,8 @@ if(mq.matches){
   const motion=document.querySelector('#motion-toggle');
   const music=document.querySelector('#sound-music');
   const rain=document.querySelector('#sound-rain');
+  const onPortfolio=location.pathname==='/'||location.pathname.endsWith('/index.html');
+  const portfolioRoute=hash=>onPortfolio?hash:`/${hash}`;
 
   // Preload the atmosphere on phones so the first permitted interaction can
   // start it without waiting for the MP3 request. Respect data-saver mode.
@@ -35,11 +39,12 @@ if(mq.matches){
     menu.innerHTML=`
       <div class="mobile-menu-top"><span>Menu</span><button type="button" class="mobile-menu-close" aria-label="Close menu">×</button></div>
       <nav aria-label="Mobile navigation">
-        <a href="#work"><span>01</span><strong>Work index</strong></a>
-        <a href="#campaigns"><span>02</span><strong>Campaigns</strong></a>
-        <a href="#products"><span>03</span><strong>Products</strong></a>
-        <a href="#about"><span>04</span><strong>About & CV</strong></a>
-        <a href="#contact"><span>05</span><strong>Get in touch</strong></a>
+        <a href="${portfolioRoute('#work')}"><span>01</span><strong>Work index</strong></a>
+        <a href="${portfolioRoute('#campaigns')}"><span>02</span><strong>Campaigns</strong></a>
+        <a href="${portfolioRoute('#products')}"><span>03</span><strong>Products</strong></a>
+        <a href="/games.html"><span>04</span><strong>Games</strong></a>
+        <a href="${portfolioRoute('#about')}"><span>05</span><strong>About & CV</strong></a>
+        <a href="${portfolioRoute('#contact')}"><span>06</span><strong>Get in touch</strong></a>
       </nav>
       <div class="mobile-menu-section">
         <span class="mobile-menu-label">Documents</span>
@@ -79,7 +84,9 @@ if(mq.matches){
     toggle.addEventListener('click',()=>menu.hidden?open():close());
     menu.querySelector('.mobile-menu-close')?.addEventListener('click',close);
     menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));
-    menu.querySelector('.mobile-motion-control')?.addEventListener('click',e=>{
+    const motionControl=menu.querySelector('.mobile-motion-control');
+    if(!motion&&motionControl)motionControl.hidden=true;
+    motionControl?.addEventListener('click',e=>{
       motion?.click();
       const paused=document.body.classList.contains('paused');
       e.currentTarget.textContent=paused?'Play room motion':'Pause room motion';
