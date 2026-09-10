@@ -1,4 +1,4 @@
-import './games-entry.js?v=1';
+import './games-entry.js?v=2';
 
 const mq=window.matchMedia('(max-width:760px)');
 const header=document.querySelector('.site-header');
