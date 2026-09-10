@@ -1,12 +1,13 @@
 /* Mobile room interaction fix.
-   Keep the room itself above the transparent homepage overlay only for the
-   visible room section, so the photographed hotspots receive taps on iOS.
-   The editorial content begins immediately after that section. */
+   Keep the room above the transparent homepage overlay so its hotspots receive
+   taps on iOS, but preserve the original 100svh room geometry. The visible room
+   is clipped at the editorial handoff instead of shrinking the coordinate space. */
 @media(max-width:760px){
   body[data-view="room"] .room{
-    height:var(--mobile-copy-start,75svh) !important;
+    height:100svh !important;
     z-index:6;
     pointer-events:auto;
+    clip-path:inset(0 0 calc(100svh - var(--mobile-copy-start,75svh)) 0);
   }
 
   body[data-view="room"] .room-plane{
@@ -18,14 +19,14 @@
     touch-action:manipulation;
   }
 
-  /* The home layer supplies the copy below the room but must never sit on top
-     of the interactive photograph. */
+  /* The home layer supplies the copy below the room but must not steal taps
+     from the photographed hotspots above it. */
   body[data-view="room"] .home{
     z-index:4;
     pointer-events:none;
   }
 
-  /* The conventional links below the hero remain fully tappable. */
+  /* The conventional links below the room remain fully tappable. */
   body[data-view="room"] .room-shortcuts{
     position:relative;
     z-index:7;
