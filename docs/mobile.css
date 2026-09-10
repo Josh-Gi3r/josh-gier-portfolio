@@ -91,11 +91,12 @@
 }
 
 /* MOBILE ROOM HOMEPAGE
-   The bedroom is a complete first scene. The editorial statement is the next
-   section in normal document flow. Nothing is squeezed into one viewport. */
+   The copy starts at the visual end of the portrait room, not after a full
+   viewport. The portrait room plane itself finishes at roughly 72svh, so 75svh
+   gives it a small landing zone and then hands off to the editorial section. */
 @media(max-width:760px){
   body[data-view="room"]{
-    --mobile-room-height:max(100svh,620px);
+    --mobile-copy-start:75svh;
     min-height:100%;
     overflow-x:hidden;
     background:#10120f;
@@ -108,11 +109,12 @@
     right:0;
   }
 
-  /* A full phone viewport belongs to the room. It scrolls away with the page. */
+  /* Keep the full room available for hotspot geometry, while the content layer
+     takes over as soon as the photographed plane has visually ended. */
   body[data-view="room"] .room{
     position:absolute;
     inset:0 0 auto;
-    height:var(--mobile-room-height);
+    height:100svh;
     min-height:0;
     overflow:hidden;
   }
@@ -126,21 +128,18 @@
     position:relative;
     inset:auto;
     min-height:0;
-    padding-top:var(--mobile-room-height);
-    /* Keep the room area transparent so the bedroom remains visible underneath;
-       switch to the dark editorial section exactly when the room ends. */
-    background:linear-gradient(to bottom,transparent 0,transparent var(--mobile-room-height),#10120f var(--mobile-room-height),#10120f 100%);
+    padding-top:var(--mobile-copy-start);
+    background:linear-gradient(to bottom,transparent 0,transparent var(--mobile-copy-start),#10120f var(--mobile-copy-start),#10120f 100%);
     pointer-events:none;
   }
 
-  /* The copy begins only after the photograph has ended. */
   body[data-view="room"] .room-title{
     position:relative;
     left:auto;
     right:auto;
     bottom:auto;
     margin:0;
-    padding:38px 20px 0;
+    padding:30px 20px 0;
     background:#10120f;
     text-shadow:none;
   }
@@ -161,7 +160,7 @@
     color:#d2d0bf;
   }
 
-  /* Four clear destinations below the statement. Scrolling is expected. */
+  /* Nothing here is being squeezed into the first screen. Let it scroll. */
   body[data-view="room"] .room-shortcuts{
     position:relative;
     left:auto;
@@ -198,6 +197,6 @@
 }
 
 @media(max-width:390px){
-  body[data-view="room"]{--mobile-room-height:max(100svh,600px)}
+  body[data-view="room"]{--mobile-copy-start:76svh}
   body[data-view="room"] .room-title h1{font-size:38px}
 }
