@@ -97,6 +97,7 @@
 @media(max-width:760px){
   body[data-view="room"]{
     --mobile-copy-start:75svh;
+    --mobile-copy-gap:clamp(18px,2.2svh,22px);
     min-height:100%;
     overflow-x:hidden;
     background:#10120f;
@@ -139,7 +140,7 @@
     right:auto;
     bottom:auto;
     margin:0;
-    padding:30px 20px 0;
+    padding:var(--mobile-copy-gap) 20px 0;
     background:#10120f;
     text-shadow:none;
   }
