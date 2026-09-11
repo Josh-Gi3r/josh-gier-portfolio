@@ -14,7 +14,7 @@ export function feedback(kind:FeedbackKind="tap"){
 
 export function bindGlobalHaptics(){
  if(typeof document==="undefined")return()=>{};
- const onClick=(event:MouseEvent)=>{const target=event.target as Element|null;const el=target?.closest?.("button,a,label,input[type='checkbox']") as HTMLElement|null;if(!el||el.hasAttribute("disabled")||el.dataset.haptic==="off")return;setTimeout(()=>feedback("tap"),0)};
+ const onClick=(event:MouseEvent)=>{const target=event.target as Element|null;const el=target?.closest?.("button,a,label,input[type='checkbox']") as HTMLElement|null;if(!el||el.hasAttribute("disabled")||el.dataset.haptic==="off")return;const before=lastAt;setTimeout(()=>{if(lastAt!==before)return;if(lastAt&&Date.now()-lastAt<120)return;feedback("tap")},45)};
  document.addEventListener("click",onClick);
  return()=>document.removeEventListener("click",onClick);
 }
