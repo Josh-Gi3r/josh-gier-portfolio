@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useHousehold } from "./HouseholdState";
-import { getMeal, getIngredient, midBases, motherBases } from "@/data/home-graph";
+import { getMeal, getIngredient, midBases, motherBases } from "@/data/home-graph-v3";
 import { mealBySlug } from "@/data/meals-researched";
 
 export function CookingModeV2({mealId}:{mealId:string}){
