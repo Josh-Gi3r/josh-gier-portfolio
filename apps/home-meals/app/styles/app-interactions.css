@@ -7,12 +7,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .hm-search-v5 input{height:100%;min-height:44px}
 .hm-inline-warning-v5 a{display:inline-flex;min-height:44px;align-items:center;padding:0 4px;margin:-10px 0}
 .hm-why-v5>a{min-height:44px;display:flex;align-items:center}
+.hm-why-v5 summary{min-height:44px;display:flex;align-items:center}
 .hm-ask-context-v5>a{min-width:44px;justify-content:center}
 .hm-grocery-list-v5 label{cursor:pointer}
 .hm-grocery-list-v5 input{min-width:22px;min-height:22px}
 
 .hm-use-soon-strip-v5{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;margin:10px 0;padding:9px 10px 9px 13px;border:1px solid #edd2b3;border-radius:17px;background:#fff2e3;overflow:hidden}
-.hm-use-soon-strip-v5>div:first-child>span{display:block;font-size:9px;font-weight:800;letter-spacing:.09em;color:#9a5d28}.hm-use-soon-strip-v5>div:first-child>strong{display:block;font-size:12px;margin-top:2px;white-space:nowrap}.hm-use-soon-strip-v5>div:nth-child(2){min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.hm-use-soon-strip-v5>div:nth-child(2)::-webkit-scrollbar{display:none}.hm-use-soon-strip-v5 button{flex:0 0 auto;min-height:44px;border:1px solid #e7c9a7;border-radius:999px;background:#fff;padding:0 8px 0 11px;display:flex;align-items:center;gap:7px;color:#7b4d28;font-size:12px;font-weight:700}.hm-use-soon-strip-v5 button b{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#f7e4cf;font-size:12px}.hm-use-soon-strip-v5>a{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;color:#8f592c;font-size:12px;font-weight:800}
+.hm-use-soon-strip-v5>div:first-child>span{display:block;font-size:11px;font-weight:800;letter-spacing:.09em;color:#9a5d28}.hm-use-soon-strip-v5>div:first-child>strong{display:block;font-size:12px;margin-top:2px;white-space:nowrap}.hm-use-soon-strip-v5>div:nth-child(2){min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.hm-use-soon-strip-v5>div:nth-child(2)::-webkit-scrollbar{display:none}.hm-use-soon-strip-v5 button{flex:0 0 auto;min-height:44px;border:1px solid #e7c9a7;border-radius:999px;background:#fff;padding:0 8px 0 11px;display:flex;align-items:center;gap:7px;color:#7b4d28;font-size:12px;font-weight:700}.hm-use-soon-strip-v5 button b{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#f7e4cf;font-size:12px}.hm-use-soon-strip-v5>a{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;color:#8f592c;font-size:12px;font-weight:800}
 .hm-swap-hint-v5{margin:-4px 0 10px;padding:9px 11px;border-radius:12px;background:#fff2e3;color:#795239;font-size:12px;line-height:1.35}
 .hm-cook-tools-v5{display:flex;justify-content:flex-end;gap:7px;margin:8px 0 0}.hm-cook-tools-v5>*{min-height:44px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;background:#fff;padding:0 12px;color:var(--green);font-size:12px;font-weight:750}.hm-cook-tools-v5>button{cursor:pointer}.hm-cook-tools-v5>a{background:#f7f2e9}.hm-cooking-v5 .hm-cook-tools-v5+main{padding-top:22px}
 
@@ -45,6 +46,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .hm-base-flow-dinners-v5 span,.hm-base-flow-dinners-v5 small{display:block}
 .hm-base-flow-dinners-v5 span{font:500 15px/1.1 var(--serif)}
 .hm-base-flow-dinners-v5 small{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* Release-gate minimums for utility text that remains intentionally compact. */
+.hm-grocery-gap-v5>div:first-child>span,.hm-week-reuse-v5>header span,.hm-grocery-gap-meter-v5>span,.hm-week-reuse-rows-v5>div>span>strong,.hm-week-reuse-rows-v5>div>small,.hm-recipe-history-v5>header span,.hm-recipe-history-v5 article small,.hm-our-note-v5>span,.hm-couple-rating-v5 b,.hm-rate-v5>div:first-child>span,.hm-prep-week-v5 span,.hm-mother-head-v5>div:last-child>span,.hm-mid-head-v5>div>span,.hm-practical-grid-v5 span,.hm-setup-banner-v5 span,.hm-portion-guide-v5>header>span,.hm-portion-guide-v5 span{font-size:11px}
 @keyframes hmNodeIn{from{opacity:0;transform:translateY(6px) scale(.975)}to{opacity:1;transform:none}}
 
 @media(max-width:374px){.hm-use-soon-strip-v5{grid-template-columns:auto minmax(0,1fr);}.hm-use-soon-strip-v5>a{display:none}.hm-base-explorer-v5{padding:14px}.hm-base-selector-v5{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}.hm-base-flow-dinners-v5{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}.hm-cook-tools-v5>*{padding:0 10px}}
