@@ -8,17 +8,22 @@ type RecipeNote={author:"josh"|"g"|"home";text:string;at:string};
 type CookEvent={mealId:string;at:string};
 export type PrepBatch={componentId:string;outputMl:number;at:string};
 type HouseholdState={
- week:string[]; componentStock:Record<string,number>; ingredientStock:Record<string,number>; groceryChecked:Record<string,boolean>; ratings:Record<string,Rating>; recipeNotes:Record<string,RecipeNote[]>; history:CookEvent[]; prepBatches:PrepBatch[]; kitchenReady:boolean; useSoon:Record<string,boolean>; favourites:Record<string,boolean>;
+ week:string[]; monthlyPool:string[]; componentStock:Record<string,number>; ingredientStock:Record<string,number>; groceryChecked:Record<string,boolean>; ratings:Record<string,Rating>; recipeNotes:Record<string,RecipeNote[]>; history:CookEvent[]; prepBatches:PrepBatch[]; kitchenReady:boolean; useSoon:Record<string,boolean>; favourites:Record<string,boolean>;
  prepNeeds:ReturnType<typeof prepNeedsForWeekMl>; shoppingNeeds:ReturnType<typeof shoppingNeedsForWeek>;
- setDay:(index:number,mealId:string)=>void; setComponent:(id:string,ml:number)=>void; setIngredient:(id:string,qty:number)=>void; toggleGrocery:(id:string)=>void; makeBatch:(id:string)=>void; cookMeal:(mealId:string)=>void; rateMeal:(mealId:string,who:"josh"|"g",value:number)=>void; noteMeal:(mealId:string,note:string,author?:"josh"|"g"|"home")=>void; confirmKitchen:()=>void; toggleUseSoon:(id:string)=>void; toggleFavourite:(recipeId:string)=>void; resetDemo:()=>void;
+ setDay:(index:number,mealId:string)=>void; toggleMonthlyPool:(recipeId:string)=>void; setComponent:(id:string,ml:number)=>void; setIngredient:(id:string,qty:number)=>void; toggleGrocery:(id:string)=>void; makeBatch:(id:string)=>void; cookMeal:(mealId:string)=>void; rateMeal:(mealId:string,who:"josh"|"g",value:number)=>void; noteMeal:(mealId:string,note:string,author?:"josh"|"g"|"home")=>void; confirmKitchen:()=>void; toggleUseSoon:(id:string)=>void; toggleFavourite:(recipeId:string)=>void; resetDemo:()=>void;
 };
 const Ctx=createContext<HouseholdState|null>(null);
 const KEY="home-meals-household-v7";
 const LEGACY_KEYS=["home-meals-household-v6","home-meals-household-v5","home-meals-household-v4","home-meals-linked-v3"];
 const validRecipeIds=new Set(recipes.map(x=>x.id));
+const defaultMonthPool=[
+ ...defaultWeek,
+ "gold-chana-masala","curry-laksa","rempah-chicken-rendang","teriyaki-salmon","gochujang-chicken","beef-ragu","pesto-salmon","harissa-chicken-traybake","chipotle-chicken-bowl"
+].filter((id,i,a)=>validRecipeIds.has(id)&&a.indexOf(id)===i);
 
 export function HouseholdStateProvider({children}:{children:React.ReactNode}){
  const [week,setWeek]=useState<string[]>(defaultWeek);
+ const [monthlyPool,setMonthlyPool]=useState<string[]>(defaultMonthPool);
  const [componentStock,setComponentStock]=useState<Record<string,number>>(initialComponentStock); // millilitres
  const [ingredientStock,setIngredientStock]=useState<Record<string,number>>(initialIngredientStock);
  const [groceryChecked,setGroceryChecked]=useState<Record<string,boolean>>({});
@@ -35,6 +40,7 @@ export function HouseholdStateProvider({children}:{children:React.ReactNode}){
   const exact=localStorage.getItem(KEY);const legacy=!exact?LEGACY_KEYS.map(k=>localStorage.getItem(k)).find(Boolean):null;const raw=exact??legacy;
   if(raw){const s=JSON.parse(raw);
    if(Array.isArray(s.week)){const migrated=s.week.filter((x:string)=>validRecipeIds.has(x));setWeek(migrated.length===7?migrated:defaultWeek)}
+   if(Array.isArray(s.monthlyPool)){const pool=s.monthlyPool.filter((x:string)=>validRecipeIds.has(x));if(pool.length)setMonthlyPool(pool)}
    if(exact){if(s.componentStock)setComponentStock({...initialComponentStock,...s.componentStock});if(s.ingredientStock)setIngredientStock({...initialIngredientStock,...s.ingredientStock});setKitchenReady(!!s.kitchenReady);if(s.prepBatches)setPrepBatches(s.prepBatches);if(s.useSoon)setUseSoon(s.useSoon);if(s.favourites)setFavourites(s.favourites)}
    if(s.groceryChecked)setGroceryChecked(s.groceryChecked);
    if(s.ratings){setRatings(s.ratings);const notes:Record<string,RecipeNote[]>={};for(const [id,r] of Object.entries(s.ratings as Record<string,Rating>)){if(r.note)notes[id]=[{author:"home",text:r.note,at:new Date().toISOString()}]}setRecipeNotes(s.recipeNotes??notes)}
@@ -43,11 +49,12 @@ export function HouseholdStateProvider({children}:{children:React.ReactNode}){
   }
  }catch{}finally{setHydrated(true)}},[]);
 
- useEffect(()=>{if(!hydrated)return;localStorage.setItem(KEY,JSON.stringify({version:7,week,componentStock,ingredientStock,groceryChecked,ratings,recipeNotes,history,prepBatches,kitchenReady,useSoon,favourites}))},[hydrated,week,componentStock,ingredientStock,groceryChecked,ratings,recipeNotes,history,prepBatches,kitchenReady,useSoon,favourites]);
+ useEffect(()=>{if(!hydrated)return;localStorage.setItem(KEY,JSON.stringify({version:7,week,monthlyPool,componentStock,ingredientStock,groceryChecked,ratings,recipeNotes,history,prepBatches,kitchenReady,useSoon,favourites}))},[hydrated,week,monthlyPool,componentStock,ingredientStock,groceryChecked,ratings,recipeNotes,history,prepBatches,kitchenReady,useSoon,favourites]);
 
  const prepNeeds=useMemo(()=>prepNeedsForWeekMl(week,componentStock),[week,componentStock]);
  const shoppingNeeds=useMemo(()=>shoppingNeedsForWeek(week,ingredientStock),[week,ingredientStock]);
  const setDay=(index:number,mealId:string)=>{if(!validRecipeIds.has(mealId))return;setWeek(prev=>prev.map((x,i)=>i===index?mealId:x));setGroceryChecked({})};
+ const toggleMonthlyPool=(recipeId:string)=>{if(!validRecipeIds.has(recipeId))return;setMonthlyPool(prev=>prev.includes(recipeId)?prev.filter(id=>id!==recipeId):[...prev,recipeId])};
  const setComponent=(id:string,ml:number)=>{setComponentStock(prev=>({...prev,[id]:Math.max(0,ml)}));setKitchenReady(true)};
  const setIngredient=(id:string,qty:number)=>{setIngredientStock(prev=>({...prev,[id]:Math.max(0,qty)}));setKitchenReady(true);if(qty<=0)setUseSoon(prev=>({...prev,[id]:false}))};
  const toggleGrocery=(id:string)=>setGroceryChecked(prev=>({...prev,[id]:!prev[id]}));
@@ -58,8 +65,8 @@ export function HouseholdStateProvider({children}:{children:React.ReactNode}){
  const confirmKitchen=()=>setKitchenReady(true);
  const toggleUseSoon=(id:string)=>setUseSoon(prev=>({...prev,[id]:!prev[id]}));
  const toggleFavourite=(recipeId:string)=>{if(!validRecipeIds.has(recipeId))return;setFavourites(prev=>({...prev,[recipeId]:!prev[recipeId]}))};
- const resetDemo=()=>{setWeek(defaultWeek);setComponentStock(initialComponentStock);setIngredientStock(initialIngredientStock);setGroceryChecked({});setRatings({});setRecipeNotes({});setHistory([]);setPrepBatches([]);setKitchenReady(false);setUseSoon({});setFavourites({})};
- const value={week,componentStock,ingredientStock,groceryChecked,ratings,recipeNotes,history,prepBatches,kitchenReady,useSoon,favourites,prepNeeds,shoppingNeeds,setDay,setComponent,setIngredient,toggleGrocery,makeBatch,cookMeal,rateMeal,noteMeal,confirmKitchen,toggleUseSoon,toggleFavourite,resetDemo};
+ const resetDemo=()=>{setWeek(defaultWeek);setMonthlyPool(defaultMonthPool);setComponentStock(initialComponentStock);setIngredientStock(initialIngredientStock);setGroceryChecked({});setRatings({});setRecipeNotes({});setHistory([]);setPrepBatches([]);setKitchenReady(false);setUseSoon({});setFavourites({})};
+ const value={week,monthlyPool,componentStock,ingredientStock,groceryChecked,ratings,recipeNotes,history,prepBatches,kitchenReady,useSoon,favourites,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setComponent,setIngredient,toggleGrocery,makeBatch,cookMeal,rateMeal,noteMeal,confirmKitchen,toggleUseSoon,toggleFavourite,resetDemo};
  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 export function useHousehold(){const v=useContext(Ctx);if(!v)throw new Error("useHousehold must be inside HouseholdStateProvider");return v}
