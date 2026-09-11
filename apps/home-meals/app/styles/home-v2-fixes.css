@@ -1,0 +1,6 @@
+/* Final mobile containment: horizontal week/plan rails must scroll locally, never the document. */
+.hm-screen,.hm-section,.hm-app-main{min-width:0;max-width:100%;box-sizing:border-box}
+@media(max-width:640px){
+  .hm-week-strip,.hm-plan-cards{width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+  .hm-week-strip>a,.hm-plan-cards article{flex:0 0 138px}
+}
