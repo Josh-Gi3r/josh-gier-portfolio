@@ -1,11 +1,4 @@
-import Link from "next/link";
+import { RecipeDetailV2 } from "@/components/RecipeDetailV2";
+import { meals } from "@/data/home-graph";
 import { notFound } from "next/navigation";
-import { Icon } from "@/components/Icons";
-import { MealVisual } from "@/components/MealVisual";
-import { RatingPanel } from "@/components/RatingPanel";
-import { mealBySlug } from "@/data/meals-researched";
-
-export default async function RecipePage({params}:{params:Promise<{slug:string}>}){
- const{slug}=await params;const meal=mealBySlug(slug);if(!meal)notFound();
- return <div className="page researched-meal-detail"><Link href="/cook" className="back-link">← Researched meals</Link><section className="researched-meal-hero"><div className="researched-meal-hero-copy"><span className="eyebrow">{meal.cuisine.toUpperCase()} · {meal.method.toUpperCase()}</span><h1>{meal.title}</h1><p>{meal.subtitle}</p><div className="meal-hero-stats"><div><small>DINNER TIME</small><strong>{meal.time} min</strong></div><div><small>METHOD</small><strong>{meal.method}</strong></div><div><small>DIFFICULTY</small><strong>{meal.difficulty}</strong></div></div><div className="meal-parts large">{meal.parts.map(x=><span key={`${x.code}-${x.count}`}>{x.code} ×{x.count}<small>{x.sizeMl} ml</small></span>)}</div><Link href={`/cook/${meal.slug}/cook`} className="primary-button">Start cooking <Icon name="arrow"/></Link></div><MealVisual slug={meal.slug} title={meal.title}/></section><section className="meal-rationale"><article><span className="eyebrow">WHY IT MADE THE CUT</span><p>{meal.why}</p></article><article><span className="eyebrow">BALANCE</span><p>{meal.balance}</p></article></section><div className="recipe-content-grid"><section><span className="eyebrow">FOR TWO</span><h2>Fresh ingredients.</h2><ul className="ingredient-list">{meal.ingredients.map(item=><li key={item}><span className="check-circle"><Icon name="check" size={13}/></span>{item}</li>)}</ul></section><section><span className="eyebrow">METHOD</span><h2>{meal.steps.length} moves.</h2><ol className="method-list">{meal.steps.map((step,i)=><li key={step}><span>{String(i+1).padStart(2,"0")}</span><p>{step}</p></li>)}</ol></section></div><section className="meal-source"><div><span className="eyebrow">REFERENCE RECIPE</span><h2>Benchmark, then adapt.</h2><p>The Home Meals quantities are rewritten around our freezer modules. The source is retained so we can compare technique and keep improving our version.</p></div><a href={meal.source.url} target="_blank" rel="noreferrer"><span>SOURCE</span><strong>{meal.source.label}</strong><b>↗</b></a></section><RatingPanel recipeSlug={meal.slug}/></div>
-}
+export default async function RecipePage({params}:{params:Promise<{slug:string}>}){const{slug}=await params;if(!meals.some(m=>m.id===slug))notFound();return <RecipeDetailV2 mealId={slug}/>}
