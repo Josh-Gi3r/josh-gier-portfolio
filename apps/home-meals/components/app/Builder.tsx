@@ -3,6 +3,7 @@ import {useMemo,useState} from "react";
 import {getComponent,ingredients,recipes} from "@/data/home-data";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
+import {recipeAvailability} from "@/data/stock-math";
 import {Back,MealCard,PageHead} from "./Primitives";
 
 export function Builder(){
@@ -10,7 +11,7 @@ export function Builder(){
  const stockedComponents=useMemo(()=>Array.from(new Set(recipes.flatMap(r=>r.prep.map(p=>p.id)))).filter(id=>(h.componentStock[id]??0)>0),[h.componentStock]);
  const stockedIngredients=useMemo(()=>ingredients.filter(i=>(h.ingredientStock[i.id]??0)>0),[h.ingredientStock]);
  const useSoonIds=useMemo(()=>new Set(Object.keys(h.useSoon).filter(id=>h.useSoon[id]&&(h.ingredientStock[id]??0)>0)),[h.useSoon,h.ingredientStock]);
- const score=(r:typeof recipes[number])=>{const missingPrep=r.prep.filter(p=>(h.componentStock[p.id]??0)<p.totalMl).length;const missingIng=r.ingredients.filter(i=>i.unit!=="have"&&(h.ingredientStock[i.id]??0)<i.qty).length;const rating=Math.max(h.ratings[r.id]?.josh??0,h.ratings[r.id]?.g??0);const soon=r.ingredients.filter(i=>useSoonIds.has(i.id)).length;return missingPrep*30+missingIng*10+r.minutes-rating*3-soon*16-Number(!!h.favourites[r.id])*6};
+ const score=(r:typeof recipes[number])=>{const a=recipeAvailability(r.id,h.componentStock,h.ingredientStock);const rating=Math.max(h.ratings[r.id]?.josh??0,h.ratings[r.id]?.g??0);const soon=r.ingredients.filter(i=>useSoonIds.has(i.id)).length;return a.missingPrep.length*30+a.missingIngredients.length*10+r.minutes-rating*3-soon*16-Number(!!h.favourites[r.id])*6};
  const matches=useMemo(()=>recipes.filter(r=>mode==="ready"?true:mode==="prep"?(selected?r.prep.some(p=>p.id===selected):true):(selected?r.ingredients.some(i=>i.id===selected):true)).sort((a,b)=>score(a)-score(b)),[mode,selected,h.componentStock,h.ingredientStock,h.ratings,h.useSoon,h.favourites]);
  const list=showAll?matches:matches.slice(0,6);
  const chooseMode=(m:"ready"|"prep"|"ingredient")=>{setMode(m);setSelected("");setShowAll(false);feedback("tap")};
