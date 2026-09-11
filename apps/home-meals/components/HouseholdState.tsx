@@ -41,6 +41,6 @@ export function HouseholdStateProvider({children}:{children:React.ReactNode}){
  const confirmKitchen=()=>setKitchenReady(true);const toggleUseSoon=(id:string)=>setUseSoon(prev=>({...prev,[id]:!prev[id]}));const toggleFavourite=(recipeId:string)=>{if(!validRecipeIds.has(recipeId))return;setFavourites(prev=>({...prev,[recipeId]:!prev[recipeId]}))};
  const resetDemo=()=>{setWeek(defaultWeek);setMonthlyPool(defaultMonthPool);setComponentStock(initialComponentStock);setIngredientStock(initialIngredientStock);setGroceryChecked({});setRatings({});setRecipeNotes({});setHistory([]);setPrepBatches([]);setKitchenReady(false);setUseSoon({});setFavourites({})};
  const value={week,monthlyPool,componentStock,ingredientStock,groceryChecked,ratings,recipeNotes,history,prepBatches,kitchenReady,useSoon,favourites,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setComponent,setIngredient,toggleGrocery,makeBatch,cookMeal,rateMeal,noteMeal,confirmKitchen,toggleUseSoon,toggleFavourite,resetDemo};
- return <Ctx.Provider value={value}>{children}</Ctx.Provider>
+ return <Ctx.Provider value={value}>{hydrated?children:<div className="hm-boot-v5" aria-label="Loading Home Meals"><div><span>♥</span><strong>Home Meals</strong><small>Josh + G</small><i/></div></div>}</Ctx.Provider>
 }
 export function useHousehold(){const v=useContext(Ctx);if(!v)throw new Error("useHousehold must be inside HouseholdStateProvider");return v}
