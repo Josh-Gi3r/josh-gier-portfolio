@@ -10,7 +10,7 @@ export function Cook(){
  const h=useHousehold();const[q,setQ]=useState("");const[cuisine,setCuisine]=useState("All");const[showAll,setShowAll]=useState(false);
  const cuisines=["All",...Array.from(new Set(recipes.map(x=>x.cuisine))).sort()];
  const cookedIds=new Set(h.history.map(x=>x.mealId));
- const favourites=recipes.filter(r=>(h.ratings[r.id]?.josh??0)>=4||(h.ratings[r.id]?.g??0)>=4);
+ const favourites=recipes.filter(r=>h.favourites[r.id]||(h.ratings[r.id]?.josh??0)>=4||(h.ratings[r.id]?.g??0)>=4);
  const recent=h.history.map(x=>recipes.find(r=>r.id===x.mealId)).filter(Boolean).filter((r,i,a)=>a.findIndex(x=>x?.id===r?.id)===i).slice(0,8) as typeof recipes;
  const quick=recipes.filter(r=>r.minutes<=25).slice(0,10);
  const newToUs=recipes.filter(r=>!cookedIds.has(r.id)).slice(0,8);
