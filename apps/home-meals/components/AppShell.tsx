@@ -1,33 +1,42 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Icon } from "./Icons";
-import { researchedWeek } from "@/data/meal-plan";
-import { mealBySlug, researchedMeals } from "@/data/meals-researched";
+import { useHousehold } from "./HouseholdState";
+import { getIngredient, getMeal, motherBases, midBases } from "@/data/home-graph";
 
 const nav=[
- {href:"/",label:"Home",icon:"home" as const},{href:"/cook",label:"Cook",icon:"cook" as const},{href:"/prep",label:"Prep",icon:"prep" as const},{href:"/kitchen",label:"Kitchen",icon:"kitchen" as const},{href:"/plan",label:"Plan",icon:"plan" as const},{href:"/learn",label:"Learn",icon:"learn" as const}
+ {href:"/",label:"Home",icon:"home" as const},
+ {href:"/cook",label:"Cook",icon:"cook" as const},
+ {href:"/prep",label:"Prep",icon:"prep" as const},
+ {href:"/kitchen",label:"Kitchen",icon:"kitchen" as const},
+ {href:"/plan",label:"Plan",icon:"plan" as const}
 ];
-const todayMeal=()=>{const idx=(new Date().getDay()+6)%7;return mealBySlug(researchedWeek[idx].slug)!};
-const replyFor=(query:string)=>{
- const q=query.toLowerCase();
- if(q.includes("gold"))return "GOLD is the Indian onion-tomato masala mother: 60 ml modules, starter batch ×12. The critical cue is properly golden onion first, then tomato cooked until thick and glossy with slight oil separation.";
- if(q.includes("sambal")||q.includes("pecah"))return "For SAMBAL, keep frying until the paste darkens and red oil visibly separates from the solids — pecah minyak. Starter portions are 60 ml ×8.";
- if(q.includes("grocery")||q.includes("shop"))return "Start with the First Run shop, not the Full Library restock. It supports all six mothers plus PESTO, THAI-G, WOK-B, TARE-T and four core boosters.";
- if(q.includes("prep")||q.includes("session"))return "First Run is two sessions: Session A makes all six mothers in about 3½ hours; Session B makes four core mids and four boosters in about 90 minutes.";
- if(q.includes("cream"))return "Cream stays out of frozen mothers. Add it fresh at dinner so bases freeze cleanly and can branch into non-creamy dishes.";
- if(q.includes("label")||q.includes("freezer"))return "Label every frozen component CODE / ML / DATE — e.g. GOLD / 60 / 11SEP. Freeze trays with airflow, then bag portions once solid.";
- if(q.includes("tonight")||q.includes("today")){const m=todayMeal();return `Tonight's researched plan is ${m.title}. It takes about ${m.time} minutes and uses ${m.parts.map(x=>`${x.code} ×${x.count}`).join(", ")}. Open Home or Plan for the full recipe.`}
- const hit=researchedMeals.find(m=>q.split(/\s+/).some(w=>w.length>4&&(`${m.title} ${m.cuisine} ${m.ingredients.join(" ")}`).toLowerCase().includes(w)));
- if(hit&&(q.includes("meal")||q.includes("cook")||q.includes("chicken")||q.includes("fish")||q.includes("beef")||q.includes("vegetarian")))return `${hit.title} is in the researched library: ${hit.time} minutes, ${hit.method}, using ${hit.parts.map(x=>`${x.code} ×${x.count}`).join(", ")}. ${hit.balance}`;
- return "Ask about tonight, a meal, a mother base, mid, booster, shopping, prep order, portion size, freezer label or storage rule. I answer from the researched Home Meals V1 content.";
-};
 
 export function AppShell({children}:{children:React.ReactNode}){
- const pathname=usePathname();const[open,setOpen]=useState(false);const[query,setQuery]=useState("");const[messages,setMessages]=useState<{who:"you"|"home";text:string}[]>([{who:"home",text:"Home Meals V1 is live. Ask about tonight, a recipe, the foundation, shopping, prep or freezer stock."}]);
+ const pathname=usePathname();
+ const household=useHousehold();
+ const [open,setOpen]=useState(false);const[query,setQuery]=useState("");
+ const [messages,setMessages]=useState<{who:"you"|"home";text:string}[]>([{who:"home",text:"Hi. Ask me what we're eating, what needs using, what to buy, or what needs prep."}]);
  const active=useMemo(()=>nav.find(item=>item.href==="/"?pathname==="/":pathname.startsWith(item.href))?.href,[pathname]);
- const send=()=>{const clean=query.trim();if(!clean)return;setMessages(m=>[...m,{who:"you",text:clean},{who:"home",text:replyFor(clean)}]);setQuery("")};
- return <div className="app-shell"><aside className="side-rail"><Link href="/" className="brand-mark"><span>H</span><div><strong>Home Meals</strong><small>Josh + G</small></div></Link><nav className="side-nav">{nav.map(item=><Link key={item.href} href={item.href} className={active===item.href?"active":""}><Icon name={item.icon}/><span>{item.label}</span></Link>)}</nav><div className="rail-status"><span className="status-dot"/><div><strong>V1 operating system</strong><small>Foundation + researched meals</small></div></div></aside><main className="app-main">{children}</main><nav className="mobile-nav">{nav.slice(0,5).map(item=><Link key={item.href} href={item.href} className={active===item.href?"active":""}><Icon name={item.icon} size={19}/><span>{item.label}</span></Link>)}</nav><button className="ask-home-fab" onClick={()=>setOpen(true)}><Icon name="spark"/><span>Ask Home</span></button>{open&&<div className="ask-sheet-backdrop" onClick={()=>setOpen(false)}><section className="ask-sheet" onClick={e=>e.stopPropagation()}><div className="ask-sheet-head"><div><span className="eyebrow">HOUSEHOLD BRAIN · V1</span><h2>Ask Home</h2></div><button className="icon-button" onClick={()=>setOpen(false)}>×</button></div><div className="ask-messages">{messages.map((message,i)=><div key={i} className={`message ${message.who}`}>{message.text}</div>)}</div><div className="quick-prompts"><button onClick={()=>setQuery("What is tonight's meal?")}>Tonight</button><button onClick={()=>setQuery("What should I shop first?")}>First shop</button><button onClick={()=>setQuery("How do I know GOLD is ready?")}>GOLD cue</button></div><div className="ask-composer"><Link href="/scan" className="round-action"><Icon name="camera"/></Link><button className="round-action" disabled title="Realtime voice is Phase 2"><Icon name="mic"/></button><input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Ask Home…"/><button className="send-button" onClick={send}><Icon name="arrow"/></button></div></section></div>}</div>
+ const dayIndex=(new Date().getDay()+6)%7;
+ const tonight=getMeal(household.week[dayIndex]??household.week[0]);
+ const answer=(q0:string)=>{
+  const q=q0.toLowerCase();
+  if(q.includes("tonight")||q.includes("eat")||q.includes("cook"))return `Tonight is ${tonight.title}. About ${tonight.minutes} minutes. It uses ${[...tonight.motherIds.map(id=>motherBases.find(x=>x.id===id)?.code),...tonight.midIds.map(id=>midBases.find(x=>x.id===id)?.code)].filter(Boolean).join(" + ")||"fresh ingredients only"}.`;
+  if(q.includes("shop")||q.includes("grocery")||q.includes("buy")){const list=household.shoppingNeeds.slice(0,5).map(x=>`${getIngredient(x.id).name} ${Math.ceil(x.qty)} ${x.unit}`).join(", ");return list?`For this week's actual plan, you still need ${list}${household.shoppingNeeds.length>5?" and a few more items":""}. Plan has the full linked list.`:"You already have everything required for the current week."}
+  if(q.includes("prep")||q.includes("base")){const list=household.prepNeeds.map(x=>`${(motherBases.find(m=>m.id===x.id)??midBases.find(m=>m.id===x.id))?.code} ×${x.short}`).join(", ");return list?`Based on this week's meals and current freezer stock, prep ${list}. Everything else can wait.`:"Your current prep stock covers the planned week. Don't make anything just because it's prep day."}
+  if(q.includes("freezer")||q.includes("stock")){const low=household.prepNeeds.slice(0,4).map(x=>`${(motherBases.find(m=>m.id===x.id)??midBases.find(m=>m.id===x.id))?.code} ${x.onHand} left`).join(", ");return low?`The relevant low stock is ${low}. Prep is driven by the week, not by filling every slot.`:"The planned week is covered by current prep stock."}
+  const base=motherBases.find(x=>q.includes(x.code.toLowerCase())||q.includes(x.name.toLowerCase())); if(base)return `${base.code}: ${base.name}. ${base.purpose} You have ${household.componentStock[base.id]??0} portions. This base unlocks roughly ${base.approxMeals} dinner directions.`;
+  const mid=midBases.find(x=>q.includes(x.code.toLowerCase())||q.includes(x.name.toLowerCase())); if(mid)return `${mid.code}: ${mid.name}. It links to ${mid.parentMotherIds.map(id=>motherBases.find(x=>x.id===id)?.code).filter(Boolean).join(" + ")||"no mother base"} and opens ${mid.examples.join(", ")}. You have ${household.componentStock[mid.id]??0} portions.`;
+  return "Ask me about tonight, this week's groceries, what to prep, freezer stock, or any base. Everything I answer comes from the same linked household state.";
+ };
+ const send=()=>{const clean=query.trim();if(!clean)return;setMessages(m=>[...m,{who:"you",text:clean},{who:"home",text:answer(clean)}]);setQuery("")};
+ return <div className="hm-app-shell">
+  <main className="hm-app-main">{children}</main>
+  <div className="hm-ask-dock"><Link href="/scan" className="hm-round-action" aria-label="Camera"><Icon name="camera"/></Link><button type="button" className="hm-ask-home" onClick={()=>setOpen(true)}><Icon name="spark"/><span>Ask Home</span></button><button type="button" className="hm-round-action" onClick={()=>setOpen(true)} aria-label="Voice"><Icon name="mic"/></button></div>
+  <nav className="hm-bottom-nav">{nav.map(item=><Link key={item.href} href={item.href} className={active===item.href?"active":""}><Icon name={item.icon} size={20}/><span>{item.label}</span></Link>)}</nav>
+  {open&&<div className="hm-ask-backdrop" onClick={()=>setOpen(false)}><section className="hm-ask-sheet" onClick={e=>e.stopPropagation()}><header><div><small>JOSH + G · HOME</small><h2>Ask Home</h2><p>Camera, voice, text</p></div><button type="button" onClick={()=>setOpen(false)}>×</button></header><div className="hm-messages">{messages.map((m,i)=><div key={i} className={m.who}>{m.text}</div>)}</div><div className="hm-quick"><button onClick={()=>setQuery("What can we cook tonight?")}>Tonight</button><button onClick={()=>setQuery("What do we need to buy?")}>Groceries</button><button onClick={()=>setQuery("What should I prep?")}>Prep</button></div><div className="hm-composer"><Link href="/scan"><Icon name="camera"/></Link><input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Ask about home…"/><button type="button" onClick={send}><Icon name="arrow"/></button></div></section></div>}
+ </div>
 }
