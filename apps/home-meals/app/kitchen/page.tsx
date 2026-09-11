@@ -1,4 +1,2 @@
-import Link from "next/link";
-import { KitchenStateClient } from "@/components/KitchenStateClient";
-import { Icon } from "@/components/Icons";
-export default function KitchenPage(){return <div className="page researched-kitchen-page"><header className="topbar"><div><span className="eyebrow">KITCHEN STATE</span><h1>Track what changes dinner.</h1><p>Measured foundation stock plus a lightweight fridge and pantry. Exact where portions matter; simple counts where they do not.</p></div><Link href="/scan" className="secondary-button"><Icon name="camera"/> Scan preview</Link></header><div className="kitchen-insight-row"><div><span className="eyebrow">FIRST ACTION</span><strong>Load your First Run output</strong><small>After prep day, one tap seeds the freezer with the starter batch yields.</small></div><div><span className="eyebrow">PHILOSOPHY</span><strong>Useful, not obsessive</strong><small>We count cubes and portions; we do not barcode every lemon.</small></div><div><span className="eyebrow">NEXT PHASE</span><strong>Camera reconciliation</strong><small>Vision will later compare the digital state with fridge/freezer photos.</small></div></div><KitchenStateClient/></div>}
+import { KitchenV2 } from "@/components/KitchenV2";
+export default function KitchenPage(){return <KitchenV2/>}
