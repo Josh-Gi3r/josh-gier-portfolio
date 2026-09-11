@@ -49,7 +49,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 /* Release-gate minimums for utility text that remains intentionally compact. */
 .hm-grocery-gap-v5>div:first-child>span,.hm-week-reuse-v5>header span,.hm-grocery-gap-meter-v5>span,.hm-week-reuse-rows-v5>div>span>strong,.hm-week-reuse-rows-v5>div>small,.hm-recipe-history-v5>header span,.hm-recipe-history-v5 article small,.hm-our-note-v5>span,.hm-couple-rating-v5 b,.hm-rate-v5>div:first-child>span,.hm-prep-week-v5 span,.hm-mother-head-v5>div:last-child>span,.hm-mid-head-v5>div>span,.hm-practical-grid-v5 span,.hm-setup-banner-v5 span,.hm-portion-guide-v5>header>span,.hm-portion-guide-v5 span{font-size:11px}
-@keyframes hmNodeIn{from{opacity:0;transform:translateY(6px) scale(.975)}to{opacity:1;transform:none}}
+@keyframes hmNodeIn{from{transform:translateY(6px) scale(.975)}to{transform:none}}
 
 @media(max-width:374px){.hm-use-soon-strip-v5{grid-template-columns:auto minmax(0,1fr);}.hm-use-soon-strip-v5>a{display:none}.hm-base-explorer-v5{padding:14px}.hm-base-selector-v5{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}.hm-base-flow-dinners-v5{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}.hm-cook-tools-v5>*{padding:0 10px}}
 @media(min-width:700px){.hm-base-flow-mids-v5{grid-template-columns:repeat(3,minmax(0,1fr))}.hm-base-flow-dinners-v5{overflow:visible;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;padding:0}.hm-base-flow-dinners-v5>a{min-width:0}}
