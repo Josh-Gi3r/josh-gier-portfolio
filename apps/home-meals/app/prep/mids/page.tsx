@@ -1,2 +1,2 @@
-import { MidsV2 } from "@/components/MidsV2";
-export default function MidPage(){return <MidsV2/>}
+import {Mids} from "@/components/app/Mids";
+export default function MidsPage(){return <Mids/>}
