@@ -1,16 +1,4 @@
 import Link from "next/link";
-import { foundationImages } from "@/data/foundation-assets";
-import { foundationCounts, mothers } from "@/data/foundation";
-import { firstRunSummary } from "@/data/foundation-ops";
-import { FoundationArchitecture, YieldGraphic } from "@/components/FoundationVisuals";
+import { HomeDashboard } from "@/components/HomeDashboard";
 import { Icon } from "@/components/Icons";
-
-export default function HomePage(){return <div className="page foundation-home">
- <header className="topbar"><div><span className="eyebrow">HOME MEALS · FOUNDATION</span><h1>Build the kitchen once.</h1><p>We are starting with the real physical system: shop the shared ingredients, make the reusable prep, organise the freezer, then build the researched meal library on top.</p></div><Link href="/prep" className="top-scan">Open foundation <Icon name="arrow" size={16}/></Link></header>
- <section className="foundation-home-hero"><img src={foundationImages.prepDay} alt="Home Meals foundation prep day"/><div className="foundation-home-shade"/><div className="foundation-home-copy"><span className="eyebrow">FIRST RUN</span><h2>{firstRunSummary.sessions} prep sessions. {firstRunSummary.mothers} mothers. A freezer that finally makes sense.</h2><p>{firstRunSummary.note}</p><div className="button-row"><Link href="/prep/groceries" className="primary-button">Open shopping list →</Link><Link href="/prep/day" className="secondary-button">Start prep day</Link></div></div></section>
- <section className="foundation-home-actions"><Link href="/prep/groceries"><span>01</span><div><small>SHOP</small><strong>Foundation groceries</strong><p>First Run and Full Library lists, saved as you tick.</p></div><b>→</b></Link><Link href="/prep/day"><span>02</span><div><small>PREP</small><strong>Guided prep day</strong><p>Hot foundations first; modifiers in a separate session.</p></div><b>→</b></Link><Link href="/prep"><span>03</span><div><small>LEARN</small><strong>{foundationCounts.total} prep components</strong><p>{foundationCounts.mothers} mothers, {foundationCounts.mids} mids and {foundationCounts.boosters} boosters.</p></div><b>→</b></Link></section>
- <YieldGraphic/>
- <section className="foundation-section"><div className="section-heading"><div><span className="eyebrow">THE SIX MOTHERS</span><h2>The permanent backbone.</h2></div><Link href="/prep">Full prep system →</Link></div><div className="mother-grid home-mothers">{mothers.map(x=><Link href={`/prep/${x.slug}`} className="mother-card" key={x.slug} style={{"--base-color":x.tone} as React.CSSProperties}>{x.heroImage&&<img src={x.heroImage} alt={`${x.name} mother base`}/>}<div className="mother-card-shade"/><div className="mother-card-copy"><span>{x.code} · {x.portionMl} ml</span><h3>{x.name}</h3><small>Starter ×{x.starterYield}</small></div></Link>)}</div></section>
- <FoundationArchitecture/>
- <section className="foundation-home-next"><div><span className="eyebrow">MEALS COME NEXT</span><h2>No random recipe filler.</h2><p>The Cook and Plan layers will be repopulated from the researched meal universe after this foundation is signed off. Until then, the foundation workflow is the authoritative Home Meals content.</p></div><Link href="/prep" className="primary-button">Use the foundation →</Link></section>
- </div>}
+export default function HomePage(){return <div className="page operational-home"><header className="topbar"><div><span className="eyebrow">HOME MEALS · JOSH + G</span><h1>What are we doing?</h1><p>Tonight, this week, the freezer foundation and what needs attention — one household operating view.</p></div><Link href="/prep" className="top-scan">Foundation <Icon name="arrow" size={16}/></Link></header><HomeDashboard/></div>}
