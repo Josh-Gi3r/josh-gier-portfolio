@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
-import { CookingModeV2 } from "@/components/CookingModeV2";
-import { meals } from "@/data/home-graph";
-export default async function CookModePage({params}:{params:Promise<{slug:string}>}){const{slug}=await params;if(!meals.some(m=>m.id===slug))notFound();return <CookingModeV2 mealId={slug}/>}
+import {notFound} from "next/navigation";
+import {Cooking} from "@/components/app/Cooking";
+import {recipes} from "@/data/home-data";
+export default async function CookingPage({params}:{params:Promise<{slug:string}>}){const{slug}=await params;if(!recipes.some(r=>r.id===slug))notFound();return <Cooking id={slug}/>}
