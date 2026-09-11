@@ -1,2 +1,14 @@
-import { redirect } from "next/navigation";
-export default function GuidePage(){redirect("/learn")}
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { BaseMultiplierMap, PrepPipeline, WeekDependencyMap } from "@/components/HomeInfographics";
+import { PortionScale } from "@/components/PortionScale";
+import { foundationImages } from "@/data/foundation-assets";
+
+const guides:Record<string,{kicker:string;title:string;intro:string;steps:string[];visual:"system"|"portions"|"prep"|"freezer"}>={
+ system:{kicker:"THE LOOP",title:"Everything talks to everything.",intro:"Home Meals is useful because recipes, the week, groceries, prep and Kitchen are not separate lists.",steps:["Choose seven real recipes.","The plan totals their fresh ingredients and prep components.","Kitchen stock is subtracted automatically.","The remainder becomes Groceries + Prep.","Cooking deducts what we used.","Josh + G rate it; the recipe keeps the memory."],visual:"system"},
+ portions:{kicker:"FREEZER LANGUAGE",title:"Small when strong. Bigger when bulky.",intro:"We do not force everything into one cube size. Concentrates stay small; mothers and stocks use larger pucks.",steps:["30 ml for DARK and strong concentrates.","60 ml for small sauces / marinades.","150–250 ml for most mids and mothers.","RED and CLEAR need larger flat pucks.","Always label NAME / PORTION / DATE."],visual:"portions"},
+ "prep-day":{kicker:"PREP DAY",title:"Make only what has a reason.",intro:"Prep is foundational, but the app should protect us from pointless Sunday busywork.",steps:["Start with this week's plan.","Check freezer stock.","Make only the shortfall.","Run long stocks/reductions first.","Cool safely, portion, label, freeze.","Batch completion updates Kitchen immediately."],visual:"prep"},
+ freezer:{kicker:"FREEZER",title:"Give everything a home.",intro:"Predictable drawers make the kitchen faster now and make future camera reconciliation easier.",steps:["Top / easy-access zone: mothers + mids.","Separate raw protein into one-dinner packs.","Keep cooked rice / carb modules distinct.","Use oldest batches first.","Never keep mystery containers: label every batch."],visual:"freezer"}
+};
+
+export default async function GuidePage({params}:{params:Promise<{slug:string}>}){const{slug}=await params;const guide=guides[slug];if(!guide)notFound();return <div className="hm-screen hm-v3-screen hm-guide-v3"><header className="hm-mobile-head"><div><span>{guide.kicker}</span><h1>{guide.title}</h1><p>{guide.intro}</p></div><Link href="/learn" className="hm-head-help">‹</Link></header><section className="hm-guide-step-list">{guide.steps.map((x,i)=><article key={x}><b>{String(i+1).padStart(2,"0")}</b><span>{x}</span></article>)}</section>{guide.visual==="system"&&<><WeekDependencyMap/><BaseMultiplierMap/></>}{guide.visual==="portions"&&<PortionScale/>}{guide.visual==="prep"&&<PrepPipeline/>}{guide.visual==="freezer"&&<section className="hm-guide-freezer-photo"><img src={foundationImages.freezer} alt="Organised Home Meals freezer"/><div><strong>Simple rule</strong><span>Mothers + mids together, protein separate, carbs/veg separate, newest stock behind older stock.</span></div></section>}<div className="hm-guide-actions"><Link href="/prep">Prep ›</Link><Link href="/plan">Plan ›</Link><Link href="/kitchen">Kitchen ›</Link></div></div>}
