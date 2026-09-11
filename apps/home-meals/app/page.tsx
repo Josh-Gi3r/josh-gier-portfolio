@@ -1,2 +1,2 @@
-import { HomeDashboard } from "@/components/HomeDashboard";
-export default function HomePage(){return <HomeDashboard/>}
+import {Home} from "@/components/app/Home";
+export default function HomePage(){return <Home/>}
