@@ -46,6 +46,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .hm-base-flow-dinners-v5 span,.hm-base-flow-dinners-v5 small{display:block}
 .hm-base-flow-dinners-v5 span{font:500 15px/1.1 var(--serif)}
 .hm-base-flow-dinners-v5 small{font-size:11px;color:var(--muted);margin-top:5px}
+.hm-base-directions-v5{padding:12px;border:1px dashed #d8cfc3;border-radius:16px;background:#fbf7f0;text-align:left}
+.hm-base-directions-v5>strong{display:block;font:500 16px/1.1 var(--serif)}
+.hm-base-directions-v5>div{display:flex;gap:6px;overflow-x:auto;margin:9px -2px 7px;padding:2px;scrollbar-width:none}
+.hm-base-directions-v5>div::-webkit-scrollbar{display:none}
+.hm-base-directions-v5>div>span{flex:0 0 auto;min-height:34px;display:flex;align-items:center;padding:0 10px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:700}
+.hm-base-directions-v5>small{display:block;font-size:11px;color:var(--muted);line-height:1.35}
 
 /* Release-gate minimums for utility text that remains intentionally compact. */
 .hm-grocery-gap-v5>div:first-child>span,.hm-week-reuse-v5>header span,.hm-grocery-gap-meter-v5>span,.hm-week-reuse-rows-v5>div>span>strong,.hm-week-reuse-rows-v5>div>small,.hm-recipe-history-v5>header span,.hm-recipe-history-v5 article small,.hm-our-note-v5>span,.hm-couple-rating-v5 b,.hm-rate-v5>div:first-child>span,.hm-prep-week-v5 span,.hm-mother-head-v5>div:last-child>span,.hm-mid-head-v5>div>span,.hm-practical-grid-v5 span,.hm-setup-banner-v5 span,.hm-portion-guide-v5>header>span,.hm-portion-guide-v5 span{font-size:11px}
