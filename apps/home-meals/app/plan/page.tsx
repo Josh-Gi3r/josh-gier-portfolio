@@ -1,5 +1,2 @@
-import Link from "next/link";
-import { ResearchPlanClient } from "@/components/ResearchPlanClient";
-import { researchedMeals } from "@/data/meals-researched";
-const lanes=["Indian","Malaysian","Thai","Chinese-style","Japanese","Korean","Italian"];
-export default function PlanPage(){return <div className="page researched-plan-page"><header className="topbar"><div><span className="eyebrow">PLAN · RESEARCHED V1</span><h1>Use the freezer, then buy fresh.</h1><p>The first operating week deliberately crosses cuisines and cooking methods so we learn which foundation components deserve permanent freezer space.</p></div><Link href="/prep/groceries" className="secondary-button">Foundation shop</Link></header><ResearchPlanClient/><section className="research-pool"><div className="section-heading"><div><span className="eyebrow">30-DAY DIRECTION</span><h2>The broader meal pool.</h2></div><span className="pill">{researchedMeals.length} researched meals</span></div><div className="research-pool-grid">{lanes.map(lane=>{const meals=researchedMeals.filter(m=>m.cuisine.includes(lane)).slice(0,5);if(!meals.length)return null;return <div key={lane}><span>{lane}</span>{meals.map(m=><Link href={`/cook/${m.slug}`} key={m.slug}><strong>{m.title}</strong><small>{m.time} min · {m.method}</small></Link>)}</div>})}</div></section></div>}
+import { PlanV2 } from "@/components/PlanV2";
+export default function PlanPage(){return <PlanV2/>}
