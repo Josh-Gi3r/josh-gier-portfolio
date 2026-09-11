@@ -1,9 +1,27 @@
 "use client";
+import Link from "next/link";
 import { useMemo, useState } from "react";
-import { bases } from "@/data/home-meals";
+import { researchedMeals } from "@/data/meals-researched";
+import { mothers, mids, boosters } from "@/data/foundation";
 
-const proteins=["Chicken thigh","Salmon","Prawns","Minced beef","Tofu"];
-const carbs=["Basmati rice","Pasta","Potatoes","Noodles","Flatbread"];
-const finishers: Record<string,string[]>={RED:["Basil + Parmesan","Cream + chilli","Cumin + paprika"],GOLD:["Coconut milk","Cream + butter","Yoghurt","Spinach"],ASIAN:["Soy + honey","Coconut + lime","Oyster + sesame"],DARK:["Mushroom + cream","Dijon + butter","Miso + butter"],GREEN:["Parmesan + lemon","Cream","Butter + herbs"],FIRE:["Cumin + yoghurt","Smoked paprika + lemon","Cream"]};
-const names:Record<string,string>={"Chicken thigh|GOLD":"Coconut curry chicken","Chicken thigh|DARK":"Mustard pan-sauce chicken","Chicken thigh|RED":"Tomato chicken","Salmon|GREEN":"Herb salmon","Salmon|DARK":"Miso butter salmon","Prawns|ASIAN":"Ginger soy prawns","Prawns|FIRE":"Spicy pepper prawns","Minced beef|RED":"Quick beef ragù","Tofu|GOLD":"GOLD tofu masala"};
-export function MealBuilder(){const[protein,setProtein]=useState(proteins[0]);const[base,setBase]=useState("GOLD");const[finisher,setFinisher]=useState(finishers.GOLD[0]);const[carb,setCarb]=useState(carbs[0]);const result=useMemo(()=>names[`${protein}|${base}`]??`${base} ${protein.toLowerCase()} bowl`,[protein,base]);const selectBase=(value:string)=>{setBase(value);setFinisher(finishers[value][0])};return <div className="meal-builder"><div className="builder-stage"><span className="eyebrow">BUILD-A-MEAL</span><h2>{result}</h2><p>{protein} + {base} + {finisher} + {carb}</p><div className="builder-plate"><span>{base}</span><i/><b>{protein}</b></div><div className="builder-result-meta"><span>~20–30 min</span><span>Fresh-cooked</span><span>Freezer-first</span></div></div><div className="builder-controls"><label><span>01 · Protein</span><select value={protein} onChange={e=>setProtein(e.target.value)}>{proteins.map(x=><option key={x}>{x}</option>)}</select></label><label><span>02 · Base</span><div className="builder-base-buttons">{bases.map(b=><button key={b.code} onClick={()=>selectBase(b.code)} className={base===b.code?"active":""} style={{"--base-color":b.tone} as React.CSSProperties}><i/>{b.code}</button>)}</div></label><label><span>03 · Finisher</span><select value={finisher} onChange={e=>setFinisher(e.target.value)}>{finishers[base].map(x=><option key={x}>{x}</option>)}</select></label><label><span>04 · Carb</span><select value={carb} onChange={e=>setCarb(e.target.value)}>{carbs.map(x=><option key={x}>{x}</option>)}</select></label></div></div>}
+const anchors=[
+ {label:"Chicken",match:(s:string)=>s.includes("chicken")},
+ {label:"Beef",match:(s:string)=>s.includes("beef")},
+ {label:"Fish / salmon",match:(s:string)=>/salmon|white fish|fish fillet/.test(s)},
+ {label:"Prawns",match:(s:string)=>s.includes("prawn")},
+ {label:"Eggs",match:(s:string)=>s.includes("egg")},
+ {label:"Plant-based",match:(s:string)=>/tofu|chickpea|beans|aubergine|cauliflower/.test(s)}
+];
+const allComponents=[...mothers,...mids,...boosters];
+const nameFor=(code:string)=>allComponents.find(x=>x.code===code)?.name||code;
+const toneFor=(code:string)=>allComponents.find(x=>x.code===code)?.tone||"#777";
+
+export function MealBuilder(){
+ const[anchor,setAnchor]=useState("Chicken");
+ const eligible=useMemo(()=>{const a=anchors.find(x=>x.label===anchor)!;return researchedMeals.filter(m=>a.match(m.ingredients.join(" ").toLowerCase()))},[anchor]);
+ const codes=useMemo(()=>Array.from(new Set(eligible.flatMap(m=>m.parts.map(p=>p.code)))),[eligible]);
+ const[selected,setSelected]=useState("GOLD");
+ const activeCode=codes.includes(selected)?selected:(codes[0]||"");
+ const matches=eligible.filter(m=>!activeCode||m.parts.some(p=>p.code===activeCode));
+ return <div className="valid-builder"><section className="valid-builder-stage"><span className="eyebrow">VALID COMBINATIONS ONLY</span><h2>{matches[0]?.title||"Choose another path"}</h2><p>The builder no longer invents arbitrary sauce combinations. It only surfaces combinations already represented in the researched cookbook.</p><div className="builder-path"><span>{anchor}</span><b>+</b><span style={{borderColor:toneFor(activeCode)}}>{activeCode||"—"}</span><b>→</b><strong>{matches.length} meal{matches.length===1?"":"s"}</strong></div>{matches[0]&&<div className="builder-feature"><small>{matches[0].cuisine} · {matches[0].time} min</small><p>{matches[0].subtitle}</p><Link href={`/cook/${matches[0].slug}`} className="primary-button">Open recipe →</Link></div>}</section><section className="valid-builder-controls"><label><span>01 · Anchor</span><div className="anchor-buttons">{anchors.map(a=><button key={a.label} className={anchor===a.label?"active":""} onClick={()=>{setAnchor(a.label);setSelected("")}}>{a.label}</button>)}</div></label><label><span>02 · Foundation component</span><div className="component-buttons">{codes.map(code=><button key={code} className={activeCode===code?"active":""} style={{"--base-color":toneFor(code)} as React.CSSProperties} onClick={()=>setSelected(code)}><i/>{code}<small>{nameFor(code)}</small></button>)}</div></label><label><span>03 · Matching researched meals</span><div className="builder-results">{matches.map(m=><Link href={`/cook/${m.slug}`} key={m.slug}><strong>{m.title}</strong><small>{m.time} min · {m.method}</small></Link>)}</div></label></section></div>
+}
