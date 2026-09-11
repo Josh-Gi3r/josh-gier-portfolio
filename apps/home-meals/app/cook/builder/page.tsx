@@ -1,2 +1,2 @@
-import { MealBuilderV2 } from "@/components/MealBuilderV2";
-export default function BuilderPage(){return <MealBuilderV2/>}
+import {Builder} from "@/components/app/Builder";
+export default function BuilderPage(){return <Builder/>}
