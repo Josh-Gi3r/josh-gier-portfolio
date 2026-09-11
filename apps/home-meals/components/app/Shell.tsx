@@ -7,6 +7,7 @@ import {useHousehold} from "../HouseholdState";
 import {getComponent,getIngredient,getRecipe,motherBases,recipes} from "@/data/home-data";
 import {recipeTitle} from "@/data/recipe-display";
 import {bindGlobalHaptics,feedback} from "@/lib/feedback";
+import {useSheet} from "@/lib/useSheet";
 
 const nav=[
  {href:"/",label:"Home",icon:"home" as const},
@@ -21,8 +22,7 @@ export function Shell({children}:{children:React.ReactNode}){
  const[messages,setMessages]=useState<{who:"you"|"home";text:string}[]>([{who:"home",text:"What do you need?"}]);
  const active=useMemo(()=>nav.find(x=>x.href==="/"?path==="/":path.startsWith(x.href))?.href,[path]);
  const day=(new Date().getDay()+6)%7;const tonight=getRecipe(h.week[day]??h.week[0])??recipes[0];
- useEffect(()=>bindGlobalHaptics(),[]);
- useEffect(()=>{if(!ask)return;const old=document.body.style.overflow;document.body.style.overflow="hidden";return()=>{document.body.style.overflow=old}},[ask]);
+ useEffect(()=>bindGlobalHaptics(),[]);useSheet(ask,()=>setAsk(false));
  const answer=(text:string)=>{const s=text.toLowerCase();
   if(!h.kitchenReady&&(s.includes("have")||s.includes("buy")||s.includes("prep")||s.includes("freezer")||s.includes("soon")))return "I don't know the kitchen yet. Check Fridge, Freezer and Pantry once, then I can use the real stock.";
   if(s.includes("soon")||s.includes("go bad")||s.includes("expire")){const a=Object.keys(h.useSoon).filter(id=>h.useSoon[id]&&(h.ingredientStock[id]??0)>0).map(id=>getIngredient(id)?.name).filter(Boolean);return a.length?`Use these first: ${a.slice(0,6).join(", ")}${a.length>6?"…":""}`:"Nothing is marked use soon."}
