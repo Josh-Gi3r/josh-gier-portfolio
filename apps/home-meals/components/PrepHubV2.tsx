@@ -1,18 +1,34 @@
 "use client";
 import Link from "next/link";
 import { useHousehold } from "./HouseholdState";
-import { coverageByMother, getMeal, midBases, motherBases } from "@/data/home-graph";
+import { coverageByMother, getMeal, midBases, motherBases, totalDinnerDirections } from "@/data/home-graph-v3";
 import { foundationImages } from "@/data/foundation-assets";
+import { BaseMultiplierMap, PrepPipeline, WeekDependencyMap } from "./HomeInfographics";
 
 export function PrepHubV2(){
  const h=useHousehold();
  const label=(id:string)=>(motherBases.find(x=>x.id===id)??midBases.find(x=>x.id===id));
- return <div className="hm-screen hm-prep-screen">
-  <header className="hm-page-head"><div><p className="hm-kicker">PREP</p><h1>Prep for the meals we chose.</h1><p>Core bases are permanent infrastructure. Mid-bases multiply them. This week decides what you actually make.</p></div><Link href="/learn/system" className="hm-icon-link">?</Link></header>
-  <section className="hm-prep-hero">{foundationImages.cubes&&<img src={foundationImages.cubes} alt="Home Meals frozen base portions"/>}<div/><div className="hm-prep-hero-copy"><span>THIS WEEK'S PREP</span><h2>{h.prepNeeds.length?`${h.prepNeeds.length} things need topping up.`:"You're covered."}</h2><p>{h.prepNeeds.length?"Only prep what the current week needs. The rest stays in the library.":"No Sunday busywork. Current freezer stock covers every planned meal."}</p></div></section>
-  <section className="hm-prep-needs">{h.prepNeeds.length?h.prepNeeds.map(x=>{const item=label(x.id);return <article key={x.id} style={{"--tone":item?.tone} as React.CSSProperties}><div><i/><span>{item?.code}</span><small>{item?.name}</small></div><div><b>{x.onHand}</b><small>on hand</small></div><div><b>{x.needed}</b><small>needed</small></div><button onClick={()=>h.makeBatch(x.id)}>Make batch +{item?.batchYield}</button></article>}):<article className="covered"><strong>✓ Prep covered</strong><span>Everything required for this week is already in the freezer.</span></article>}</section>
-  <section className="hm-section"><div className="hm-section-title"><div><span>CORE BASES</span><h2>Eight mothers. The backbone.</h2></div><small>~130–150 dinner directions</small></div><div className="hm-mother-grid">{coverageByMother.map(({mother,mids,meals})=><Link href={`/prep/${mother.id}`} key={mother.id} className="hm-mother-card" style={{"--tone":mother.tone} as React.CSSProperties}><header><i/><span>{mother.code}</span><b>{h.componentStock[mother.id]??0}</b></header><h3>{mother.name}</h3><p>{mother.purpose}</p><footer><span>{mother.approxMeals} dishes</span><span>{mids.length} linked mids</span><span>{meals.length} meals wired now</span></footer></Link>)}</div></section>
-  <section className="hm-link-graph"><div className="hm-section-title"><div><span>HOW IT MULTIPLIES</span><h2>Mother → mid → dinner</h2></div><Link href="/prep/mids">All 16 mids →</Link></div><div className="hm-graph-lanes">{coverageByMother.map(({mother,mids})=><div key={mother.id} className="hm-graph-lane"><div className="hm-graph-mother" style={{"--tone":mother.tone} as React.CSSProperties}><i/><strong>{mother.code}</strong><small>{mother.name}</small></div><div className="hm-graph-line"/><div className="hm-graph-mids">{mids.length?mids.map(mid=><div key={mid.id}><strong>{mid.code}</strong><span>{mid.name}</span></div>):<div className="standalone-note"><span>No dedicated mid required</span></div>}</div></div>)}</div><p className="hm-graph-note">A mid can link to more than one mother. KORMA uses GOLD + ONION, LAKSA uses REMPAH + CLEAR, JP-CURRY uses ONION + CLEAR, and DUX uses BLOND + DARK. That many-to-many relationship is the point.</p></section>
-  <section className="hm-section"><div className="hm-section-title"><div><span>PLANNED MEALS</span><h2>Why this week's prep exists</h2></div><Link href="/plan">Change week →</Link></div><div className="hm-prep-meal-links">{h.week.map((id,i)=>{const m=getMeal(id);return <Link href={`/cook/${id}`} key={`${id}-${i}`}><span>{i+1}</span><div><strong>{m.title}</strong><small>{[...m.motherIds.map(x=>motherBases.find(b=>b.id===x)?.code),...m.midIds.map(x=>midBases.find(b=>b.id===x)?.code)].filter(Boolean).join(" + ")||"Fresh-only"}</small></div></Link>})}</div></section>
+ const low=motherBases.filter(x=>(h.componentStock[x.id]??0)<=1);
+ return <div className="hm-screen hm-prep-screen hm-v3-screen">
+  <header className="hm-mobile-head"><div><span>PREP</span><h1>Make future dinners easier.</h1><p>Only prep what earns its freezer space.</p></div><Link href="/learn/system" className="hm-head-help">?</Link></header>
+
+  <section className={`hm-prep-now ${h.prepNeeds.length?"needs":"covered"}`}>
+   <div className="hm-prep-now-photo">{foundationImages.cubes&&<img src={foundationImages.cubes} alt="Prepared freezer bases"/>}<span/></div>
+   <div className="hm-prep-now-copy"><small>THIS WEEK</small><h2>{h.prepNeeds.length?`${h.prepNeeds.length} prep jobs`:"You're covered ✦"}</h2><p>{h.prepNeeds.length?"These are the only batches this week's meals actually need.":"Freezer stock covers every planned dinner. No Sunday busywork."}</p><div className="hm-prep-now-actions">{h.prepNeeds.length?<Link href="/prep/day">Start prep mode</Link>:<Link href="/plan">See this week</Link>}<Link href="/kitchen">Freezer stock</Link></div></div>
+  </section>
+
+  {h.prepNeeds.length>0&&<section className="hm-prep-job-list">{h.prepNeeds.map((x,i)=>{const item=label(x.id);return <article key={x.id} style={{"--tone":item?.tone,animationDelay:`${i*60}ms`} as React.CSSProperties}><i/><div><span>{item?.code}</span><strong>{item?.name}</strong><small>{x.onHand} on hand · {x.needed} needed</small></div><b>short {x.short}</b><button onClick={()=>h.makeBatch(x.id)}>+ batch</button></article>})}</section>}
+
+  <section className="hm-section hm-v3-section"><div className="hm-v3-section-head"><div><span>CORE BASES</span><h2>Your eight mothers</h2></div><small>{totalDinnerDirections} dinner directions</small></div><div className="hm-mother-shelf">{coverageByMother.map(({mother,mids,meals})=>{const stock=h.componentStock[mother.id]??0;return <Link href={`/prep/${mother.id}`} key={mother.id} style={{"--tone":mother.tone} as React.CSSProperties} className={stock<=1?"low":""}><div className="hm-mother-cube"><i/><b>{mother.code}</b></div><strong>{mother.name}</strong><span>{stock} portions</span><small>{mids.length} mids · {meals.length || mother.approxMeals} dinners</small>{stock<=1&&<em>make soon</em>}</Link>})}</div></section>
+
+  <section className="hm-prep-alert-row">{low.length>0?<><div><span>LOW STOCK</span><strong>{low.map(x=>x.code).join(" · ")}</strong><small>Only top these up if the coming meals need them.</small></div><Link href="/kitchen">Adjust stock ›</Link></>:<><div><span>FREEZER</span><strong>Foundations look healthy.</strong><small>Nothing urgent across the eight core bases.</small></div><Link href="/kitchen">Open freezer ›</Link></>}</section>
+
+  <BaseMultiplierMap/>
+  <WeekDependencyMap/>
+  <PrepPipeline/>
+
+  <section className="hm-section hm-v3-section"><div className="hm-v3-section-head"><div><span>MID-BASES</span><h2>26 flavour multipliers</h2></div><Link href="/prep/mids">Explore all ›</Link></div><div className="hm-mid-teaser">{midBases.slice(0,10).map(x=><Link href={`/prep/mids/${x.id}`} key={x.id} style={{"--tone":x.tone} as React.CSSProperties}><i/><div><strong>{x.code}</strong><span>{x.name}</span><small>{x.parentMotherIds.length?x.parentMotherIds.map(id=>motherBases.find(m=>m.id===id)?.code).join(" + "):"standalone"}</small></div></Link>)}</div></section>
+
+  <section className="hm-section hm-v3-section"><div className="hm-v3-section-head"><div><span>WHY WE PREP</span><h2>This week's meals</h2></div><Link href="/plan">Change week ›</Link></div><div className="hm-prep-meal-rail">{h.week.map((id,i)=>{const m=getMeal(id);const parts=[...m.motherIds.map(x=>motherBases.find(b=>b.id===x)?.code),...m.midIds.map(x=>midBases.find(b=>b.id===x)?.code)].filter(Boolean);return <Link href={`/cook/${id}`} key={`${id}-${i}`}>{m.image&&<img src={m.image} alt=""/>}<span>{["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][i]}</span><strong>{m.title}</strong><small>{parts.join(" + ")||"fresh"}</small></Link>})}</div></section>
  </div>
 }
