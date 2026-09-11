@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
-import { boosters, foundationCounts, mids, mothers, prepTimeline, storageRules } from "@/data/foundation";
+import { boosters, foundationCounts, mids, mothers, storageRules } from "@/data/foundation";
+import { firstRunCodes, firstRunSummary, hotFoundationTimeline } from "@/data/foundation-ops";
 
 export function FoundationArchitecture(){
  const [layer,setLayer]=useState<"mother"|"mid"|"booster">("mother");
@@ -13,11 +14,14 @@ export function PortionLanguage(){
  return <section className="foundation-viz portion-viz"><div className="viz-copy"><span className="eyebrow">FREEZER LANGUAGE</span><h2>Four measured modules.</h2><p>No “some sauce.” Every recipe will eventually say exactly how many modules it needs.</p></div><div className="portion-bars">{modules.map(x=><div key={x.ml} className="portion-item"><div className="portion-cube" style={{"--scale":`${48+Math.sqrt(x.ml)*5}px`} as React.CSSProperties}><b>{x.ml}</b><span>ml</span></div><strong>{x.label}</strong><small>{x.use}</small></div>)}</div></section>
 }
 
-export function PrepTimelineGraphic(){return <section className="foundation-viz timeline-viz"><div className="viz-copy"><span className="eyebrow">PREP-DAY ORCHESTRATION</span><h2>Three hours, sequenced by stove time.</h2><p>The long reductions start first. Cold sauces and boosters happen while mothers cool. We are using waiting time instead of stacking every task end-to-end.</p></div><div className="timeline-track">{prepTimeline.map((x,i)=><div className="timeline-event" key={x.minute} style={{"--delay":`${i*55}ms`} as React.CSSProperties}><span>{x.minute}m</span><div><strong>{x.title}</strong><small>{x.detail}</small></div></div>)}</div></section>}
+export function PrepTimelineGraphic(){return <section className="foundation-viz timeline-viz"><div className="viz-copy"><span className="eyebrow">SESSION A · HOT FOUNDATIONS</span><h2>About 3½ hours, sequenced by stove time.</h2><p>All six mothers are made in parallel, with DARK reducing in the background while the other bases occupy the pans and wok. Core mids and boosters are a separate 90-minute session.</p></div><div className="timeline-track">{hotFoundationTimeline.map((x,i)=><div className="timeline-event" key={x.minute} style={{"--delay":`${i*55}ms`} as React.CSSProperties}><span>{x.minute}m</span><div><strong>{x.title}</strong><small>{x.detail}</small>{x.codes?.length?<div className="stage-codes">{x.codes.map(c=><b key={c}>{c}</b>)}</div>:null}</div></div>)}</div></section>}
 
 export function StorageGraphic(){return <section className="foundation-viz storage-viz"><div className="viz-copy"><span className="eyebrow">JB / SG STORAGE</span><h2>Cold storage is part of the recipe.</h2></div><div className="storage-grid">{storageRules.map((x,i)=><article key={x.title}><span>0{i+1}</span><strong>{x.title}</strong><b>{x.value}</b><p>{x.detail}</p></article>)}</div></section>}
 
 export function YieldGraphic(){
- const total=useMemo(()=>mothers.reduce((n,x)=>n+x.starterYield,0)+mids.reduce((n,x)=>n+x.starterYield,0)+boosters.reduce((n,x)=>n+x.starterYield,0),[]);
- return <section className="yield-strip"><div><span className="eyebrow">STARTER FOUNDATION OUTPUT</span><strong>{total}</strong><small>measured portions if every starter batch is made</small></div><div><b>{mothers.reduce((n,x)=>n+x.starterYield,0)}</b><span>mother portions</span></div><div><b>{mids.reduce((n,x)=>n+x.starterYield,0)}</b><span>mid portions</span></div><div><b>{boosters.reduce((n,x)=>n+x.starterYield,0)}</b><span>booster portions</span></div></section>
+ const firstMothers=useMemo(()=>mothers.filter(x=>firstRunCodes.mothers.includes(x.code)),[]);
+ const firstMids=useMemo(()=>mids.filter(x=>firstRunCodes.mids.includes(x.code)),[]);
+ const firstBoosters=useMemo(()=>boosters.filter(x=>firstRunCodes.boosters.includes(x.code)),[]);
+ const firstTotal=[...firstMothers,...firstMids,...firstBoosters].reduce((n,x)=>n+x.starterYield,0);
+ return <section className="yield-strip"><div><span className="eyebrow">RECOMMENDED FIRST RUN</span><strong>{firstTotal}</strong><small>measured portions across {firstRunSummary.sessions} prep sessions · not all {foundationCounts.total} library components</small></div><div><b>{firstMothers.reduce((n,x)=>n+x.starterYield,0)}</b><span>mother portions</span></div><div><b>{firstMids.reduce((n,x)=>n+x.starterYield,0)}</b><span>core-mid portions</span></div><div><b>{firstBoosters.reduce((n,x)=>n+x.starterYield,0)}</b><span>booster portions</span></div></section>
 }
