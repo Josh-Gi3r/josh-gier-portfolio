@@ -26,7 +26,7 @@ export function Kitchen(){
  const changeIngredient=(id:string,delta:number)=>{h.setIngredient(id,Math.max(0,(h.ingredientStock[id]??0)+delta));feedback("change")};
  const switchTab=(t:Tab)=>{setTab(t);setQ("");setShowAll(false);feedback("tap")};
  return <div className="hm-page-v5 hm-kitchen-v5">
-  <PageHead eyebrow="KITCHEN" title="Kitchen" sub="Enough detail to plan the week." action={<Link className="hm-round-link-v5" href="/scan" aria-label="Camera">⌁</Link>}/>
+  <PageHead eyebrow="KITCHEN" title="Kitchen" sub="What we have at home." action={<Link className="hm-round-link-v5" href="/scan" aria-label="Camera">⌁</Link>}/>
   {!h.kitchenReady&&<section className="hm-setup-banner-v5"><div><span>FIRST CHECK</span><h2>What’s actually at home?</h2><p>Start with the things this week uses. Add anything else that matters, then mark the kitchen checked.</p></div><button onClick={()=>{h.confirmKitchen();feedback("success")}}>Kitchen checked</button></section>}
   <div className="hm-segment-v5 hm-kitchen-tabs-v5">{tabs.map(t=><button key={t} className={tab===t?"active":""} onClick={()=>switchTab(t)}>{t}</button>)}</div>
   {tab==="Freezer"?<Freezer/>:<>
