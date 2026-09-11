@@ -2,4 +2,5 @@
 @import "./styles/app-shell.css";
 @import "./styles/app-screens-core.css";
 @import "./styles/app-screens-house.css";
+@import "./styles/app-interactions.css";
 @import "./styles/app-responsive.css";
