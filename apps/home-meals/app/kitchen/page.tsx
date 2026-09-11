@@ -1,2 +1,2 @@
-import { KitchenV2 } from "@/components/KitchenV2";
-export default function KitchenPage(){return <KitchenV2/>}
+import {Kitchen} from "@/components/app/Kitchen";
+export default function KitchenPage(){return <Kitchen/>}
