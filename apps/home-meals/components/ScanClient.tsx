@@ -1,17 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Icon } from "./Icons";
+import { useHousehold } from "./HouseholdState";
+import { getIngredient, midBases, motherBases } from "@/data/home-graph-v3";
 
-const modes=["Fridge","Freezer","Receipt","Ingredient","Prep check","Meal"];
-const freezerDetected={RED:5,GOLD:7,REMPAH:4,SAMBAL:3,DARK:8,BLOND:5,"THAI-G":3,"WOK-B":4,GG:8};
-const fridgeDetected=[{name:"Chicken thighs",qty:3,unit:"portions"},{name:"Eggs",qty:8,unit:"eggs"},{name:"Parmesan",qty:1,unit:"piece"},{name:"Cooking cream",qty:1,unit:"carton"},{name:"Broccoli",qty:2,unit:"heads"},{name:"Mushrooms",qty:1,unit:"box"}];
+const modes=[{id:"Fridge",icon:"🥬",copy:"What's actually at home"},{id:"Freezer",icon:"❄",copy:"Count bases + portions"},{id:"Receipt",icon:"🧾",copy:"Add what we bought"},{id:"Prep check",icon:"🍳",copy:"Does this look ready?"},{id:"Meal",icon:"🍽",copy:"Remember what we cooked"}] as const;
+type Mode=(typeof modes)[number]["id"];
+const freezerDetected:Record<string,number>={red:5,gold:7,rempah:4,sambal:3,dark:8,blond:5,clear:4,onion:2,"thai-green":3,"wok-brown":4};
+const fridgeDetected:Record<string,number>={"chicken-thigh":900,cream:250,broccoli:500,mushrooms:300,parmesan:90,lime:3};
+const receiptDetected:Record<string,number>={"chicken-thigh":1000,cream:400,"red-onion":500,coriander:30,broccoli:400};
 
 export function ScanClient(){
- const[mode,setMode]=useState("Fridge");const[preview,setPreview]=useState<string|null>(null);const[analysed,setAnalysed]=useState(false);const[confirmed,setConfirmed]=useState(false);
+ const h=useHousehold();
+ const[mode,setMode]=useState<Mode>("Fridge");const[preview,setPreview]=useState<string|null>(null);const[analysed,setAnalysed]=useState(false);const[confirmed,setConfirmed]=useState(false);
  useEffect(()=>()=>{if(preview)URL.revokeObjectURL(preview)},[preview]);
  const onFile=(file?:File)=>{if(!file)return;if(preview)URL.revokeObjectURL(preview);setPreview(URL.createObjectURL(file));setAnalysed(false);setConfirmed(false)};
- const confirm=()=>{try{if(mode==="Freezer")localStorage.setItem("hm-foundation-stock",JSON.stringify(freezerDetected));if(mode==="Fridge")localStorage.setItem("hm-fridge",JSON.stringify(fridgeDetected));if(mode==="Receipt"){const existing=JSON.parse(localStorage.getItem("hm-receipts")||"[]");existing.push({date:"11 Sep",retailer:"Village Grocer",items:["Chicken thigh 1 kg","Cooking cream ×2","Tomatoes 1 kg"],total:null});localStorage.setItem("hm-receipts",JSON.stringify(existing))}setConfirmed(true)}catch{setConfirmed(false)}};
- const result=mode==="Freezer"?["RED ×5","GOLD ×7","REMPAH ×4","SAMBAL ×3","DARK ×8","BLOND ×5","THAI-G ×3","WOK-B ×4","GG ×8"]:mode==="Fridge"?["Chicken portions ×3","Eggs ×8","Parmesan ×1","Cream ×1","Broccoli ×2","Mushrooms ×1"]:mode==="Ingredient"?["Likely: coriander / cilantro","Confidence: simulated V1"]:mode==="Prep check"?["Surface looks reduced rather than watery","Use the recipe's visual cue as authority","Vision coaching is simulated in V1"]:mode==="Meal"?["Meal photo recorded locally in V1 preview","Automatic recipe matching arrives with vision"]:[];
- return <div className="scan-experience"><div className="scan-v1-note"><strong>V1 camera surface</strong><p>You can take a real photo now. The interpretation shown below is deliberately simulated; confirming Fridge or Freezer updates the real local state used by this device. Live vision comes in Phase 2.</p></div><div className="mode-strip">{modes.map(m=><button key={m} className={mode===m?"active":""} onClick={()=>{setMode(m);setAnalysed(false);setConfirmed(false)}}>{m}</button>)}</div><div className="camera-stage">{preview?<img src={preview} alt="Selected kitchen photo"/>:<><div className="camera-reticle"><i/><i/><i/><i/></div><div className="camera-copy"><Icon name="camera" size={34}/><strong>Show Home your {mode.toLowerCase()}</strong><span>Use the rear camera or choose an existing photo.</span></div></>}<label className="camera-shutter"><input type="file" accept="image/*" capture="environment" onChange={e=>onFile(e.target.files?.[0])}/><span/></label></div>{preview&&<button className="primary-button analyse-button" onClick={()=>{setAnalysed(true);setConfirmed(false)}}><Icon name="spark"/> Analyse {mode}</button>}{analysed&&<div className="scan-result"><div className="scan-result-head"><span className="eyebrow">SIMULATED INTERPRETATION · V1</span><h3>{mode} preview</h3></div>{mode==="Receipt"?<><p>Village Grocer · 11 Sep</p><ul><li>Chicken thigh 1 kg <strong>RM18.90</strong></li><li>Cooking cream ×2 <strong>RM14.60</strong></li><li>Tomatoes 1 kg <strong>RM7.90</strong></li></ul></>:<div className="detected-chips">{result.map(x=><span key={x}>{x}</span>)}</div>}{(["Fridge","Freezer","Receipt"].includes(mode))?<button className={confirmed?"secondary-button confirmed-action":"secondary-button"} onClick={confirm} disabled={confirmed}><Icon name="check"/>{confirmed?" Updated on this device":" Confirm & update local state"}</button>:<p className="phase-note">This mode is preview-only until live vision coaching is connected.</p>}</div>}</div>
+ const detected=useMemo(()=>{
+  if(mode==="Freezer")return Object.entries(freezerDetected).map(([id,qty])=>{const item=motherBases.find(x=>x.id===id)??midBases.find(x=>x.id===id);return {id,label:item?.code??id,qty,unit:"portions"}});
+  if(mode==="Fridge")return Object.entries(fridgeDetected).map(([id,qty])=>({id,label:getIngredient(id).name,qty,unit:getIngredient(id).defaultUnit}));
+  if(mode==="Receipt")return Object.entries(receiptDetected).map(([id,qty])=>({id,label:getIngredient(id).name,qty,unit:getIngredient(id).defaultUnit}));
+  return [];
+ },[mode]);
+ const confirm=()=>{
+  if(mode==="Freezer")for(const [id,qty] of Object.entries(freezerDetected))h.setComponent(id,qty);
+  if(mode==="Fridge")for(const [id,qty] of Object.entries(fridgeDetected))h.setIngredient(id,qty);
+  if(mode==="Receipt")for(const [id,qty] of Object.entries(receiptDetected))h.setIngredient(id,(h.ingredientStock[id]??0)+qty);
+  setConfirmed(true);
+ };
+ return <div className="hm-scan-v3">
+  <header className="hm-mobile-head"><div><span>SHOW HOME</span><h1>Point. Snap. Done.</h1><p>The camera is just another way to update our kitchen.</p></div><Link href="/" className="hm-head-help">×</Link></header>
+  <div className="hm-scan-mode-rail">{modes.map(m=><button key={m.id} className={mode===m.id?"active":""} onClick={()=>{setMode(m.id);setAnalysed(false);setConfirmed(false)}}><i>{m.icon}</i><strong>{m.id}</strong><small>{m.copy}</small></button>)}</div>
+  <section className="hm-camera-v3">{preview?<img src={preview} alt="Selected kitchen photo"/>:<div className="hm-camera-empty"><div className="reticle"><i/><i/><i/><i/></div><span>{modes.find(x=>x.id===mode)?.icon}</span><h2>Show Home your {mode.toLowerCase()}</h2><p>{mode==="Prep check"?"Take a photo of the pan or prep stage.":mode==="Meal"?"Take a quick photo before we eat.":"Take a clear photo. We'll confirm before changing anything."}</p></div>}<label className="hm-camera-shutter-v3"><input type="file" accept="image/*" capture="environment" onChange={e=>onFile(e.target.files?.[0])}/><span/></label></section>
+  {preview&&!analysed&&<button className="hm-scan-analyse" onClick={()=>setAnalysed(true)}><Icon name="spark"/> Check this photo</button>}
+  {analysed&&<section className="hm-scan-result-v3"><header><span>V1 PREVIEW</span><h2>{mode==="Prep check"?"Here's what I'd look for":mode==="Meal"?"Meal noted":"I found these"}</h2></header>{["Fridge","Freezer","Receipt"].includes(mode)?<div className="hm-detected-list-v3">{detected.map(x=><div key={x.id}><i>✓</i><span><strong>{x.label}</strong><small>{x.qty} {x.unit}</small></span></div>)}</div>:mode==="Prep check"?<div className="hm-prep-check-v3"><strong>Use the recipe cue as the authority.</strong><p>The photo coaching is simulated in V1. For meat doneness, use time + temperature, not the camera.</p></div>:<div className="hm-prep-check-v3"><strong>Nice. We'll tie meal photos to cook history when live vision is connected.</strong></div>}{["Fridge","Freezer","Receipt"].includes(mode)&&<button onClick={confirm} disabled={confirmed}>{confirmed?"✓ Kitchen updated":"Confirm & update Kitchen"}</button>}</section>}
+  <footer className="hm-scan-footnote"><span>✦</span><p><strong>Same household state.</strong> Confirmed scans update the exact stock used by Plan, Prep and Ask Home. Image understanding itself is still simulated until live vision is connected.</p></footer>
+ </div>
 }
