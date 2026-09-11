@@ -1,3 +1,2 @@
-import Link from "next/link";
-import { mids } from "@/data/foundation";
-export default function MidPage(){return <div className="page foundation-library"><Link href="/prep" className="back-link">← Foundation</Link><header className="topbar"><div><span className="eyebrow">MID-BASES</span><h1>Specific flavour without bloating the freezer.</h1><p>These are the directional layers: Thai curry paste, wok sauces, teriyaki, laksa, harissa, pesto and more. Most are 30–60 ml because they are stronger than a mother base.</p></div><span className="pill">{mids.length} mids</span></header><div className="library-grid">{mids.map(x=><Link href={`/prep/mids/${x.slug}`} key={x.slug} className="library-card" style={{"--base-color":x.tone} as React.CSSProperties}><i/><div><span>{x.code} · {x.portionMl} ml</span><h2>{x.name}</h2><p>{x.summary}</p></div><footer><small>Starter ×{x.starterYield}</small><b>→</b></footer></Link>)}</div></div>}
+import { MidsV2 } from "@/components/MidsV2";
+export default function MidPage(){return <MidsV2/>}
