@@ -20,8 +20,8 @@ export function Kitchen(){
  const list=ingredients
   .filter(i=>tab==="Fridge"?["Fresh","Protein","Dairy"].includes(i.category):tab==="Pantry"&&i.category==="Pantry")
   .filter(i=>!q||i.name.toLowerCase().includes(q.toLowerCase()))
-  .sort((a,b)=>Number(relevantIds.has(b.id))-Number(relevantIds.has(a.id))||Number((h.ingredientStock[b.id]??0)>0)-Number((h.ingredientStock[a.id]??0)>0)||a.name.localeCompare(b.name));
- const priority=list.filter(i=>relevantIds.has(i.id)||(h.ingredientStock[i.id]??0)>0);
+  .sort((a,b)=>Number(!!h.useSoon[b.id])-Number(!!h.useSoon[a.id])||Number(relevantIds.has(b.id))-Number(relevantIds.has(a.id))||Number((h.ingredientStock[b.id]??0)>0)-Number((h.ingredientStock[a.id]??0)>0)||a.name.localeCompare(b.name));
+ const priority=list.filter(i=>h.useSoon[i.id]||relevantIds.has(i.id)||(h.ingredientStock[i.id]??0)>0);
  const shown=q||showAll?list:(priority.length?priority:list).slice(0,14);
  const changeIngredient=(id:string,delta:number)=>{h.setIngredient(id,Math.max(0,(h.ingredientStock[id]??0)+delta));feedback("change")};
  const switchTab=(t:Tab)=>{setTab(t);setQ("");setShowAll(false);feedback("tap")};
@@ -33,7 +33,7 @@ export function Kitchen(){
    <label className="hm-search-v5"><span>⌕</span><input value={q} onChange={e=>setQ(e.target.value)} placeholder={`Find in ${tab.toLowerCase()}`}/></label>
    <section className="hm-block-v5">
     <SectionHead eyebrow={tab.toUpperCase()} title={tab==="Fridge"?"Food we care about":"Staples we actually use"}/>
-    <div className="hm-stock-list-v5">{shown.map(i=>{const n=h.ingredientStock[i.id]??0;const relevant=relevantIds.has(i.id);return <article key={i.id}><div><strong>{i.name}</strong><span>{relevant&&<b>This week</b>}{i.tracking==="state"?(n>0?"Have it":"Out"):n>0?`${Math.round(n*10)/10} ${i.unit}`:"Out"}</span></div>{i.tracking==="state"?<button className={n>0?"on":""} onClick={()=>{h.setIngredient(i.id,n>0?0:1);feedback("change")}}>{n>0?"Have":"Out"}</button>:<div className="hm-stepper-v5"><button aria-label={`Decrease ${i.name}`} onClick={()=>changeIngredient(i.id,-stepFor(i.unit))}>−</button><b>{n?Math.round(n*10)/10:"0"}</b><span>{i.unit}</span><button aria-label={`Increase ${i.name}`} onClick={()=>changeIngredient(i.id,stepFor(i.unit))}>+</button></div>}</article>})}</div>
+    <div className="hm-stock-list-v5">{shown.map(i=>{const n=h.ingredientStock[i.id]??0;const relevant=relevantIds.has(i.id);const soon=!!h.useSoon[i.id];return <article key={i.id} className={tab==="Fridge"?"with-soon":""}><div><strong>{i.name}</strong><span>{soon&&<b className="soon">Use soon</b>}{relevant&&<b>This week</b>}{i.tracking==="state"?(n>0?"Have it":"Out"):n>0?`${Math.round(n*10)/10} ${i.unit}`:"Out"}</span></div>{tab==="Fridge"&&<button className={`hm-soon-toggle-v5 ${soon?"on":""}`} aria-label={`${soon?"Remove":"Mark"} ${i.name} ${soon?"from":"as"} use soon`} onClick={()=>{if(n>0){h.toggleUseSoon(i.id);feedback("change")}}} disabled={n<=0}>◷</button>}{i.tracking==="state"?<button className={n>0?"on":""} onClick={()=>{h.setIngredient(i.id,n>0?0:1);feedback("change")}}>{n>0?"Have":"Out"}</button>:<div className="hm-stepper-v5"><button aria-label={`Decrease ${i.name}`} onClick={()=>changeIngredient(i.id,-stepFor(i.unit))}>−</button><b>{n?Math.round(n*10)/10:"0"}</b><span>{i.unit}</span><button aria-label={`Increase ${i.name}`} onClick={()=>changeIngredient(i.id,stepFor(i.unit))}>+</button></div>}</article>})}</div>
     {!q&&list.length>shown.length&&<button className="hm-text-button-v5" onClick={()=>{setShowAll(v=>!v);feedback("tap")}}>{showAll?"Show less":`Show all ${list.length}`}</button>}
    </section>
   </>}
