@@ -7,7 +7,7 @@ type CookEvent={mealId:string;at:string};
 type HouseholdState={
  week:string[]; componentStock:Record<string,number>; ingredientStock:Record<string,number>; groceryChecked:Record<string,boolean>; ratings:Record<string,Rating>; history:CookEvent[];
  prepNeeds:ReturnType<typeof prepNeedsForWeek>; shoppingNeeds:ReturnType<typeof shoppingNeedsForWeek>;
- setDay:(index:number,mealId:string)=>void; setComponent:(id:string,qty:number)=>void; setIngredient:(id:string,qty:number)=>void; toggleGrocery:(id:string)=>void; makeBatch:(id:string)=>void; cookMeal:(mealId:string)=>void; rateMeal:(mealId:string,who:"josh"|"g",value:number)=>void; resetDemo:()=>void;
+ setDay:(index:number,mealId:string)=>void; setComponent:(id:string,qty:number)=>void; setIngredient:(id:string,qty:number)=>void; toggleGrocery:(id:string)=>void; makeBatch:(id:string)=>void; cookMeal:(mealId:string)=>void; rateMeal:(mealId:string,who:"josh"|"g",value:number)=>void; noteMeal:(mealId:string,note:string)=>void; resetDemo:()=>void;
 };
 const Ctx=createContext<HouseholdState|null>(null);
 const KEY="home-meals-linked-v3";
@@ -31,8 +31,9 @@ export function HouseholdStateProvider({children}:{children:React.ReactNode}){
  const makeBatch=(id:string)=>{const m=getMother(id);const mid=getMid(id);const yieldQty=m?.batchYield??mid?.batchYield??1;setComponentStock(prev=>({...prev,[id]:(prev[id]??0)+yieldQty}));};
  const cookMeal=(mealId:string)=>{const meal=getMeal(mealId);setComponentStock(prev=>{const next={...prev};for(const id of [...meal.motherIds,...meal.midIds])next[id]=Math.max(0,(next[id]??0)-1);return next});setIngredientStock(prev=>{const next={...prev};for(const req of meal.ingredients)next[req.id]=Math.max(0,(next[req.id]??0)-req.qty);return next});setHistory(prev=>[{mealId,at:new Date().toISOString()},...prev].slice(0,100));};
  const rateMeal=(mealId:string,who:"josh"|"g",value:number)=>setRatings(prev=>({...prev,[mealId]:{...(prev[mealId]??{}),[who]:value}}));
+ const noteMeal=(mealId:string,note:string)=>setRatings(prev=>({...prev,[mealId]:{...(prev[mealId]??{}),note}}));
  const resetDemo=()=>{setWeek(defaultWeek);setComponentStock(initialComponentStock);setIngredientStock(initialIngredientStock);setGroceryChecked({});setRatings({});setHistory([])};
- const value={week,componentStock,ingredientStock,groceryChecked,ratings,history,prepNeeds,shoppingNeeds,setDay,setComponent,setIngredient,toggleGrocery,makeBatch,cookMeal,rateMeal,resetDemo};
+ const value={week,componentStock,ingredientStock,groceryChecked,ratings,history,prepNeeds,shoppingNeeds,setDay,setComponent,setIngredient,toggleGrocery,makeBatch,cookMeal,rateMeal,noteMeal,resetDemo};
  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 export function useHousehold(){const v=useContext(Ctx);if(!v)throw new Error("useHousehold must be inside HouseholdStateProvider");return v}
