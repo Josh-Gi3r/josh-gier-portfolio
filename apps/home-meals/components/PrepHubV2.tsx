@@ -4,6 +4,7 @@ import { useHousehold } from "./HouseholdState";
 import { coverageByMother, getMeal, midBases, motherBases, totalDinnerDirections } from "@/data/home-graph-v3";
 import { foundationImages } from "@/data/foundation-assets";
 import { BaseMultiplierMap, PrepPipeline, WeekDependencyMap } from "./HomeInfographics";
+import { PortionScale } from "./PortionScale";
 
 export function PrepHubV2(){
  const h=useHousehold();
@@ -26,6 +27,7 @@ export function PrepHubV2(){
   <BaseMultiplierMap/>
   <WeekDependencyMap/>
   <PrepPipeline/>
+  <PortionScale/>
 
   <section className="hm-section hm-v3-section"><div className="hm-v3-section-head"><div><span>MID-BASES</span><h2>26 flavour multipliers</h2></div><Link href="/prep/mids">Explore all ›</Link></div><div className="hm-mid-teaser">{midBases.slice(0,10).map(x=><Link href={`/prep/mids/${x.id}`} key={x.id} style={{"--tone":x.tone} as React.CSSProperties}><i/><div><strong>{x.code}</strong><span>{x.name}</span><small>{x.parentMotherIds.length?x.parentMotherIds.map(id=>motherBases.find(m=>m.id===id)?.code).join(" + "):"standalone"}</small></div></Link>)}</div></section>
 
