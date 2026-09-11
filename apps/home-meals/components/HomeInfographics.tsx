@@ -40,14 +40,15 @@ export function FreezerWheel(){
 
 export function GroceryDelta(){
  const h=useHousehold();
- const totalRequired=h.shoppingNeeds.reduce((n,x)=>n+x.required,0);
- const atHome=h.shoppingNeeds.reduce((n,x)=>n+x.onHand,0);
- const toBuy=h.shoppingNeeds.reduce((n,x)=>n+x.qty,0);
- const safe=Math.max(totalRequired,1);
+ const requiredIds=useMemo(()=>{const ids=new Set<string>();h.week.forEach(mealId=>getMeal(mealId).ingredients.forEach(x=>ids.add(x.id)));return [...ids]},[h.week]);
+ const totalItems=requiredIds.length;
+ const topUpItems=h.shoppingNeeds.length;
+ const coveredItems=Math.max(0,totalItems-topUpItems);
+ const coveredPct=totalItems?Math.round((coveredItems/totalItems)*100):100;
  return <section className="hm-viz-card hm-grocery-delta">
   <header><div><span className="hm-viz-kicker">THIS WEEK'S DELTA</span><h3>Only buy the gap.</h3></div><Link href="/plan">shopping list →</Link></header>
-  <div className="hm-delta-flow"><div><strong>{Math.round(totalRequired)}</strong><span>planned demand</span></div><b>−</b><div><strong>{Math.round(atHome)}</strong><span>already home</span></div><b>=</b><div className="buy"><strong>{Math.round(toBuy)}</strong><span>to buy</span></div></div>
-  <div className="hm-delta-bar"><span style={{width:`${Math.min(100,(atHome/safe)*100)}%`}}/><i style={{left:`${Math.min(100,(atHome/safe)*100)}%`}}/></div>
+  <div className="hm-delta-flow"><div><strong>{totalItems}</strong><span>ingredients needed</span></div><b>−</b><div><strong>{coveredItems}</strong><span>already covered</span></div><b>=</b><div className="buy"><strong>{topUpItems}</strong><span>top-ups</span></div></div>
+  <div className="hm-delta-bar"><span style={{width:`${coveredPct}%`}}/><i style={{left:`${coveredPct}%`}}/></div>
  </section>
 }
 
