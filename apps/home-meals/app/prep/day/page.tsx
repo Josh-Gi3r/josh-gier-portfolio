@@ -1,5 +1,2 @@
-import Link from "next/link";
-import { PrepDayClient } from "@/components/PrepDayClient";
-import { PrepTimelineGraphic, StorageGraphic } from "@/components/FoundationVisuals";
-import { foundationImages } from "@/data/foundation-assets";
-export default function PrepDayPage(){return <div className="page prep-day-page"><Link href="/prep" className="back-link">← Foundation</Link><header className="topbar"><div><span className="eyebrow">PREP DAY</span><h1>One kitchen. One sequence.</h1><p>Start the longest reductions first, use cooling time for cold sauces and boosters, then portion only once the cooked bases are properly cooled.</p></div><Link href="/prep/groceries" className="secondary-button">Check groceries</Link></header><section className="foundation-image-hero"><img src={foundationImages.prepDay} alt="Home Meals prep-day workstation"/><div><span className="eyebrow">PARALLEL PREP</span><h2>The stove, blender and cooling space work together.</h2><p>This flow is intentionally sequenced so long reductions happen while you make cold mids and boosters.</p></div></section><PrepDayClient/><PrepTimelineGraphic/><StorageGraphic/></div>}
+import { PrepDayV2 } from "@/components/PrepDayV2";
+export default function PrepDayPage(){return <PrepDayV2/>}
