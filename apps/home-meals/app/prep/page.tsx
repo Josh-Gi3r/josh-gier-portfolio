@@ -1,2 +1,2 @@
-import { PrepHubV2 } from "@/components/PrepHubV2";
-export default function PrepPage(){return <PrepHubV2/>}
+import {Prep} from "@/components/app/Prep";
+export default function PrepPage(){return <Prep/>}
