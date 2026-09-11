@@ -3,6 +3,7 @@ import Link from "next/link";
 import {useHousehold} from "../HouseholdState";
 import {getComponent,getIngredient,getRecipe,ingredients,motherBases} from "@/data/home-data";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
+import {recipeAvailability} from "@/data/stock-math";
 import {MealCard,PageHead,RecipeReady,SectionHead} from "./Primitives";
 
 const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
@@ -11,7 +12,7 @@ export function Home(){
  const trackedIngredients=ingredients.filter(x=>(h.ingredientStock[x.id]??0)>0).length;const stockedMothers=motherBases.filter(x=>(h.componentStock[x.id]??0)>0).length;
  const firstPrep=h.prepNeeds[0];const firstBuy=h.shoppingNeeds[0];
  const soonIds=Object.keys(h.useSoon).filter(id=>h.useSoon[id]&&(h.ingredientStock[id]??0)>0);const uncoveredSoon=soonIds.filter(id=>!h.week.some(rid=>getRecipe(rid).ingredients.some(x=>x.id===id)));const prioritySoon=uncoveredSoon[0]??soonIds[0];const soonName=prioritySoon?getIngredient(prioritySoon)?.name:null;const soonDay=prioritySoon?h.week.findIndex(id=>getRecipe(id).ingredients.some(x=>x.id===prioritySoon)):-1;
- const missingPrep=tonight.prep.some(x=>(h.componentStock[x.id]??0)<x.totalMl);const missingIngredients=tonight.ingredients.some(x=>x.unit!=="have"&&(h.ingredientStock[x.id]??0)<x.qty);const readyTonight=h.kitchenReady&&!missingPrep&&!missingIngredients;
+ const readyTonight=h.kitchenReady&&recipeAvailability(tonight.id,h.componentStock,h.ingredientStock).ready;
  const heroHref=readyTonight?`/cook/${tonight.id}/cook`:`/cook/${tonight.id}`;const heroLabel=readyTonight?"Cook":h.kitchenReady?"See what’s missing":"Open recipe";
  return <div className="hm-page-v5 hm-home-v5">
   <PageHead eyebrow="HOME MEALS" title="Tonight" sub="Josh + G" action={<div className="hm-us-v5"><b>J</b><b>G</b></div>}/>
