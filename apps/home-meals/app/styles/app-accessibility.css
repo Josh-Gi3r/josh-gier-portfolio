@@ -1,0 +1,5 @@
+:root{--muted:#59625d}
+/* Keep small secondary labels comfortably above AA contrast on cream/white surfaces. */
+.hm-page-head-v5 span,.hm-section-head-v5 span,.hm-ask-context-v5 span,.hm-recipe-history-v5>header span,.hm-grocery-gap-v5>div:first-child>span,.hm-week-reuse-v5>header span{color:#466653}
+.hm-ready-v5.unknown{color:#4f5752}
+.hm-rating-line-v5{color:#745918!important}
