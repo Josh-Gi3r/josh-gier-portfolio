@@ -1,2 +1,2 @@
-import { PrepDayV2 } from "@/components/PrepDayV2";
-export default function PrepDayPage(){return <PrepDayV2/>}
+import {PrepDay} from "@/components/app/PrepDay";
+export default function PrepDayPage(){return <PrepDay/>}
