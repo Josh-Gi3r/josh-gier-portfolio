@@ -28,13 +28,13 @@ export function BaseMultiplierMap(){
 
 export function FreezerWheel(){
  const h=useHousehold();
+ const total=motherBases.reduce((n,x)=>n+(h.componentStock[x.id]??0),0);
  const max=Math.max(1,...motherBases.map(x=>h.componentStock[x.id]??0));
- return <section className="hm-viz-card hm-freezer-wheel-card">
-  <header><div><span className="hm-viz-kicker">FREEZER PULSE</span><h3>Eight mothers at a glance.</h3></div><span>tap Prep to top up</span></header>
-  <div className="hm-freezer-wheel-wrap">
-   <div className="hm-freezer-wheel-center"><b>❄</b><strong>{motherBases.reduce((n,x)=>n+(h.componentStock[x.id]??0),0)}</strong><small>portions</small></div>
-   <div className="hm-freezer-orbit">{motherBases.map((x,i)=>{const stock=h.componentStock[x.id]??0;const pct=Math.max(.18,stock/max);return <div key={x.id} className={`hm-freezer-chip ${stock<=1?"low":""}`} style={{"--angle":`${i*45}deg`,"--tone":x.tone,"--fill":pct} as React.CSSProperties}><i/><span>{x.code}</span><strong>{stock}</strong></div>})}</div>
-  </div>
+ const low=motherBases.filter(x=>(h.componentStock[x.id]??0)<=1);
+ return <section className="hm-freezer-pulse-v4">
+  <header><div><span>FREEZER PULSE</span><h3>{low.length?`${low.length} foundations running low`:"Foundations look good ✦"}</h3></div><Link href="/prep">Prep ›</Link></header>
+  <div className="hm-freezer-summary-v4"><div className="hm-freezer-total-v4"><b>❄</b><strong>{total}</strong><small>mother portions</small><i/></div><div className="hm-freezer-bars-v4">{motherBases.map((x,i)=>{const stock=h.componentStock[x.id]??0;const pct=Math.max(8,Math.round((stock/max)*100));return <Link href={`/prep/${x.id}`} key={x.id} className={stock<=1?"low":""} style={{"--tone":x.tone,"--delay":`${i*55}ms`} as React.CSSProperties}><div><span>{x.code}</span><b>{stock}</b></div><em><i style={{width:`${pct}%`}}/></em></Link>})}</div></div>
+  <footer><span className={low.length?"warn":"good"}>{low.length?`Next up: ${low.slice(0,3).map(x=>x.code).join(" · ")}`:"No emergency batch needed"}</span><small>Tap a bar to open its prep page</small></footer>
  </section>
 }
 
