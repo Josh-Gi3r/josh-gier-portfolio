@@ -1,2 +1,2 @@
-import { ScanV2 } from "@/components/ScanV2";
-export default function ScanPage(){return <ScanV2/>}
+import {Scan} from "@/components/app/Scan";
+export default function ScanPage(){return <Scan/>}
