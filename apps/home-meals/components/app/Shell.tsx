@@ -1,12 +1,12 @@
 "use client";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
-import {useMemo,useState} from "react";
+import {useEffect,useMemo,useState} from "react";
 import {Icon} from "../Icons";
 import {useHousehold} from "../HouseholdState";
 import {getComponent,getIngredient,getRecipe,motherBases,recipes} from "@/data/home-data";
 import {recipeTitle} from "@/data/recipe-display";
-import {feedback} from "@/lib/feedback";
+import {bindGlobalHaptics,feedback} from "@/lib/feedback";
 
 const nav=[
  {href:"/",label:"Home",icon:"home" as const},
@@ -21,6 +21,8 @@ export function Shell({children}:{children:React.ReactNode}){
  const[messages,setMessages]=useState<{who:"you"|"home";text:string}[]>([{who:"home",text:"What do you need?"}]);
  const active=useMemo(()=>nav.find(x=>x.href==="/"?path==="/":path.startsWith(x.href))?.href,[path]);
  const day=(new Date().getDay()+6)%7;const tonight=getRecipe(h.week[day]??h.week[0])??recipes[0];
+ useEffect(()=>bindGlobalHaptics(),[]);
+ useEffect(()=>{if(!ask)return;const old=document.body.style.overflow;document.body.style.overflow="hidden";return()=>{document.body.style.overflow=old}},[ask]);
  const answer=(text:string)=>{const s=text.toLowerCase();
   if(!h.kitchenReady&&(s.includes("have")||s.includes("buy")||s.includes("prep")||s.includes("freezer")||s.includes("soon")))return "I don't know the kitchen yet. Check Fridge, Freezer and Pantry once, then I can use the real stock.";
   if(s.includes("soon")||s.includes("go bad")||s.includes("expire")){const a=Object.keys(h.useSoon).filter(id=>h.useSoon[id]&&(h.ingredientStock[id]??0)>0).map(id=>getIngredient(id)?.name).filter(Boolean);return a.length?`Use these first: ${a.slice(0,6).join(", ")}${a.length>6?"…":""}`:"Nothing is marked use soon."}
@@ -34,8 +36,8 @@ export function Shell({children}:{children:React.ReactNode}){
  const send=(text=q)=>{const clean=text.trim();if(!clean)return;setMessages(v=>[...v,{who:"you",text:clean},{who:"home",text:answer(clean)}]);setQ("");feedback("change")};
  return <div className="hm-shell-v5">
   <main className="hm-main-v5">{children}</main>
-  <nav className="hm-nav-v5" aria-label="Main navigation">{nav.map(item=><Link href={item.href} key={item.href} className={active===item.href?"active":""} onClick={()=>feedback("tap")}><Icon name={item.icon} size={22}/><span>{item.label}</span></Link>)}</nav>
-  <button className="hm-ask-fab-v5" onClick={()=>{setAsk(true);feedback("tap")}} aria-label="Ask Home"><Icon name="spark" size={22}/><span>Ask Home</span></button>
+  <nav className="hm-nav-v5" aria-label="Main navigation">{nav.map(item=><Link href={item.href} key={item.href} className={active===item.href?"active":""}><Icon name={item.icon} size={22}/><span>{item.label}</span></Link>)}</nav>
+  <button className="hm-ask-fab-v5" onClick={()=>setAsk(true)} aria-label="Ask Home"><Icon name="spark" size={22}/><span>Ask Home</span></button>
   {ask&&<div className="hm-sheet-backdrop-v5" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setAsk(false)}}><section className="hm-sheet-v5 hm-ask-sheet-v5" role="dialog" aria-modal="true" aria-label="Ask Home">
    <div className="hm-sheet-handle-v5"/><header><div><span>HOME</span><h2>Ask Home</h2></div><button className="hm-icon-button-v5" onClick={()=>setAsk(false)} aria-label="Close">×</button></header>
    <div className="hm-ask-context-v5"><div><span>Tonight</span><strong>{recipeTitle(tonight.id,tonight.title)}</strong></div><Link href={`/cook/${tonight.id}`} onClick={()=>setAsk(false)}>Open</Link></div>
