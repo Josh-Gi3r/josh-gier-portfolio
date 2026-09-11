@@ -10,24 +10,22 @@ import {
   defaultWeek,
   initialComponentStock as legacyComponentStock,
   initialIngredientStock,
+  getIngredient,
   getMeal,
   getMother,
   shoppingNeedsForWeek,
-  prepNeedsForWeek as legacyPrepNeedsForWeek,
+  midBases as legacyMidBases,
 } from "./home-graph";
 
 export type { MotherBase, MidBase, IngredientDef, Meal, Requirement };
-export { motherBases, ingredients, meals, defaultWeek, initialIngredientStock, getMeal, getMother, shoppingNeedsForWeek };
+export { motherBases, ingredients, meals, defaultWeek, initialIngredientStock, getIngredient, getMeal, getMother, shoppingNeedsForWeek };
 
-const oldMid=(id:string)=>requireLegacy(id);
-function requireLegacy(id:string):MidBase {
-  const legacy = legacyMidBases.find(x=>x.id===id);
-  if(!legacy) throw new Error(`Missing legacy mid ${id}`);
+const requireLegacy=(id:string):MidBase=>{
+  const legacy=legacyMidBases.find(x=>x.id===id);
+  if(!legacy)throw new Error(`Missing legacy mid ${id}`);
   return legacy;
-}
-import { midBases as legacyMidBases } from "./home-graph";
-
-const patched=(id:string,patch:Partial<MidBase>):MidBase=>({...oldMid(id),...patch});
+};
+const patched=(id:string,patch:Partial<MidBase>):MidBase=>({...requireLegacy(id),...patch});
 
 export const midBases:MidBase[]=[
   patched("makhani",{code:"MAKHANI",parentMotherIds:["gold"],standalone:false}),
