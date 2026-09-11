@@ -1,2 +1,2 @@
-import { LearnV2 } from "@/components/LearnV2";
-export default function LearnPage(){return <LearnV2/>}
+import {Help} from "@/components/app/Help";
+export default function HelpPage(){return <Help/>}
