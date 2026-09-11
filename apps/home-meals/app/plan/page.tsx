@@ -1,2 +1,2 @@
-import { PlanV2 } from "@/components/PlanV2";
-export default function PlanPage(){return <PlanV2/>}
+import {Plan} from "@/components/app/Plan";
+export default function PlanPage(){return <Plan/>}
