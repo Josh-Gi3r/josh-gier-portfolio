@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { defaultWeek, getMeal, getMid, getMother, initialComponentStock, initialIngredientStock, prepNeedsForWeek, shoppingNeedsForWeek } from "@/data/home-graph";
+import { defaultWeek, getMeal, getMid, getMother, initialComponentStock, initialIngredientStock, prepNeedsForWeek, shoppingNeedsForWeek } from "@/data/home-graph-v3";
 
 type Rating={josh?:number;g?:number;note?:string};
 type CookEvent={mealId:string;at:string};
@@ -10,7 +10,7 @@ type HouseholdState={
  setDay:(index:number,mealId:string)=>void; setComponent:(id:string,qty:number)=>void; setIngredient:(id:string,qty:number)=>void; toggleGrocery:(id:string)=>void; makeBatch:(id:string)=>void; cookMeal:(mealId:string)=>void; rateMeal:(mealId:string,who:"josh"|"g",value:number)=>void; resetDemo:()=>void;
 };
 const Ctx=createContext<HouseholdState|null>(null);
-const KEY="home-meals-linked-v2";
+const KEY="home-meals-linked-v3";
 
 export function HouseholdStateProvider({children}:{children:React.ReactNode}){
  const [week,setWeek]=useState<string[]>(defaultWeek);
@@ -20,7 +20,7 @@ export function HouseholdStateProvider({children}:{children:React.ReactNode}){
  const [ratings,setRatings]=useState<Record<string,Rating>>({});
  const [history,setHistory]=useState<CookEvent[]>([]);
  const [hydrated,setHydrated]=useState(false);
- useEffect(()=>{try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(s.week)setWeek(s.week);if(s.componentStock)setComponentStock(s.componentStock);if(s.ingredientStock)setIngredientStock(s.ingredientStock);if(s.groceryChecked)setGroceryChecked(s.groceryChecked);if(s.ratings)setRatings(s.ratings);if(s.history)setHistory(s.history)}}catch{}finally{setHydrated(true)}},[]);
+ useEffect(()=>{try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(s.week)setWeek(s.week);if(s.componentStock)setComponentStock({...initialComponentStock,...s.componentStock});if(s.ingredientStock)setIngredientStock({...initialIngredientStock,...s.ingredientStock});if(s.groceryChecked)setGroceryChecked(s.groceryChecked);if(s.ratings)setRatings(s.ratings);if(s.history)setHistory(s.history)}}catch{}finally{setHydrated(true)}},[]);
  useEffect(()=>{if(!hydrated)return;localStorage.setItem(KEY,JSON.stringify({week,componentStock,ingredientStock,groceryChecked,ratings,history}))},[hydrated,week,componentStock,ingredientStock,groceryChecked,ratings,history]);
  const prepNeeds=useMemo(()=>prepNeedsForWeek(week,componentStock),[week,componentStock]);
  const shoppingNeeds=useMemo(()=>shoppingNeedsForWeek(week,ingredientStock),[week,ingredientStock]);
