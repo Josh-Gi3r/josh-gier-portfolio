@@ -45,6 +45,7 @@ export function Shell({children}:{children:React.ReactNode}){
  const send=(text=q)=>{const clean=text.trim();if(!clean)return;setMessages(v=>[...v,{who:"you",text:clean},{who:"home",text:answer(clean)}]);setQ("");feedback("change")};
  return <div className="hm-shell-v5">
   {cookingRoute?<div className="hm-main-v5">{children}</div>:<main className="hm-main-v5">{children}</main>}
+  {h.storageIssue&&<div className="hm-storage-warning-v5" role="status"><span><strong>Changes aren’t saving on this device.</strong><small>Keep this tab open and try again before closing Home Meals.</small></span><button onClick={h.clearStorageIssue} aria-label="Dismiss save warning">×</button></div>}
   <nav className="hm-nav-v5" aria-label="Main navigation">{nav.map(item=><Link href={item.href} key={item.href} className={active===item.href?"active":""}><Icon name={item.icon} size={22}/><span>{item.label}</span></Link>)}</nav>
   <button className="hm-ask-fab-v5" onClick={()=>setAsk(true)} aria-label="Ask Home"><Icon name="spark" size={22}/><span>Ask Home</span></button>
   {ask&&<div className="hm-sheet-backdrop-v5" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setAsk(false)}}><section className="hm-sheet-v5 hm-ask-sheet-v5" role="dialog" aria-modal="true" aria-label="Ask Home">
