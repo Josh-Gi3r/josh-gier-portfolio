@@ -1,0 +1,56 @@
+/* Pass 43: repair the Home hero stacking bug and give desktop/tablet a deliberate household-app composition. */
+.hm-page-v5{margin-left:auto;margin-right:auto}
+.hm-tonight-v6{isolation:isolate}
+.hm-tonight-v6>img{z-index:0!important}
+.hm-tonight-v6 .hm-tonight-shade-v5{z-index:1!important;background:linear-gradient(90deg,rgba(11,17,12,.72) 0%,rgba(11,17,12,.46) 43%,rgba(11,17,12,.10) 76%,rgba(11,17,12,.03) 100%),linear-gradient(0deg,rgba(5,9,6,.26),transparent 52%)!important}
+.hm-tonight-v6 .hm-tonight-content-v5{z-index:2!important}
+.hm-tonight-v6 h2{max-width:min(72%,560px)}
+.hm-tonight-v6 p{max-width:min(62%,440px)}
+.hm-priority-v5>span{font-size:11px!important}
+.hm-priority-v5>strong{font-size:15px!important;line-height:1.2}
+.hm-priority-v5>p{font-size:13px!important;line-height:1.38!important;color:#6e746f!important}
+.hm-home-v6 .hm-meal-card-v5.compact .hm-meal-card-copy-v5>small{display:block!important;margin-top:4px;font-size:12px!important;line-height:1.25;color:#777b76}
+.hm-home-v6 .hm-meal-card-v5.compact .hm-rating-line-v5{margin-top:4px}
+
+@media(min-width:700px){
+ .hm-home-v6 .hm-tonight-v6{height:410px;min-height:410px}
+ .hm-home-v6 .hm-tonight-v6 .hm-tonight-content-v5{padding:34px 32px 30px}
+ .hm-home-v6 .hm-tonight-v6 h2{margin-top:18px;font-size:54px}
+ .hm-home-v6 .hm-tonight-v6 p{font-size:15px}
+ .hm-priority-v5{min-height:82px!important;padding:14px 50px 14px 16px!important}
+}
+
+@media(min-width:900px){
+ .hm-home-v6{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:18px;align-items:start}
+ .hm-home-v6>.hm-page-head-v5,.hm-home-v6>.hm-tonight-v6,.hm-home-v6>.hm-priority-v5,.hm-home-v6>.hm-home-week-v6{grid-column:1/-1}
+ .hm-home-v6>.hm-page-head-v5{margin-bottom:18px}
+ .hm-home-v6>.hm-tonight-v6{height:430px;min-height:430px;border-radius:30px;box-shadow:0 16px 40px rgba(53,40,25,.13)}
+ .hm-home-v6>.hm-priority-v5{margin-top:12px!important}
+ .hm-home-v6>.hm-home-week-v6{margin-top:30px}
+ .hm-home-v6 .hm-meal-rail-v5{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;overflow:visible;padding:0}
+ .hm-home-v6 .hm-meal-card-v5.compact{min-width:0;flex-basis:auto;min-height:218px;border-radius:18px}
+ .hm-home-v6 .hm-meal-card-v5.compact>img,.hm-home-v6 .hm-meal-card-v5.compact>.hm-photo-placeholder-v5{height:122px}
+ .hm-home-v6 .hm-meal-card-v5.compact .hm-meal-card-copy-v5{padding:9px 10px 11px}
+ .hm-home-v6 .hm-meal-card-v5.compact .hm-meal-card-copy-v5>strong{font-size:15px;line-height:1.08}
+ .hm-home-v6>.hm-kitchen-status-v6,.hm-home-v6>.hm-memory-v6{margin-top:14px;margin-bottom:0}
+ .hm-home-v6>.hm-kitchen-status-v6{grid-column:1}
+ .hm-home-v6>.hm-memory-v6{grid-column:2}
+ .hm-home-v6 .hm-kitchen-grid-v6>a{min-height:112px}
+ .hm-home-v6 .hm-memory-card-v5{min-height:235px;grid-template-columns:148px minmax(0,1fr) 20px;padding:14px}
+ .hm-home-v6 .hm-memory-card-v5 img{width:148px;height:148px;border-radius:18px}
+ .hm-home-v6 .hm-memory-card-v5 strong{font-size:22px;line-height:1.05}
+ .hm-home-v6 .hm-memory-card-v5 p{font-size:14px}
+}
+
+@media(min-width:1200px){
+ .hm-home-v6>.hm-tonight-v6{height:455px;min-height:455px}
+ .hm-home-v6 .hm-tonight-v6 h2{font-size:60px;max-width:52%}
+ .hm-home-v6 .hm-tonight-v6 p{max-width:44%}
+}
+
+@media(max-width:430px){
+ .hm-home-v6 .hm-tonight-v6{min-height:332px}
+ .hm-home-v6 .hm-tonight-v6 .hm-tonight-content-v5{padding:23px 20px 21px}
+ .hm-home-v6 .hm-tonight-v6 h2{max-width:88%;font-size:clamp(35px,10vw,42px)}
+ .hm-home-v6 .hm-tonight-v6 p{max-width:82%;font-size:13px}
+}
