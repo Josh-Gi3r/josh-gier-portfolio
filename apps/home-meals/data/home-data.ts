@@ -6,7 +6,7 @@ export type IngredientCategory="Fresh"|"Protein"|"Dairy"|"Pantry";
 export type IngredientUnit="g"|"ml"|"count"|"portion"|"have";
 export type IngredientTracking="quantity"|"state";
 export type IngredientDef={id:string;name:string;category:IngredientCategory;unit:IngredientUnit;tracking:IngredientTracking};
-export type IngredientRequirement={id:string;qty:number;unit:IngredientUnit;raw:string};
+export type IngredientRequirement={id:string;qty:number;unit:IngredientUnit;raw:string;display:string;optional?:boolean};
 export type PrepRequirement={id:string;portions:number;portionMl:number;totalMl:number};
 export type Booster={id:string;code:string;name:string;portionMl:number;batchYield:number;tone:string;examples:string[]};
 export type CanonicalRecipe={
@@ -39,8 +39,6 @@ const codeToId:Record<string,string>={
  PESTO:"pesto",HAR:"harissa",CHIP:"chipotle"
 };
 
-// Newer food-architecture decisions that supersede older research-part tags.
-// Values are exact Home Meals prep modules used at dinner time.
 const prepOverrides:Record<string,{code:string;count:number;sizeMl:number}[]>={
  "curry-laksa":[{code:"REMPAH",count:1,sizeMl:60},{code:"LAKSA",count:2,sizeMl:60},{code:"CLEAR",count:1,sizeMl:450}],
  "rempah-chicken-rendang":[{code:"REMPAH",count:2,sizeMl:60},{code:"RENDANG",count:1,sizeMl:60},{code:"LE",count:1,sizeMl:15}],
@@ -60,8 +58,10 @@ const resolvePart=(code:string)=>codeToId[code]??supplementalCodeToId[code];
 const componentById=(id:string)=>motherBases.find(x=>x.id===id)??midBases.find(x=>x.id===id)??boosters.find(x=>x.id===id);
 
 const FRACTIONS:Record<string,number>={"½":.5,"¼":.25,"¾":.75,"⅓":1/3,"⅔":2/3,"1½":1.5,"1¼":1.25,"1¾":1.75};
-const numberValue=(s:string)=>FRACTIONS[s]??Number(s);
 const stateNames=new Set(["salt","black pepper","salt and black pepper","garam masala","paprika","amchur","roasted cumin","roasted cumin powder","cumin","cumin seeds","palm sugar","sugar","oregano","rosemary","white pepper","baking soda","plain flour","cornstarch","cornstarch slurry","sesame seeds"]);
+const stateLabels:Record<string,string>={
+ "salt":"Salt","black pepper":"Black pepper","salt and black pepper":"Salt & black pepper","garam masala":"Garam masala","paprika":"Paprika","amchur":"Amchur","roasted cumin":"Roasted cumin","roasted cumin powder":"Roasted cumin powder","cumin":"Cumin","cumin seeds":"Cumin seeds","palm sugar":"Palm sugar","sugar":"Sugar","oregano":"Oregano","rosemary":"Rosemary","white pepper":"White pepper","baking soda":"Baking soda","plain flour":"Plain flour","cornstarch":"Cornstarch","cornstarch slurry":"Cornstarch","sesame seeds":"Sesame seeds"
+};
 
 const aliases:[RegExp,string,string,IngredientCategory,IngredientUnit,IngredientTracking][]=[
  [/chicken thigh|chicken thighs|boneless chicken thigh|boneless chicken thighs|chicken breast or thigh/i,"chicken-thigh","Chicken thighs","Protein","g","quantity"],
@@ -124,19 +124,19 @@ const aliases:[RegExp,string,string,IngredientCategory,IngredientUnit,Ingredient
  [/makrut lime leaves/i,"makrut-lime","Makrut lime leaves","Fresh","count","quantity"],
  [/lime$/i,"lime","Lime","Fresh","count","quantity"],
  [/lemon/i,"lemon","Lemon","Fresh","count","quantity"],
- [/fish sauce/i,"fish-sauce","Fish sauce","Pantry","ml","quantity"],
- [/oyster sauce/i,"oyster-sauce","Oyster sauce","Pantry","ml","quantity"],
- [/light soy|soy sauce/i,"soy-sauce","Soy sauce","Pantry","ml","quantity"],
- [/dark soy/i,"dark-soy","Dark soy","Pantry","ml","quantity"],
- [/sesame oil/i,"sesame-oil","Sesame oil","Pantry","ml","quantity"],
- [/red wine vinegar/i,"red-wine-vinegar","Red wine vinegar","Pantry","ml","quantity"],
- [/dry red wine/i,"red-wine","Dry red wine","Pantry","ml","quantity"],
- [/sake/i,"sake","Sake","Pantry","ml","quantity"],
- [/dijon mustard/i,"dijon","Dijon mustard","Pantry","ml","quantity"],
- [/tamarind water|^tamarind$/i,"tamarind","Tamarind","Pantry","ml","quantity"],
+ [/fish sauce/i,"fish-sauce","Fish sauce","Pantry","ml","state"],
+ [/oyster sauce/i,"oyster-sauce","Oyster sauce","Pantry","ml","state"],
+ [/light soy|soy sauce/i,"soy-sauce","Soy sauce","Pantry","ml","state"],
+ [/dark soy/i,"dark-soy","Dark soy","Pantry","ml","state"],
+ [/sesame oil/i,"sesame-oil","Sesame oil","Pantry","ml","state"],
+ [/red wine vinegar/i,"red-wine-vinegar","Red wine vinegar","Pantry","ml","state"],
+ [/dry red wine/i,"red-wine","Dry red wine","Pantry","ml","state"],
+ [/sake/i,"sake","Sake","Pantry","ml","state"],
+ [/dijon mustard/i,"dijon","Dijon mustard","Pantry","ml","state"],
+ [/tamarind water|^tamarind$/i,"tamarind","Tamarind","Pantry","ml","state"],
  [/roasted peanuts/i,"peanuts","Roasted peanuts","Pantry","g","quantity"],
  [/toasted desiccated coconut/i,"desiccated-coconut","Desiccated coconut","Pantry","g","quantity"],
- [/neutral oil|olive oil|^oil$|ghee or oil|neutral oil or ghee/i,"cooking-fat","Cooking oil / ghee","Pantry","ml","quantity"]
+ [/neutral oil|olive oil|^oil$|ghee or oil|neutral oil or ghee/i,"cooking-fat","Cooking oil / ghee","Pantry","ml","state"]
 ];
 
 function stem(raw:string){
@@ -144,6 +144,7 @@ function stem(raw:string){
  const patterns=[/\s(?:\d+(?:\.\d+)?|1½|1¼|1¾|½|¼|¾|⅓|⅔)\s*[×x]\s*\d+\s*g/i,/\s(?:\d+(?:\.\d+)?|1½|1¼|1¾|½|¼|¾|⅓|⅔)\s*(?:g|ml|tbsp|tsp|portions?|head|sprig|wedge|small)\b/i,/\s(?:\d+(?:\.\d+)?|1½|1¼|1¾|½|¼|¾|⅓|⅔)\b/];
  let idx=x.length;for(const p of patterns){const m=x.match(p);if(m&&m.index!==undefined)idx=Math.min(idx,m.index)}return x.slice(0,idx).replace(/[,;:]$/," ").trim();
 }
+function displayAmount(raw:string,s:string){const i=raw.toLowerCase().indexOf(s.toLowerCase());let rest=i>=0?raw.slice(i+s.length).trim():"";rest=rest.replace(/^[,;:\-–—\s]+/,"").replace(/\s+optional$/i,"").trim();if(!rest){const m=raw.match(/1½|1¼|1¾|½|¼|¾|⅓|⅔|\d+(?:\.\d+)?/);if(m?.index!==undefined)rest=raw.slice(m.index).replace(/\s+optional$/i,"").trim()}return rest||"to taste"}
 function parseNumber(x:string){return FRACTIONS[x]??Number(x)}
 function amount(raw:string,id:string,preferred:IngredientUnit):{qty:number;unit:IngredientUnit}{
  if(id==="lettuce"){const m=raw.match(/lettuce\s+(\d+)/i);return{qty:m?Number(m[1]):1,unit:"count"}}
@@ -155,12 +156,14 @@ function amount(raw:string,id:string,preferred:IngredientUnit):{qty:number;unit:
  return{qty:1,unit:preferred==="have"?"have":"count"};
 }
 function ingredientFromRaw(raw:string):IngredientRequirement|null{
- const s=stem(raw);if(!s)return null;
+ const s=stem(raw);if(!s)return null;const optional=/\boptional\b/i.test(raw);const display=displayAmount(raw,s);
+ const make=(id:string,qty:number,unit:IngredientUnit):IngredientRequirement=>({id,qty,unit,raw,display:display==="to taste"&&id==="lemon"&&/wedge/i.test(raw)?"1 wedge":display,optional:optional||undefined});
  if(/^water(?: or stock)?$/i.test(s)||/^chicken or prawn stock$/i.test(s))return null;
  const componentCodes=new Set([...motherBases,...midBases,...boosters].map(x=>x.code).concat(["HAR","CHIP","TARE-T"]));if(componentCodes.has(s.toUpperCase()))return null;
- if(stateNames.has(s.toLowerCase())){const id=s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return{id,qty:1,unit:"have",raw}}
- for(const [re,id,, ,unit] of aliases){if(re.test(s)){const a=amount(raw,id,unit);return{id,qty:a.qty,unit:a.unit,raw}}}
- const id=s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return{id,qty:1,unit:"have",raw};
+ if(/^cornstarch slurry$/i.test(s)){const a=amount(raw,"cornstarch","have");return make("cornstarch",a.qty,a.unit)}
+ if(stateNames.has(s.toLowerCase())){const id=s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");const a=amount(raw,id,"have");return make(id,a.qty,a.unit)}
+ for(const [re,id,, ,unit] of aliases){if(re.test(s)){const a=amount(raw,id,unit);return make(id,a.qty,a.unit)}}
+ const id=s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return make(id,1,"have");
 }
 
 export const prepComponents=[...motherBases.map(x=>({...x,kind:"mother" as const})),...midBases.map(x=>({...x,kind:"mid" as const})),...boosters.map(x=>({...x,kind:"booster" as const}))];
@@ -174,7 +177,7 @@ export const recipes:CanonicalRecipe[]=researchedMeals.map(r=>{const prep=normal
 }});
 
 const defs=new Map<string,IngredientDef>();
-for(const r of recipes)for(const req of r.ingredients){if(defs.has(req.id))continue;const s=stem(req.raw);if(stateNames.has(s.toLowerCase())){defs.set(req.id,{id:req.id,name:s.replace(/\b\w/g,c=>c.toUpperCase()),category:"Pantry",unit:"have",tracking:"state"});continue}let hit:IngredientDef|undefined;for(const [re,id,name,category,unit,tracking] of aliases){if(id===req.id||re.test(s)){hit={id,name,category,unit,tracking};break}}defs.set(req.id,hit??{id:req.id,name:s,category:"Pantry",unit:req.unit,tracking:req.unit==="have"?"state":"quantity"})}
+for(const r of recipes)for(const req of r.ingredients){if(defs.has(req.id))continue;const s=stem(req.raw);if(req.id==="cornstarch"||stateNames.has(s.toLowerCase())){const key=req.id==="cornstarch"?"cornstarch":s.toLowerCase();defs.set(req.id,{id:req.id,name:stateLabels[key]??s,category:"Pantry",unit:"have",tracking:"state"});continue}let hit:IngredientDef|undefined;for(const [re,id,name,category,unit,tracking] of aliases){if(id===req.id||re.test(s)){hit={id,name,category,unit,tracking};break}}defs.set(req.id,hit??{id:req.id,name:s,category:"Pantry",unit:req.unit,tracking:req.unit==="have"?"state":"quantity"})}
 export const ingredients=[...defs.values()].sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name));
 export const getIngredient=(id:string)=>ingredients.find(x=>x.id===id)!;
 export const getRecipe=(id:string)=>recipes.find(x=>x.id===id)!;
@@ -183,16 +186,15 @@ export const getMother=(id:string)=>motherBases.find(x=>x.id===id);
 export const getMid=(id:string)=>midBases.find(x=>x.id===id);
 export const defaultWeek=[...firstWeekSlugs];
 
-// Fresh install starts honest: no pretend freezer inventory. Pantry staples are also unknown until setup.
 export const initialComponentStock:Record<string,number>=Object.fromEntries(prepComponents.map(x=>[x.id,0]));
 export const initialIngredientStock:Record<string,number>=Object.fromEntries(ingredients.map(x=>[x.id,0]));
 
 export function prepDemandForWeek(week:string[]){const out:Record<string,{portions:number,totalMl:number}>={};for(const recipeId of week){const r=getRecipe(recipeId);if(!r)continue;for(const p of r.prep){const v=out[p.id]??{portions:0,totalMl:0};v.portions+=p.portions;v.totalMl+=p.totalMl;out[p.id]=v}}return out}
 export function prepNeedsForWeek(week:string[],stock:Record<string,number>){return Object.entries(prepDemandForWeek(week)).map(([id,v])=>({id,needed:v.portions,totalMl:v.totalMl,onHand:stock[id]??0,short:Math.max(0,v.portions-(stock[id]??0))})).filter(x=>x.short>0)}
-export function ingredientDemandForWeek(week:string[]){const out:Record<string,{qty:number;unit:IngredientUnit}>={};for(const recipeId of week){const r=getRecipe(recipeId);if(!r)continue;for(const req of r.ingredients){const def=getIngredient(req.id);if(def?.tracking==="state"){out[req.id]={qty:1,unit:"have"};continue}const v=out[req.id];if(!v)out[req.id]={qty:req.qty,unit:req.unit};else if(v.unit===req.unit)v.qty+=req.qty}}return out}
+export function ingredientDemandForWeek(week:string[]){const out:Record<string,{qty:number;unit:IngredientUnit}>={};for(const recipeId of week){const r=getRecipe(recipeId);if(!r)continue;for(const req of r.ingredients){if(req.optional)continue;const def=getIngredient(req.id);if(def?.tracking==="state"){out[req.id]={qty:1,unit:"have"};continue}const v=out[req.id];if(!v)out[req.id]={qty:req.qty,unit:req.unit};else if(v.unit===req.unit)v.qty+=req.qty}}return out}
 export function shoppingNeedsForWeek(week:string[],stock:Record<string,number>){return Object.entries(ingredientDemandForWeek(week)).map(([id,v])=>{const def=getIngredient(id),onHand=stock[id]??0;const qty=def?.tracking==="state"?(onHand>0?0:1):Math.max(0,v.qty-onHand);return{id,qty,unit:v.unit,required:v.qty,onHand}}).filter(x=>x.qty>0)}
 export function componentConsumption(recipeId:string){const r=getRecipe(recipeId);return r?r.prep.map(x=>({id:x.id,qty:x.portions})):[]}
-export function ingredientConsumption(recipeId:string){return getRecipe(recipeId)?.ingredients??[]}
+export function ingredientConsumption(recipeId:string){return getRecipe(recipeId)?.ingredients.filter(x=>!x.optional)??[]}
 export const coverageByMother=motherBases.map(mother=>({mother,mids:midBases.filter(mid=>mid.parentMotherIds.includes(mother.id)),meals:recipes.filter(r=>r.motherIds.includes(mother.id))}));
 export const totalDinnerDirections=150;
 export const componentLabel=(id:string)=>componentById(id);
