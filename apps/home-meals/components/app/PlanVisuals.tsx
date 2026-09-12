@@ -13,8 +13,8 @@ export function WeekReuse(){
 
 export function GroceryGap(){
  const h=useHousehold();
- const required=useMemo(()=>{const ids=new Set<string>();h.week.forEach(id=>getRecipe(id).ingredients.forEach(x=>ids.add(x.id)));return [...ids]},[h.week]);
+ const required=useMemo(()=>{const ids=new Set<string>();h.week.forEach(id=>getRecipe(id).ingredients.forEach(x=>{if(!x.optional)ids.add(x.id)}));return [...ids]},[h.week]);
  const missing=h.shoppingNeeds.length;const covered=h.kitchenReady?Math.max(0,required.length-missing):0;const pct=h.kitchenReady&&required.length?Math.round(covered/required.length*100):0;
  const next=h.shoppingNeeds.slice(0,3).map(x=>getIngredient(x.id)?.name).filter(Boolean);
- return <section className="hm-grocery-gap-v5"><div><span>THIS WEEK</span><h2>{h.kitchenReady?missing?`${missing} things still missing`:"Everything is covered":"Check the kitchen first"}</h2><p>{h.kitchenReady?(next.length?`Next up: ${next.join(" · ")}.`:"Nothing needs buying for the current plan."):"Once Fridge, Freezer and Pantry are checked, this becomes the real shopping gap."}</p></div><div className="hm-grocery-gap-meter-v5"><b>{h.kitchenReady?`${pct}%`:"—"}</b><span>already home</span><em><i style={{width:`${pct}%`}}/></em></div></section>
+ return <section className="hm-grocery-gap-v5"><div><span>THIS WEEK</span><h2>{h.kitchenReady?missing?`${missing} things still missing`:"Everything is covered":"Check the kitchen first"}</h2><p>{h.kitchenReady?(next.length?`Next up: ${next.join(" · ")}.`:"Nothing needs buying for the current plan."):"Once Fridge, Freezer and Pantry are checked, this becomes the real shopping gap."}</p></div><div className="hm-grocery-gap-meter-v5"><b>{h.kitchenReady?`${pct}%`:"—"}</b><span>required ingredients home</span><em><i style={{width:`${pct}%`}}/></em></div></section>
 }
