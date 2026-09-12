@@ -64,7 +64,7 @@ function Freezer(){
  return <>
   <section className="hm-block-v5">
    <SectionHead eyebrow="MOTHERS" title="Core bases" action={<Link href="/prep">Prep</Link>}/>
-   <div className="hm-freezer-mothers-v5">{motherBases.map(m=>{const n=stockPortions(m.id,h.componentStock);return <article key={m.id} style={{"--tone":m.tone} as React.CSSProperties}><i/><div><strong>{m.code}</strong><span>{m.name}</span><small>{h.componentStock[m.id]??0} ml</small></div><div className="hm-stepper-v5"><button aria-label={`Decrease ${m.code}`} onClick={()=>setByPortion(m.id,-1)}>−</button><b>{n}</b><button aria-label={`Increase ${m.code}`} onClick={()=>setByPortion(m.id,1)}>+</button></div></article>})}</div>
+   <div className="hm-freezer-mothers-v5">{motherBases.map(m=>{const n=stockPortions(m.id,h.componentStock);return <article key={m.id} style={{"--tone":m.tone} as React.CSSProperties}><i/><div><strong>{m.code}</strong><span>{m.name}</span><small>{h.componentStock[m.id]??0} ml</small></div><em className="hm-stock-segments-v5" aria-label={`${n} ${n===1?"portion":"portions"} of ${m.code}`}>{[0,1,2,3,4].map(i=><i key={i} className={i<Math.min(n,5)?"on":""}/>)}</em><div className="hm-stepper-v5"><button aria-label={`Decrease ${m.code}`} onClick={()=>setByPortion(m.id,-1)}>−</button><b>{n}</b><button aria-label={`Increase ${m.code}`} onClick={()=>setByPortion(m.id,1)}>+</button></div></article>})}</div>
   </section>
   <section className="hm-block-v5">
    <SectionHead eyebrow="MIDS + BOOSTERS" title="Other prep" action={<Link href="/prep/mids">Mids</Link>}/>
