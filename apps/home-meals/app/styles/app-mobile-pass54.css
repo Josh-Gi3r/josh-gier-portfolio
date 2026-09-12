@@ -1,0 +1,6 @@
+/* Pass 54: final responsive width authority. Desktop expands the mobile app to the implementation contract. */
+@media(min-width:900px){
+ .hm-page-v5{width:min(100%,1180px)!important;max-width:1180px!important;padding-left:28px;padding-right:28px}
+ .hm-home-v5,.hm-plan-v5,.hm-prep-v5,.hm-cook-v5,.hm-kitchen-v5{max-width:1180px!important}
+}
+@media(min-width:1200px){.hm-page-v5{padding-left:30px;padding-right:30px}}
