@@ -34,7 +34,7 @@ export function HouseholdStateProvider({children}:{children:React.ReactNode}){
  const prepNeeds=useMemo(()=>prepNeedsForWeekMl(week,componentStock),[week,componentStock]);const shoppingNeeds=useMemo(()=>shoppingNeedsForWeek(week,ingredientStock),[week,ingredientStock]);
  const setDay=(index:number,mealId:string)=>{if(!validRecipeIds.has(mealId))return;setWeek(prev=>prev.map((x,i)=>i===index?mealId:x));setGroceryChecked({})};
  const toggleMonthlyPool=(recipeId:string)=>{if(!validRecipeIds.has(recipeId))return;setMonthlyPool(prev=>prev.includes(recipeId)?prev.filter(id=>id!==recipeId):[...prev,recipeId])};
- const setComponent=(id:string,ml:number)=>{setComponentStock(prev=>({...prev,[id]:Math.max(0,ml)}));setKitchenReady(true)};
+ const setComponent=(id:string,ml:number)=>{const target=Math.max(0,ml);const current=Math.max(0,componentStock[id]??0);const removed=Math.max(0,current-target);if(removed>0)setPrepBatches(prev=>consumeRecordedBatches(prev,[{id,ml:removed}]));setComponentStock(prev=>({...prev,[id]:target}));setKitchenReady(true)};
  const setIngredient=(id:string,qty:number)=>{setIngredientStock(prev=>({...prev,[id]:Math.max(0,qty)}));setKitchenReady(true);if(qty<=0)setUseSoon(prev=>({...prev,[id]:false}))};
  const toggleGrocery=(id:string)=>setGroceryChecked(prev=>({...prev,[id]:!prev[id]}));
  const makeBatch=(id:string)=>{const ml=batchOutputMl(id);if(!ml)return;const now=new Date().toISOString();setComponentStock(prev=>({...prev,[id]:(prev[id]??0)+ml}));setPrepBatches(prev=>[{componentId:id,outputMl:ml,remainingMl:ml,at:now},...prev].slice(0,100));setKitchenReady(true)};
