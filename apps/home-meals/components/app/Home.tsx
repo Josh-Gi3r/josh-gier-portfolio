@@ -11,7 +11,7 @@ const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 export function Home(){
  const h=useHousehold();const day=(new Date().getDay()+6)%7;const tonight=getRecipe(h.week[day]??h.week[0]);const last=h.history[0]?getRecipe(h.history[0].mealId):null;const tonightTitle=recipeTitle(tonight.id,tonight.title);const lastPhoto=last?h.mealPhotos.find(x=>x.mealId===last.id):undefined;const lastVersion=last?(h.recipeVersions[last.id]?.[0]?.number??1):1;
  const fridgeItems=ingredients.filter(x=>["Fresh","Protein","Dairy"].includes(x.category)&&(h.ingredientStock[x.id]??0)>0).length;
- const pantryItems=ingredients.filter(x=>x.category==="Pantry"&&(h.ingredientStock[x.id]??0)>0).length;const pantryLow=ingredients.filter(x=>x.category==="Pantry"&&x.tracking==="state"&&(h.ingredientStock[x.id]??0)===1).length;
+ const pantryItems=ingredients.filter(x=>x.category==="Pantry"&&(h.ingredientStock[x.id]??0)>0).length;const pantryLowItems=ingredients.filter(x=>x.category==="Pantry"&&x.tracking==="state"&&(h.ingredientStock[x.id]??0)===1);const pantryLow=pantryLowItems.length;
  const stockedMothers=motherBases.filter(x=>(h.componentStock[x.id]??0)>0).length;
  const firstPrep=h.prepNeeds[0];const firstBuy=h.shoppingNeeds[0];
  const soonIds=Object.keys(h.useSoon).filter(id=>h.useSoon[id]&&(h.ingredientStock[id]??0)>0);const uncoveredSoon=soonIds.filter(id=>!h.week.some(rid=>getRecipe(rid).ingredients.some(x=>x.id===id)));const prioritySoon=uncoveredSoon[0]??soonIds[0];const soonName=prioritySoon?getIngredient(prioritySoon)?.name:null;const soonDay=prioritySoon?h.week.findIndex(id=>getRecipe(id).ingredients.some(x=>x.id===prioritySoon)):-1;
@@ -27,6 +27,7 @@ export function Home(){
    firstPrep?<Link href="/prep" className="hm-priority-v5 prep"><span>Prep</span><strong>{getComponent(firstPrep.id)?.code} needs topping up</strong><p>{firstPrep.shortMl} ml short for this week.</p><b>›</b></Link>:
    firstBuy?<Link href="/plan" className="hm-priority-v5 shop"><span>Shopping</span><strong>{getIngredient(firstBuy.id)?.name} is on the list</strong><p>{h.shoppingNeeds.length} {h.shoppingNeeds.length===1?"item":"items"} to buy this week.</p><b>›</b></Link>:
    prioritySoon?<Link href={`/cook/${h.week[soonDay]}`} className="hm-priority-v5 soon"><span>Use soon</span><strong>{soonName} is covered</strong><p>{soonDay>=0?`${days[soonDay]}'s dinner already uses it.`:"It is already in the plan."}</p><b>›</b></Link>:
+   pantryLow?<Link href="/kitchen" className="hm-priority-v5 shop"><span>Next shop</span><strong>{pantryLow===1?`${pantryLowItems[0].name} is running low`:`${pantryLow} pantry staples are running low`}</strong><p>Still enough for this week. Check them before the next grocery run.</p><b>›</b></Link>:
    <div className="hm-priority-v5 good"><span>This week</span><strong>We’re covered</strong><p>No urgent shop or prep job.</p></div>}
 
   <section className="hm-block-v5 hm-home-week-v6"><SectionHead title="This week" action={<Link href="/plan">See all ›</Link>}/><div className="hm-meal-rail-v5">{h.week.map((id,i)=><MealCard recipe={getRecipe(id)} key={`${id}-${i}`} compact day={`${days[i]}${i===day?" · today":""}`}/>)}</div></section>
