@@ -1,4 +1,4 @@
-/* Pass 75b: explicitly pin both navigation wings around the centre bay. */
+/* Pass 75b: explicitly pin both navigation wings around the centre bay.
+   The center controls remain absolutely centered against the full dock. */
 .hm-dock-left-v75{grid-column:1!important}
 .hm-dock-right-v75{grid-column:3!important}
-.hm-dock-center-v75{grid-column:2!important}
