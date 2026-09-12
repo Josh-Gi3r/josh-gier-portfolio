@@ -9,7 +9,7 @@ export function feedback(kind:FeedbackKind="tap"){
  // a generic tap never duplicates a stronger pattern that just fired.
  if(now-lastAt<70&&p<=lastPriority)return;
  lastAt=now;lastPriority=p;setTimeout(()=>{if(Date.now()-lastAt>80)lastPriority=0},90);
- try{navigator.vibrate(kind==="success"?[18,45,18]:kind==="change"?20:10)}catch{}
+ try{navigator.vibrate(kind==="success"?[20,50,20]:kind==="change"?20:10)}catch{}
 }
 
 export function bindGlobalHaptics(){
