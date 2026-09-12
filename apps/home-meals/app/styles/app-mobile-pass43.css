@@ -1,4 +1,4 @@
-/* Pass 43: repair the Home hero stacking bug and give desktop/tablet a deliberate household-app composition. */
+/* Pass 43/45: repair the Home hero stacking bug and give desktop/tablet a deliberate household-app composition. */
 .hm-page-v5{margin-left:auto;margin-right:auto}
 .hm-tonight-v6{isolation:isolate}
 .hm-tonight-v6>img{z-index:0!important}
@@ -25,14 +25,18 @@
  .hm-home-v6>.hm-page-head-v5,.hm-home-v6>.hm-tonight-v6,.hm-home-v6>.hm-priority-v5,.hm-home-v6>.hm-home-week-v6{grid-column:1/-1}
  .hm-home-v6>.hm-page-head-v5{margin-bottom:18px}
  .hm-home-v6>.hm-tonight-v6{height:430px;min-height:430px;border-radius:30px;box-shadow:0 16px 40px rgba(53,40,25,.13)}
- .hm-home-v6>.hm-priority-v5{margin-top:12px!important}
+ .hm-home-v6>.hm-priority-v5{min-height:66px!important;margin-top:12px!important;padding:10px 14px!important;display:grid!important;grid-template-columns:96px minmax(220px,.78fr) minmax(0,1fr) 30px;gap:12px;align-items:center}
+ .hm-home-v6>.hm-priority-v5>span{align-self:center;margin:0}
+ .hm-home-v6>.hm-priority-v5>strong{margin:0!important;font-size:15px!important}
+ .hm-home-v6>.hm-priority-v5>p{margin:0!important;font-size:13px!important}
+ .hm-home-v6>.hm-priority-v5>b{position:static!important;transform:none!important;justify-self:end}
  .hm-home-v6>.hm-home-week-v6{margin-top:30px}
  .hm-home-v6 .hm-meal-rail-v5{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;overflow:visible;padding:0}
  .hm-home-v6 .hm-meal-card-v5.compact{min-width:0;flex-basis:auto;min-height:218px;border-radius:18px}
  .hm-home-v6 .hm-meal-card-v5.compact>img,.hm-home-v6 .hm-meal-card-v5.compact>.hm-photo-placeholder-v5{height:122px}
  .hm-home-v6 .hm-meal-card-v5.compact .hm-meal-card-copy-v5{padding:9px 10px 11px}
  .hm-home-v6 .hm-meal-card-v5.compact .hm-meal-card-copy-v5>strong{font-size:15px;line-height:1.08}
- .hm-home-v6>.hm-kitchen-status-v6,.hm-home-v6>.hm-memory-v6{margin-top:14px;margin-bottom:0}
+ .hm-home-v6>.hm-kitchen-status-v6,.hm-home-v6>.hm-memory-v6{margin-top:14px;margin-bottom:0;min-width:0}
  .hm-home-v6>.hm-kitchen-status-v6{grid-column:1}
  .hm-home-v6>.hm-memory-v6{grid-column:2}
  .hm-home-v6 .hm-kitchen-grid-v6>a{min-height:112px}
@@ -40,6 +44,7 @@
  .hm-home-v6 .hm-memory-card-v5 img{width:148px;height:148px;border-radius:18px}
  .hm-home-v6 .hm-memory-card-v5 strong{font-size:22px;line-height:1.05}
  .hm-home-v6 .hm-memory-card-v5 p{font-size:14px}
+ .hm-home-v6>.hm-memory-v6>.hm-empty-v5{min-height:235px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:24px}
 }
 
 @media(min-width:1200px){
