@@ -1,0 +1,299 @@
+/* Pass 70: production bottom bar aligned to the approved visual direction.
+   Six equal destinations stay on one baseline while the Camera / Ask / Mic cluster
+   is locked to the exact screen centre. Ask Home uses a physical press interaction
+   adapted from the shared Uiverse reference: raised depth at rest, 7px press travel,
+   fast 100ms response, gloss highlight, and shadow collapse. */
+
+.hm-nav-v6{
+  isolation:isolate!important;
+  overflow:visible!important;
+  display:grid!important;
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  align-items:end!important;
+  gap:0!important;
+  background:linear-gradient(180deg,#fffdf9 0%,#fbf7f0 46%,#f4ede2 100%)!important;
+  border:1px solid rgba(180,151,108,.34)!important;
+  box-shadow:0 -12px 34px rgba(54,41,27,.09),0 8px 24px rgba(54,41,27,.08),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 0 rgba(167,137,96,.11)!important;
+  backdrop-filter:blur(16px)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+}
+.hm-nav-v6:before{
+  content:""!important;
+  position:absolute!important;
+  z-index:-1!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  background:linear-gradient(180deg,#fffdf9 0%,#fbf7f0 58%,#f4ede2 100%)!important;
+  border:1px solid rgba(180,151,108,.34)!important;
+  border-bottom:0!important;
+  box-shadow:0 -12px 28px rgba(54,41,27,.08),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+.hm-nav-v6>a,
+.hm-more-nav-v69{
+  color:#5d6662!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  text-decoration:none!important;
+  transition:transform 120ms ease,background-color 140ms ease,color 140ms ease,box-shadow 140ms ease!important;
+}
+.hm-nav-v6>a svg,.hm-more-nav-v69 svg{filter:drop-shadow(0 1px 0 rgba(255,255,255,.78))}
+.hm-nav-v6>a:hover,.hm-more-nav-v69:hover{
+  color:#34423b!important;
+  background:rgba(255,255,255,.38)!important;
+  transform:translateY(-1px)!important;
+}
+.hm-nav-v6>a:active,.hm-more-nav-v69:active{transform:translateY(1px) scale(.98)!important}
+.hm-nav-v6>a.active,.hm-more-nav-v69.active{
+  color:#155b40!important;
+  background:linear-gradient(180deg,rgba(238,245,237,.96),rgba(224,237,226,.88))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 3px 8px rgba(38,91,62,.08)!important;
+}
+.hm-nav-v6>a:focus-visible,.hm-more-nav-v69:focus-visible,
+.hm-home-tools-v6>a:focus-visible,.hm-home-tools-v6>button:focus-visible{
+  outline:3px solid rgba(38,112,77,.30)!important;
+  outline-offset:3px!important;
+}
+
+.hm-home-tools-v6{
+  position:fixed!important;
+  z-index:1002!important;
+  left:50%!important;
+  right:auto!important;
+  transform:translateX(-50%)!important;
+  display:grid!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+.hm-home-tools-v6>*{pointer-events:auto!important}
+
+.hm-home-tools-v6 .hm-input-orb-v6{
+  position:relative!important;
+  inset:auto!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  border-radius:50%!important;
+  border:1px solid rgba(157,134,101,.20)!important;
+  background:linear-gradient(180deg,#fffefb 0%,#faf6ef 54%,#eee7dc 100%)!important;
+  color:#18553d!important;
+  box-shadow:0 4px 0 #d8d0c4,0 10px 18px rgba(65,49,31,.14),inset 0 2px 1px rgba(255,255,255,.96),inset 0 -5px 9px rgba(139,116,84,.07)!important;
+  transition:transform 90ms ease,box-shadow 90ms ease,filter 90ms ease!important;
+  overflow:hidden!important;
+}
+.hm-home-tools-v6 .hm-input-orb-v6:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:linear-gradient(to top,rgba(74,61,45,.08),transparent 54%);
+  pointer-events:none;
+}
+.hm-home-tools-v6 .hm-input-orb-v6:after{
+  content:"";
+  position:absolute;
+  top:14%;
+  left:18%;
+  width:36%;
+  height:14%;
+  border-radius:999px;
+  background:rgba(255,255,255,.70);
+  filter:blur(1.5px);
+  transform:rotate(-10deg);
+  pointer-events:none;
+}
+.hm-home-tools-v6 .hm-input-orb-v6 svg{position:relative;z-index:2}
+.hm-home-tools-v6 .hm-input-orb-v6:active{
+  transform:translateY(4px)!important;
+  box-shadow:0 0 0 #d8d0c4,0 5px 10px rgba(65,49,31,.11),inset 0 2px 1px rgba(255,255,255,.90),inset 0 -3px 7px rgba(139,116,84,.06)!important;
+}
+
+.hm-home-tools-v6 .hm-ask-orb-v6{
+  position:relative!important;
+  inset:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:2px!important;
+  margin:0!important;
+  padding:0!important;
+  border-radius:50%!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+  border:1px solid rgba(5,45,30,.58)!important;
+  background:linear-gradient(180deg,#2c7758 0%,#1d6347 38%,#15543b 68%,#0f452f 100%)!important;
+  color:#fff!important;
+  font-weight:850!important;
+  letter-spacing:-.02em!important;
+  line-height:1.02!important;
+  box-shadow:0 7px 0 #0a3827,0 17px 26px -10px rgba(20,93,62,.66),inset 0 2px 1px rgba(255,255,255,.35),inset 0 -10px 16px rgba(2,35,23,.22)!important;
+  transform:translateY(-4px)!important;
+  transition:transform 100ms ease,border-color 100ms ease,box-shadow 100ms ease,filter 100ms ease!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+.hm-home-tools-v6 .hm-ask-orb-v6:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  border-radius:50%;
+  background:linear-gradient(to top,rgba(0,0,0,.25),rgba(0,0,0,.04) 50%,transparent 72%);
+  pointer-events:none;
+}
+.hm-home-tools-v6 .hm-ask-orb-v6:after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:13%;
+  left:17%;
+  width:36%;
+  height:13%;
+  border-radius:999px;
+  background:rgba(255,255,255,.34);
+  filter:blur(2px);
+  transform:rotate(-10deg);
+  pointer-events:none;
+}
+.hm-home-tools-v6 .hm-ask-orb-v6 svg,
+.hm-home-tools-v6 .hm-ask-orb-v6 span{position:relative!important;z-index:2!important;color:#fff!important}
+.hm-home-tools-v6 .hm-ask-orb-v6 svg{filter:drop-shadow(0 1px 1px rgba(0,0,0,.22));animation:hmAskSparkPulse 2.5s ease-in-out infinite}
+.hm-home-tools-v6 .hm-ask-orb-v6 span{font-weight:850!important;text-align:center!important;white-space:normal!important}
+.hm-home-tools-v6 .hm-ask-orb-v6:hover{filter:saturate(1.06) brightness(1.02)!important}
+.hm-home-tools-v6 .hm-ask-orb-v6:active{
+  transform:translateY(3px)!important;
+  box-shadow:0 0 0 #0a3827,0 7px 13px -8px rgba(20,93,62,.48),inset 0 2px 1px rgba(255,255,255,.28),inset 0 -6px 12px rgba(2,35,23,.18)!important;
+}
+.hm-home-tools-v6 .hm-ask-orb-v6:active:after{opacity:.72;transform:rotate(-10deg) translateY(2px)}
+@keyframes hmAskSparkPulse{0%,100%{opacity:.88;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+
+/* Mobile: the bar remains full-width, the six destination hit areas stay equal,
+   and the centre controls live in the raised part of the bar rather than consuming columns. */
+@media(max-width:699px){
+  .hm-main-v5{padding-bottom:calc(118px + env(safe-area-inset-bottom))!important}
+  .hm-nav-v6{
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    transform:none!important;
+    width:100%!important;
+    height:calc(88px + env(safe-area-inset-bottom))!important;
+    padding:28px 6px env(safe-area-inset-bottom)!important;
+    border-radius:26px 26px 0 0!important;
+  }
+  .hm-nav-v6:before{
+    top:-41px!important;
+    width:198px!important;
+    height:62px!important;
+    border-radius:106px 106px 0 0!important;
+  }
+  .hm-nav-v6>a{
+    height:56px!important;
+    min-height:56px!important;
+    border-radius:14px!important;
+    gap:3px!important;
+    padding:0 1px!important;
+    font-size:10px!important;
+  }
+  .hm-nav-v6>a svg{width:22px!important;height:22px!important}
+  .hm-nav-v6>a span{font-size:10px!important;line-height:1!important;white-space:nowrap!important;letter-spacing:-.025em!important}
+  .hm-home-tools-v6{
+    grid-template-columns:48px 82px 48px!important;
+    gap:5px!important;
+    width:188px!important;
+    height:86px!important;
+    bottom:calc(61px + env(safe-area-inset-bottom))!important;
+  }
+  .hm-home-tools-v6 .hm-input-orb-v6{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important}
+  .hm-home-tools-v6 .hm-input-orb-v6 svg{width:22px!important;height:22px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6{width:82px!important;height:82px!important;min-width:82px!important;min-height:82px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6 svg{width:20px!important;height:20px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6 span{max-width:58px!important;font-size:11px!important}
+  .hm-more-nav-v69{
+    right:6px!important;
+    bottom:calc(4px + env(safe-area-inset-bottom))!important;
+    width:calc((100vw - 12px)/6)!important;
+    height:56px!important;
+    min-height:56px!important;
+    border-radius:14px!important;
+    gap:3px!important;
+    font-size:10px!important;
+  }
+  .hm-more-nav-v69 svg{width:22px!important;height:22px!important}
+  .hm-more-nav-v69 span{font-size:10px!important;line-height:1!important;letter-spacing:-.025em!important}
+}
+@media(max-width:374px){
+  .hm-nav-v6{padding-left:4px!important;padding-right:4px!important}
+  .hm-nav-v6:before{width:184px!important;top:-38px!important;height:59px!important}
+  .hm-home-tools-v6{grid-template-columns:44px 76px 44px!important;gap:4px!important;width:172px!important;height:80px!important;bottom:calc(62px + env(safe-area-inset-bottom))!important}
+  .hm-home-tools-v6 .hm-input-orb-v6{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6{width:76px!important;height:76px!important;min-width:76px!important;min-height:76px!important}
+  .hm-nav-v6>a span,.hm-more-nav-v69 span{font-size:9px!important;letter-spacing:-.04em!important}
+  .hm-more-nav-v69{right:4px!important;width:calc((100vw - 8px)/6)!important}
+}
+
+/* Tablet / desktop: retain the same geometry, only increase tactile object scale. */
+@media(min-width:700px){
+  .hm-main-v5{padding-bottom:132px!important}
+  .hm-nav-v6{
+    left:50%!important;
+    right:auto!important;
+    bottom:12px!important;
+    transform:translateX(-50%)!important;
+    width:min(calc(100% - 24px),1180px)!important;
+    height:96px!important;
+    padding:32px 14px 10px!important;
+    border-radius:34px!important;
+  }
+  .hm-nav-v6:before{
+    top:-49px!important;
+    width:264px!important;
+    height:76px!important;
+    border-radius:138px 138px 0 0!important;
+  }
+  .hm-nav-v6>a{height:58px!important;min-height:58px!important;border-radius:16px!important;font-size:12px!important;gap:4px!important}
+  .hm-nav-v6>a svg{width:24px!important;height:24px!important}
+  .hm-nav-v6>a span{font-size:12px!important;line-height:1!important}
+  .hm-home-tools-v6{
+    grid-template-columns:60px 102px 60px!important;
+    gap:8px!important;
+    width:238px!important;
+    height:108px!important;
+    bottom:76px!important;
+  }
+  .hm-home-tools-v6 .hm-input-orb-v6{width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important}
+  .hm-home-tools-v6 .hm-input-orb-v6 svg{width:26px!important;height:26px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6{width:102px!important;height:102px!important;min-width:102px!important;min-height:102px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6 svg{width:24px!important;height:24px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6 span{max-width:72px!important;font-size:14px!important}
+  .hm-more-nav-v69{
+    right:calc((100vw - min(calc(100vw - 24px),1180px))/2 + 14px)!important;
+    bottom:22px!important;
+    width:calc((min(calc(100vw - 24px),1180px) - 28px)/6)!important;
+    height:58px!important;
+    min-height:58px!important;
+    border-radius:16px!important;
+    gap:4px!important;
+    font-size:12px!important;
+  }
+  .hm-more-nav-v69 svg{width:24px!important;height:24px!important}
+  .hm-more-nav-v69 span{font-size:12px!important;line-height:1!important}
+}
+@media(min-width:1100px){
+  .hm-nav-v6:before{width:286px!important;height:80px!important;top:-52px!important}
+  .hm-home-tools-v6{grid-template-columns:64px 108px 64px!important;gap:9px!important;width:254px!important;height:114px!important;bottom:77px!important}
+  .hm-home-tools-v6 .hm-input-orb-v6{width:64px!important;height:64px!important;min-width:64px!important;min-height:64px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6{width:108px!important;height:108px!important;min-width:108px!important;min-height:108px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6 span{font-size:15px!important;max-width:78px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .hm-nav-v6>a,.hm-more-nav-v69,.hm-home-tools-v6 .hm-input-orb-v6,.hm-home-tools-v6 .hm-ask-orb-v6{transition:none!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6 svg{animation:none!important}
+}
