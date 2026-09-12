@@ -9,7 +9,7 @@ import {MealCard,PageHead,RecipeReady,SectionHead} from "./Primitives";
 
 const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 export function Home(){
- const h=useHousehold();const day=(new Date().getDay()+6)%7;const tonight=getRecipe(h.week[day]??h.week[0]);const last=h.history[0]?getRecipe(h.history[0].mealId):null;
+ const h=useHousehold();const day=(new Date().getDay()+6)%7;const tonight=getRecipe(h.week[day]??h.week[0]);const last=h.history[0]?getRecipe(h.history[0].mealId):null;const tonightTitle=recipeTitle(tonight.id,tonight.title);
  const fridgeItems=ingredients.filter(x=>["Fresh","Protein","Dairy"].includes(x.category)&&(h.ingredientStock[x.id]??0)>0).length;
  const pantryItems=ingredients.filter(x=>x.category==="Pantry"&&(h.ingredientStock[x.id]??0)>0).length;
  const stockedMothers=motherBases.filter(x=>(h.componentStock[x.id]??0)>0).length;
@@ -20,7 +20,7 @@ export function Home(){
  return <div className="hm-page-v5 hm-home-v5 hm-home-v6">
   <PageHead title="Home Meals" sub="Josh & G" action={<div className="hm-us-v5 hm-us-v6"><b>J</b><b>G</b></div>}/>
 
-  <section className="hm-tonight-v5 hm-tonight-v6">{tonight.image?<img src={tonight.image} alt="" width={780} height={520} loading="eager" fetchPriority="high" decoding="async"/>:<div/>}<div className="hm-tonight-shade-v5"/><div className="hm-tonight-content-v5"><span className="hm-hero-kicker-v6">TONIGHT’S DINNER</span><h2>{recipeTitle(tonight.id,tonight.title)}</h2><p>{recipeSubtitle(tonight.id,tonight.subtitle)}</p><div className="hm-tonight-meta-v5"><RecipeReady recipe={tonight}/><span>{tonight.minutes} min</span></div><div className="hm-tonight-actions-v5"><Link href={heroHref}>{heroLabel} <b>→</b></Link><Link href="/plan">Swap</Link></div></div></section>
+  <section className="hm-tonight-v5 hm-tonight-v6">{tonight.image?<img src={tonight.image} alt={tonightTitle} width={780} height={520} loading="eager" fetchPriority="high" decoding="async"/>:<div/>}<div className="hm-tonight-shade-v5"/><div className="hm-tonight-content-v5"><span className="hm-hero-kicker-v6">TONIGHT’S DINNER</span><h2>{tonightTitle}</h2><p>{recipeSubtitle(tonight.id,tonight.subtitle)}</p><div className="hm-tonight-meta-v5"><RecipeReady recipe={tonight}/><span>{tonight.minutes} min</span></div><div className="hm-tonight-actions-v5"><Link href={heroHref}>{heroLabel} <b>→</b></Link><Link href="/plan">Swap</Link></div></div></section>
 
   {!h.kitchenReady?<Link href="/kitchen" className="hm-priority-v5 setup"><span>Kitchen</span><strong>Tell Home what we have</strong><p>Check the fridge, freezer and pantry once so shopping and prep are real.</p><b>›</b></Link>:
    uncoveredSoon.length>0?<Link href="/plan" className="hm-priority-v5 soon"><span>Use soon</span><strong>{soonName} needs a dinner</strong><p>Nothing in the current week uses it yet.{uncoveredSoon.length>1?` +${uncoveredSoon.length-1} more.`:""}</p><b>›</b></Link>:
@@ -38,6 +38,6 @@ export function Home(){
    <Link href="/plan" className="shopping" style={{"--status-image":`url(${foundationImages.groceries})`} as React.CSSProperties}><div className="hm-kitchen-icon-v6">⌑</div><span><strong>Shopping</strong><small>{h.shoppingNeeds.length?`${h.shoppingNeeds.length} items`:"Nothing urgent"}</small></span><b>›</b></Link>
   </div></section>
 
-  <section className="hm-block-v5 hm-memory-v6"><SectionHead title="Our cookbook" action={<Link href="/cook">Recipes ›</Link>}/>{last?<Link href={`/cook/${last.id}`} className="hm-memory-card-v5">{last.image&&<img src={last.image} alt="" width={148} height={148} loading="lazy" decoding="async"/>}<div><strong>{recipeTitle(last.id,last.title)}</strong><span>{h.ratings[last.id]?.josh?`Josh ${h.ratings[last.id].josh}★`:"Josh —"} · {h.ratings[last.id]?.g?`G ${h.ratings[last.id].g}★`:"G —"}</span>{h.recipeNotes[last.id]?.[0]&&<p>“{h.recipeNotes[last.id][0].text}”</p>}</div><b>›</b></Link>:<div className="hm-empty-v5"><strong>Nothing cooked yet.</strong><p>Cook something and Home will remember what worked for us.</p><Link href="/cook">Choose a recipe</Link></div>}</section>
+  <section className="hm-block-v5 hm-memory-v6"><SectionHead title="Our cookbook" action={<Link href="/cook">Recipes ›</Link>}/>{last?<Link href={`/cook/${last.id}`} className="hm-memory-card-v5">{last.image&&<img src={last.image} alt={recipeTitle(last.id,last.title)} width={148} height={148} loading="lazy" decoding="async"/>}<div><strong>{recipeTitle(last.id,last.title)}</strong><span>{h.ratings[last.id]?.josh?`Josh ${h.ratings[last.id].josh}★`:"Josh —"} · {h.ratings[last.id]?.g?`G ${h.ratings[last.id].g}★`:"G —"}</span>{h.recipeNotes[last.id]?.[0]&&<p>“{h.recipeNotes[last.id][0].text}”</p>}</div><b>›</b></Link>:<div className="hm-empty-v5"><strong>Nothing cooked yet.</strong><p>Cook something and Home will remember what worked for us.</p><Link href="/cook">Choose a recipe</Link></div>}</section>
  </div>
 }
