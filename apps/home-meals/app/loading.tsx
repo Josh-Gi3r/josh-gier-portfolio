@@ -1,0 +1,1 @@
+export default function Loading(){return <div className="hm-page-v5 hm-loading-v13" aria-live="polite"><div className="hm-loading-mark-v13">H</div><div><span>HOME MEALS</span><strong>Getting the kitchen ready…</strong><i/></div></div>}
