@@ -1,0 +1,10 @@
+"use client";
+import {useEffect,useState} from "react";
+import {usePathname} from "next/navigation";
+
+export function PwaRuntime(){
+ const[online,setOnline]=useState(true);const[updateReady,setUpdateReady]=useState(false);const[registration,setRegistration]=useState<ServiceWorkerRegistration|null>(null);const path=usePathname();const cookingRoute=/^\/cook\/[^/]+\/cook$/.test(path);
+ useEffect(()=>{const sync=()=>setOnline(navigator.onLine);sync();window.addEventListener("online",sync);window.addEventListener("offline",sync);let mounted=true;if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"}).then(reg=>{if(!mounted)return;setRegistration(reg);const inspect=()=>{if(reg.waiting)setUpdateReady(true)};inspect();reg.addEventListener("updatefound",()=>{const worker=reg.installing;if(!worker)return;worker.addEventListener("statechange",()=>{if(worker.state==="installed"&&navigator.serviceWorker.controller)setUpdateReady(true)})})}).catch(()=>{});return()=>{mounted=false;window.removeEventListener("online",sync);window.removeEventListener("offline",sync)}},[]);
+ const applyUpdate=()=>{const waiting=registration?.waiting;if(!waiting)return;let reloaded=false;const reload=()=>{if(reloaded)return;reloaded=true;window.location.reload()};navigator.serviceWorker.addEventListener("controllerchange",reload,{once:true});waiting.postMessage({type:"SKIP_WAITING"});setTimeout(reload,1800)};
+ return <>{!online&&<div className="hm-offline-v8" role="status">Offline · saved Home Meals pages still work</div>}{updateReady&&!cookingRoute&&<div className="hm-update-ready-v39" role="status"><span><strong>Home Meals has an update.</strong><small>Your kitchen state stays on this device.</small></span><button onClick={applyUpdate}>Update</button></div>}</>
+}
