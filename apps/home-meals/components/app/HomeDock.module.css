@@ -32,11 +32,11 @@
   height:58px;
   pointer-events:auto;
 }
-
 .left{grid-column:1}
 .right{grid-column:3}
 
 .navItem{
+  appearance:none;
   min-width:0;
   height:54px;
   display:flex;
@@ -44,21 +44,21 @@
   align-items:center;
   justify-content:center;
   gap:4px;
-  color:#545b5a;
+  color:#4d5352;
   text-decoration:none;
   font-family:var(--sans);
   font-size:10px;
   font-weight:720;
   line-height:1;
   border-radius:14px;
-  transition:color 120ms ease,transform 100ms ease,background-color 120ms ease;
+  transition:color 120ms ease,transform 100ms ease;
   -webkit-tap-highlight-color:transparent;
 }
-.navItem svg{width:22px;height:22px;stroke-width:1.85}
-.navItem:hover{color:#293632;transform:translateY(-1px)}
+.navItem svg{width:22px;height:22px;stroke-width:1.85;filter:drop-shadow(0 1px 0 rgba(255,255,255,.8))}
+.navItem:hover{color:#26322f;transform:translateY(-1px)}
 .navItem:active{transform:translateY(2px) scale(.97)}
 .active{color:#0e573a}
-.active svg{filter:drop-shadow(0 2px 3px rgba(20,85,58,.16))}
+.active svg{filter:drop-shadow(0 1px 0 rgba(255,255,255,.8)) drop-shadow(0 2px 3px rgba(20,85,58,.16))}
 
 .center{
   position:absolute;
@@ -78,6 +78,7 @@
 .center>*{pointer-events:auto}
 
 .sideButton{
+  appearance:none;
   position:relative;
   display:grid;
   place-items:center;
@@ -88,16 +89,16 @@
   padding:0;
   margin:0;
   border-radius:50%;
-  border:1px solid rgba(177,149,109,.34);
+  border:1px solid rgba(177,149,109,.38);
   color:#0c5739;
   background:
-    radial-gradient(circle at 34% 20%,rgba(255,255,255,.95),rgba(255,255,255,0) 30%),
-    linear-gradient(180deg,#fffefa 0%,#f9f5ee 52%,#ece3d5 100%);
+    radial-gradient(circle at 34% 18%,rgba(255,255,255,.96),rgba(255,255,255,0) 30%),
+    linear-gradient(180deg,#fffefa 0%,#f9f5ed 52%,#ebe1d2 100%);
   box-shadow:
-    0 3px 0 #d3c8b8,
+    0 3px 0 #d0c3b1,
     0 8px 16px rgba(58,43,26,.14),
-    inset 0 1px 0 rgba(255,255,255,.95),
-    inset 0 -4px 7px rgba(125,99,66,.07);
+    inset 0 1px 0 rgba(255,255,255,.96),
+    inset 0 -4px 7px rgba(125,99,66,.08);
   transition:transform 90ms ease,box-shadow 90ms ease,filter 90ms ease;
   text-decoration:none;
   -webkit-tap-highlight-color:transparent;
@@ -105,12 +106,9 @@
 .sideButton:before{
   content:"";
   position:absolute;
-  left:16%;
-  top:12%;
-  width:34%;
-  height:12%;
+  left:16%;top:12%;width:34%;height:12%;
   border-radius:999px;
-  background:rgba(255,255,255,.75);
+  background:rgba(255,255,255,.78);
   filter:blur(1.4px);
   transform:rotate(-12deg);
 }
@@ -118,14 +116,11 @@
 .sideButton:hover{filter:brightness(1.02)}
 .sideButton:active{
   transform:translateY(3px);
-  box-shadow:
-    0 0 0 #d3c8b8,
-    0 4px 9px rgba(58,43,26,.10),
-    inset 0 1px 0 rgba(255,255,255,.92),
-    inset 0 -2px 5px rgba(125,99,66,.05);
+  box-shadow:0 0 0 #d0c3b1,0 4px 9px rgba(58,43,26,.10),inset 0 1px 0 rgba(255,255,255,.92),inset 0 -2px 5px rgba(125,99,66,.05);
 }
 
 .ask{
+  appearance:none;
   position:relative;
   width:72px;
   height:72px;
@@ -134,7 +129,9 @@
   padding:0;
   margin:0;
   border-radius:50%;
-  border:1px solid rgba(6,43,29,.72);
+  border:1px solid rgba(6,43,29,.76);
+  outline:1.5px solid rgba(201,164,89,.88);
+  outline-offset:1px;
   overflow:hidden;
   display:flex;
   flex-direction:column;
@@ -143,9 +140,9 @@
   gap:2px;
   color:#fff;
   background:
-    radial-gradient(circle at 35% 16%,rgba(255,255,255,.30),rgba(255,255,255,0) 25%),
+    radial-gradient(circle at 35% 16%,rgba(255,255,255,.32),rgba(255,255,255,0) 25%),
     radial-gradient(circle at 50% 118%,rgba(0,25,16,.36),rgba(0,0,0,0) 52%),
-    linear-gradient(180deg,#2e7c5b 0%,#1d6548 43%,#0f4932 100%);
+    linear-gradient(180deg,#317f5e 0%,#1d6548 43%,#0d472f 100%);
   box-shadow:
     0 7px 0 #083724,
     0 14px 24px -9px rgba(15,79,53,.58),
@@ -161,43 +158,20 @@
   line-height:1.02;
   -webkit-tap-highlight-color:transparent;
 }
-.ask:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(to top,rgba(0,0,0,.19),rgba(0,0,0,0) 58%);
-}
-.ask:after{
-  content:"";
-  position:absolute;
-  left:17%;
-  top:11%;
-  width:36%;
-  height:13%;
-  border-radius:999px;
-  background:rgba(255,255,255,.30);
-  filter:blur(2px);
-  transform:rotate(-10deg);
-}
+.ask:before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.19),rgba(0,0,0,0) 58%)}
+.ask:after{content:"";position:absolute;left:17%;top:11%;width:36%;height:13%;border-radius:999px;background:rgba(255,255,255,.32);filter:blur(2px);transform:rotate(-10deg)}
 .ask svg,.ask span{position:relative;z-index:2}
 .ask svg{width:19px;height:19px;stroke-width:1.85;filter:drop-shadow(0 1px 1px rgba(0,0,0,.18))}
 .ask span{max-width:52px;text-align:center}
 .ask:hover{filter:saturate(1.06) brightness(1.02)}
 .ask:active{
   transform:translateY(5px);
-  box-shadow:
-    0 0 0 #083724,
-    0 6px 12px -8px rgba(15,79,53,.45),
-    inset 0 0 0 1px rgba(255,255,255,.15),
-    inset 0 2px 2px rgba(255,255,255,.27),
-    inset 0 -6px 11px rgba(0,27,17,.18);
+  box-shadow:0 0 0 #083724,0 6px 12px -8px rgba(15,79,53,.45),inset 0 0 0 1px rgba(255,255,255,.15),inset 0 2px 2px rgba(255,255,255,.27),inset 0 -6px 11px rgba(0,27,17,.18);
 }
 
-.navItem:focus-visible,.sideButton:focus-visible,.ask:focus-visible{
-  outline:3px solid rgba(27,103,70,.28);
-  outline-offset:3px;
-}
+.navItem:focus-visible,.sideButton:focus-visible,.ask:focus-visible{outline:3px solid rgba(27,103,70,.28);outline-offset:3px}
 
+:global(.hm-nav-v5.hm-nav-v6),:global(.hm-home-tools-v6),:global(.hm-more-nav-v69){display:none!important}
 :global(.hm-main-v5){padding-bottom:calc(108px + env(safe-area-inset-bottom))!important}
 
 @media(max-width:374px){
@@ -213,29 +187,37 @@
   .dock{
     bottom:8px;
     width:min(calc(100% - 22px),1160px);
-    height:132px;
-    grid-template-columns:minmax(0,1fr) 282px minmax(0,1fr);
+    height:176px;
+    grid-template-columns:minmax(0,1fr) 330px minmax(0,1fr);
     padding:0 16px 0;
   }
-  .shell{bottom:0;height:126px}
-  .wing{height:66px}
-  .navItem{height:60px;font-size:14px;gap:5px;border-radius:18px}
-  .navItem svg{width:30px;height:30px;stroke-width:1.75}
+  .shell{bottom:0;height:170px}
+  .wing{height:76px}
+  .navItem{height:68px;font-size:17px;gap:6px;border-radius:18px;font-weight:690}
+  .navItem svg{width:36px;height:36px;stroke-width:1.7}
   .center{
-    bottom:18px;
-    width:282px;
-    height:118px;
-    grid-template-columns:72px 118px 72px;
+    bottom:5px;
+    width:330px;
+    height:140px;
+    grid-template-columns:86px 138px 86px;
     gap:10px;
   }
-  .sideButton{width:72px;height:72px;min-width:72px;min-height:72px;box-shadow:0 4px 0 #d3c8b8,0 12px 22px rgba(58,43,26,.14),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -6px 10px rgba(125,99,66,.07)}
-  .sideButton svg{width:32px;height:32px}
-  .ask{width:118px;height:118px;min-width:118px;min-height:118px;font-size:17px;box-shadow:0 8px 0 #083724,0 20px 30px -10px rgba(15,79,53,.56),inset 0 0 0 1px rgba(255,255,255,.16),inset 0 3px 2px rgba(255,255,255,.30),inset 0 -14px 20px rgba(0,27,17,.22)}
-  .ask svg{width:28px;height:28px}
-  .ask span{max-width:84px}
-  :global(.hm-main-v5){padding-bottom:150px!important}
+  .sideButton{
+    width:86px;height:86px;min-width:86px;min-height:86px;
+    transform:translateY(6px);
+    box-shadow:0 4px 0 #d0c3b1,0 13px 24px rgba(58,43,26,.15),inset 0 1px 0 rgba(255,255,255,.96),inset 0 -7px 11px rgba(125,99,66,.08)
+  }
+  .sideButton:active{transform:translateY(10px)}
+  .sideButton svg{width:38px;height:38px}
+  .ask{
+    width:138px;height:138px;min-width:138px;min-height:138px;
+    font-size:18px;
+    box-shadow:0 8px 0 #083724,0 20px 31px -10px rgba(15,79,53,.58),inset 0 0 0 1px rgba(255,255,255,.16),inset 0 3px 2px rgba(255,255,255,.30),inset 0 -16px 22px rgba(0,27,17,.22)
+  }
+  .ask:active{transform:translateY(5px)}
+  .ask svg{width:31px;height:31px}
+  .ask span{max-width:96px}
+  :global(.hm-main-v5){padding-bottom:188px!important}
 }
 
-@media(prefers-reduced-motion:reduce){
-  .navItem,.sideButton,.ask{transition:none}
-}
+@media(prefers-reduced-motion:reduce){.navItem,.sideButton,.ask{transition:none}}
