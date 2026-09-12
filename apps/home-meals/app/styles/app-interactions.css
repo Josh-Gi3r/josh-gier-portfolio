@@ -11,6 +11,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .hm-ask-context-v5>a{min-width:44px;justify-content:center}
 .hm-grocery-list-v5 label{cursor:pointer}
 .hm-grocery-list-v5 input{min-width:22px;min-height:22px}
+.hm-grocery-list-v5 label.done{opacity:1;background:#f1f5f1}
+.hm-grocery-list-v5 label.done strong{color:#46534b;text-decoration:line-through}
+.hm-grocery-list-v5 label.done small{color:#59625d}
 
 .hm-use-soon-strip-v5{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;margin:10px 0;padding:9px 10px 9px 13px;border:1px solid #edd2b3;border-radius:17px;background:#fff2e3;overflow:hidden}
 .hm-use-soon-strip-v5>div:first-child>span{display:block;font-size:11px;font-weight:800;letter-spacing:.09em;color:#9a5d28}.hm-use-soon-strip-v5>div:first-child>strong{display:block;font-size:12px;margin-top:2px;white-space:nowrap}.hm-use-soon-strip-v5>div:nth-child(2){min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.hm-use-soon-strip-v5>div:nth-child(2)::-webkit-scrollbar{display:none}.hm-use-soon-strip-v5 button{flex:0 0 auto;min-height:44px;border:1px solid #e7c9a7;border-radius:999px;background:#fff;padding:0 8px 0 11px;display:flex;align-items:center;gap:7px;color:#7b4d28;font-size:12px;font-weight:700}.hm-use-soon-strip-v5 button b{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#f7e4cf;font-size:12px}.hm-use-soon-strip-v5>a{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;color:#8f592c;font-size:12px;font-weight:800}
