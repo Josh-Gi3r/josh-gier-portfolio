@@ -17,15 +17,16 @@ export function Cook(){
  const newToUs=recipes.filter(r=>!cookedIds.has(r.id)).slice(0,8);
  const visible=useMemo(()=>recipes.filter(r=>(cuisine==="All"||r.cuisine===cuisine)&&(`${recipeTitle(r.id,r.title)} ${recipeSubtitle(r.id,r.subtitle)} ${r.title} ${r.cuisine}`).toLowerCase().includes(q.toLowerCase())),[q,cuisine]);
  const searching=!!q||cuisine!=="All";const library=searching||showAll?visible:visible.slice(0,12);
+ const clearSearch=()=>{setQ("");setCuisine("All");setShowAll(false);feedback("tap")};
  return <div className="hm-page-v5 hm-cook-v5">
   <PageHead eyebrow="COOK" title="Our recipes" sub="The ones we cook, keep and change." action={<Link className="hm-round-link-v5" href="/cook/builder" aria-label="From what we have">✦</Link>}/>
-  <div className="hm-search-row-v5"><label className="hm-search-v5"><span>⌕</span><input value={q} onChange={e=>{setQ(e.target.value);setShowAll(false)}} placeholder="Search recipes"/></label><Link href="/cook/builder">From what we have</Link></div>
+  <div className="hm-search-row-v5"><label className="hm-search-v5"><span>⌕</span><input value={q} onChange={e=>{setQ(e.target.value);setShowAll(false)}} placeholder="Search recipes" aria-label="Search recipes"/></label><Link href="/cook/builder">From what we have</Link></div>
   {!q&&cuisine==="All"&&<>
    {favourites.length>0&&<section className="hm-block-v5"><SectionHead eyebrow="FAVOURITES" title="We’d make these again"/><div className="hm-meal-rail-v5">{favourites.slice(0,8).map(r=><MealCard recipe={r} key={r.id} compact/>)}</div></section>}
    <section className="hm-block-v5"><SectionHead eyebrow="QUICK" title="25 minutes or less"/><div className="hm-meal-rail-v5">{quick.map(r=><MealCard recipe={r} key={r.id} compact/>)}</div></section>
    {recent.length>0&&<section className="hm-block-v5"><SectionHead eyebrow="RECENT" title="Made lately"/><div className="hm-meal-rail-v5">{recent.map(r=><MealCard recipe={r} key={r.id} compact/>)}</div></section>}
    <section className="hm-block-v5"><SectionHead eyebrow="NEW TO US" title="Worth trying"/><div className="hm-meal-rail-v5">{newToUs.map(r=><MealCard recipe={r} key={r.id} compact/>)}</div></section>
   </>}
-  <section className="hm-block-v5 hm-library-v5"><SectionHead eyebrow="ALL RECIPES" title={`${visible.length} recipes`}/><div className="hm-filter-rail-v5">{cuisines.map(c=><button key={c} className={cuisine===c?"active":""} onClick={()=>{setCuisine(c);setShowAll(false);feedback("tap")}}>{c}</button>)}</div><div className="hm-recipe-list-v5">{library.map(r=><MealCard recipe={r} key={r.id}/>)}</div>{!searching&&visible.length>12&&<button className="hm-secondary-button-v5" onClick={()=>{setShowAll(v=>!v);feedback("tap")}}>{showAll?"Show fewer":`Show all ${visible.length}`}</button>}</section>
+  <section className="hm-block-v5 hm-library-v5"><SectionHead eyebrow="ALL RECIPES" title={`${visible.length} ${visible.length===1?"recipe":"recipes"}`}/><div className="hm-filter-rail-v5">{cuisines.map(c=><button key={c} className={cuisine===c?"active":""} onClick={()=>{setCuisine(c);setShowAll(false);feedback("tap")}}>{c}</button>)}</div>{library.length?<div className="hm-recipe-list-v5">{library.map(r=><MealCard recipe={r} key={r.id}/>)}</div>:<div className="hm-empty-v5"><strong>No recipes match that.</strong><p>Try another dish or cuisine.</p><button className="hm-text-button-v5" onClick={clearSearch}>Clear search</button></div>}{!searching&&visible.length>12&&<button className="hm-secondary-button-v5" onClick={()=>{setShowAll(v=>!v);feedback("tap")}}>{showAll?"Show fewer":`Show all ${visible.length}`}</button>}</section>
  </div>
 }
