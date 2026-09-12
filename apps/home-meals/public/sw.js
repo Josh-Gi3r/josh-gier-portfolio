@@ -1,6 +1,6 @@
-const CACHE='home-meals-v9';
-const IMAGE_CACHE='home-meals-images-v1';
-const CORE=['/','/cook','/prep','/kitchen','/plan','/learn','/scan','/manifest.webmanifest','/icon.svg'];
+const CACHE='home-meals-v10';
+const IMAGE_CACHE='home-meals-images-v2';
+const CORE=['/','/cook','/cook/builder','/prep','/prep/day','/prep/mids','/kitchen','/plan','/learn','/scan','/manifest.webmanifest','/icon.svg'];
 
 async function trim(cacheName,maxEntries){
  const cache=await caches.open(cacheName);const keys=await cache.keys();
@@ -29,7 +29,7 @@ self.addEventListener('fetch',event=>{
   return;
  }
  if(req.destination==='image'){
-  event.respondWith(caches.open(IMAGE_CACHE).then(async cache=>{const hit=await cache.match(req);if(hit)return hit;try{const res=await fetch(req);if(res.ok||res.type==='opaque'){cache.put(req,res.clone()).then(()=>trim(IMAGE_CACHE,80));}return res}catch{return hit||Response.error()}}));
+  event.respondWith(caches.open(IMAGE_CACHE).then(async cache=>{const hit=await cache.match(req);if(hit)return hit;try{const res=await fetch(req);if(res.ok||res.type==='opaque'){cache.put(req,res.clone()).then(()=>trim(IMAGE_CACHE,100));}return res}catch{return hit||Response.error()}}));
   return;
  }
  if(url.origin===self.location.origin&&(req.destination==='style'||req.destination==='script'||req.destination==='font')){
