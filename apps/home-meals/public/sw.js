@@ -1,4 +1,4 @@
-const CACHE='home-meals-v10';
+const CACHE='home-meals-v11';
 const IMAGE_CACHE='home-meals-images-v2';
 const CORE=['/','/cook','/cook/builder','/prep','/prep/day','/prep/mids','/kitchen','/plan','/learn','/scan','/manifest.webmanifest','/icon.svg'];
 
@@ -25,7 +25,7 @@ self.addEventListener('fetch',event=>{
  if(req.method!=='GET')return;
  const url=new URL(req.url);
  if(req.mode==='navigate'){
-  event.respondWith(fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(cache=>cache.put(req,copy));return res}).catch(async()=>await caches.match(req)||await caches.match('/')||Response.error()));
+  event.respondWith(fetch(req,{cache:'no-store'}).then(res=>{const copy=res.clone();caches.open(CACHE).then(cache=>cache.put(req,copy));return res}).catch(async()=>await caches.match(req)||await caches.match('/')||Response.error()));
   return;
  }
  if(req.destination==='image'){
@@ -33,9 +33,15 @@ self.addEventListener('fetch',event=>{
   return;
  }
  if(url.origin===self.location.origin&&(req.destination==='style'||req.destination==='script'||req.destination==='font')){
-  event.respondWith(caches.match(req).then(hit=>{
-   const fresh=fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(cache=>cache.put(req,copy));return res}).catch(()=>hit);
-   return hit||fresh;
-  }));
+  event.respondWith((async()=>{
+   const hit=await caches.match(req);
+   try{
+    const res=await fetch(req,{cache:'no-store'});
+    if(res.ok){const copy=res.clone();caches.open(CACHE).then(cache=>cache.put(req,copy));}
+    return res;
+   }catch{
+    return hit||Response.error();
+   }
+  })());
  }
 });
