@@ -8,5 +8,5 @@ export function MoreNav(){
  const cookingRoute=/^\/cook\/[^/]+\/cook$/.test(path);
  if(cookingRoute)return null;
  const active=path.startsWith("/learn");
- return <Link href="/learn" className={`hm-more-nav-v69 ${active?"active":""}`} aria-current={active?"page":undefined}><Icon name="learn" size={22}/><span>More</span></Link>;
+ return <Link href="/learn" className={`hm-more-nav-v69 ${active?"active":""}`} aria-current={active?"page":undefined}><Icon name="more" size={22}/><span>More</span></Link>;
 }
