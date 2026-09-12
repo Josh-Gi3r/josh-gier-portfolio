@@ -14,6 +14,7 @@ type Tab=typeof tabs[number];
 const smallHerbs=new Set(["coriander","parsley","thai-basil"]);
 const stateLevels=[{value:0,label:"Out"},{value:1,label:"Low"},{value:2,label:"Some"},{value:3,label:"Plenty"}] as const;
 function stateLevelLabel(value:number){return value>=3?"Plenty":value>=2?"Some":value>=1?"Low":"Out"}
+function useSoonLabel(at?:string){if(!at)return "";const days=Math.max(0,Math.floor((Date.now()-new Date(at).getTime())/86400000));return days===0?"today":days===1?"1d":`${days}d`}
 function stepFor(item:{id:string;category:string;unit:string}){
  if(item.unit==="count"||item.unit==="portion")return 1;
  if(item.unit==="ml")return item.category==="Dairy"?50:25;
@@ -35,7 +36,7 @@ export function Kitchen(){
  const list=ingredients
   .filter(i=>tab==="Fridge"?["Fresh","Protein","Dairy"].includes(i.category):tab==="Pantry"&&i.category==="Pantry")
   .filter(i=>!q||i.name.toLowerCase().includes(q.toLowerCase()))
-  .sort((a,b)=>Number(!!h.useSoon[b.id])-Number(!!h.useSoon[a.id])||Number(relevantIds.has(b.id))-Number(relevantIds.has(a.id))||Number((h.ingredientStock[b.id]??0)>0)-Number((h.ingredientStock[a.id]??0)>0)||a.name.localeCompare(b.name));
+  .sort((a,b)=>Number(!!h.useSoon[b.id])-Number(!!h.useSoon[a.id])||(h.useSoon[a.id]&&h.useSoon[b.id]?new Date(h.useSoonAt[a.id]??0).getTime()-new Date(h.useSoonAt[b.id]??0).getTime():0)||Number(relevantIds.has(b.id))-Number(relevantIds.has(a.id))||Number((h.ingredientStock[b.id]??0)>0)-Number((h.ingredientStock[a.id]??0)>0)||a.name.localeCompare(b.name));
  const priority=list.filter(i=>h.useSoon[i.id]||relevantIds.has(i.id)||(h.ingredientStock[i.id]??0)>0);
  const shown=q||showAll?list:(priority.length?priority:list).slice(0,14);
  const changeIngredient=(id:string,delta:number)=>{h.setIngredient(id,Math.max(0,(h.ingredientStock[id]??0)+delta));feedback("change")};
@@ -46,7 +47,7 @@ export function Kitchen(){
  const stockedFridge=ingredients.filter(i=>["Fresh","Protein","Dairy"].includes(i.category)&&(h.ingredientStock[i.id]??0)>0);
  const stockedPantry=ingredients.filter(i=>i.category==="Pantry"&&(h.ingredientStock[i.id]??0)>0);
  const lowPantry=stockedPantry.filter(i=>i.tracking==="state"&&(h.ingredientStock[i.id]??0)===1);
- const useSoon=stockedFridge.filter(i=>h.useSoon[i.id]);
+ const useSoon=stockedFridge.filter(i=>h.useSoon[i.id]).sort((a,b)=>new Date(h.useSoonAt[a.id]??0).getTime()-new Date(h.useSoonAt[b.id]??0).getTime());
  const thisWeek=ingredients.filter(i=>relevantIds.has(i.id)&&(h.ingredientStock[i.id]??0)>0);
  return <div className="hm-page-v5 hm-kitchen-v5 hm-kitchen-v6">
   <PageHead title="Kitchen" sub="What’s at home, what needs using, and what is running low." action={<Link className="hm-round-link-v5" href={scanHref} aria-label={`Open ${scanMode.toLowerCase()} camera`}>⌁</Link>}/>
@@ -55,7 +56,7 @@ export function Kitchen(){
   <div className="hm-segment-v5 hm-kitchen-tabs-v5 hm-kitchen-tabs-v6">{tabs.map(t=><button key={t} className={tab===t?"active":""} onClick={()=>switchTab(t)}>{t}</button>)}</div>
 
   {tab==="Fridge"&&<section className="hm-kitchen-focus-v6">
-   <div className={`hm-use-first-v6 ${useSoon.length?"urgent":"calm"}`}><span>{useSoon.length?"USE FIRST":"FRIDGE"}</span><strong>{useSoon.length?`${useSoon.length} ${useSoon.length===1?"thing needs":"things need"} attention`:"Nothing urgent"}</strong><p>{useSoon.length?useSoon.slice(0,5).map(x=>x.name).join(" · "):"Keep this light. Mark something use-soon only when it will actually change dinner decisions."}</p>{useSoon.length>0&&<Link href="/plan">Fit them into the week →</Link>}</div>
+   <div className={`hm-use-first-v6 ${useSoon.length?"urgent":"calm"}`}><span>{useSoon.length?"USE FIRST":"FRIDGE"}</span><strong>{useSoon.length?`${useSoon.length} ${useSoon.length===1?"thing needs":"things need"} attention`:"Nothing urgent"}</strong><p>{useSoon.length?useSoon.slice(0,5).map(x=>`${x.name}${useSoonLabel(h.useSoonAt[x.id])?` (${useSoonLabel(h.useSoonAt[x.id])})`:""}`).join(" · "):"Keep this light. Mark something use-soon only when it will actually change dinner decisions."}</p>{useSoon.length>0&&<Link href="/plan">Fit them into the week →</Link>}</div>
    <div className="hm-kitchen-pulse-v6"><div><b>{stockedFridge.length}</b><span>in fridge</span></div><div><b>{thisWeek.filter(i=>["Fresh","Protein","Dairy"].includes(i.category)).length}</b><span>used this week</span></div><div><b>{useSoon.length}</b><span>use soon</span></div></div>
   </section>}
 
@@ -63,7 +64,7 @@ export function Kitchen(){
 
   {tab==="Freezer"?<Freezer/>:<>
    <section className="hm-block-v5 hm-kitchen-editor-v6"><SectionHead title={tab==="Fridge"?"Update the fridge":"Update the pantry"} action={<Link href={scanHref}>Use camera ›</Link>}/><label className="hm-search-v5"><span>⌕</span><input value={q} onChange={e=>setQ(e.target.value)} placeholder={`Find in ${tab.toLowerCase()}`} aria-label={`Find in ${tab.toLowerCase()}`}/></label>
-    {shown.length?<div className="hm-stock-list-v5">{shown.map(i=>{const n=h.ingredientStock[i.id]??0;const relevant=relevantIds.has(i.id);const soon=!!h.useSoon[i.id];const step=stepFor(i);const level=stateLevelLabel(n);return <article key={i.id} className={`${tab==="Fridge"?"with-soon":""} ${i.tracking==="state"?"state-level-v21":""}`}><div><strong>{i.name}</strong><span>{soon&&<b className="soon">Use soon</b>}{relevant&&<b>This week</b>}{i.tracking==="state"?level:n>0?formatQty(n,i.unit):"Out"}</span></div>{tab==="Fridge"&&<button className={`hm-soon-toggle-v5 ${soon?"on":""}`} aria-label={`${soon?"Remove":"Mark"} ${i.name} ${soon?"from":"as"} use soon`} onClick={()=>{if(n>0){h.toggleUseSoon(i.id);feedback("change")}}} disabled={n<=0}>◷</button>}{i.tracking==="state"?<div className="hm-stock-level-v21" role="group" aria-label={`${i.name} stock level`}>{stateLevels.map(option=><button key={option.value} className={n===option.value?"on":""} aria-pressed={n===option.value} onClick={()=>setStateLevel(i.id,option.value)}><i/>{option.label}</button>)}</div>:<div className="hm-stepper-v5"><button aria-label={`Decrease ${i.name} by ${step} ${i.unit}`} onClick={()=>changeIngredient(i.id,-step)}>−</button><b>{n?Math.round(n*10)/10:"0"}</b><span>{i.unit==="count"?"":i.unit==="portion"?(n===1?"portion":"portions"):i.unit}</span><button aria-label={`Increase ${i.name} by ${step} ${i.unit}`} onClick={()=>changeIngredient(i.id,step)}>+</button></div>}</article>})}</div>:<div className="hm-empty-v5"><strong>Nothing matches.</strong><p>Try another name or clear the search.</p>{q&&<button className="hm-text-button-v5" onClick={()=>{setQ("");feedback("tap")}}>Clear search</button>}</div>}
+    {shown.length?<div className="hm-stock-list-v5">{shown.map(i=>{const n=h.ingredientStock[i.id]??0;const relevant=relevantIds.has(i.id);const soon=!!h.useSoon[i.id];const step=stepFor(i);const level=stateLevelLabel(n);const marked=useSoonLabel(h.useSoonAt[i.id]);return <article key={i.id} className={`${tab==="Fridge"?"with-soon":""} ${i.tracking==="state"?"state-level-v21":""}`}><div><strong>{i.name}</strong><span>{soon&&<b className="soon">Use soon{marked?` · ${marked}`:""}</b>}{relevant&&<b>This week</b>}{i.tracking==="state"?level:n>0?formatQty(n,i.unit):"Out"}</span></div>{tab==="Fridge"&&<button className={`hm-soon-toggle-v5 ${soon?"on":""}`} aria-label={`${soon?"Remove":"Mark"} ${i.name} ${soon?"from":"as"} use soon`} onClick={()=>{if(n>0){h.toggleUseSoon(i.id);feedback("change")}}} disabled={n<=0}>◷</button>}{i.tracking==="state"?<div className="hm-stock-level-v21" role="group" aria-label={`${i.name} stock level`}>{stateLevels.map(option=><button key={option.value} className={n===option.value?"on":""} aria-pressed={n===option.value} onClick={()=>setStateLevel(i.id,option.value)}><i/>{option.label}</button>)}</div>:<div className="hm-stepper-v5"><button aria-label={`Decrease ${i.name} by ${step} ${i.unit}`} onClick={()=>changeIngredient(i.id,-step)}>−</button><b>{n?Math.round(n*10)/10:"0"}</b><span>{i.unit==="count"?"":i.unit==="portion"?(n===1?"portion":"portions"):i.unit}</span><button aria-label={`Increase ${i.name} by ${step} ${i.unit}`} onClick={()=>changeIngredient(i.id,step)}>+</button></div>}</article>})}</div>:<div className="hm-empty-v5"><strong>Nothing matches.</strong><p>Try another name or clear the search.</p>{q&&<button className="hm-text-button-v5" onClick={()=>{setQ("");feedback("tap")}}>Clear search</button>}</div>}
     {!q&&list.length>shown.length&&<button className="hm-text-button-v5" onClick={()=>{setShowAll(v=>!v);feedback("tap")}}>{showAll?"Show less":`Show all ${list.length}`}</button>}
    </section>
   </>}
