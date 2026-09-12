@@ -27,7 +27,7 @@ export function Shell({children}:{children:React.ReactNode}){
  const day=(new Date().getDay()+6)%7;const tonight=getRecipe(h.week[day]??h.week[0])??recipes[0];
  const cameraMode=cookingRoute||path.startsWith("/prep")?"Prep":path.startsWith("/kitchen")?"Fridge":"Fridge";
  const cameraHref=`/scan?mode=${cameraMode}&back=${encodeURIComponent(path)}`;
- useEffect(()=>bindGlobalHaptics(),[]);useSheet(ask,()=>{setAsk(false);setVoiceState("idle")});
+ useEffect(()=>{bindGlobalHaptics();const openAsk=()=>setAsk(true);window.addEventListener("home-meals:ask",openAsk);return()=>window.removeEventListener("home-meals:ask",openAsk)},[]);useSheet(ask,()=>{setAsk(false);setVoiceState("idle")});
  const answer=(text:string)=>{const s=text.toLowerCase();
   const needsKitchen=s.includes("have")||s.includes("buy")||s.includes("shop")||s.includes("grocery")||s.includes("prep")||s.includes("freezer")||s.includes("soon")||s.includes("low")||s.includes("make now")||s.includes("ready now");
   if(!h.kitchenReady&&needsKitchen)return "I don't know the kitchen yet. Check Fridge, Freezer and Pantry once, then I can use the real stock.";
