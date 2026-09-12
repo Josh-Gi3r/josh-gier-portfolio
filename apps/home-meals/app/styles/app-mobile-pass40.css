@@ -1,0 +1,3 @@
+/* Pass 40: meal cards become ours once we have actually cooked them. */
+.hm-meal-card-v5{position:relative}.hm-meal-card-ours-v40{position:absolute;top:8px;left:8px;z-index:2;min-height:23px;display:inline-flex;align-items:center;padding:0 7px;border-radius:8px;background:rgba(35,42,36,.74);backdrop-filter:blur(8px);color:#fff;font-size:8px;font-style:normal;font-weight:850;letter-spacing:.11em;line-height:1}.hm-meal-card-v5.has-our-photo-v40 img{filter:saturate(.96) contrast(1.01)}
+.hm-meal-card-v5.compact .hm-meal-card-ours-v40{top:6px;left:6px;min-height:21px;font-size:7px;padding-inline:6px}
