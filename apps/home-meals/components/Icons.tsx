@@ -1,6 +1,6 @@
 import React from "react";
 
-type IconName = "home" | "cook" | "prep" | "kitchen" | "plan" | "learn" | "spark" | "camera" | "mic" | "arrow" | "clock" | "star" | "check" | "chevron" | "plus" | "minus";
+type IconName = "home" | "cook" | "prep" | "kitchen" | "plan" | "learn" | "more" | "spark" | "camera" | "mic" | "arrow" | "clock" | "star" | "check" | "chevron" | "plus" | "minus";
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const common = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
@@ -11,6 +11,7 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
     kitchen: <><path d="M6 3v18M18 3v18"/><path d="M6 8h12M6 15h12"/><path d="M9 11h2M13 18h2"/></>,
     plan: <><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="m8 14 2 2 5-5"/></>,
     learn: <><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H20v17H7.5A3.5 3.5 0 0 0 4 22z"/><path d="M4 5.5V22"/></>,
+    more: <><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/></>,
     spark: <><path d="m12 3 1.4 4.1L17.5 8.5l-4.1 1.4L12 14l-1.4-4.1-4.1-1.4 4.1-1.4z"/><path d="m18.5 14 .7 2.1 2.1.7-2.1.7-.7 2.1-.7-2.1-2.1-.7 2.1-.7z"/></>,
     camera: <><path d="M5 7h3l1-2h6l1 2h3a2 2 0 0 1 2 2v9H3V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="3"/></>,
     mic: <><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></>,
