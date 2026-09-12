@@ -1,0 +1,4 @@
+/* Mobile pass 8: PWA/offline states and install-safe chrome. */
+.hm-offline-v8{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:90;transform:translateX(-50%);max-width:calc(100vw - 32px);padding:9px 12px;border-radius:14px;background:rgba(39,48,42,.94);color:#fff;font-size:10px;font-weight:700;line-height:1.25;box-shadow:0 8px 24px rgba(20,24,21,.18);backdrop-filter:blur(12px);text-align:center;pointer-events:none}
+@media(min-width:900px){.hm-offline-v8{bottom:24px}}
+@media(prefers-reduced-motion:no-preference){.hm-offline-v8{animation:hmOfflineIn .2s ease both}@keyframes hmOfflineIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}}
