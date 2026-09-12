@@ -1,0 +1,44 @@
+/* Pass 46: make the persistent Home dock feel like app chrome, not a giant overlay. */
+.hm-nav-v6{box-sizing:border-box}
+.hm-nav-v6>a{min-width:0}
+.hm-home-tools-v6{box-sizing:border-box}
+
+@media(max-width:699px){
+ .hm-main-v5{padding-bottom:calc(122px + env(safe-area-inset-bottom))}
+ .hm-nav-v6{width:100%;height:calc(69px + env(safe-area-inset-bottom));padding:8px 8px env(safe-area-inset-bottom);border-radius:22px 22px 0 0}
+ .hm-nav-v6>a{height:53px;min-height:53px;font-size:11px;gap:3px}
+ .hm-home-tools-v6{width:190px;height:64px;bottom:calc(49px + env(safe-area-inset-bottom))}
+ .hm-input-orb-v6{width:46px;height:46px;min-width:46px!important;min-height:46px!important}
+ .hm-ask-orb-v6{width:66px;height:66px;min-width:66px!important;min-height:66px!important;bottom:-3px;font-size:9px;box-shadow:inset 0 1px 1px rgba(255,255,255,.24),inset 0 -2px 4px rgba(7,34,23,.16),0 3px 0 #0e3626,0 10px 22px rgba(24,79,56,.22)!important}
+ .hm-ask-orb-v6 svg{width:21px;height:21px}
+}
+
+@media(max-width:374px){
+ .hm-home-tools-v6{width:174px}
+ .hm-input-orb-v6{width:44px;height:44px;min-width:44px!important;min-height:44px!important}
+ .hm-ask-orb-v6{width:62px;height:62px;min-width:62px!important;min-height:62px!important}
+ .hm-nav-v6>a{font-size:10px}
+}
+
+@media(min-width:700px) and (max-width:899px){
+ .hm-main-v5{padding-bottom:128px}
+ .hm-nav-v6{width:min(calc(100% - 32px),660px);height:70px;bottom:12px;padding:8px 12px;border:1px solid rgba(112,95,73,.13);border-radius:24px;box-shadow:0 12px 34px rgba(45,37,25,.12)}
+ .hm-nav-v6>a{height:52px}
+ .hm-home-tools-v6{width:204px;height:66px;bottom:66px}
+ .hm-input-orb-v6{width:46px;height:46px}
+ .hm-ask-orb-v6{width:68px;height:68px;bottom:-2px}
+}
+
+@media(min-width:900px){
+ .hm-main-v5{padding-bottom:118px}
+ .hm-nav-v6{width:560px;height:64px;bottom:14px;padding:6px 12px;border:1px solid rgba(112,95,73,.14);border-radius:22px;background:rgba(255,252,246,.96);box-shadow:0 12px 34px rgba(45,37,25,.12)}
+ .hm-nav-v6>a{height:50px;min-height:50px;font-size:11px;gap:2px;border-radius:13px}
+ .hm-nav-v6>a.active{background:#edf3ed;box-shadow:none}
+ .hm-home-tools-v6{width:116px;height:48px;bottom:68px}
+ .hm-home-tools-v6 .hm-input-orb-v6{display:none!important}
+ .hm-ask-orb-v6{left:50%;bottom:0;width:116px;height:48px;min-width:116px!important;min-height:48px!important;border-radius:17px!important;flex-direction:row!important;gap:7px!important;font-size:11px!important;box-shadow:inset 0 1px 1px rgba(255,255,255,.22),0 3px 0 #0e3626,0 10px 22px rgba(24,79,56,.20)!important}
+ .hm-ask-orb-v6 svg{width:18px;height:18px}
+ .hm-ask-orb-v6:active{transform:translateX(-50%) translateY(2px)}
+}
+
+@media(prefers-reduced-motion:reduce){.hm-nav-v6>a,.hm-input-orb-v6,.hm-ask-orb-v6{transition:none!important}}
