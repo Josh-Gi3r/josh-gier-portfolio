@@ -139,7 +139,7 @@
   .hm-home-tools-v6{bottom:calc(72px + env(safe-area-inset-bottom))!important}
   .hm-more-nav-v69{
     right:5px!important;
-    bottom:calc(10px + env(safe-area-inset-bottom))!important;
+    bottom:env(safe-area-inset-bottom)!important;
     width:calc((100vw - 10px)/6)!important;
     height:54px!important;
     min-height:54px!important;
