@@ -1,0 +1,203 @@
+/* Pass 75 — actual integrated Home dock component.
+   This replaces the old sibling/fixed-layer nav implementation. */
+
+.hm-nav-v6,.hm-home-tools-v6,.hm-more-nav-v69{display:none!important}
+
+.hm-dock-v75{
+  --dock-cream:#fcf8f0;
+  --dock-cream-bottom:#f4ecdf;
+  --dock-gold:rgba(179,143,88,.42);
+  --dock-green:#155b3f;
+  position:fixed;
+  z-index:1000;
+  left:0;
+  right:0;
+  bottom:0;
+  height:calc(76px + env(safe-area-inset-bottom));
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);
+  align-items:end;
+  padding:16px 8px env(safe-area-inset-bottom);
+  box-sizing:border-box;
+  border:1px solid var(--dock-gold);
+  border-bottom:0;
+  border-radius:24px 24px 0 0;
+  background:linear-gradient(180deg,#fffdf9 0%,var(--dock-cream) 58%,var(--dock-cream-bottom) 100%);
+  box-shadow:0 -6px 20px rgba(45,35,23,.07),0 8px 22px rgba(45,35,23,.08),inset 0 1px 0 rgba(255,255,255,.96),inset 0 -2px 0 rgba(165,127,75,.10);
+  overflow:visible;
+}
+.hm-dock-v75:before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:50%;
+  top:-35px;
+  width:236px;
+  height:55px;
+  transform:translateX(-50%);
+  border:1px solid var(--dock-gold);
+  border-bottom:0;
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  background:linear-gradient(180deg,#fffdf9 0%,var(--dock-cream) 70%,var(--dock-cream-bottom) 100%);
+  box-shadow:0 -6px 16px rgba(45,35,23,.05),inset 0 1px 0 rgba(255,255,255,.96);
+}
+.hm-dock-v75:after{
+  content:"";
+  position:absolute;
+  z-index:-2;
+  left:50%;
+  top:-29px;
+  width:268px;
+  height:47px;
+  transform:translateX(-50%);
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  border-top:1px solid rgba(255,255,255,.88);
+  background:rgba(250,245,237,.62);
+  pointer-events:none;
+}
+
+.hm-dock-wing-v75{
+  min-width:0;
+  height:100%;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:end;
+}
+.hm-dock-wing-v75>a{
+  position:relative;
+  min-width:0;
+  height:52px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  color:#5c6561;
+  text-decoration:none;
+  border-radius:12px;
+  transition:transform 100ms ease,color 120ms ease,background-color 120ms ease;
+  touch-action:manipulation;
+}
+.hm-dock-wing-v75>a svg{width:21px;height:21px;stroke-width:1.8;filter:none}
+.hm-dock-wing-v75>a span{font-family:var(--sans);font-size:9px;font-weight:700;line-height:1;letter-spacing:-.03em;white-space:nowrap}
+.hm-dock-wing-v75>a.active{color:var(--dock-green)}
+.hm-dock-wing-v75>a.active svg{stroke-width:2.15}
+.hm-dock-wing-v75>a:hover{color:#273a31;background:rgba(255,255,255,.28);transform:translateY(-1px)}
+.hm-dock-wing-v75>a:active{transform:translateY(1px) scale(.985)}
+.hm-dock-wing-v75>a:focus-visible,.hm-dock-center-v75>a:focus-visible,.hm-dock-center-v75>button:focus-visible{outline:3px solid rgba(32,109,76,.26);outline-offset:3px}
+
+.hm-dock-center-v75{
+  position:absolute;
+  z-index:2;
+  left:50%;
+  bottom:calc(31px + env(safe-area-inset-bottom));
+  width:170px;
+  height:80px;
+  transform:translateX(-50%);
+  display:grid;
+  grid-template-columns:46px 72px 46px;
+  gap:3px;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+}
+.hm-dock-center-v75>*{pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
+.hm-dock-side-button-v75{
+  width:46px;height:46px;min-width:46px;min-height:46px;
+  display:grid;place-items:center;
+  padding:0;
+  border-radius:50%;
+  color:#15583e;
+  text-decoration:none;
+  border:1px solid rgba(173,141,98,.33);
+  background:radial-gradient(circle at 34% 20%,rgba(255,255,255,.82),transparent 26%),linear-gradient(180deg,#fffefa 0%,#faf6ef 54%,#eee6d9 100%);
+  box-shadow:0 4px 0 rgba(184,162,129,.46),0 8px 16px rgba(55,43,29,.12),inset 0 2px 1px rgba(255,255,255,.98),inset 0 -5px 9px rgba(130,103,69,.06);
+  transition:transform 90ms ease,box-shadow 90ms ease,filter 90ms ease;
+}
+.hm-dock-side-button-v75 svg{width:22px;height:22px;position:relative;z-index:2}
+.hm-dock-side-button-v75:hover{filter:brightness(1.015)}
+.hm-dock-side-button-v75:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(184,162,129,.40),0 4px 9px rgba(55,43,29,.09),inset 0 2px 1px rgba(255,255,255,.95)}
+
+.hm-dock-ask-v75{
+  position:relative;
+  width:72px;height:72px;min-width:72px;min-height:72px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:1px;
+  padding:0;
+  border-radius:50%;
+  overflow:hidden;
+  isolation:isolate;
+  color:white;
+  border:2px solid rgba(181,145,82,.72);
+  background:radial-gradient(circle at 35% 18%,rgba(255,255,255,.30),transparent 24%),radial-gradient(circle at 50% 118%,rgba(1,26,17,.34),transparent 50%),linear-gradient(180deg,#2f7b5b 0%,#1d6347 45%,#0d482f 100%);
+  box-shadow:0 7px 0 #0a3827,0 14px 24px -9px rgba(15,79,53,.56),0 0 0 1px rgba(255,255,255,.17) inset,inset 0 2px 2px rgba(255,255,255,.30),inset 0 -10px 15px rgba(0,27,17,.20);
+  transform:translateY(-2px);
+  transition:transform 100ms ease,box-shadow 100ms ease,filter 100ms ease;
+}
+.hm-dock-ask-v75:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  border-radius:50%;
+  background:linear-gradient(to top,rgba(0,0,0,.18),rgba(0,0,0,.02) 58%,transparent 76%);
+  pointer-events:none;
+}
+.hm-dock-ask-v75:after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:12%;left:19%;width:31%;height:10%;
+  border-radius:999px;
+  background:rgba(255,255,255,.30);
+  filter:blur(1.4px);
+  transform:rotate(-10deg);
+  pointer-events:none;
+}
+.hm-dock-ask-v75 svg,.hm-dock-ask-v75 span{position:relative;z-index:2}
+.hm-dock-ask-v75 svg{width:18px;height:18px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.18))}
+.hm-dock-ask-v75 span{max-width:54px;font-family:var(--sans);font-size:10px;font-weight:800;line-height:1.02;letter-spacing:-.025em;text-align:center}
+.hm-dock-ask-v75:hover{filter:saturate(1.05) brightness(1.025)}
+.hm-dock-ask-v75:active{transform:translateY(5px);box-shadow:0 0 0 #0a3827,0 5px 10px -8px rgba(15,79,53,.42),0 0 0 1px rgba(255,255,255,.13) inset,inset 0 2px 2px rgba(255,255,255,.24),inset 0 -6px 10px rgba(0,27,17,.17)}
+
+.hm-main-v5{padding-bottom:calc(98px + env(safe-area-inset-bottom))!important}
+
+@media(max-width:374px){
+ .hm-dock-v75{grid-template-columns:minmax(0,1fr) 140px minmax(0,1fr);padding-left:5px;padding-right:5px}
+ .hm-dock-v75:before{width:220px;height:52px;top:-33px}
+ .hm-dock-v75:after{width:250px;height:45px;top:-27px}
+ .hm-dock-center-v75{width:158px;height:76px;grid-template-columns:43px 66px 43px;gap:3px}
+ .hm-dock-side-button-v75{width:43px;height:43px;min-width:43px;min-height:43px}
+ .hm-dock-ask-v75{width:66px;height:66px;min-width:66px;min-height:66px}
+ .hm-dock-wing-v75>a span{font-size:8px}
+}
+
+@media(min-width:700px){
+ .hm-dock-v75{
+  left:50%;right:auto;bottom:12px;transform:translateX(-50%);
+  width:min(calc(100% - 24px),1180px);
+  height:86px;
+  grid-template-columns:minmax(0,1fr) 246px minmax(0,1fr);
+  padding:20px 16px 9px;
+  border-radius:32px;
+  border-bottom:1px solid rgba(179,143,88,.28);
+ }
+ .hm-dock-v75:before{top:-43px;width:360px;height:66px}
+ .hm-dock-v75:after{top:-34px;width:400px;height:57px}
+ .hm-dock-wing-v75>a{height:56px;gap:4px}
+ .hm-dock-wing-v75>a svg{width:24px;height:24px}
+ .hm-dock-wing-v75>a span{font-size:11px}
+ .hm-dock-center-v75{bottom:calc(34px + env(safe-area-inset-bottom));width:228px;height:98px;grid-template-columns:58px 96px 58px;gap:8px}
+ .hm-dock-side-button-v75{width:58px;height:58px;min-width:58px;min-height:58px}
+ .hm-dock-side-button-v75 svg{width:25px;height:25px}
+ .hm-dock-ask-v75{width:96px;height:96px;min-width:96px;min-height:96px}
+ .hm-dock-ask-v75 svg{width:21px;height:21px}
+ .hm-dock-ask-v75 span{font-size:12px;max-width:66px}
+ .hm-main-v5{padding-bottom:132px!important}
+}
+
+@media(prefers-reduced-motion:reduce){.hm-dock-wing-v75>a,.hm-dock-side-button-v75,.hm-dock-ask-v75{transition:none!important}}

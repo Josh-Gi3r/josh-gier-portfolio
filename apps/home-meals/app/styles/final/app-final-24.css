@@ -1,0 +1,201 @@
+/* Pass 74 — faithful implementation of the approved Home Meals dock reference.
+   Long ivory bar + subtle warm rim + one smooth centre rise + three tactile controls.
+   No separate pedestal, no active tiles, no oversized neumorphic cards. */
+
+.hm-nav-v6{
+  --hm-center-bay:164px!important;
+  height:calc(76px + env(safe-area-inset-bottom))!important;
+  padding:18px 8px env(safe-area-inset-bottom)!important;
+  border-radius:24px 24px 0 0!important;
+  overflow:visible!important;
+  background:linear-gradient(180deg,#fffdf8 0%,#faf6ef 62%,#f3ebdf 100%)!important;
+  border:1px solid rgba(181,145,93,.38)!important;
+  border-bottom:0!important;
+  box-shadow:
+    0 -7px 22px rgba(49,38,25,.07),
+    0 7px 18px rgba(49,38,25,.07),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -2px 0 rgba(170,132,80,.10)!important;
+}
+
+/* Wide shallow ellipse creates the single continuous sculpted shoulder from the reference. */
+.hm-nav-v6:before{
+  content:""!important;
+  position:absolute!important;
+  z-index:-1!important;
+  left:50%!important;
+  top:-37px!important;
+  width:258px!important;
+  height:57px!important;
+  transform:translateX(-50%)!important;
+  border-radius:50% 50% 0 0 / 100% 100% 0 0!important;
+  background:linear-gradient(180deg,#fffdf8 0%,#faf6ef 72%,#f3ebdf 100%)!important;
+  border:1px solid rgba(181,145,93,.38)!important;
+  border-bottom:0!important;
+  box-shadow:0 -6px 17px rgba(49,38,25,.055),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+.hm-nav-v6:after{
+  content:""!important;
+  position:absolute!important;
+  z-index:-2!important;
+  left:50%!important;
+  top:-31px!important;
+  width:292px!important;
+  height:50px!important;
+  transform:translateX(-50%)!important;
+  border-radius:50% 50% 0 0 / 100% 100% 0 0!important;
+  background:rgba(249,244,235,.72)!important;
+  border-top:1px solid rgba(255,255,255,.86)!important;
+  pointer-events:none!important;
+}
+
+.hm-nav-v6>a,
+.hm-more-nav-v69{
+  position:relative!important;
+  height:54px!important;
+  min-height:54px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:3px!important;
+  padding:0!important;
+  border-radius:13px!important;
+  color:#5c6461!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  text-decoration:none!important;
+  transition:transform 110ms ease,color 130ms ease,background-color 130ms ease!important;
+}
+.hm-nav-v6>a svg,.hm-more-nav-v69 svg{
+  width:23px!important;height:23px!important;
+  stroke-width:1.85!important;
+  filter:none!important;
+}
+.hm-nav-v6>a span,.hm-more-nav-v69 span{
+  font-size:10px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  letter-spacing:-.025em!important;
+  white-space:nowrap!important;
+}
+.hm-nav-v6>a.active,.hm-more-nav-v69.active{
+  color:#105c3e!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.hm-nav-v6>a.active svg,.hm-more-nav-v69.active svg{stroke-width:2.15!important}
+.hm-nav-v6>a.active:after,.hm-more-nav-v69.active:after{display:none!important}
+.hm-nav-v6>a:hover,.hm-more-nav-v69:hover{color:#273a31!important;background:rgba(255,255,255,.30)!important;transform:translateY(-1px)!important}
+.hm-nav-v6>a:active,.hm-more-nav-v69:active{transform:translateY(1px) scale(.985)!important}
+
+/* Center controls share one horizontal axis and sit half-in / half-out of the raised bar. */
+.hm-home-tools-v6{
+  width:184px!important;
+  height:84px!important;
+  grid-template-columns:50px 78px 50px!important;
+  gap:3px!important;
+  bottom:calc(34px + env(safe-area-inset-bottom))!important;
+  align-items:center!important;
+}
+
+.hm-home-tools-v6 .hm-input-orb-v6{
+  width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;
+  border-radius:50%!important;
+  color:#15583e!important;
+  border:1px solid rgba(176,145,101,.34)!important;
+  background:
+    radial-gradient(circle at 34% 20%,rgba(255,255,255,.82),transparent 26%),
+    linear-gradient(180deg,#fffefa 0%,#fbf7f0 54%,#eee6d9 100%)!important;
+  box-shadow:
+    0 4px 0 rgba(185,163,130,.46),
+    0 8px 17px rgba(55,43,29,.13),
+    inset 0 2px 1px rgba(255,255,255,.98),
+    inset 0 -5px 9px rgba(130,103,69,.065)!important;
+  transform:none!important;
+  transition:transform 90ms ease,box-shadow 90ms ease,filter 90ms ease!important;
+}
+.hm-home-tools-v6 .hm-input-orb-v6:before{background:linear-gradient(to top,rgba(69,55,38,.06),transparent 56%)!important}
+.hm-home-tools-v6 .hm-input-orb-v6:after{top:13%!important;left:20%!important;width:30%!important;height:10%!important;background:rgba(255,255,255,.68)!important;filter:blur(1px)!important}
+.hm-home-tools-v6 .hm-input-orb-v6 svg{width:23px!important;height:23px!important;position:relative!important;z-index:2!important}
+.hm-home-tools-v6 .hm-input-orb-v6:active{
+  transform:translateY(3px)!important;
+  box-shadow:0 1px 0 rgba(185,163,130,.40),0 4px 9px rgba(55,43,29,.10),inset 0 2px 1px rgba(255,255,255,.96)!important;
+}
+
+/* Ask Home: approved glossy green orb + physical Uiverse press mechanics. */
+.hm-home-tools-v6 .hm-ask-orb-v6{
+  width:78px!important;height:78px!important;min-width:78px!important;min-height:78px!important;
+  margin:0!important;
+  border-radius:50%!important;
+  border:2px solid rgba(181,145,82,.70)!important;
+  background:
+    radial-gradient(circle at 35% 18%,rgba(255,255,255,.30),transparent 24%),
+    radial-gradient(circle at 50% 118%,rgba(1,26,17,.34),transparent 50%),
+    linear-gradient(180deg,#2d7959 0%,#1c6145 45%,#0d482f 100%)!important;
+  color:#fff!important;
+  transform:translateY(-2px)!important;
+  box-shadow:
+    0 7px 0 #0a3827,
+    0 14px 24px -9px rgba(15,79,53,.56),
+    0 0 0 1px rgba(255,255,255,.17) inset,
+    inset 0 2px 2px rgba(255,255,255,.30),
+    inset 0 -10px 15px rgba(0,27,17,.20)!important;
+  transition:transform 100ms ease,box-shadow 100ms ease,filter 100ms ease!important;
+}
+.hm-home-tools-v6 .hm-ask-orb-v6:before{background:linear-gradient(to top,rgba(0,0,0,.18),rgba(0,0,0,.02) 58%,transparent 76%)!important}
+.hm-home-tools-v6 .hm-ask-orb-v6:after{top:12%!important;left:19%!important;width:31%!important;height:10%!important;background:rgba(255,255,255,.30)!important;filter:blur(1.4px)!important;transform:rotate(-10deg)!important}
+.hm-home-tools-v6 .hm-ask-orb-v6 svg{width:18px!important;height:18px!important;animation:none!important;filter:drop-shadow(0 1px 1px rgba(0,0,0,.18))!important}
+.hm-home-tools-v6 .hm-ask-orb-v6 span{max-width:58px!important;font-size:10.5px!important;font-weight:800!important;line-height:1.02!important;letter-spacing:-.025em!important}
+.hm-home-tools-v6 .hm-ask-orb-v6:hover{filter:saturate(1.05) brightness(1.025)!important}
+.hm-home-tools-v6 .hm-ask-orb-v6:active{
+  transform:translateY(5px)!important;
+  box-shadow:
+    0 0 0 #0a3827,
+    0 5px 10px -8px rgba(15,79,53,.42),
+    0 0 0 1px rgba(255,255,255,.13) inset,
+    inset 0 2px 2px rgba(255,255,255,.24),
+    inset 0 -6px 10px rgba(0,27,17,.17)!important;
+}
+
+.hm-more-nav-v69{
+  bottom:calc(3px + env(safe-area-inset-bottom))!important;
+  height:54px!important;min-height:54px!important;
+}
+
+@media(max-width:374px){
+  .hm-nav-v6{--hm-center-bay:150px!important;padding-left:5px!important;padding-right:5px!important}
+  .hm-nav-v6:before{width:238px!important;height:53px!important;top:-34px!important}
+  .hm-nav-v6:after{width:268px!important;height:46px!important;top:-28px!important}
+  .hm-home-tools-v6{width:170px!important;height:80px!important;grid-template-columns:46px 72px 46px!important;gap:3px!important}
+  .hm-home-tools-v6 .hm-input-orb-v6{width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6{width:72px!important;height:72px!important;min-width:72px!important;min-height:72px!important}
+  .hm-more-nav-v69{right:5px!important;width:calc((100vw - 10px - 150px)/6)!important}
+}
+
+@media(min-width:700px){
+  .hm-nav-v6{
+    --hm-center-bay:246px!important;
+    height:82px!important;
+    padding:19px 16px 9px!important;
+    border-radius:32px!important;
+  }
+  .hm-nav-v6:before{top:-43px!important;width:360px!important;height:66px!important;border-radius:50% 50% 0 0 / 100% 100% 0 0!important}
+  .hm-nav-v6:after{top:-34px!important;width:400px!important;height:57px!important}
+  .hm-nav-v6>a,.hm-more-nav-v69{height:56px!important;min-height:56px!important}
+  .hm-nav-v6>a svg,.hm-more-nav-v69 svg{width:24px!important;height:24px!important}
+  .hm-nav-v6>a span,.hm-more-nav-v69 span{font-size:11px!important}
+  .hm-home-tools-v6{
+    width:228px!important;
+    height:98px!important;
+    grid-template-columns:58px 96px 58px!important;
+    gap:8px!important;
+    bottom:calc(34px + env(safe-area-inset-bottom))!important;
+  }
+  .hm-home-tools-v6 .hm-input-orb-v6{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important}
+  .hm-home-tools-v6 .hm-input-orb-v6 svg{width:25px!important;height:25px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6{width:96px!important;height:96px!important;min-width:96px!important;min-height:96px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6 svg{width:21px!important;height:21px!important}
+  .hm-home-tools-v6 .hm-ask-orb-v6 span{font-size:12px!important;max-width:66px!important}
+  .hm-more-nav-v69{bottom:calc(19px + env(safe-area-inset-bottom))!important}
+}
