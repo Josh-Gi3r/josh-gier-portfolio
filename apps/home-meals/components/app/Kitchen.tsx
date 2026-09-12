@@ -38,7 +38,7 @@ export function Kitchen(){
  const shown=q||showAll?list:(priority.length?priority:list).slice(0,14);
  const changeIngredient=(id:string,delta:number)=>{h.setIngredient(id,Math.max(0,(h.ingredientStock[id]??0)+delta));feedback("change")};
  const switchTab=(t:Tab)=>{setTab(t);setQ("");setShowAll(false);feedback("tap")};
- const scanMode=tab==="Freezer"?"Freezer":tab==="Pantry"?"Receipt":"Fridge";
+ const scanMode=tab==="Freezer"?"Freezer":tab==="Pantry"?"Pantry":"Fridge";
  const scanHref=`/scan?mode=${scanMode}&back=${encodeURIComponent("/kitchen")}`;
  const stockedFridge=ingredients.filter(i=>["Fresh","Protein","Dairy"].includes(i.category)&&(h.ingredientStock[i.id]??0)>0);
  const stockedPantry=ingredients.filter(i=>i.category==="Pantry"&&(h.ingredientStock[i.id]??0)>0);
@@ -63,7 +63,7 @@ export function Kitchen(){
     {!q&&list.length>shown.length&&<button className="hm-text-button-v5" onClick={()=>{setShowAll(v=>!v);feedback("tap")}}>{showAll?"Show less":`Show all ${list.length}`}</button>}
    </section>
   </>}
-  <div className="hm-kitchen-bottom-v5 hm-kitchen-bottom-v6"><Link href={scanHref}>Show Home</Link><button onClick={()=>{h.confirmKitchen();feedback("success")}}>Kitchen checked ✓</button></div>
+  <div className="hm-kitchen-bottom-v5 hm-kitchen-bottom-v6"><Link href={scanHref}>Show Home</Link><button onClick={()=>{h.confirmKitchen();feedback("success")}}>{h.kitchenReady?"Kitchen up to date ✓":"Kitchen checked ✓"}</button></div>
  </div>
 }
 
