@@ -3,7 +3,7 @@
   isolation:isolate!important;
   overflow:visible!important;
   display:grid!important;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr) 176px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;
+  grid-template-columns:minmax(0,1.5fr) minmax(0,1.5fr) 176px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;
   align-items:end!important;
   gap:0!important;
   background:rgba(255,252,246,.985)!important;
@@ -105,21 +105,21 @@
     height:calc(78px + env(safe-area-inset-bottom))!important;
     padding:10px 5px env(safe-area-inset-bottom)!important;
     border-radius:24px 24px 0 0!important;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 176px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;
+    grid-template-columns:minmax(0,1.5fr) minmax(0,1.5fr) 176px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;
   }
   .hm-nav-v6:before{top:-32px;width:188px;height:68px;border-radius:50px 50px 0 0}
   .hm-nav-v6>a{height:58px!important;min-height:58px!important;justify-content:center!important;gap:3px!important;font-size:9px!important;padding:0 1px!important}
   .hm-nav-v6>a svg{width:21px!important;height:21px!important}
-  .hm-nav-v6>a span{font-size:9px!important;white-space:nowrap}
+  .hm-nav-v6>a span{font-size:9px!important;white-space:nowrap;letter-spacing:-.03em}
   .hm-home-tools-v6{bottom:calc(38px + env(safe-area-inset-bottom))!important}
 }
 @media(max-width:374px){
-  .hm-nav-v6{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 160px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;padding-left:3px!important;padding-right:3px!important}
-  .hm-nav-v6:before{width:172px}
-  .hm-home-tools-v6{grid-template-columns:43px 64px 43px!important;gap:5px!important;width:160px!important;height:64px!important}
-  .hm-home-tools-v6 .hm-input-orb-v6{width:43px!important;height:43px!important;min-width:43px!important;min-height:43px!important}
+  .hm-nav-v6{grid-template-columns:minmax(0,1.5fr) minmax(0,1.5fr) 154px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;padding-left:3px!important;padding-right:3px!important}
+  .hm-nav-v6:before{width:166px}
+  .hm-home-tools-v6{grid-template-columns:40px 64px 40px!important;gap:5px!important;width:154px!important;height:64px!important}
+  .hm-home-tools-v6 .hm-input-orb-v6{width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important}
   .hm-home-tools-v6 .hm-ask-orb-v6{width:64px!important;height:64px!important;min-width:64px!important;min-height:64px!important}
-  .hm-nav-v6>a span{font-size:8px!important}
+  .hm-nav-v6>a span{font-size:8px!important;letter-spacing:-.05em}
 }
 @media(min-width:700px){
   .hm-main-v5{padding-bottom:118px!important}
@@ -132,7 +132,7 @@
     height:76px!important;
     padding:10px 14px!important;
     border-radius:30px!important;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 210px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;
+    grid-template-columns:minmax(0,1.5fr) minmax(0,1.5fr) 210px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;
   }
   .hm-nav-v6:before{top:-36px;width:224px;height:74px;border-radius:58px 58px 0 0}
   .hm-nav-v6>a{height:56px!important;min-height:56px!important;border-radius:15px!important;font-size:11px!important;gap:3px!important}
@@ -143,7 +143,7 @@
   .hm-home-tools-v6 .hm-ask-orb-v6 svg{width:19px!important;height:19px!important}
 }
 @media(min-width:1100px){
-  .hm-nav-v6{width:940px!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 224px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important}
+  .hm-nav-v6{width:940px!important;grid-template-columns:minmax(0,1.5fr) minmax(0,1.5fr) 224px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important}
   .hm-nav-v6:before{width:238px}
   .hm-home-tools-v6{width:202px!important;grid-template-columns:54px 78px 54px!important;gap:7px!important}
   .hm-home-tools-v6 .hm-input-orb-v6{width:54px!important;height:54px!important;min-width:54px!important;min-height:54px!important}
