@@ -23,7 +23,7 @@ export function Cook(){
  return <div className="hm-page-v5 hm-cook-v5">
   <PageHead eyebrow="COOK" title="Our recipes" sub="The ones we cook, keep and change." action={<Link className="hm-round-link-v5" href="/cook/builder" aria-label="From what we have">✦</Link>}/>
   <div className="hm-search-row-v5"><label className="hm-search-v5"><span>⌕</span><input value={q} onChange={e=>{setQ(e.target.value);setView("all");setShowAll(false)}} placeholder="Search recipes" aria-label="Search recipes"/></label><Link href="/cook/builder">From what we have</Link></div>
-  {!q&&<div className="hm-segment-v5 hm-cook-tabs-v5"><button className={view==="ours"?"active":""} onClick={()=>chooseView("ours")}>For us</button><button className={view==="all"?"active":""} onClick={()=>chooseView("all")}>All 36</button></div>}
+  {!q&&<div className="hm-segment-v5 hm-cook-tabs-v5"><button className={view==="ours"?"active":""} onClick={()=>chooseView("ours")}>For us</button><button className={view==="all"?"active":""} onClick={()=>chooseView("all")}>All {recipes.length}</button></div>}
   {view==="ours"&&!q?<>
    {favourites.length>0&&<section className="hm-block-v5"><SectionHead eyebrow="FAVOURITES" title="We’d make these again"/><div className="hm-meal-rail-v5">{favourites.slice(0,8).map(r=><MealCard recipe={r} key={r.id} compact/>)}</div></section>}
    <section className="hm-block-v5"><SectionHead eyebrow="QUICK" title="25 minutes or less"/><div className="hm-meal-rail-v5">{quick.map(r=><MealCard recipe={r} key={r.id} compact/>)}</div></section>
