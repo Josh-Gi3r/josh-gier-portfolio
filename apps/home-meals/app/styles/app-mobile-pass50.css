@@ -1,0 +1,24 @@
+/* Pass 50: desktop/tablet task layouts should expand the app instead of stretching mobile rails. */
+@media(min-width:700px){
+ .hm-cook-v5 .hm-cook-tabs-v5{max-width:340px}
+ .hm-cook-v5 .hm-meal-rail-v5{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;overflow:visible;padding:0}
+ .hm-cook-v5 .hm-meal-card-v5.compact{min-width:0;min-height:230px;display:block;padding:0;overflow:hidden;border-radius:20px}
+ .hm-cook-v5 .hm-meal-card-v5.compact>img,.hm-cook-v5 .hm-meal-card-v5.compact>.hm-photo-placeholder-v5{width:100%;height:145px;border-radius:0;object-fit:cover}
+ .hm-cook-v5 .hm-meal-card-v5.compact .hm-meal-card-copy-v5{padding:10px 11px 12px}
+ .hm-cook-v5 .hm-meal-card-v5.compact .hm-meal-card-copy-v5>strong{font-size:17px;line-height:1.05}
+}
+@media(min-width:1000px){
+ .hm-cook-v5 .hm-meal-rail-v5{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+ .hm-cook-v5 .hm-meal-card-v5.compact>img,.hm-cook-v5 .hm-meal-card-v5.compact>.hm-photo-placeholder-v5{height:152px}
+ .hm-cook-v5 .hm-block-v5{margin:32px 0}
+}
+@media(min-width:1050px){
+ .hm-plan-v5 .hm-week-strip-v5{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;overflow:visible;padding:0}
+ .hm-plan-v5 .hm-week-strip-v5>button{min-width:0;min-height:220px;flex:none}
+ .hm-plan-v5 .hm-week-strip-v5 img,.hm-plan-v5 .hm-week-strip-v5>button>div{height:116px}
+ .hm-plan-v5 .hm-week-strip-v5 strong{font-size:15px;line-height:1.08}
+}
+@media(min-width:1200px){
+ .hm-cook-v5 .hm-meal-rail-v5{grid-template-columns:repeat(5,minmax(0,1fr))}
+ .hm-cook-v5 .hm-meal-card-v5.compact{min-height:238px}
+}
