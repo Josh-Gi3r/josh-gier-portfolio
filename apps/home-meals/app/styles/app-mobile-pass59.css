@@ -1,0 +1,4 @@
+/* Pass 59: final live touch audit. Empty-state CTAs must be real touch targets, not inline text links. */
+.hm-empty-v5>a,.hm-empty-v5>button{min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 12px;border-radius:12px;touch-action:manipulation}
+.hm-empty-v5>a{color:var(--green);font-weight:750;text-decoration:none}
+@media(max-width:430px){.hm-empty-v5>a,.hm-empty-v5>button{min-height:46px}}
