@@ -1,0 +1,5 @@
+/* Pass 63: final live audit fixes for touch targets and iOS input sizing. */
+.hm-note-author-v7 button{min-height:44px!important;height:44px!important}
+.hm-rate-v5 textarea{font-size:16px!important}
+.hm-plan-v5 .hm-shop-trigger-v5{min-height:44px!important;height:44px!important}
+@media(max-width:430px){.hm-note-author-v7 button,.hm-plan-v5 .hm-shop-trigger-v5{min-height:46px!important;height:46px!important}}

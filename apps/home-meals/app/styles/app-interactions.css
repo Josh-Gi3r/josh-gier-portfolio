@@ -1,0 +1,78 @@
+/* Interaction contract + coded Base → Mid → Dinner explorer. */
+button,a,input,select,textarea{transition:transform .14s ease,background-color .16s ease,border-color .16s ease,box-shadow .16s ease,opacity .16s ease}
+button:active,a:active{transform:scale(.985)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(65,112,82,.28);outline-offset:2px}
+.hm-section-head-v5>a,.hm-section-head-v5>button{min-width:44px;justify-content:center}
+.hm-back-v5{min-width:44px;padding-right:8px}
+.hm-search-v5 input{height:100%;min-height:44px}
+.hm-inline-warning-v5 a{display:inline-flex;min-height:44px;align-items:center;padding:0 4px;margin:-10px 0}
+.hm-why-v5>a{min-height:44px;display:flex;align-items:center}
+.hm-why-v5 summary{min-height:44px;display:flex;align-items:center}
+.hm-ask-context-v5>a{min-width:44px;justify-content:center}
+.hm-grocery-list-v5 label{cursor:pointer}
+.hm-grocery-list-v5 input{min-width:22px;min-height:22px}
+.hm-grocery-list-v5 label.done{opacity:1;background:#f1f5f1}
+.hm-grocery-list-v5 label.done strong{color:#46534b;text-decoration:line-through}
+.hm-grocery-list-v5 label.done small{color:#59625d}
+
+.hm-use-soon-strip-v5{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;margin:10px 0;padding:9px 10px 9px 13px;border:1px solid #edd2b3;border-radius:17px;background:#fff2e3;overflow:hidden}
+.hm-use-soon-strip-v5>div:first-child>span{display:block;font-size:11px;font-weight:800;letter-spacing:.09em;color:#9a5d28}.hm-use-soon-strip-v5>div:first-child>strong{display:block;font-size:12px;margin-top:2px;white-space:nowrap}.hm-use-soon-strip-v5>div:nth-child(2){min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.hm-use-soon-strip-v5>div:nth-child(2)::-webkit-scrollbar{display:none}.hm-use-soon-strip-v5 button{flex:0 0 auto;min-height:44px;border:1px solid #e7c9a7;border-radius:999px;background:#fff;padding:0 8px 0 11px;display:flex;align-items:center;gap:7px;color:#7b4d28;font-size:12px;font-weight:700}.hm-use-soon-strip-v5 button b{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#f7e4cf;font-size:12px}.hm-use-soon-strip-v5>a{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;color:#8f592c;font-size:12px;font-weight:800}
+.hm-swap-hint-v5{margin:-4px 0 10px;padding:9px 11px;border-radius:12px;background:#fff2e3;color:#795239;font-size:12px;line-height:1.35}
+.hm-cook-tools-v5{display:flex;justify-content:flex-end;gap:7px;margin:8px 0 0}.hm-cook-tools-v5>*{min-height:44px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;background:#fff;padding:0 12px;color:var(--green);font-size:12px;font-weight:750}.hm-cook-tools-v5>button{cursor:pointer}.hm-cook-tools-v5>a{background:#f7f2e9}.hm-cooking-v5 .hm-cook-tools-v5+main{padding-top:22px}
+
+.hm-base-explorer-v5{margin:28px 0;padding:16px;border:1px solid var(--line);border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 7px 24px rgba(49,42,30,.04)}
+.hm-base-explorer-v5>header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.hm-base-explorer-v5>header>div{min-width:0}
+.hm-base-explorer-v5>header span{display:block;font-size:11px;line-height:1.2;font-weight:800;letter-spacing:.11em;color:#52705f}
+.hm-base-explorer-v5>header h2{font:500 24px/1.04 var(--serif);letter-spacing:-.015em;margin:4px 0 0}
+.hm-base-explorer-v5>header small{max-width:110px;text-align:right;font-size:12px;line-height:1.25;color:var(--muted)}
+.hm-base-selector-v5{display:flex;gap:7px;overflow-x:auto;margin:14px -16px 0;padding:1px 16px 10px;scroll-snap-type:x proximity;scrollbar-width:none}
+.hm-base-selector-v5::-webkit-scrollbar{display:none}
+.hm-base-selector-v5 button{flex:0 0 auto;min-width:64px;height:46px;padding:0 10px;border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;gap:7px;font-size:11px;font-weight:800;scroll-snap-align:start}
+.hm-base-selector-v5 button i{width:6px;height:27px;border-radius:999px;background:var(--tone);box-shadow:inset 0 2px 2px rgba(255,255,255,.2)}
+.hm-base-selector-v5 button.active{background:#eef5ef;border-color:#8ead99;color:var(--green);box-shadow:0 4px 13px rgba(39,88,61,.09)}
+.hm-base-flow-v5{margin-top:4px;text-align:center}
+.hm-base-flow-root-v5{width:min(220px,78%);margin:0 auto;padding:13px;border-radius:18px;background:linear-gradient(150deg,#faf7f0,#f0ebe2);border:1px solid var(--line);display:grid;grid-template-columns:8px 1fr;gap:2px 10px;text-align:left;align-items:center}
+.hm-base-flow-root-v5>i{grid-row:1/3;width:8px;height:44px;border-radius:999px;background:var(--tone)}
+.hm-base-flow-root-v5>strong{font-size:13px;letter-spacing:.04em}
+.hm-base-flow-root-v5>span{font-size:12px;color:var(--muted)}
+.hm-base-flow-arrow-v5{height:29px;display:grid;place-items:center;color:#88a08f;font-size:18px;line-height:1}
+.hm-base-flow-mids-v5{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.hm-base-flow-mids-v5>a,.hm-base-flow-direct-v5{min-height:70px;padding:10px;border:1px solid var(--line);border-radius:15px;background:#fff;text-align:left;animation:hmNodeIn .24s cubic-bezier(.2,.75,.25,1) both;animation-delay:var(--delay,0ms)}
+.hm-base-flow-mids-v5 strong,.hm-base-flow-mids-v5 span,.hm-base-flow-mids-v5 small,.hm-base-flow-direct-v5 strong,.hm-base-flow-direct-v5 span{display:block}
+.hm-base-flow-mids-v5 strong{font-size:11px;color:var(--green)}
+.hm-base-flow-mids-v5 span{font-size:13px;font-weight:700;margin-top:2px}
+.hm-base-flow-mids-v5 small,.hm-base-flow-direct-v5 span{font-size:11px;line-height:1.25;color:var(--muted);margin-top:4px}
+.hm-base-flow-dinners-v5{display:flex;gap:7px;overflow-x:auto;margin:0 -16px;padding:0 16px 5px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.hm-base-flow-dinners-v5::-webkit-scrollbar{display:none}
+.hm-base-flow-dinners-v5>a{flex:0 0 150px;min-height:74px;padding:10px 11px;border:1px solid var(--line);border-radius:15px;background:#f9f5ee;text-align:left;scroll-snap-align:start;animation:hmNodeIn .24s cubic-bezier(.2,.75,.25,1) both;animation-delay:var(--delay,0ms)}
+.hm-base-flow-dinners-v5 span,.hm-base-flow-dinners-v5 small{display:block}
+.hm-base-flow-dinners-v5 span{font:500 15px/1.1 var(--serif)}
+.hm-base-flow-dinners-v5 small{font-size:11px;color:var(--muted);margin-top:5px}
+.hm-base-directions-v5{padding:12px;border:1px dashed #d8cfc3;border-radius:16px;background:#fbf7f0;text-align:left}
+.hm-base-directions-v5>strong{display:block;font:500 16px/1.1 var(--serif)}
+.hm-base-directions-v5>div{display:flex;gap:6px;overflow-x:auto;margin:9px -2px 7px;padding:2px;scrollbar-width:none}
+.hm-base-directions-v5>div::-webkit-scrollbar{display:none}
+.hm-base-directions-v5>div>span{flex:0 0 auto;min-height:34px;display:flex;align-items:center;padding:0 10px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:700}
+.hm-base-directions-v5>small{display:block;font-size:11px;color:var(--muted);line-height:1.35}
+.hm-stock-action-v5.research{background:#f7f1e8;border-color:#e3d8c8}.hm-stock-action-v5.research strong{font:500 18px/1.15 var(--serif)}
+
+/* Release-gate minimums for utility text that remains intentionally compact. */
+.hm-grocery-gap-v5>div:first-child>span,.hm-week-reuse-v5>header span,.hm-grocery-gap-meter-v5>span,.hm-week-reuse-rows-v5>div>span>strong,.hm-week-reuse-rows-v5>div>small,.hm-recipe-history-v5>header span,.hm-recipe-history-v5 article small,.hm-our-note-v5>span,.hm-couple-rating-v5 b,.hm-rate-v5>div:first-child>span,.hm-prep-week-v5 span,.hm-mother-head-v5>div:last-child>span,.hm-mid-head-v5>div>span,.hm-practical-grid-v5 span,.hm-setup-banner-v5 span,.hm-portion-guide-v5>header>span,.hm-portion-guide-v5 span{font-size:11px}
+@keyframes hmNodeIn{from{transform:translateY(6px) scale(.975)}to{transform:none}}
+
+@media(max-width:374px){.hm-use-soon-strip-v5{grid-template-columns:auto minmax(0,1fr);}.hm-use-soon-strip-v5>a{display:none}.hm-base-explorer-v5{padding:14px}.hm-base-selector-v5{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}.hm-base-flow-dinners-v5{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}.hm-cook-tools-v5>*{padding:0 10px}}
+@media(min-width:700px){.hm-base-flow-mids-v5{grid-template-columns:repeat(3,minmax(0,1fr))}.hm-base-flow-dinners-v5{overflow:visible;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;padding:0}.hm-base-flow-dinners-v5>a{min-width:0}}
+@media(prefers-reduced-motion:reduce){.hm-base-flow-mids-v5>a,.hm-base-flow-dinners-v5>a{animation:none}}
+
+/* Tactile mobile depth: one shared language, not page-specific decoration. */
+.hm-meal-card-v5,.hm-priority-v5,.hm-kitchen-pulse-v5 a,.hm-memory-card-v5,.hm-prep-needs-v5 article,.hm-mother-rail-v5>a,.hm-mid-quick-v5>a,.hm-stock-list-v5 article,.hm-freezer-mothers-v5 article,.hm-freezer-other-v5 article,.hm-week-strip-v5>button,.hm-grocery-list-v5 label,.hm-plan-prep-v5>div,.hm-base-explorer-v5,.hm-week-reuse-v5,.hm-grocery-gap-v5,.hm-stock-action-v5,.hm-setup-banner-v5{box-shadow:var(--shadow-card);border-color:#dfd6ca}
+.hm-base-explorer-v5,.hm-prep-week-v5,.hm-grocery-gap-v5,.hm-week-reuse-v5{box-shadow:var(--shadow-raised)}
+.hm-primary-button-v5,.hm-tonight-actions-v5 a:first-child,.hm-prep-week-v5 a,.hm-stock-action-v5 button,.hm-prepday-list-v5 article>button,.hm-kitchen-bottom-v5 button,.hm-rate-v5 label>button,.hm-cooking-v5>footer button.primary,.hm-cook-finished-v5>a,.hm-setup-banner-v5 button{box-shadow:var(--shadow-primary);transform:translateY(0);transition:transform .12s ease,box-shadow .12s ease,filter .16s ease}
+.hm-primary-button-v5:active,.hm-tonight-actions-v5 a:first-child:active,.hm-prep-week-v5 a:active,.hm-stock-action-v5 button:active,.hm-prepday-list-v5 article>button:active,.hm-kitchen-bottom-v5 button:active,.hm-rate-v5 label>button:active,.hm-cooking-v5>footer button.primary:active,.hm-cook-finished-v5>a:active,.hm-setup-banner-v5 button:active{transform:translateY(2px) scale(.995);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 1px 0 #174a34,0 5px 10px rgba(31,91,64,.14)}
+.hm-secondary-button-v5,.hm-search-row-v5>a,.hm-filter-rail-v5 button,.hm-chip-picker-v5 button,.hm-segment-v5 button.active,.hm-sticky-actions-v5>button,.hm-cook-tools-v5>*{box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 2px 5px rgba(55,43,28,.08)}
+.hm-nav-v5{box-shadow:0 -1px 0 rgba(255,255,255,.8),0 -12px 34px rgba(45,37,25,.12)}
+.hm-ask-fab-v5{box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 4px 0 #174a34,0 14px 30px rgba(31,91,64,.28)}
+.hm-ask-fab-v5:active{transform:translateX(-50%) translateY(2px) scale(.99);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 #174a34,0 8px 18px rgba(31,91,64,.22)}
+.hm-sheet-v5{box-shadow:0 -18px 60px rgba(45,37,25,.18)}
+@media(hover:hover){.hm-meal-card-v5:hover,.hm-week-strip-v5>button:hover,.hm-mother-rail-v5>a:hover,.hm-mid-quick-v5>a:hover{transform:translateY(-1px);box-shadow:0 2px 3px rgba(55,43,28,.07),0 12px 26px rgba(55,43,28,.10)}}

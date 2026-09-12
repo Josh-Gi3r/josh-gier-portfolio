@@ -1,0 +1,14 @@
+/* Pass 21: approximate household stock levels for pantry staples. */
+.hm-stock-list-v5 article.state-level-v21{display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-items:start!important;gap:9px!important;padding-block:13px!important}
+.hm-stock-list-v5 article.state-level-v21>div:first-child{width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hm-stock-list-v5 article.state-level-v21>div:first-child>span{flex:0 0 auto;text-align:right}
+.hm-stock-level-v21{grid-column:1/-1;width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:4px;border-radius:15px;background:#eee8dd;border:1px solid rgba(75,63,48,.08)}
+.hm-stock-level-v21 button{position:relative;min-width:0!important;min-height:44px!important;border:0!important;border-radius:11px!important;background:transparent!important;color:#756f66!important;box-shadow:none!important;padding:5px 3px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px!important;font-weight:760!important;line-height:1!important;letter-spacing:.01em;transition:transform .12s ease,background .16s ease,color .16s ease,box-shadow .16s ease}
+.hm-stock-level-v21 button i{display:block;width:7px;height:7px;border-radius:50%;background:#b8afa2;box-shadow:0 0 0 3px rgba(184,175,162,.14)}
+.hm-stock-level-v21 button.on{background:#fffdf8!important;color:#244d3a!important;box-shadow:0 2px 8px rgba(57,48,37,.09)!important}
+.hm-stock-level-v21 button.on i{background:#356b50;box-shadow:0 0 0 3px rgba(53,107,80,.13)}
+.hm-stock-level-v21 button:first-child.on{color:#8a473b!important}.hm-stock-level-v21 button:first-child.on i{background:#a85345;box-shadow:0 0 0 3px rgba(168,83,69,.12)}
+.hm-stock-level-v21 button:nth-child(2).on{color:#8a5a25!important}.hm-stock-level-v21 button:nth-child(2).on i{background:#b27732;box-shadow:0 0 0 3px rgba(178,119,50,.12)}
+.hm-stock-level-v21 button:active{transform:translateY(1px) scale(.98)}
+@media(max-width:374px){.hm-stock-level-v21{gap:3px}.hm-stock-level-v21 button{font-size:10px!important;padding-inline:1px!important}}
+@media(prefers-reduced-motion:reduce){.hm-stock-level-v21 button{transition:none!important}}

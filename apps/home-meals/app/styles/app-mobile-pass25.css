@@ -1,0 +1,8 @@
+/* Pass 25: make freezer FIFO feel like a physical label, not a dashboard alert. */
+.hm-freezer-fifo-v25{min-height:76px;margin:12px 0 16px;padding:13px 14px 13px 15px;border-radius:20px;background:#edf1e8;border:1px solid rgba(54,84,63,.12);display:flex;align-items:center;justify-content:space-between;gap:14px;color:#2e4939;text-decoration:none;box-shadow:0 4px 12px rgba(48,58,48,.06),inset 0 1px rgba(255,255,255,.7);transition:transform .14s ease,box-shadow .16s ease}
+.hm-freezer-fifo-v25:active{transform:translateY(2px);box-shadow:0 2px 6px rgba(48,58,48,.05),inset 0 1px rgba(255,255,255,.65)}
+.hm-freezer-fifo-v25>span{min-width:0;display:block}.hm-freezer-fifo-v25 small,.hm-freezer-fifo-v25 strong,.hm-freezer-fifo-v25 p{display:block}
+.hm-freezer-fifo-v25 small{font-size:10px;line-height:1.1;font-weight:850;letter-spacing:.13em;color:#5e7465}.hm-freezer-fifo-v25 strong{margin-top:5px;font:600 18px/1.08 var(--serif);letter-spacing:-.01em;color:#274234}.hm-freezer-fifo-v25 p{margin:4px 0 0;font-size:13px;line-height:1.35;color:#667069}
+.hm-freezer-fifo-v25>b{flex:0 0 auto;width:42px;height:42px;border-radius:14px;background:#fffdf7;display:grid;place-items:center;font-size:22px;font-weight:500;color:#356149;box-shadow:0 2px 8px rgba(53,76,59,.08)}
+@media(max-width:374px){.hm-freezer-fifo-v25{padding-inline:12px;gap:9px}.hm-freezer-fifo-v25 strong{font-size:17px}.hm-freezer-fifo-v25 p{font-size:12px}.hm-freezer-fifo-v25>b{width:40px;height:40px}}
+@media(prefers-reduced-motion:reduce){.hm-freezer-fifo-v25{transition:none!important}}

@@ -1,0 +1,3 @@
+/* Pass 53: use-soon age is planning data, not a generic badge. */
+.hm-use-soon-aged-v53>div:nth-child(2)>button>span{min-width:0;display:flex;align-items:baseline;gap:6px}.hm-use-soon-aged-v53>div:nth-child(2)>button strong{font-size:12px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hm-use-soon-aged-v53>div:nth-child(2)>button small{font-size:10px;line-height:1;color:#8b6c48;white-space:nowrap}.hm-use-soon-aged-v53>div:nth-child(2)>button:first-child{border-color:rgba(151,104,52,.18);background:#fff7e9}
+@media(max-width:430px){.hm-use-soon-aged-v53>div:nth-child(2){scroll-snap-type:x proximity}.hm-use-soon-aged-v53>div:nth-child(2)>button{scroll-snap-align:start}}

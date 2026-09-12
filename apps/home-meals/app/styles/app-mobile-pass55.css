@@ -1,0 +1,2 @@
+/* Pass 55: cooking drawer makes FIFO physical and obvious. */
+.hm-cook-prep-label-v55{min-width:0;display:flex!important;flex-direction:column;align-items:flex-start}.hm-cook-prep-label-v55>strong{font-size:13px;line-height:1.2}.hm-cook-prep-label-v55>small{margin-top:3px;font-size:11px;line-height:1.25;color:#7b776f}.hm-cook-drawer-v5 p>.hm-cook-prep-label-v55+strong{white-space:nowrap;color:#315f47}

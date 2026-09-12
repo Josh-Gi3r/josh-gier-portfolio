@@ -1,0 +1,10 @@
+/* Pass 51: mobile keyboard, focus and sheet safety. */
+.hm-shell-v5 :where(a,button,input,textarea,summary):focus-visible,.hm-page-v5 :where(a,button,input,textarea,summary):focus-visible{outline:3px solid rgba(42,101,73,.28);outline-offset:2px}
+.hm-ask-sheet-v5{overscroll-behavior:contain}.hm-composer-v5 input{font-size:16px!important}
+@media(max-width:699px){
+ .hm-ask-sheet-v5{max-height:92dvh;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+ .hm-ask-messages-v5{max-height:34dvh;overscroll-behavior:contain}
+ .hm-composer-v5{position:sticky;bottom:0;z-index:3;margin:4px -4px -4px;padding:9px 4px 4px;background:linear-gradient(180deg,rgba(255,250,242,0),#fffaf2 28%)}
+ .hm-ask-quick-v5{scroll-snap-type:x proximity}.hm-ask-quick-v5>*{scroll-snap-align:start}
+}
+@media(prefers-reduced-motion:reduce){.hm-shell-v5 :where(a,button,input,textarea,summary),.hm-page-v5 :where(a,button,input,textarea,summary){scroll-behavior:auto!important}}

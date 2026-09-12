@@ -1,0 +1,5 @@
+/* Pass 64: visual doneness cues stay editorial, not another dashboard card. */
+.hm-recipe-cues-v64>div{border-top:1px solid rgba(91,75,56,.11)}
+.hm-recipe-cues-v64>div>p{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;margin:0;padding:12px 0;border-bottom:1px solid rgba(91,75,56,.1);font:400 15px/1.48 var(--serif)!important;color:#353934}
+.hm-recipe-cues-v64>div>p>b{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#e7efe5;color:#24583d;font:700 12px var(--sans)}
+.hm-recipe-cues-v64>div>p>span{padding-top:2px}

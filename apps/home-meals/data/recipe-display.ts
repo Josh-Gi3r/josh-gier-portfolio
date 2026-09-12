@@ -1,0 +1,42 @@
+// Household-facing recipe copy. Research/source rationale remains in meals-researched.ts.
+// These strings describe dinner, not the internal prep architecture.
+export const recipeDisplay:Record<string,{title:string;subtitle:string}>={
+ "gold-chicken-curry":{title:"Everyday chicken curry",subtitle:"Warm cumin, garam masala and coriander in a glossy onion-tomato gravy."},
+ "gold-chana-masala":{title:"Chana masala",subtitle:"Tangy chickpeas with roasted cumin, amchur, coriander and lemon."},
+ "gold-punjabi-egg-curry":{title:"Punjabi egg curry",subtitle:"Boiled eggs in a spiced onion-tomato gravy with green chilli and coriander."},
+ "gold-saag-chicken":{title:"Saag chicken",subtitle:"Tender chicken in a deep spinach curry finished with yoghurt and lemon."},
+ "gold-aloo-matar":{title:"Aloo matar",subtitle:"Soft potatoes and sweet peas in a warm, comforting masala."},
+ "sambal-udang":{title:"Sambal udang",subtitle:"Prawns in glossy sambal with tamarind, makrut lime and a little palm sugar."},
+ "sambal-telur":{title:"Sambal telur",subtitle:"Boiled eggs coated in sambal with soft onion and cool cucumber."},
+ "curry-laksa":{title:"Curry laksa",subtitle:"Coconut-rich laksa broth with noodles, tofu puffs, sprouts and lime."},
+ "rempah-coconut-fish":{title:"Lemongrass coconut fish",subtitle:"White fish and green beans in a fragrant lemongrass coconut curry."},
+ "rempah-chicken-rendang":{title:"Chicken rendang",subtitle:"Chicken simmered with coconut, makrut lime and toasted coconut until the sauce clings."},
+ "thai-green-chicken":{title:"Thai green chicken curry",subtitle:"Chicken, vegetables, Thai basil and makrut lime in a fragrant coconut curry."},
+ "thai-red-chicken":{title:"Thai red chicken & pumpkin curry",subtitle:"Tender chicken and pumpkin in a rich red curry with basil and makrut lime."},
+ "massaman-beef":{title:"Massaman beef",subtitle:"Slow-braised beef, potatoes and peanuts in a warm-spiced coconut curry."},
+ "pad-kra-pao":{title:"Pad kra pao",subtitle:"Savoury-spicy minced meat with holy basil and a crisp fried egg."},
+ "pad-see-ew":{title:"Pad see ew",subtitle:"Charred wide rice noodles with gai lan, egg and a savoury dark sauce."},
+ "beef-broccoli":{title:"Beef & broccoli",subtitle:"Tender beef and crisp broccoli in a glossy savoury wok sauce."},
+ "brown-chicken-mushroom":{title:"Chicken & mushrooms",subtitle:"Velvety chicken, mushrooms and spring onion in a rich savoury wok sauce."},
+ "moo-goo-gai-pan":{title:"Moo goo gai pan",subtitle:"Tender chicken, mushrooms, greens and bamboo shoots in a light white sauce."},
+ "white-sauce-prawns":{title:"Prawns & greens",subtitle:"Prawns, greens and mushrooms in a light, peppery white sauce."},
+ "wok-tofu-greenbeans":{title:"Crispy tofu & green beans",subtitle:"Crisp tofu and blistered green beans in a glossy brown sauce."},
+ "teriyaki-salmon":{title:"Teriyaki salmon",subtitle:"Pan-seared salmon with glossy sake-soy tare and broccoli."},
+ "teriyaki-chicken":{title:"Chicken teriyaki",subtitle:"Crisp-edged chicken thigh with a glossy sake-soy tare."},
+ "miso-salmon":{title:"Miso-ginger salmon",subtitle:"Broiled salmon with a savoury miso-ginger glaze, mushrooms and broccoli."},
+ "miso-aubergine-tofu":{title:"Miso aubergine & tofu",subtitle:"Caramelised aubergine and tofu with a sweet-savoury miso glaze."},
+ "bulgogi-beef":{title:"Bulgogi beef",subtitle:"Thin beef in a pear-soy marinade, seared hot and fast."},
+ "gochujang-chicken":{title:"Gochujang chicken & roast vegetables",subtitle:"Roast chicken and vegetables in a sticky, sweet-hot gochujang glaze."},
+ "gochujang-tofu":{title:"Gochujang tofu & broccoli",subtitle:"Crisp tofu and broccoli in a spicy-sweet gochujang glaze."},
+ "beef-ragu":{title:"Beef ragù",subtitle:"Beef, red wine and Parmesan in a rich tomato ragù."},
+ "chicken-cacciatore":{title:"Chicken cacciatore",subtitle:"Tomato-braised chicken with peppers, mushrooms, rosemary and herbs."},
+ "mustard-mushroom-chicken":{title:"Mustard mushroom chicken",subtitle:"Golden chicken and mushrooms in a creamy Dijon pan sauce."},
+ "pesto-salmon":{title:"Pesto salmon & roast vegetables",subtitle:"Roast salmon and vegetables finished with basil pesto, lemon and Parmesan."},
+ "red-shakshuka":{title:"Shakshuka",subtitle:"Eggs baked in spiced tomato and harissa with cool yoghurt and flatbread."},
+ "harissa-chicken-traybake":{title:"Harissa chicken traybake",subtitle:"Chicken, peppers, red onion and beans caramelised together on one tray."},
+ "harissa-chickpeas":{title:"Harissa chickpeas & roast cauliflower",subtitle:"Spiced chickpeas and roast cauliflower with cool yoghurt and lemon."},
+ "chipotle-chicken-bowl":{title:"Chipotle chicken bowl",subtitle:"Smoky tomato chicken with black beans, corn, lime and coriander."},
+ "chipotle-bean-skillet":{title:"Chipotle black-bean skillet",subtitle:"Smoky black beans, corn and tomato with lime and coriander."}
+};
+export function recipeTitle(id:string,fallback:string){return recipeDisplay[id]?.title??fallback}
+export function recipeSubtitle(id:string,fallback:string){return recipeDisplay[id]?.subtitle??fallback}

@@ -1,0 +1,42 @@
+/* Mobile pass 7: task-first interaction polish for planning, prep, scan and cooking. */
+
+.hm-prepday-workbench-v7{position:relative;min-height:190px;margin:10px 0 16px;border-radius:24px;overflow:hidden;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:18px;color:#fff;box-shadow:0 10px 26px rgba(43,34,23,.12);isolation:isolate}
+.hm-prepday-workbench-v7:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,24,18,.08),rgba(22,24,18,.78));z-index:-1}
+.hm-prepday-workbench-v7>div{width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+.hm-prepday-workbench-v7 span,.hm-prepday-workbench-v7 small{display:block}.hm-prepday-workbench-v7 span{font-size:9px;letter-spacing:.14em;font-weight:820;color:rgba(255,255,255,.72)}
+.hm-prepday-workbench-v7 strong{display:block;font:500 25px/1.02 var(--serif);letter-spacing:-.02em;margin-top:5px}.hm-prepday-workbench-v7 small{font-size:10px;line-height:1.35;color:rgba(255,255,255,.72);margin-top:5px;max-width:240px}
+.hm-prepday-workbench-v7 b{flex:0 0 auto;min-width:58px;text-align:center;padding:10px 9px;border-radius:16px;background:rgba(255,253,248,.14);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);font:600 21px var(--serif)}
+
+.hm-prepday-list-v5 article .hm-prep-job-photo-v7{width:54px;height:54px;border-radius:15px;overflow:hidden;background:color-mix(in srgb,var(--tone) 18%,#efe7db);flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(91,75,56,.08)}
+.hm-prep-job-photo-v7 img,.hm-prep-job-photo-v7 i{display:block;width:100%;height:100%;object-fit:cover}.hm-prep-job-photo-v7 i{background:linear-gradient(145deg,color-mix(in srgb,var(--tone) 65%,#fff),var(--tone))}
+.hm-prepday-list-v5 article.done .hm-prep-job-photo-v7{filter:saturate(.55);opacity:.66}
+
+.hm-prep-wrap-v7{margin:18px 0 8px;padding:16px;border-radius:22px;background:#fffaf2;border:1px solid rgba(91,75,56,.1)}
+.hm-prep-wrap-v7>header span{display:block;font-size:9px;letter-spacing:.14em;font-weight:820;color:#667268}.hm-prep-wrap-v7>header h2{font:500 23px/1.05 var(--serif);margin:4px 0 5px}.hm-prep-wrap-v7>header p{font-size:10px;line-height:1.4;color:#747a74;margin:0}
+.hm-prep-wrap-v7>div{display:grid;gap:8px;margin-top:12px}.hm-prep-wrap-v7 button{min-height:58px;border:1px solid rgba(91,75,56,.1);border-radius:17px;background:#fffdf8;display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;text-align:left;padding:8px 11px;color:#29372f;box-shadow:var(--touch-shadow);transition:transform .14s ease,background .18s ease,border-color .18s ease}
+.hm-prep-wrap-v7 button:active{transform:translateY(2px)}.hm-prep-wrap-v7 button:disabled{opacity:.46;box-shadow:none}.hm-prep-wrap-v7 button>i{width:31px;height:31px;border-radius:11px;background:#ece7dc;display:grid;place-items:center;font-style:normal;font-weight:800}.hm-prep-wrap-v7 button span strong,.hm-prep-wrap-v7 button span small{display:block}.hm-prep-wrap-v7 button span strong{font-size:12px}.hm-prep-wrap-v7 button span small{font-size:9px;color:#777b76;margin-top:2px}.hm-prep-wrap-v7 button>b{font-size:18px;color:#a29b90}.hm-prep-wrap-v7 button.done{background:#e8f0e6;border-color:rgba(50,98,62,.14)}.hm-prep-wrap-v7 button.done>i{background:#1d5a3e;color:#fff}.hm-prep-wrap-v7 button.done>b{color:#1d5a3e}
+
+.hm-week-strip-v5>button.changed{animation:hmMealSettle .46s cubic-bezier(.2,.8,.2,1)}
+@keyframes hmMealSettle{0%{transform:scale(.96) translateY(4px);opacity:.55}60%{transform:scale(1.015) translateY(-1px)}100%{transform:none;opacity:1}}
+.hm-swap-stock-v7{display:inline-flex!important;align-items:center;min-height:22px;padding:0 7px;border-radius:8px;background:#edf2e8;color:#285c41!important;font-size:8px!important;font-weight:760!important;margin-top:4px!important}.hm-swap-stock-v7.missing{background:#fff0df;color:#955c2f!important}
+
+.hm-cooking-v7 .hm-cooking-step-v5{animation:hmCookStep .2s ease both}.hm-cooking-v7 .hm-timer-v5{border-radius:20px}.hm-cooking-v7 .hm-timer-v5.done{background:#e7f0e5;border-color:rgba(49,104,64,.14)}.hm-cooking-v7 .hm-timer-v5.done strong{color:#215b3e}.hm-timer-caption-v7{display:block;font-size:9px;color:#777b76;margin-top:4px;text-align:center}
+@keyframes hmCookStep{from{opacity:.35;transform:translateX(8px)}to{opacity:1;transform:none}}
+
+.hm-note-author-v7{display:flex!important;gap:6px!important;margin:8px 0 9px!important}.hm-note-author-v7 button{min-width:62px!important;min-height:40px!important;border-radius:13px!important;border:1px solid rgba(91,75,56,.1)!important;background:#fffaf2!important;color:#606861!important;font-size:10px!important;font-weight:760!important;padding:0 10px!important;box-shadow:var(--touch-shadow)!important}.hm-note-author-v7 button.active{background:#1f5a40!important;color:#fff!important;border-color:#1f5a40!important;box-shadow:var(--green-touch)!important}.hm-note-author-v7 button:active{transform:translateY(2px)}
+.hm-not-cooked-v7{margin:13px 0 0;padding:12px 13px;border-radius:16px;background:#fff7e8;border:1px solid rgba(154,108,55,.1);font-size:10px;line-height:1.4;color:#766858}.hm-not-cooked-v7 strong{color:#554532}
+.hm-cook-stock-v20{margin:16px 0 18px;padding:14px;border-radius:18px;background:#edf3eb;border:1px solid rgba(54,98,65,.1);text-align:left}.hm-cook-stock-v20>div:first-child>span{display:block;font-size:8px;letter-spacing:.13em;font-weight:820;color:#4c6f57}.hm-cook-stock-v20>div:first-child>strong{display:block;font:500 19px/1.05 var(--serif);margin-top:4px;color:#284b36}.hm-cook-stock-v20>div:first-child>small{display:block;font-size:9px;line-height:1.38;color:#6a756e;margin-top:4px}.hm-cook-stock-group-v20{margin-top:11px;padding-top:9px;border-top:1px solid rgba(54,98,65,.1)}.hm-cook-stock-group-v20>b{display:block;font-size:8px;letter-spacing:.12em;color:#6b786f;margin-bottom:3px}.hm-cook-stock-group-v20>p{display:flex;justify-content:space-between;gap:12px;margin:0;padding:5px 0;font-size:10px}.hm-cook-stock-group-v20>p span{color:#5f6d65}.hm-cook-stock-group-v20>p strong{color:#294c37}.hm-cook-stock-group-v20>small{display:block;font-size:8px;color:#7a837d;margin-top:3px}.hm-cook-stock-v20>a{display:inline-flex;align-items:center;min-height:38px;margin-top:7px;color:#1d5a3e;font-size:10px;font-weight:760}
+
+.hm-scan-modes-v6 button{scroll-snap-align:start}.hm-camera-library-v6,.hm-shutter-v6,.hm-camera-clear-v6{touch-action:manipulation}
+.hm-photo-next-v6{animation:hmPhotoReady .22s ease both}@keyframes hmPhotoReady{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media(max-width:430px){
+ .hm-prepday-workbench-v7{min-height:172px;margin-top:8px;padding:15px}.hm-prepday-workbench-v7 strong{font-size:22px}.hm-prepday-workbench-v7 b{min-width:52px;font-size:19px}
+ .hm-prepday-list-v5 article{grid-template-columns:30px 54px minmax(0,1fr) auto!important;gap:8px!important}.hm-prepday-list-v5 article>i{display:none!important}
+ .hm-prepday-list-v5 article>button,.hm-prepday-list-v5 article>a{min-width:72px!important;padding-inline:8px!important}
+}
+@media(max-width:374px){
+ .hm-prepday-list-v5 article{grid-template-columns:28px 46px minmax(0,1fr)!important}.hm-prep-job-photo-v7{width:46px!important;height:46px!important}.hm-prepday-list-v5 article>button,.hm-prepday-list-v5 article>a{grid-column:2 / -1;width:100%;margin-top:2px}
+ .hm-prepday-workbench-v7 small{max-width:190px}
+}
+@media(prefers-reduced-motion:reduce){.hm-week-strip-v5>button.changed,.hm-cooking-v7 .hm-cooking-step-v5,.hm-photo-next-v6{animation:none!important}.hm-prep-wrap-v7 button{transition:none!important}}

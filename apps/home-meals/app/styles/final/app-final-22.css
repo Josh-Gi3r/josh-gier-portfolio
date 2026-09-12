@@ -1,0 +1,3 @@
+/* Pass 71b: More shares the exact vertical baseline with the five in-nav destinations. */
+@media(max-width:699px){.hm-more-nav-v69{bottom:calc(1px + env(safe-area-inset-bottom))!important}}
+@media(min-width:700px){.hm-more-nav-v69{bottom:17px!important}}
