@@ -1,0 +1,13 @@
+/* Pass 57: keep Ask Home and camera/mic physically above the bottom nav, never on top of Prep. */
+@media(max-width:699px){
+ .hm-home-tools-v6{bottom:calc(68px + env(safe-area-inset-bottom))}
+ .hm-main-v5{padding-bottom:calc(140px + env(safe-area-inset-bottom))}
+}
+@media(min-width:700px) and (max-width:899px){
+ .hm-home-tools-v6{bottom:82px}
+ .hm-main-v5{padding-bottom:144px}
+}
+@media(min-width:900px){
+ .hm-home-tools-v6{bottom:80px}
+ .hm-main-v5{padding-bottom:128px}
+}
