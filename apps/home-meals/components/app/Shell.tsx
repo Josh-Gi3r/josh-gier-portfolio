@@ -20,12 +20,14 @@ const nav=[
 ];
 
 export function Shell({children}:{children:React.ReactNode}){
- const path=usePathname();const h=useHousehold();const[ask,setAsk]=useState(false);const[q,setQ]=useState("");
+ const path=usePathname();const h=useHousehold();const[ask,setAsk]=useState(false);const[q,setQ]=useState("");const[voiceState,setVoiceState]=useState<"idle"|"listening"|"unsupported">("idle");
  const[messages,setMessages]=useState<{who:"you"|"home";text:string}[]>([{who:"home",text:"What do you need?"}]);
  const active=useMemo(()=>nav.find(x=>x.href==="/"?path==="/":path.startsWith(x.href))?.href,[path]);
  const cookingRoute=/^\/cook\/[^/]+\/cook$/.test(path);
  const day=(new Date().getDay()+6)%7;const tonight=getRecipe(h.week[day]??h.week[0])??recipes[0];
- useEffect(()=>bindGlobalHaptics(),[]);useSheet(ask,()=>setAsk(false));
+ const cameraMode=cookingRoute||path.startsWith("/prep")?"Prep":path.startsWith("/kitchen")?"Fridge":"Fridge";
+ const cameraHref=`/scan?mode=${cameraMode}&back=${encodeURIComponent(path)}`;
+ useEffect(()=>bindGlobalHaptics(),[]);useSheet(ask,()=>{setAsk(false);setVoiceState("idle")});
  const answer=(text:string)=>{const s=text.toLowerCase();
   const needsKitchen=s.includes("have")||s.includes("buy")||s.includes("shop")||s.includes("grocery")||s.includes("prep")||s.includes("freezer")||s.includes("soon")||s.includes("low")||s.includes("make now")||s.includes("ready now");
   if(!h.kitchenReady&&needsKitchen)return "I don't know the kitchen yet. Check Fridge, Freezer and Pantry once, then I can use the real stock.";
@@ -43,16 +45,33 @@ export function Shell({children}:{children:React.ReactNode}){
   return "Ask me about tonight, what we have, what can be made now, groceries, prep, use-soon food, favourites, or the last dinner.";
  }
  const send=(text=q)=>{const clean=text.trim();if(!clean)return;setMessages(v=>[...v,{who:"you",text:clean},{who:"home",text:answer(clean)}]);setQ("");feedback("change")};
- return <div className="hm-shell-v5">
+ const startVoice=()=>{
+  setAsk(true);feedback("tap");
+  const W=window as typeof window & {SpeechRecognition?:new()=>any;webkitSpeechRecognition?:new()=>any};
+  const Recognition=W.SpeechRecognition||W.webkitSpeechRecognition;
+  if(!Recognition){setVoiceState("unsupported");setMessages(v=>[...v,{who:"home",text:"Voice input isn’t available in this browser yet. You can still type or show me something with the camera."}]);return;}
+  const rec=new Recognition();rec.lang="en-SG";rec.interimResults=false;rec.maxAlternatives=1;
+  rec.onstart=()=>setVoiceState("listening");
+  rec.onresult=(e:any)=>{const text=e.results?.[0]?.[0]?.transcript??"";setVoiceState("idle");if(text)send(text)};
+  rec.onerror=()=>setVoiceState("idle");rec.onend=()=>setVoiceState(v=>v==="listening"?"idle":v);rec.start();
+ };
+ return <div className="hm-shell-v5 hm-shell-v6">
   {cookingRoute?<div className="hm-main-v5">{children}</div>:<main className="hm-main-v5">{children}</main>}
   {h.storageIssue&&<div className="hm-storage-warning-v5" role="status"><span><strong>Changes aren’t saving on this device.</strong><small>Keep this tab open and try again before closing Home Meals.</small></span><button onClick={h.clearStorageIssue} aria-label="Dismiss save warning">×</button></div>}
-  <nav className="hm-nav-v5" aria-label="Main navigation">{nav.map(item=><Link href={item.href} key={item.href} className={active===item.href?"active":""}><Icon name={item.icon} size={22}/><span>{item.label}</span></Link>)}</nav>
-  <button className="hm-ask-fab-v5" onClick={()=>setAsk(true)} aria-label="Ask Home"><Icon name="spark" size={22}/><span>Ask Home</span></button>
-  {ask&&<div className="hm-sheet-backdrop-v5" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setAsk(false)}}><section className="hm-sheet-v5 hm-ask-sheet-v5" role="dialog" aria-modal="true" aria-label="Ask Home">
-   <div className="hm-sheet-handle-v5"/><header><div><span>HOME</span><h2>Ask Home</h2></div><button className="hm-icon-button-v5" onClick={()=>setAsk(false)} aria-label="Close">×</button></header>
+  {!cookingRoute&&<>
+   <nav className="hm-nav-v5 hm-nav-v6" aria-label="Main navigation">{nav.map(item=><Link href={item.href} key={item.href} className={active===item.href?"active":""}><Icon name={item.icon} size={22}/><span>{item.label}</span></Link>)}</nav>
+   <div className="hm-home-tools-v6" aria-label="Home inputs">
+    <Link href={cameraHref} className="hm-input-orb-v6 camera" aria-label="Show Home with camera"><Icon name="camera" size={23}/></Link>
+    <button className="hm-ask-orb-v6" onClick={()=>setAsk(true)} aria-label="Ask Home"><Icon name="spark" size={24}/><span>Ask Home</span></button>
+    <button className={`hm-input-orb-v6 mic ${voiceState==="listening"?"listening":""}`} onClick={startVoice} aria-label="Talk to Home"><Icon name="mic" size={23}/></button>
+   </div>
+  </>}
+  {ask&&<div className="hm-sheet-backdrop-v5" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setAsk(false)}}><section className="hm-sheet-v5 hm-ask-sheet-v5 hm-ask-sheet-v6" role="dialog" aria-modal="true" aria-label="Ask Home">
+   <div className="hm-sheet-handle-v5"/><header><div><span>HOME</span><h2>Ask Home</h2><p>Camera, voice or text. Same kitchen brain.</p></div><button className="hm-icon-button-v5" onClick={()=>setAsk(false)} aria-label="Close">×</button></header>
+   <div className="hm-ask-modes-v6"><Link href={cameraHref} onClick={()=>setAsk(false)}><Icon name="camera" size={20}/><span><strong>Show</strong><small>fridge, prep, receipt</small></span></Link><button className="active" onClick={()=>document.querySelector<HTMLInputElement>(".hm-composer-v5 input")?.focus()}><Icon name="spark" size={20}/><span><strong>Ask</strong><small>what should we do?</small></span></button><button onClick={startVoice}><Icon name="mic" size={20}/><span><strong>{voiceState==="listening"?"Listening…":"Tell"}</strong><small>hands-free input</small></span></button></div>
    <div className="hm-ask-context-v5"><div><span>Tonight</span><strong>{recipeTitle(tonight.id,tonight.title)}</strong></div><Link href={`/cook/${tonight.id}`} onClick={()=>setAsk(false)}>Open</Link></div>
    <div className="hm-ask-messages-v5" tabIndex={0} aria-label="Ask Home conversation">{messages.slice(-6).map((m,i)=><div key={i} className={m.who}>{m.text}</div>)}</div>
-   <div className="hm-ask-quick-v5"><button onClick={()=>send("What should we cook tonight?")}>Tonight</button><button onClick={()=>send("What can we make now?")}>Ready now</button><button onClick={()=>send("What should we use soon?")}>Use soon</button><button onClick={()=>send("What do we need to buy?")}>Groceries</button><button onClick={()=>send("What should we prep?")}>Prep</button><Link href={`/scan?mode=${cookingRoute||path.startsWith("/prep")?"Prep":"Fridge"}&back=${encodeURIComponent(path)}`} onClick={()=>setAsk(false)}>Camera</Link></div>
+   <div className="hm-ask-quick-v5"><button onClick={()=>send("What should we cook tonight?")}>Tonight</button><button onClick={()=>send("What can we make now?")}>Ready now</button><button onClick={()=>send("What should we use soon?")}>Use soon</button><button onClick={()=>send("What do we need to buy?")}>Groceries</button><button onClick={()=>send("What should we prep?")}>Prep</button></div>
    <form className="hm-composer-v5" onSubmit={e=>{e.preventDefault();send()}}><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Ask about home…" aria-label="Ask Home" autoFocus/><button aria-label="Send"><Icon name="arrow" size={18}/></button></form>
   </section></div>}
  </div>
