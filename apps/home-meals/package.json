@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "audit:data": "node scripts/audit-home-data.cjs",
+    "build": "npm run audit:data && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit"
   },
