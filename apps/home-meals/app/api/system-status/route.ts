@@ -10,6 +10,9 @@ export async function GET(){
   askHome:openai,
   vision:openai,
   realtimeVoice:openai,
-  backend:"railway-postgres"
+  backend:"railway-postgres",
+  model:process.env.OPENAI_MODEL?.trim()||"gpt-5.6-sol",
+  visionModel:process.env.OPENAI_VISION_MODEL?.trim()||process.env.OPENAI_MODEL?.trim()||"gpt-5.6-sol",
+  liveModel:process.env.OPENAI_LIVE_MODEL?.trim()||"gpt-live-1"
  },{headers:{"Cache-Control":"no-store"}})
 }
