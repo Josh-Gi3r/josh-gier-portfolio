@@ -4,10 +4,11 @@ const fail=m=>failures.push(m),unique=(xs,label)=>{const s=new Set();for(const x
 try{
   fs.rmSync(out,{recursive:true,force:true});
   const tsc=path.join(root,'node_modules','.bin',process.platform==='win32'?'tsc.cmd':'tsc');
-  const r=spawnSync(tsc,['--target','ES2020','--module','commonjs','--moduleResolution','node','--esModuleInterop','--skipLibCheck','--outDir',out,'data/food-truth-v2.ts','data/home-data.ts'],{cwd:root,stdio:'inherit'});
+  const r=spawnSync(tsc,['--target','ES2020','--module','commonjs','--moduleResolution','node','--esModuleInterop','--skipLibCheck','--outDir',out,'data/food-truth-v2.ts','data/food-engine-v2.ts','data/home-data.ts'],{cwd:root,stdio:'inherit'});
   if(r.status!==0)process.exit(r.status||1);
 
   const truth=require(path.join(out,'food-truth-v2.js'));
+  const engine=require(path.join(out,'food-engine-v2.js'));
   const current=require(path.join(out,'home-data.js'));
   const components=truth.canonicalPrepComponentsV2,recipes=truth.recipePrepRequirementsV2;
   if(components.length!==41)fail(`canonical v2 prep set must contain 41 components, found ${components.length}`);
@@ -52,6 +53,16 @@ try{
   exact('moo-goo-gai-pan',['wok-white:150:ml']);
   exact('pad-kra-pao',['garlic:15:g','chilli:15:g','krapow:30:ml']);
   exact('gold-chicken-curry',['gold:120:g']);
+
+  const defaultDemand=engine.prepDemandForRecipesV2(current.defaultWeek);
+  const zeroStock={};
+  const emptyNeeds=engine.prepNeedsForRecipesV2(current.defaultWeek,zeroStock);
+  for(const demand of defaultDemand){const need=emptyNeeds.find(x=>x.componentId===demand.componentId);if(!need||need.shortfall.qty!==demand.required.qty||need.shortfall.unit!==demand.required.unit)fail(`v2 empty-stock shortfall mismatch for ${demand.componentId}`)}
+  const exactStock=Object.fromEntries(defaultDemand.map(x=>[x.componentId,x.required]));
+  if(engine.prepNeedsForRecipesV2(current.defaultWeek,exactStock).length)fail('v2 exact default-week stock still reports prep shortfalls');
+  const firstRecipe=current.defaultWeek[0],firstReq=recipes[firstRecipe][0];
+  if(firstReq){const batch=engine.createMeasuredPrepBatchV2({batchId:'audit-batch',componentId:firstReq.componentId,measuredOutput:firstReq.quantity,producedAt:'2026-09-14T00:00:00.000Z',recipeVersion:'audit-v1'});const stock=engine.componentStockFromBatchesV2([batch]);if(!engine.recipePrepAvailabilityV2(firstRecipe,stock).ready)fail(`v2 measured stock does not mark ${firstRecipe} ready`)}
+  let mismatchRejected=false;try{engine.createMeasuredPrepBatchV2({batchId:'bad-unit',componentId:'gold',measuredOutput:{qty:120,unit:'ml'},producedAt:'2026-09-14T00:00:00.000Z',recipeVersion:'audit-v1'})}catch{mismatchRejected=true}if(!mismatchRejected)fail('v2 measured batch accepted incompatible units');
 
   if(failures.length){console.error(`\nHome Meals food-truth v2 audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}
   else console.log(`\nHome Meals food-truth v2 audit passed · ${components.length} prep components · ${v2RecipeIds.length} dinner contracts · no assumed batch yields`);
