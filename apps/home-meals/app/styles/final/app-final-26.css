@@ -2,3 +2,12 @@
    The center controls remain absolutely centered against the full dock. */
 .hm-dock-left-v75{grid-column:1!important}
 .hm-dock-right-v75{grid-column:3!important}
+
+/* Acceptance: Kitchen header camera keeps a full 44px touch target without adding visual weight. */
+.hm-kitchen-v5 .hm-round-link-v5{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;padding:0!important;display:grid!important;place-items:center!important}
+
+/* Acceptance: utility text never drops below the 11px product contract. */
+.hm-plan-v5 .hm-week-strip-v5>button>small,
+.hm-use-soon-aged-v53>div:nth-child(2)>button small,
+.hm-cook-stock-group-v20 p>span small,
+.hm-base-explorer-v5>header>small{font-size:11px!important}
