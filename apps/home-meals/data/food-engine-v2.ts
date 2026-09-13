@@ -160,3 +160,30 @@ export function consumeBatchesFifoV2(componentId: string, required: Quantity, ba
   }
   return next;
 }
+
+export function consumeRecipeBatchesFifoV2(recipeId:string,batches:readonly PrepBatchV2[]):PrepBatchV2[]{
+  const stock=componentStockFromBatchesV2(batches);
+  const availability=recipePrepAvailabilityV2(recipeId,stock);
+  if(!availability.ready){
+    const summary=availability.missing.map(x=>`${x.componentId}:${x.shortfall.qty}${x.shortfall.unit}`).join(", ");
+    throw new Error(`Insufficient measured batches for ${recipeId}: ${summary}`);
+  }
+  let next=[...batches];
+  for(const requirement of recipePrepV2(recipeId)){
+    next=consumeBatchesFifoV2(requirement.componentId,requirement.quantity,next);
+  }
+  return next;
+}
+
+export function oldestRemainingBatchV2(componentId:string,batches:readonly PrepBatchV2[]):PrepBatchV2|undefined{
+  return [...batches]
+    .filter(b=>b.componentId===componentId&&b.remaining.qty>0)
+    .sort((a,b)=>Date.parse(a.producedAt)-Date.parse(b.producedAt))[0];
+}
+
+export function oldestRecipeBatchV2(recipeId:string,batches:readonly PrepBatchV2[]):PrepBatchV2|undefined{
+  const needed=new Set(recipePrepV2(recipeId).map(x=>x.componentId));
+  return [...batches]
+    .filter(b=>needed.has(b.componentId)&&b.remaining.qty>0)
+    .sort((a,b)=>Date.parse(a.producedAt)-Date.parse(b.producedAt))[0];
+}
