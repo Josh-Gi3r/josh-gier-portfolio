@@ -14,7 +14,9 @@ try{
     "data/ingredient-truth-v2.ts",
     "data/recipe-truth-v2.ts",
     "data/household-v12.ts",
+    "data/household-memory-v2.ts",
     "data/planner-v2.ts",
+    "data/view-models-v2.ts",
     "data/home-data.ts"
   ],{cwd:root,stdio:"inherit"});
   if(r.status!==0)process.exit(r.status||1);
@@ -24,7 +26,9 @@ try{
   const ingredientTruth=require(path.join(out,"ingredient-truth-v2.js"));
   const recipes=require(path.join(out,"recipe-truth-v2.js"));
   const household=require(path.join(out,"household-v12.js"));
+  const memory=require(path.join(out,"household-memory-v2.js"));
   const engine=require(path.join(out,"food-engine-v2.js"));
+  const views=require(path.join(out,"view-models-v2.js"));
   const current=require(path.join(out,"home-data.js"));
 
   if(recipes.canonicalRecipesV2.length!==36)fail(`recipe truth must cover 36 dinners, found ${recipes.canonicalRecipesV2.length}`);
@@ -72,6 +76,18 @@ try{
   const withBatch=household.addMeasuredBatchV12(migrated,measured);
   if(household.componentStockV12(withBatch).gold.qty!==180)fail("measured batch did not become v12 stock");
 
+  const goldView=views.prepComponentViewV2("gold",household.componentStockV12(withBatch));
+  if(goldView.stockLabel!=="180 g"||goldView.workingUnitLabel!=="60 g")fail("GOLD view model lost canonical mass units");
+  const clearView=views.prepComponentViewV2("clear",{clear:{qty:450,unit:"ml"}});
+  if(clearView.stockLabel!=="450 ml")fail("CLEAR view model lost canonical volume units");
+
+  let mem={recipeId:"pad-kra-pao",promotionState:"researched",activeVersion:1,evidence:[]};
+  mem=memory.addPreferenceEvidenceV2(mem,{person:"g",recipeId:"pad-kra-pao",dimension:"heat",value:-1,observedAt:"2026-09-14T00:00:00Z"});
+  if(memory.shouldApplyPreferenceAutomaticallyV2(mem,"g","heat"))fail("single household observation became an automatic preference");
+  mem=memory.addPreferenceEvidenceV2(mem,{person:"g",recipeId:"pad-kra-pao",dimension:"heat",value:-1,observedAt:"2026-09-15T00:00:00Z"});
+  if(!memory.shouldApplyPreferenceAutomaticallyV2(mem,"g","heat"))fail("repeated household preference evidence was not recognized");
+  let demotionRejected=false;try{memory.promoteRecipeStateV2("household_tested","source_verified")}catch{demotionRejected=true}if(!demotionRejected)fail("recipe truth promotion state allowed regression");
+
   const forbiddenFinalNutrition=/nutritionStatus\s*:\s*["']final["']/;
   const scanFiles=["data/food-truth-v2.ts","data/recipe-truth-v2.ts","data/nutrition-v2.ts"];
   for(const rel of scanFiles){
@@ -84,7 +100,7 @@ try{
     for(const x of failures)console.error(` - ${x}`);
     process.exitCode=1;
   }else{
-    console.log(`\nHome Meals food-system v2 audit passed · 36 recipes · ${truth.canonicalPrepComponentsV2.length} prep components · v12 migration safe`);
+    console.log(`\nHome Meals food-system v2 audit passed · 36 recipes · ${truth.canonicalPrepComponentsV2.length} prep components · v12 migration safe · couple memory safe`);
   }
   for(const x of warnings)console.warn(`WARN: ${x}`);
 }finally{
