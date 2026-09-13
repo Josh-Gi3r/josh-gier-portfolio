@@ -1,5 +1,5 @@
 import { quantity, type Quantity } from "./food-quantity";
-import { canonicalPrepComponentsV2, getCanonicalPrepV2 } from "./food-truth-v2";
+import { canonicalPrepComponentsV2, getCanonicalPrepV2, recipePrepV2 } from "./food-truth-v2";
 import { componentStockFromBatchesV2, type ComponentStockV2, type PrepBatchV2 } from "./food-engine-v2";
 
 export type ArchivedLegacyPrepBatchV11 = Readonly<{
@@ -93,27 +93,17 @@ export function migrateHouseholdV11ToV12(
     useSoonAt:safeRecord<string>(legacy.useSoonAt),
     favourites:safeRecord<boolean>(legacy.favourites),
     kitchenReady:!!legacy.kitchenReady,
-    legacyArchive:{
-      componentStockV11,
-      prepBatchesV11:prepBatches,
-    },
+    legacyArchive:{componentStockV11,prepBatchesV11:prepBatches},
     migrationWarnings:warnings,
   };
 }
 
-export function setManualComponentStockV12(
-  state:HouseholdStateV12,
-  componentId:string,
-  observed:Quantity
-):HouseholdStateV12 {
+export function setManualComponentStockV12(state:HouseholdStateV12,componentId:string,observed:Quantity):HouseholdStateV12 {
   const component=getCanonicalPrepV2(componentId);
   if(!component)throw new Error(`Unknown prep component: ${componentId}`);
+  if(observed.qty<0)throw new Error(`Manual stock cannot be negative for ${componentId}`);
   if(observed.unit!==component.workingUnit.unit)throw new Error(`Manual stock unit mismatch for ${componentId}`);
-  return {
-    ...state,
-    manualComponentStock:{...state.manualComponentStock,[componentId]:observed},
-    kitchenReady:true,
-  };
+  return {...state,manualComponentStock:{...state.manualComponentStock,[componentId]:observed},kitchenReady:true};
 }
 
 export function componentStockV12(state:HouseholdStateV12):ComponentStockV2 {
@@ -130,4 +120,36 @@ export function componentStockV12(state:HouseholdStateV12):ComponentStockV2 {
 
 export function addMeasuredBatchV12(state:HouseholdStateV12,batch:PrepBatchV2):HouseholdStateV12{
   return {...state,componentBatches:[batch,...state.componentBatches],kitchenReady:true};
+}
+
+export function consumeComponentV12(state:HouseholdStateV12,componentId:string,required:Quantity):HouseholdStateV12{
+  const component=getCanonicalPrepV2(componentId);
+  if(!component)throw new Error(`Unknown prep component: ${componentId}`);
+  if(required.qty<0||required.unit!==component.workingUnit.unit)throw new Error(`Invalid consumption quantity for ${componentId}`);
+  const total=componentStockV12(state)[componentId]??quantity(0,component.workingUnit.unit);
+  if(total.qty<required.qty)throw new Error(`Insufficient prep stock for ${componentId}: need ${required.qty}${required.unit}, have ${total.qty}${total.unit}`);
+
+  let left=required.qty;
+  const batches=state.componentBatches.map(b=>({...b}));
+  const order=batches.map((batch,index)=>({batch,index}))
+    .filter(x=>x.batch.componentId===componentId&&x.batch.remaining.qty>0)
+    .sort((a,b)=>Date.parse(a.batch.producedAt)-Date.parse(b.batch.producedAt));
+  for(const {index} of order){
+    if(left<=0)break;
+    const batch=batches[index];
+    if(batch.remaining.unit!==required.unit)throw new Error(`Batch unit mismatch for ${componentId}`);
+    const used=Math.min(batch.remaining.qty,left);
+    batches[index]={...batch,remaining:quantity(batch.remaining.qty-used,batch.remaining.unit)};
+    left-=used;
+  }
+  const manual=state.manualComponentStock[componentId]??quantity(0,component.workingUnit.unit);
+  if(left>manual.qty)throw new Error(`Manual stock reconciliation failed for ${componentId}`);
+  const manualComponentStock={...state.manualComponentStock,[componentId]:quantity(manual.qty-left,manual.unit)};
+  return {...state,componentBatches:batches,manualComponentStock};
+}
+
+export function consumeRecipePrepV12(state:HouseholdStateV12,recipeId:string):HouseholdStateV12{
+  let next=state;
+  for(const requirement of recipePrepV2(recipeId))next=consumeComponentV12(next,requirement.componentId,requirement.quantity);
+  return next;
 }
