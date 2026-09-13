@@ -3,6 +3,8 @@ import { recipePrepV2, type RecipePrepRequirementV2 } from "./food-truth-v2";
 import { safetyProfileV2, type RecipeSafetyProfileV2 } from "./food-safety-v2";
 import { getIngredientTruthV2 } from "./ingredient-truth-v2";
 
+type LegacyRecipe=(typeof recipes)[number];
+
 export type RecipeIdentityClass =
   | "close_reference"
   | "household_adaptation"
@@ -87,39 +89,14 @@ const explicitStarches:Readonly<Record<string,StarchDefinitionV2>> = {
 };
 
 const sourceOverrides:Readonly<Record<string,{source:{label:string;url:string};status:"specific"|"adaptation_reference";supporting?:readonly RecipeEvidenceV2[]}>>={
-  "beef-ragu":{
-    source:{label:"GialloZafferano — Ragù alla Bolognese technique",url:"https://www.giallozafferano.com/recipes/Ragu-alla-bolognese.html"},
-    status:"adaptation_reference",
-  },
-  "mustard-mushroom-chicken":{
-    source:{label:"RecipeTin Eats — Chicken in Creamy Mustard Sauce",url:"https://www.recipetineats.com/chicken-in-creamy-mustard-sauce/"},
-    status:"adaptation_reference",
-    supporting:[{label:"RecipeTin Eats — Chicken Breast in Creamy Mushroom Sauce",url:"https://www.recipetineats.com/chicken-breast-in-creamy-mushroom-sauce/",role:"adaptation_reference"}],
-  },
-  "pesto-salmon":{
-    source:{label:"The Mediterranean Dish — Pesto Salmon",url:"https://www.themediterraneandish.com/pesto-salmon/"},
-    status:"specific",
-  },
-  "miso-aubergine-tofu":{
-    source:{label:"Just One Cookbook — Miso Dengaku (tofu and eggplant)",url:"https://www.justonecookbook.com/miso-dengaku/"},
-    status:"adaptation_reference",
-  },
-  "gochujang-chicken":{
-    source:{label:"Maangchi — Spicy Korean chicken skewers / gochujang sauce",url:"https://www.maangchi.com/recipe/dak-kkochi"},
-    status:"adaptation_reference",
-  },
-  "gochujang-tofu":{
-    source:{label:"Korean Bapsang — Korean-style Mapo Tofu",url:"https://www.koreanbapsang.com/mapo-tofu-korean-style/"},
-    status:"adaptation_reference",
-  },
-  "chipotle-chicken-bowl":{
-    source:{label:"Rick Bayless — Chicken Tinga",url:"https://www.rickbayless.com/recipe/chicken-tinga-tacos/"},
-    status:"adaptation_reference",
-  },
-  "chipotle-bean-skillet":{
-    source:{label:"Rick Bayless — Black Bean-Bathed Enchiladas with Chipotle",url:"https://www.rickbayless.com/recipe/black-bean-bathed-enchiladas-with-chorizo/"},
-    status:"adaptation_reference",
-  },
+  "beef-ragu":{source:{label:"GialloZafferano — Ragù alla Bolognese technique",url:"https://www.giallozafferano.com/recipes/Ragu-alla-bolognese.html"},status:"adaptation_reference"},
+  "mustard-mushroom-chicken":{source:{label:"RecipeTin Eats — Chicken in Creamy Mustard Sauce",url:"https://www.recipetineats.com/chicken-in-creamy-mustard-sauce/"},status:"adaptation_reference",supporting:[{label:"RecipeTin Eats — Chicken Breast in Creamy Mushroom Sauce",url:"https://www.recipetineats.com/chicken-breast-in-creamy-mushroom-sauce/",role:"adaptation_reference"}]},
+  "pesto-salmon":{source:{label:"The Mediterranean Dish — Pesto Salmon",url:"https://www.themediterraneandish.com/pesto-salmon/"},status:"specific"},
+  "miso-aubergine-tofu":{source:{label:"Just One Cookbook — Miso Dengaku (tofu and eggplant)",url:"https://www.justonecookbook.com/miso-dengaku/"},status:"adaptation_reference"},
+  "gochujang-chicken":{source:{label:"Maangchi — Spicy Korean chicken skewers / gochujang sauce",url:"https://www.maangchi.com/recipe/dak-kkochi"},status:"adaptation_reference"},
+  "gochujang-tofu":{source:{label:"Korean Bapsang — Korean-style Mapo Tofu",url:"https://www.koreanbapsang.com/mapo-tofu-korean-style/"},status:"adaptation_reference"},
+  "chipotle-chicken-bowl":{source:{label:"Rick Bayless — Chicken Tinga",url:"https://www.rickbayless.com/recipe/chicken-tinga-tacos/"},status:"adaptation_reference"},
+  "chipotle-bean-skillet":{source:{label:"Rick Bayless — Black Bean-Bathed Enchiladas with Chipotle",url:"https://www.rickbayless.com/recipe/black-bean-bathed-enchiladas-with-chorizo/"},status:"adaptation_reference"},
 };
 
 function legacySourceStatus(url:string):CanonicalRecipeV2["sourceStatus"] {
@@ -127,11 +104,11 @@ function legacySourceStatus(url:string):CanonicalRecipeV2["sourceStatus"] {
   if(/youtube\.com/i.test(url))return "adaptation_reference";
   return "specific";
 }
-function canonicalSource(recipe:typeof recipes[number]){
+function canonicalSource(recipe:LegacyRecipe){
   const override=sourceOverrides[recipe.id];
   return override?{source:override.source,status:override.status,evidence:[{...override.source,role:override.status==="specific"?"culinary_reference" as const:"adaptation_reference" as const},...(override.supporting??[])]}:{source:recipe.source,status:legacySourceStatus(recipe.source.url),evidence:[{...recipe.source,role:legacySourceStatus(recipe.source.url)==="specific"?"culinary_reference" as const:"adaptation_reference" as const}]};
 }
-function statuses(recipe:typeof recipes[number]):RecipeTruthStatus[] {
+function statuses(recipe:LegacyRecipe):RecipeTruthStatus[] {
   const out:RecipeTruthStatus[]=["formulation_locked","kitchen_validation_required"];
   const ingredientTruth=recipe.ingredients.map(x=>getIngredientTruthV2(x.id)).filter(Boolean);
   if(ingredientTruth.some(x=>x?.truthStatus==="needs_variant_split"))out.push("needs_variant_split");
@@ -144,27 +121,12 @@ function statuses(recipe:typeof recipes[number]):RecipeTruthStatus[] {
 export const canonicalRecipesV2:readonly CanonicalRecipeV2[] = recipes.map(recipe=>{
   const source=canonicalSource(recipe);
   return {
-    id:recipe.id,
-    title:recipe.title,
-    cuisine:recipe.cuisine,
-    servings:2,
+    id:recipe.id,title:recipe.title,cuisine:recipe.cuisine,servings:2,
     identityClass:identityOverrides[recipe.id]??(source.status==="generic_or_wrong"?"needs_source_upgrade":"legacy_researched"),
-    truthStatus:statuses(recipe),
-    reportedTotalMinutes:recipe.minutes,
-    prepMinutes:null,
-    activeMinutes:null,
-    passiveMinutes:null,
-    marinationMinutes:null,
-    prep:recipePrepV2(recipe.id),
-    ingredientIds:recipe.ingredients.filter(x=>!x.optional).map(x=>x.id),
-    rawIngredients:recipe.rawIngredients,
-    explicitStarch:explicitStarches[recipe.id]??null,
-    source:source.source,
-    evidenceSources:source.evidence,
-    sourceStatus:source.status,
-    safety:safetyProfileV2(recipe.id),
-    finishedWeightG:null,
-    actualServings:null,
+    truthStatus:statuses(recipe),reportedTotalMinutes:recipe.minutes,prepMinutes:null,activeMinutes:null,passiveMinutes:null,marinationMinutes:null,
+    prep:recipePrepV2(recipe.id),ingredientIds:recipe.ingredients.filter(x=>!x.optional).map(x=>x.id),rawIngredients:recipe.rawIngredients,
+    explicitStarch:explicitStarches[recipe.id]??null,source:source.source,evidenceSources:source.evidence,sourceStatus:source.status,
+    safety:safetyProfileV2(recipe.id),finishedWeightG:null,actualServings:null,
   };
 });
 
