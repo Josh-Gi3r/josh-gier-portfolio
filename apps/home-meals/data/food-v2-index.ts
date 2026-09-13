@@ -15,6 +15,7 @@ export * from "./allergen-engine-v2";
 export * from "./nutrition-v2";
 export * from "./nutrition-engine-v2";
 export * from "./food-safety-v2";
+export * from "./calibration-v2";
 export * from "./household-v12";
 export * from "./household-memory-v2";
 export * from "./planner-v2";
