@@ -1,0 +1,23 @@
+import {NextRequest,NextResponse} from "next/server";
+import {ingredients,prepComponents} from "@/data/home-data";
+
+export const dynamic="force-dynamic";
+function noStore(body:unknown,status=200){return NextResponse.json(body,{status,headers:{"Cache-Control":"no-store"}})}
+function outputText(data:any){if(typeof data?.output_text==="string")return data.output_text;for(const item of data?.output??[])for(const content of item?.content??[])if(content?.type==="output_text"&&typeof content.text==="string")return content.text;return ""}
+const allowedModes=new Set(["Fridge","Freezer","Pantry","Receipt","Prep","Meal"]);
+export async function GET(){return noStore({configured:!!process.env.OPENAI_API_KEY?.trim()})}
+export async function POST(req:NextRequest){
+ const key=process.env.OPENAI_API_KEY?.trim();if(!key)return noStore({error:"vision_not_configured"},503);
+ const body=await req.json().catch(()=>null) as {mode?:unknown;imageDataUrl?:unknown;question?:unknown}|null;
+ const mode=typeof body?.mode==="string"&&allowedModes.has(body.mode)?body.mode:"Meal";const imageDataUrl=typeof body?.imageDataUrl==="string"?body.imageDataUrl:"";const question=typeof body?.question==="string"?body.question.trim():"";
+ if(!/^data:image\/(jpeg|png|webp);base64,/i.test(imageDataUrl))return noStore({error:"image_required"},400);if(imageDataUrl.length>10_500_000)return noStore({error:"image_too_large"},413);
+ const trackedIngredients=ingredients.map(i=>({id:i.id,name:i.name,unit:i.unit,tracking:i.tracking}));const trackedPrep=prepComponents.map(c=>({id:c.id,code:c.code,name:c.name,kind:c.kind}));
+ const schema={type:"object",additionalProperties:false,required:["summary","items","assessment","cookingCue","needsConfirmation","warnings"],properties:{summary:{type:"string"},items:{type:"array",maxItems:30,items:{type:"object",additionalProperties:false,required:["id","name","quantity","unit","confidence","useSoon"],properties:{id:{type:["string","null"]},name:{type:"string"},quantity:{type:["number","null"]},unit:{type:["string","null"]},confidence:{type:"number",minimum:0,maximum:1},useSoon:{type:"boolean"}}}},assessment:{type:["string","null"]},cookingCue:{type:["string","null"]},needsConfirmation:{type:"boolean"},warnings:{type:"array",maxItems:8,items:{type:"string"}}}};
+ const prompt={mode,question:question||null,trackedIngredients,trackedPrep,rules:["Only map an item to an id when you are confident it matches a tracked item.","For Receipt/Fridge/Pantry/Freezer, estimate conservatively and require confirmation before stock changes.","For Prep/Meal, focus on visible cooking cues such as browning, texture, reduction, doneness indicators and obvious safety concerns; do not pretend to know internal temperature from appearance alone.","If quantity cannot be estimated reliably, return null."]};
+ try{
+  const response=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{Authorization:`Bearer ${key}`,"Content-Type":"application/json"},body:JSON.stringify({model:process.env.OPENAI_VISION_MODEL?.trim()||process.env.OPENAI_MODEL?.trim()||"gpt-5.6-luna",store:false,max_output_tokens:900,instructions:"You are Home Meals vision. Inspect the household food/cooking image carefully. Be conservative. Never claim a stock change has happened. Output only the requested structured object.",input:[{role:"user",content:[{type:"input_text",text:JSON.stringify(prompt)},{type:"input_image",image_url:imageDataUrl,detail:"high"}]}],text:{format:{type:"json_schema",name:"home_meals_vision",strict:true,schema}}})});
+  if(!response.ok)return noStore({error:"vision_failed",status:response.status},502);const data=await response.json();const raw=outputText(data);if(!raw)return noStore({error:"vision_empty"},502);const parsed=JSON.parse(raw);
+  const validIngredientIds=new Set(ingredients.map(i=>i.id));const validPrepIds=new Set(prepComponents.map(c=>c.id));const items=(Array.isArray(parsed.items)?parsed.items:[]).map((x:any)=>{const id=typeof x.id==="string"&&(validIngredientIds.has(x.id)||validPrepIds.has(x.id))?x.id:null;return {id,name:String(x.name||"Unknown item"),quantity:Number.isFinite(x.quantity)?Number(x.quantity):null,unit:x.unit==null?null:String(x.unit),confidence:Math.max(0,Math.min(1,Number(x.confidence)||0)),useSoon:!!x.useSoon}}).slice(0,30);
+  return noStore({summary:String(parsed.summary||""),items,assessment:parsed.assessment==null?null:String(parsed.assessment),cookingCue:parsed.cookingCue==null?null:String(parsed.cookingCue),needsConfirmation:parsed.needsConfirmation!==false,warnings:Array.isArray(parsed.warnings)?parsed.warnings.map(String).slice(0,8):[],source:"vision"});
+ }catch(error){return noStore({error:"vision_failed",detail:error instanceof Error?error.message:"unknown"},502)}
+}
