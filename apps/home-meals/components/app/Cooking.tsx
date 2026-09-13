@@ -5,6 +5,7 @@ import {useHousehold} from "../HouseholdState";
 import {getComponent,getIngredient,getRecipe} from "@/data/home-data";
 import {recipeTitle} from "@/data/recipe-display";
 import {feedback} from "@/lib/feedback";
+import {getHouseholdPerson} from "@/lib/device-profile";
 import {formatQty} from "./Primitives";
 
 function stepMinutes(s:string){const m=s.match(/(\d+)(?:[–-](\d+))?\s*(?:minutes?|mins?)/i);return m?Number(m[1]):0}
@@ -20,6 +21,7 @@ export function Cooking({id}:{id:string}){
  const clearTick=()=>{if(tick.current){clearInterval(tick.current);tick.current=null}};
  const stopTimer=()=>{clearTick();setTimer(0);setTimerEnd(null);setTimerDone(false)};
  const armTimer=(end:number)=>{clearTick();setTimerDone(false);setTimerEnd(end);setTimer(Math.max(0,Math.ceil((end-Date.now())/1000)));tick.current=setInterval(()=>{const left=Math.max(0,Math.ceil((end-Date.now())/1000));setTimer(left);if(!left){clearTick();setTimerEnd(null);setTimerDone(true);feedback("success")}},1000)};
+ useEffect(()=>{const person=getHouseholdPerson();if(person)setNoteAuthor(person)},[]);
  useEffect(()=>{let lock:any;const wake=async()=>{try{if("wakeLock" in navigator)lock=await (navigator as any).wakeLock.request("screen")}catch{}};wake();if(initial.current?.timerEnd)armTimer(initial.current.timerEnd);return()=>{lock?.release?.();clearTick()}},[]);
  useEffect(()=>{if(done)return;try{sessionStorage.setItem(sessionKey,JSON.stringify({step,timerEnd,timerDone,updatedAt:Date.now()} satisfies CookSession))}catch{}},[sessionKey,step,timerEnd,timerDone,done]);
  const startTimer=(mins:number)=>armTimer(Date.now()+mins*60000);

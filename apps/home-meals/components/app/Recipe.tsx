@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
-import {useMemo,useState} from "react";
+import {useEffect,useMemo,useState} from "react";
 import {useHousehold} from "../HouseholdState";
 import {getComponent,getIngredient,getRecipe} from "@/data/home-data";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
 import {feedback} from "@/lib/feedback";
+import {getHouseholdPerson} from "@/lib/device-profile";
 import {ingredientRequirementMissing} from "@/data/stock-math";
 import {useSheet} from "@/lib/useSheet";
 import {Back,ComponentPill,formatQty,RecipeReady} from "./Primitives";
@@ -13,6 +14,7 @@ const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 function stateLevelLabel(value:number){return value>=3?"plenty":value>=2?"some":value>=1?"low":"out"}
 export function Recipe({id}:{id:string}){
  const h=useHousehold();const r=getRecipe(id);const[chooseDay,setChooseDay]=useState(false);const[note,setNote]=useState(h.ratings[id]?.note??"");const[noteAuthor,setNoteAuthor]=useState<"josh"|"g">("josh");const[saved,setSaved]=useState(false);const[versionSaved,setVersionSaved]=useState(false);useSheet(chooseDay,()=>setChooseDay(false));
+ useEffect(()=>{const person=getHouseholdPerson();if(person)setNoteAuthor(person)},[]);
  const cooked=h.history.filter(x=>x.mealId===id);const lastNote=h.recipeNotes[id]?.[0];const rating=h.ratings[id]??{};const favourite=!!h.favourites[id];const versions=h.recipeVersions[id]??[];const currentVersion=versions[0]?.number??1;const latestVersionSummary=versions[0]?.summary;const personalPhoto=h.mealPhotos.find(x=>x.mealId===id);
  const events=useMemo(()=>[...cooked.map(x=>({at:x.at,label:"Cooked",detail:"Dinner logged"})),...(h.recipeNotes[id]??[]).map(x=>({at:x.at,label:x.author==="josh"?"Josh note":x.author==="g"?"G note":"Our note",detail:x.text})),...versions.map(v=>({at:v.at,label:`v${v.number} adopted`,detail:v.summary}))].sort((a,b)=>new Date(b.at).getTime()-new Date(a.at).getTime()).slice(0,7),[cooked,h.recipeNotes,id,versions]);
  const cues=useMemo(()=>r.steps.filter(s=>/(until|fragrant|aromatic|glossy|clings?|tender|golden|brown|crisp|wilt|thicken|reduce|coats?|soft|sizzling|bubbl)/i.test(s)).slice(0,4),[r.steps]);
