@@ -1,0 +1,37 @@
+import {NextRequest,NextResponse} from "next/server";
+import {ingredients,prepComponents,recipes,getRecipe} from "@/data/home-data";
+import {recipeTitle} from "@/data/recipe-display";
+
+export const dynamic="force-dynamic";
+const validIds=new Set(recipes.map(r=>r.id));
+
+type State={week?:string[];componentStock?:Record<string,number>;ingredientStock?:Record<string,number>;useSoon?:Record<string,boolean>;favourites?:Record<string,boolean>;ratings?:Record<string,{josh?:number;g?:number}>;history?:{mealId:string;at:string}[];recipeNotes?:Record<string,{author:string;text:string;at:string}[]>;prepBatches?:{componentId:string;remainingMl?:number;outputMl?:number;at:string}[];kitchenReady?:boolean};
+function noStore(body:unknown,status=200){return NextResponse.json(body,{status,headers:{"Cache-Control":"no-store"}})}
+function outputText(data:any){if(typeof data?.output_text==="string")return data.output_text;for(const item of data?.output??[])for(const content of item?.content??[])if(content?.type==="output_text"&&typeof content.text==="string")return content.text;return ""}
+function householdContext(state:State){
+ const week=(state.week??[]).map((id,i)=>({day:i,mealId:id,title:validIds.has(id)?recipeTitle(id,getRecipe(id).title):id}));
+ const prep=prepComponents.map(c=>({id:c.id,code:c.code,name:c.name,ml:Math.max(0,Number(state.componentStock?.[c.id]??0))})).filter(x=>x.ml>0);
+ const stocked=ingredients.map(i=>({id:i.id,name:i.name,qty:Math.max(0,Number(state.ingredientStock?.[i.id]??0)),unit:i.unit,useSoon:!!state.useSoon?.[i.id]})).filter(x=>x.qty>0||x.useSoon).slice(0,120);
+ const favourites=recipes.filter(r=>state.favourites?.[r.id]).map(r=>({id:r.id,title:recipeTitle(r.id,r.title)}));
+ const ratings=Object.entries(state.ratings??{}).filter(([id])=>validIds.has(id)).map(([id,v])=>({id,title:recipeTitle(id,getRecipe(id).title),josh:v.josh??null,g:v.g??null}));
+ const recent=(state.history??[]).slice(0,12).filter(x=>validIds.has(x.mealId)).map(x=>({id:x.mealId,title:recipeTitle(x.mealId,getRecipe(x.mealId).title),at:x.at}));
+ const notes=Object.entries(state.recipeNotes??{}).flatMap(([id,list])=>validIds.has(id)?(list??[]).slice(0,2).map(n=>({id,title:recipeTitle(id,getRecipe(id).title),author:n.author,text:n.text,at:n.at})):[]).slice(0,20);
+ const batches=(state.prepBatches??[]).filter(b=>(b.remainingMl??b.outputMl??0)>0).slice(0,30);
+ const catalog=recipes.map(r=>({id:r.id,title:recipeTitle(r.id,r.title),minutes:r.minutes,cuisine:r.cuisine,ingredients:r.ingredients.filter(x=>!x.optional).map(x=>x.id),prep:r.prep.map(x=>({id:x.id,ml:x.ml}))}));
+ return {kitchenReady:!!state.kitchenReady,week,prep,stocked,favourites,ratings,recent,notes,batches,catalog};
+}
+
+export async function POST(req:NextRequest){
+ const key=process.env.OPENAI_API_KEY?.trim();if(!key)return noStore({error:"ai_not_configured"},503);
+ const body=await req.json().catch(()=>null) as {question?:unknown;state?:State}|null;const question=typeof body?.question==="string"?body.question.trim():"";
+ if(!question)return noStore({error:"question_required"},400);
+ const context=householdContext(body?.state??{});
+ const schema={type:"object",additionalProperties:false,required:["text","mealIds","tags","href","action"],properties:{text:{type:"string"},mealIds:{type:"array",items:{type:"string"},maxItems:4},tags:{type:"array",items:{type:"string"},maxItems:6},href:{type:["string","null"]},action:{type:["string","null"]}}};
+ try{
+  const response=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{Authorization:`Bearer ${key}`,"Content-Type":"application/json"},body:JSON.stringify({model:process.env.OPENAI_MODEL?.trim()||"gpt-5.6-luna",store:false,max_output_tokens:500,instructions:"You are Home, the private household kitchen assistant for Josh and G. Answer concisely and practically. Use only the supplied household state for claims about stock, freezer batches, meal history, preferences or the current plan. Never invent inventory. Prefer meals that are stocked, use food marked useSoon, respect ratings/favourites and avoid recent repeats. If the state is insufficient, say exactly what needs checking. Return only the requested structured object. href must be an internal Home Meals path or null. action is a short CTA label or null. Do not claim you changed household state; this endpoint only advises.",input:[{role:"user",content:[{type:"input_text",text:JSON.stringify({question,household:context})}]}],text:{format:{type:"json_schema",name:"home_meals_reply",strict:true,schema}}})});
+  if(!response.ok)return noStore({error:"ai_failed",status:response.status},502);
+  const data=await response.json();const raw=outputText(data);if(!raw)return noStore({error:"ai_empty"},502);const parsed=JSON.parse(raw) as {text:string;mealIds:string[];tags:string[];href:string|null;action:string|null};
+  const mealIds=(parsed.mealIds??[]).filter(id=>validIds.has(id)).slice(0,4);const href=typeof parsed.href==="string"&&parsed.href.startsWith("/")&&!parsed.href.startsWith("//")?parsed.href:null;
+  return noStore({text:String(parsed.text||""),mealIds,tags:(parsed.tags??[]).map(String).slice(0,6),href,action:parsed.action?String(parsed.action):null,source:"ai"});
+ }catch(error){return noStore({error:"ai_failed",detail:error instanceof Error?error.message:"unknown"},502)}
+}
