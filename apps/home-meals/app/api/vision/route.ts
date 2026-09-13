@@ -5,7 +5,7 @@ export const dynamic="force-dynamic";
 function noStore(body:unknown,status=200){return NextResponse.json(body,{status,headers:{"Cache-Control":"no-store"}})}
 function outputText(data:any){if(typeof data?.output_text==="string")return data.output_text;for(const item of data?.output??[])for(const content of item?.content??[])if(content?.type==="output_text"&&typeof content.text==="string")return content.text;return ""}
 const allowedModes=new Set(["Fridge","Freezer","Pantry","Receipt","Prep","Meal"]);
-
+export async function GET(){return noStore({configured:!!process.env.OPENAI_API_KEY?.trim()})}
 export async function POST(req:NextRequest){
  const key=process.env.OPENAI_API_KEY?.trim();if(!key)return noStore({error:"vision_not_configured"},503);
  const body=await req.json().catch(()=>null) as {mode?:unknown;imageDataUrl?:unknown;question?:unknown}|null;
