@@ -1,2 +1,3 @@
 import {Help} from "@/components/app/Help";
-export default function HelpPage(){return <Help/>}
+import {HouseholdStatusCard} from "@/components/HouseholdStatusCard";
+export default function HelpPage(){return <><Help/><HouseholdStatusCard/></>}
