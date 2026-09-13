@@ -8,11 +8,12 @@ const SESSION_MAX_AGE_SECONDS=60*60*24*45;
 function env(name:string){const value=process.env[name]?.trim();return value||null}
 export function syncConfigured(){return !!(env("DATABASE_URL")&&env("HOME_MEALS_SYNC_SECRET"))}
 function secret(){return env("HOME_MEALS_SYNC_SECRET")}
+function householdCode(){return env("HOME_MEALS_HOUSEHOLD_CODE")||secret()}
 function hmac(value:string){const key=secret();if(!key)return "";return createHmac("sha256",key).update(value).digest("base64url")}
 function safeEqual(a:string,b:string){const aa=Buffer.from(a),bb=Buffer.from(b);return aa.length===bb.length&&timingSafeEqual(aa,bb)}
 export function createSessionToken(){const issued=Math.floor(Date.now()/1000).toString();return `${issued}.${hmac(`home-meals:${issued}`)}`}
 export function verifySessionToken(token:string|undefined|null){if(!token||!secret())return false;const [issued,sig]=token.split(".");if(!issued||!sig)return false;const timestamp=Number(issued);if(!Number.isFinite(timestamp))return false;const age=Math.floor(Date.now()/1000)-timestamp;if(age<0||age>SESSION_MAX_AGE_SECONDS)return false;return safeEqual(sig,hmac(`home-meals:${issued}`))}
-export function verifyHouseholdCode(code:string){const expected=secret();if(!expected)return false;return safeEqual(hmac(`code:${code}`),hmac(`code:${expected}`))}
+export function verifyHouseholdCode(code:string){const expected=householdCode();if(!expected||!secret())return false;return safeEqual(hmac(`code:${code}`),hmac(`code:${expected}`))}
 export function sessionMaxAge(){return SESSION_MAX_AGE_SECONDS}
 
 let client:ReturnType<typeof postgres>|null=null;
