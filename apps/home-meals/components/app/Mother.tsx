@@ -3,12 +3,14 @@ import Link from "next/link";
 import {useMemo,useState,type CSSProperties} from "react";
 import {useHousehold} from "../HouseholdState";
 import {motherProcessImages} from "@/data/mother-process-assets";
-import {getComponent,motherBases,recipes} from "@/data/home-data";
-import {canonicalPrepComponentsV2,getCanonicalPrepV2,recipePrepV2} from "@/data/food-truth-v2";
+import {getComponent,motherBases} from "@/data/home-data";
+import {allLiveRecipesV7 as recipes} from "@/data/recipe-catalog-v7";
+import {canonicalPrepComponentsV2,getCanonicalPrepV2} from "@/data/food-truth-v2";
+import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {quantity} from "@/data/food-quantity";
 import {containerGuidanceV6,getHouseholdPrepFormulationV6,getPrepPortionPolicyV6,packetBreakdownV6} from "@/data/prep-portioning-v6";
 import {getPrepStorageV2} from "@/data/prep-storage-v2";
-import {prepDemandForWeek,stockPortions} from "@/data/stock-math";
+import {prepDemandForWeekV7,stockPortionsV7} from "@/data/stock-math-v7";
 import {feedback} from "@/lib/feedback";
 import {motherHero,toneFor,toneGradient} from "@/lib/tones";
 import {HomeSays} from "./HomeSays";
@@ -20,9 +22,9 @@ export function Mother({id}:{id:string}){
  const h=useHousehold(),m=motherBases.find(x=>x.id===id)!,truth=getCanonicalPrepV2(id),form=getHouseholdPrepFormulationV6(id),policy=getPrepPortionPolicyV6(id),storage=getPrepStorageV2(id);if(!truth||!form||!policy)throw new Error(`Missing canonical mother ${id}`);
  const process=motherProcessImages[id]??[],hero=motherHero(id),tone=toneFor(id),grad=toneGradient(id);
  const[confirm,setConfirm]=useState(false),[count,setCount]=useState(false),[toast,setToast]=useState(""),[made,setMade]=useState(""),[error,setError]=useState("");
- const qty=h.componentStock[id]??0,packets=stockPortions(id,h.componentStock),short=h.prepNeeds.find(x=>x.id===id),weekDemand=prepDemandForWeek(h.week).find(x=>x.id===id);
+ const qty=h.componentStock[id]??0,packets=stockPortionsV7(id,h.componentStock),short=h.prepNeeds.find(x=>x.id===id),weekDemand=prepDemandForWeekV7(h.week).find(x=>x.id===id);
  const children=canonicalPrepComponentsV2.filter(x=>x.tier==="mid"&&x.madeFrom.includes(id));
- const linked=useMemo(()=>{const family=descendantsOf(id);return recipes.filter(r=>recipePrepV2(r.id).some(p=>family.has(p.componentId)))},[id]);
+ const linked=useMemo(()=>{const family=descendantsOf(id);return recipes.filter(r=>prepForRecipeAtCookScaleV7(r.id).some(p=>family.has(p.componentId)))},[id]);
  const batches=h.prepBatches.filter(b=>b.componentId===id&&b.remaining.qty>0).sort((a,b)=>new Date(a.producedAt).getTime()-new Date(b.producedAt).getTime()),oldest=batches[0];
  const suggestedPackets=short?Math.max(1,Math.ceil(short.shortQty/policy.packet.qty)):Math.max(policy.targetRotation[0],Math.ceil((weekDemand?.neededQty??0)/policy.packet.qty));
  const finishBatch=()=>{const measured=Number(made);if(!(measured>0))return;try{const output=quantity(measured,policy.packet.unit),split=packetBreakdownV6(id,output);h.recordMeasuredProduction(id,output,"portion-v6");setMade("");setError("");setConfirm(false);feedback("success");const rem=split.remainder.qty>0?` + ${formatQty(split.remainder.qty,split.remainder.unit)} remainder`:"";setToast(`${m.code} · ${split.fullPackets} full ${split.fullPackets===1?"packet":"packets"}${rem}`);window.setTimeout(()=>setToast(""),2200)}catch(e){setError(e instanceof Error?e.message:"Couldn’t log the measured batch.")}};
@@ -39,7 +41,7 @@ export function Mother({id}:{id:string}){
    <SectionHead title="Cook it" action={<span className="muted">{form.method.length} steps</span>}/><div className="hm-steps" style={{marginTop:14}}>{form.method.map((step,i)=><div key={i} className="hm-card hm-step" style={{"--phase":grad} as CSSProperties}><b>{i+1}</b><div><p>{step.instruction}</p>{step.cue&&<small>{step.cue}</small>}</div><span/></div>)}</div>
    <SectionHead title="When it’s ready" action={<Link href={`/scan?mode=Prep&back=${encodeURIComponent(`/prep/${id}`)}`}>Show the pan</Link>}/><div className="hm-cues">{form.method.filter(x=>x.cue).map((x,i)=><div key={i} className="hm-card"><b>✓</b>{x.cue}</div>)}</div>
    {h.kitchenReady&&(batches.length>0||qty>0)&&<><SectionHead title="In the freezer" action={<span className="muted">oldest first · exact stock underneath</span>}/><div className="hm-card hm-batches-card">{batches.slice(0,4).map((b,i)=>{const left=packetBreakdownV6(id,b.remaining),madeN=packetBreakdownV6(id,b.initial);return <div key={b.batchId} className="row"><b className={`n ${i===0?"first":""}`}>{i+1}</b><span><strong>{left.fullPackets} full {left.fullPackets===1?"packet":"packets"}{left.remainder.qty?` + ${formatQty(left.remainder.qty,left.remainder.unit)} remainder`:""}{i===0?" · use first":""}</strong><small>Made {new Date(b.producedAt).toLocaleDateString(undefined,{day:"numeric",month:"short"})} · measured {formatQty(b.initial.qty,b.initial.unit)} · {madeN.fullPackets} full packets</small></span></div>})}</div></>}
-   {children.length>0&&<><SectionHead title={`Build from ${m.code}`} action={<Link href="/prep/mids">Explore ›</Link>}/><div className="hm-chiplist">{children.map(x=>{const c=getComponent(x.id),n=recipes.filter(r=>recipePrepV2(r.id).some(p=>p.componentId===x.id)).length;return c?<Link key={x.id} href={`/prep/mids/${x.id}`} className="tinted" style={{"--tone":toneFor(x.id)} as CSSProperties}><i/>{x.code}<small>{n?`${n} ${n===1?"dinner":"dinners"}`:x.name}</small></Link>:null})}</div></>}
+   {children.length>0&&<><SectionHead title={`Build from ${m.code}`} action={<Link href="/prep/mids">Explore ›</Link>}/><div className="hm-chiplist">{children.map(x=>{const c=getComponent(x.id),n=recipes.filter(r=>prepForRecipeAtCookScaleV7(r.id).some(p=>p.componentId===x.id)).length;return c?<Link key={x.id} href={`/prep/mids/${x.id}`} className="tinted" style={{"--tone":toneFor(x.id)} as CSSProperties}><i/>{x.code}<small>{n?`${n} ${n===1?"dinner":"dinners"}`:x.name}</small></Link>:null})}</div></>}
    <SectionHead title="Becomes" action={<span style={{color:tone,fontWeight:700,fontSize:13}}>{linked.length} dinners</span>}/>{linked.length?<div className="hm-rail">{linked.map(r=><MealTile key={r.id} recipe={r}/>)}</div>:<div className="hm-chiplist">{m.examples.map(x=><span key={x}>{x}</span>)}</div>}
    <div className="hm-card hm-refs"><p><b>Portioning · </b>{containerGuidanceV6(id)}</p>{storage?.note&&<p><b>Storage · </b>{storage.note}</p>}{form.evidence.map(e=><a key={e.url} href={e.url} target="_blank" rel="noreferrer">{e.label} ↗</a>)}</div>
   </div>
