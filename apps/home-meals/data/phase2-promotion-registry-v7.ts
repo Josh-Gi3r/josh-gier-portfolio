@@ -20,16 +20,16 @@ const specs:readonly {id:PromotionWaveIdV7;label:string;count:number}[]=[
 /** Machine-readable promotion ledger. A wave is live only after its complete gate, including final imagery, passes. */
 export const promotionWaveStateV7:Readonly<Record<PromotionWaveIdV7,PromotionWaveStateV7>>={
  chinese:"live",
- indian:"formulation_locked",
- thai:"formulation_locked",
- "malaysia-sg-id":"formulation_locked",
- vietnamese:"formulation_locked",
- japanese:"formulation_locked",
- korean:"formulation_locked",
- "middle-east-med":"formulation_locked",
- "italian-european":"formulation_locked",
- "mexican-latin":"formulation_locked",
- everyday:"formulation_locked",
+ indian:"live",
+ thai:"live",
+ "malaysia-sg-id":"live",
+ vietnamese:"live",
+ japanese:"live",
+ korean:"live",
+ "middle-east-med":"live",
+ "italian-european":"live",
+ "mexican-latin":"live",
+ everyday:"live",
 } as const;
 
 let offset=0;
