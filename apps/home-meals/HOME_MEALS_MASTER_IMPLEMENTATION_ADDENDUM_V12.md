@@ -100,7 +100,7 @@ Home Meals uses the model as a reasoning layer only where reasoning adds value; 
 
 This preserves accuracy while avoiding needless model work for deterministic tasks.
 
-## 9. Server persistence supersedes local-only persistence language
+## 9. Server persistence, privacy and recovery supersede local-only persistence language
 
 The old master-plan section 28 described localStorage as the bridge "until server persistence arrives." Server persistence has arrived.
 
@@ -108,11 +108,20 @@ Current contract:
 
 - Railway Postgres stores the shared Josh + G household state;
 - a private household session gates household sync and AI mutation-capable endpoints;
+- the household code is rate-limited against repeated guessing and successful authentication clears its attempt bucket;
+- session cookies are HTTP-only, Secure and SameSite=Lax;
+- household code/token comparison is timing-safe;
+- household API payloads are runtime-validated as v12 state and size-capped before persistence;
 - optimistic versioning prevents silent last-write-wins overwrite;
+- first-write races refresh the winning remote state/version before presenting a conflict;
 - concurrent edits surface an explicit conflict;
-- remote updates are deferred during active cooking where applying them would disrupt the cooking session;
+- remote updates are deferred during active cooking without prematurely advancing sync metadata;
+- leaving cooking re-fetches canonical server truth rather than blindly applying a stale pending payload;
 - failed sync writes preserve local state and surface recovery rather than silently dropping work;
+- database error detail is logged server-side and not returned to the browser;
 - local/session browser storage may support migration, offline continuity and active-cooking resilience, but it is not a second authoritative household truth.
+
+Production browser responses also carry defensive headers for content-type sniffing, framing, referrer leakage, permissions, opener isolation and HSTS, and the framework identification header is disabled.
 
 ## 10. PWA / offline status
 
@@ -122,13 +131,29 @@ The offline shell is no longer merely desirable. Primary completed routes are ca
 
 Software completion requires all of the following to agree on the accepted commit:
 
-1. TypeScript typecheck;
-2. catalogue, culinary/food-truth, food-system, intelligence, household-journey, private-AI, release-infrastructure, v3/v12 cutover and product-completion audits;
-3. production Next.js build;
-4. repeatable Chromium browser acceptance in CI;
-5. Railway deployment and healthcheck success;
-6. production status/configuration checks;
-7. QA acceptance matrix and final completion tracker updated to the same evidence.
+1. Node 24 and npm 10.9.8 parity between CI and production, with a committed npm lockfile;
+2. TypeScript typecheck;
+3. catalogue audit;
+4. culinary / food-truth audit;
+5. food-system audit;
+6. intelligence audit;
+7. first-week household-journey audit;
+8. household-API hardening audit;
+9. private-AI endpoint audit;
+10. sync-recovery audit;
+11. Kitchen accessibility audit;
+12. release-infrastructure audit;
+13. v3/v12 cutover audit;
+14. product-completion audit;
+15. production Next.js build;
+16. repeatable Chromium browser acceptance in CI;
+17. Railway deployment and healthcheck success on the same accepted head;
+18. production status/configuration checks;
+19. QA acceptance matrix and final completion tracker updated to the same evidence.
+
+The current repeatable browser gate is **152 Playwright tests**: a data-derived **136-route** catalogue crawl at 390 px, stateful first-run navigation, **132 responsive samples** across all canonical widths (`360, 375, 390, 393, 412, 430, 768, 820, 1024, 1280, 1440`) and five two-device sync/recovery cases. Visible-control accessible-name checks run during the full catalogue crawl.
+
+Implementation acceptance commit `11a416636250200c60f27866154aaa02dfb37185` passed all audits, production build and **152 / 152 Playwright tests**, and deployed successfully on Railway. Final documentation heads must preserve the same release gates before closure.
 
 Only two categories may remain outside software acceptance:
 
