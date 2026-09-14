@@ -55,7 +55,7 @@ test("primary app navigation remains usable on phone",async({page})=>{
 });
 
 const responsiveRoutes=["/","/cook","/cook/gold-chicken-curry","/cook/gold-chicken-curry/cook","/prep","/prep/gold","/prep/mids","/prep/mids/thai-green","/prep/day","/kitchen","/plan","/scan"];
-const widths=[360,375,390,412,430,768,1280,1440];
+const widths=[360,375,390,393,412,430,768,820,1024,1280,1440];
 
 test.describe("responsive release matrix",()=>{
   for(const width of widths){
