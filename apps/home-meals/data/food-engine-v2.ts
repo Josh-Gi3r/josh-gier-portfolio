@@ -7,6 +7,7 @@ import {
   type Quantity,
 } from "./food-quantity";
 import { getCanonicalPrepV2, recipePrepV2 } from "./food-truth-v2";
+import { DEFAULT_COOK_SERVINGS_V4, prepRequirementsForCookServingsV4, type SupportedCookServingsV4 } from "./household-serving-policy-v4";
 
 export type ComponentStockV2 = Readonly<Record<string, Quantity>>;
 
@@ -51,10 +52,15 @@ export function emptyComponentStockV2(): ComponentStockV2 {
   return {};
 }
 
-export function prepDemandForRecipesV2(recipeIds: readonly string[]): PrepDemandV2[] {
+/** Runtime prep truth. The legacy food-truth map is two-serving research provenance. */
+export function prepForRecipeAtCookScaleV4(recipeId:string,servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4){
+  return prepRequirementsForCookServingsV4(recipeId,recipePrepV2(recipeId),servings);
+}
+
+export function prepDemandForRecipesV2(recipeIds: readonly string[],servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4): PrepDemandV2[] {
   const demand = new Map<string, Quantity>();
   for (const recipeId of recipeIds) {
-    for (const requirement of recipePrepV2(recipeId)) {
+    for (const requirement of prepForRecipeAtCookScaleV4(recipeId,servings)) {
       const current = demand.get(requirement.componentId) ?? canonicalZero(requirement.componentId);
       demand.set(requirement.componentId, addQuantity(current, requirement.quantity));
     }
@@ -62,8 +68,8 @@ export function prepDemandForRecipesV2(recipeIds: readonly string[]): PrepDemand
   return [...demand].map(([componentId, required]) => ({ componentId, required }));
 }
 
-export function prepNeedsForRecipesV2(recipeIds: readonly string[], stock: ComponentStockV2): PrepNeedV2[] {
-  return prepDemandForRecipesV2(recipeIds)
+export function prepNeedsForRecipesV2(recipeIds: readonly string[], stock: ComponentStockV2,servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4): PrepNeedV2[] {
+  return prepDemandForRecipesV2(recipeIds,servings)
     .map(({ componentId, required }) => {
       const onHand = stockValue(stock, componentId);
       return { componentId, required, onHand, shortfall: shortfallQuantity(required, onHand) };
@@ -71,8 +77,8 @@ export function prepNeedsForRecipesV2(recipeIds: readonly string[], stock: Compo
     .filter(need => need.shortfall.qty > 0);
 }
 
-export function recipePrepAvailabilityV2(recipeId: string, stock: ComponentStockV2) {
-  const missing = recipePrepV2(recipeId)
+export function recipePrepAvailabilityV2(recipeId: string, stock: ComponentStockV2,servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4) {
+  const missing = prepForRecipeAtCookScaleV4(recipeId,servings)
     .map(requirement => {
       const onHand = stockValue(stock, requirement.componentId);
       const shortfall = shortfallQuantity(requirement.quantity, onHand);
@@ -82,14 +88,14 @@ export function recipePrepAvailabilityV2(recipeId: string, stock: ComponentStock
   return { ready: missing.length === 0, missing };
 }
 
-export function consumeRecipePrepV2(recipeId: string, stock: ComponentStockV2): ComponentStockV2 {
-  const availability = recipePrepAvailabilityV2(recipeId, stock);
+export function consumeRecipePrepV2(recipeId: string, stock: ComponentStockV2,servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4): ComponentStockV2 {
+  const availability = recipePrepAvailabilityV2(recipeId, stock,servings);
   if (!availability.ready) {
     const summary = availability.missing.map(x => `${x.componentId}:${x.shortfall.qty}${x.shortfall.unit}`).join(", ");
     throw new Error(`Insufficient prep stock for ${recipeId}: ${summary}`);
   }
   const next: Record<string, Quantity> = { ...stock };
-  for (const requirement of recipePrepV2(recipeId)) {
+  for (const requirement of prepForRecipeAtCookScaleV4(recipeId,servings)) {
     const onHand = stockValue(next, requirement.componentId);
     next[requirement.componentId] = subtractQuantity(onHand, requirement.quantity);
   }
@@ -161,15 +167,15 @@ export function consumeBatchesFifoV2(componentId: string, required: Quantity, ba
   return next;
 }
 
-export function consumeRecipeBatchesFifoV2(recipeId:string,batches:readonly PrepBatchV2[]):PrepBatchV2[]{
+export function consumeRecipeBatchesFifoV2(recipeId:string,batches:readonly PrepBatchV2[],servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4):PrepBatchV2[]{
   const stock=componentStockFromBatchesV2(batches);
-  const availability=recipePrepAvailabilityV2(recipeId,stock);
+  const availability=recipePrepAvailabilityV2(recipeId,stock,servings);
   if(!availability.ready){
     const summary=availability.missing.map(x=>`${x.componentId}:${x.shortfall.qty}${x.shortfall.unit}`).join(", ");
     throw new Error(`Insufficient measured batches for ${recipeId}: ${summary}`);
   }
   let next=[...batches];
-  for(const requirement of recipePrepV2(recipeId)){
+  for(const requirement of prepForRecipeAtCookScaleV4(recipeId,servings)){
     next=consumeBatchesFifoV2(requirement.componentId,requirement.quantity,next);
   }
   return next;
@@ -181,8 +187,8 @@ export function oldestRemainingBatchV2(componentId:string,batches:readonly PrepB
     .sort((a,b)=>Date.parse(a.producedAt)-Date.parse(b.producedAt))[0];
 }
 
-export function oldestRecipeBatchV2(recipeId:string,batches:readonly PrepBatchV2[]):PrepBatchV2|undefined{
-  const needed=new Set(recipePrepV2(recipeId).map(x=>x.componentId));
+export function oldestRecipeBatchV2(recipeId:string,batches:readonly PrepBatchV2[],servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4):PrepBatchV2|undefined{
+  const needed=new Set(prepForRecipeAtCookScaleV4(recipeId,servings).map(x=>x.componentId));
   return [...batches]
     .filter(b=>needed.has(b.componentId)&&b.remaining.qty>0)
     .sort((a,b)=>Date.parse(a.producedAt)-Date.parse(b.producedAt))[0];
