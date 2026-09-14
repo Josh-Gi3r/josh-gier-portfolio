@@ -7,7 +7,7 @@ import {getComponent,motherBases,recipes} from "@/data/home-data";
 import {canonicalPrepComponentsV2,getCanonicalPrepV2,recipePrepV2} from "@/data/food-truth-v2";
 import {getPrepFormulationV2} from "@/data/prep-formulations-v2";
 import {getPrepStorageV2} from "@/data/prep-storage-v2";
-import {prepDemandForWeekMl,stockPortions} from "@/data/stock-math";
+import {prepDemandForWeek,stockPortions} from "@/data/stock-math";
 import {feedback} from "@/lib/feedback";
 import {motherHero,portionWord,toneFor,toneGradient} from "@/lib/tones";
 import {HomeSays} from "./HomeSays";
@@ -19,7 +19,7 @@ export function Mother({id}:{id:string}){
  const h=useHousehold(),m=motherBases.find(x=>x.id===id)!,truth=getCanonicalPrepV2(id),form=getPrepFormulationV2(id),storage=getPrepStorageV2(id);if(!truth||!form)throw new Error(`Missing canonical mother ${id}`);
  const process=motherProcessImages[id]??[],hero=motherHero(id),tone=toneFor(id),grad=toneGradient(id);
  const[confirm,setConfirm]=useState(false),[count,setCount]=useState(false),[toast,setToast]=useState(""),[made,setMade]=useState("");
- const qty=h.componentStock[id]??0,portions=stockPortions(id,h.componentStock),short=h.prepNeeds.find(x=>x.id===id),weekDemand=prepDemandForWeekMl(h.week).find(x=>x.id===id);
+ const qty=h.componentStock[id]??0,portions=stockPortions(id,h.componentStock),short=h.prepNeeds.find(x=>x.id===id),weekDemand=prepDemandForWeek(h.week).find(x=>x.id===id);
  const children=canonicalPrepComponentsV2.filter(x=>x.tier==="mid"&&x.madeFrom.includes(id));
  const linked=useMemo(()=>{const family=descendantsOf(id);return recipes.filter(r=>recipePrepV2(r.id).some(p=>family.has(p.componentId)))},[id]);
  const batches=h.prepBatches.filter(b=>b.componentId===id&&b.remaining.qty>0).sort((a,b)=>new Date(a.producedAt).getTime()-new Date(b.producedAt).getTime()),oldest=batches[0];
