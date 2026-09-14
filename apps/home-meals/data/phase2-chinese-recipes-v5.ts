@@ -1,6 +1,6 @@
 import {phase2ChineseRecipesV4,type Phase2IngredientV4,type Phase2RecipeResearchV4} from "./phase2-chinese-recipes-v4";
 import {quantity} from "./food-quantity";
-import {prepRequirementsForCookServingsV4,scaleReferenceIngredientsToCookServingsV4} from "./household-serving-policy-v4";
+import {prepRequirementsForCookServingsV4,scaleReferenceIngredientToCookServingsV4} from "./household-serving-policy-v4";
 
 export type Phase2RecipeResearchV5=Omit<Phase2RecipeResearchV4,"targetServings"|"ingredients"|"prep"|"referenceMinutes"|"researchDecision">&Readonly<{
   targetServings:4;
@@ -25,13 +25,18 @@ function cookScaleNote(r:Phase2RecipeResearchV4){
   return "Four-serving ingredient truth for two diners plus leftovers. Keep the same culinary endpoint rather than extending time mechanically.";
 }
 
+function scaleResearchIngredient(input:Phase2IngredientV4):Phase2IngredientV4{
+  const scaled=scaleReferenceIngredientToCookServingsV4({ingredientId:input.id,name:input.name,qty:input.qty,unit:input.unit,optional:input.optional});
+  return {...input,qty:scaled.qty};
+}
+
 export const phase2ChineseRecipesV5:readonly Phase2RecipeResearchV5[]=phase2ChineseRecipesV4.map(r=>{
   const referencePrep=r.prep.map(p=>({componentId:p.componentId,quantity:quantity(p.qty,p.unit)}));
   const prep=prepRequirementsForCookServingsV4(r.id,referencePrep).map(p=>({componentId:p.componentId,qty:p.quantity.qty,unit:p.quantity.unit}));
   return {
     ...r,
     targetServings:4 as const,
-    ingredients:scaleReferenceIngredientsToCookServingsV4(r.ingredients) as Phase2IngredientV4[],
+    ingredients:r.ingredients.map(scaleResearchIngredient),
     prep,
     referenceMinutes:r.referenceMinutes+(timeAdjust[r.id]??5),
     cookScaleNote:cookScaleNote(r),
