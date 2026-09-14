@@ -5,6 +5,7 @@ import {quantity,type Quantity} from "@/data/food-quantity";
 import {prepNeedsForRecipesV2,createMeasuredPrepBatchV2} from "@/data/food-engine-v2";
 import {shoppingNeedsForPlanV2} from "@/data/ingredient-engine-v2";
 import {getPrepFormulationV2} from "@/data/prep-formulations-v2";
+import {getCanonicalPrepV2} from "@/data/food-truth-v2";
 import type {RecipeCookObservationV2} from "@/data/calibration-v2";
 import {
  addMeasuredBatchV12,componentStockV12,confirmEmptyKitchenV12,consumeComponentV12,cookRecipeV12,migrateHouseholdV11ToV12,recordCookObservationV12,
@@ -31,6 +32,7 @@ export type HouseholdStateV12Context={
  setQualitativeIngredientLevel:(ingredientId:string,level:number)=>void;
  recordMeasuredBatch:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
  recordMeasuredProduction:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
+ recordPortionedProduction:(componentId:string,workingPortions:number,recipeVersion:string)=>void;
  cookMeal:(recipeId:string,variantId?:string)=>void;
  logMealWithoutStock:(recipeId:string,variantId?:string)=>void;
  recordCookObservation:(observation:RecipeCookObservationV2)=>void;
@@ -72,6 +74,7 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
 
  const recordMeasuredBatch=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>addMeasuredBatchV12(prev,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion})));
  const recordMeasuredProduction=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>{const formulation=getPrepFormulationV2(componentId);if(!formulation)throw new Error(`Missing canonical prep formulation for ${componentId}`);let next=prev;for(const parent of formulation.componentInputs)next=consumeComponentV12(next,parent.componentId,quantity(parent.qty,parent.unit));return addMeasuredBatchV12(next,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion}))});
+ const recordPortionedProduction=(componentId:string,workingPortions:number,recipeVersion:string)=>{const component=getCanonicalPrepV2(componentId);if(!component||!Number.isFinite(workingPortions)||workingPortions<=0)throw new Error(`Invalid working portions for ${componentId}`);const portions=Math.max(1,Math.round(workingPortions));recordMeasuredProduction(componentId,quantity(portions*component.workingUnit.qty,component.workingUnit.unit),recipeVersion)};
  const cookMeal=(recipeId:string,variantId?:string)=>{if(!validRecipeIds.has(recipeId))return;setState(prev=>{try{return cookRecipeV12(prev,recipeId,variantId)}catch{return historyOnly(prev,recipeId,variantId)}})};
  const logMealWithoutStock=(recipeId:string,variantId?:string)=>{if(validRecipeIds.has(recipeId))setState(prev=>historyOnly(prev,recipeId,variantId))};
  const recordCookObservation=(observation:RecipeCookObservationV2)=>setState(prev=>recordCookObservationV12(prev,observation));
@@ -87,7 +90,7 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  const clearMigrationWarnings=()=>setState(prev=>({...prev,migrationWarnings:[]}));
  const resetV12=()=>setState(freshState());
 
- const value:HouseholdStateV12Context={state,componentStock,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setActivePrepSet,toggleActivePrep,setComponentObserved,reconcileComponentTotal,setIngredientObserved,setQualitativeIngredientLevel,recordMeasuredBatch,recordMeasuredProduction,cookMeal,logMealWithoutStock,recordCookObservation,rateMeal,noteMeal,promoteRecipeVersion,toggleUseSoon,toggleFavourite,toggleGrocery,confirmKitchen,confirmEmptyKitchen,clearMigrationWarnings,resetV12};
+ const value:HouseholdStateV12Context={state,componentStock,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setActivePrepSet,toggleActivePrep,setComponentObserved,reconcileComponentTotal,setIngredientObserved,setQualitativeIngredientLevel,recordMeasuredBatch,recordMeasuredProduction,recordPortionedProduction,cookMeal,logMealWithoutStock,recordCookObservation,rateMeal,noteMeal,promoteRecipeVersion,toggleUseSoon,toggleFavourite,toggleGrocery,confirmKitchen,confirmEmptyKitchen,clearMigrationWarnings,resetV12};
  if(!hydrated)return<div aria-label="Loading Home Meals"/>;
  return<Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
