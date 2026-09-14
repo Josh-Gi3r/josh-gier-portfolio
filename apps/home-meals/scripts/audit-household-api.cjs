@@ -3,7 +3,7 @@ const root=path.resolve(__dirname,'..'),failures=[];
 const read=rel=>fs.readFileSync(path.join(root,rel),'utf8');
 const must=(text,re,msg)=>{if(!re.test(text))failures.push(msg)};
 const mustNot=(text,re,msg)=>{if(re.test(text))failures.push(msg)};
-const household=read('app/api/household/route.ts'),session=read('app/api/household/session/route.ts'),server=read('lib/server-household.ts'),rate=read('lib/server-rate-limit.ts');
+const household=read('app/api/household/route.ts'),session=read('app/api/household/session/route.ts'),server=read('lib/server-household.ts'),rate=read('lib/server-rate-limit.ts'),config=read('next.config.ts');
 
 must(household,/validV12Payload/,'household writes are not runtime-validated as v12 state');
 must(household,/encoded\.length>1_500_000/,'household payload size cap is missing');
@@ -21,5 +21,7 @@ must(session,/secure:true/,'session cookie is not Secure');
 must(session,/sameSite:"lax"/,'session cookie is not SameSite=Lax');
 must(server,/timingSafeEqual/,'household secret comparison is not timing-safe');
 must(server,/where id=\$\{HOUSEHOLD_ID\} and version=\$\{baseVersion\}/,'database write is not optimistic-version guarded');
+must(config,/poweredByHeader:\s*false/,'framework identification header is not disabled');
+for(const header of ['X-Content-Type-Options','X-Frame-Options','Referrer-Policy','Permissions-Policy','Cross-Origin-Opener-Policy','Strict-Transport-Security'])if(!config.includes(header))failures.push(`security header missing: ${header}`);
 
-if(failures.length){console.error(`\nHome Meals household-API audit FAILED (${failures.length})`);for(const failure of failures)console.error(` - ${failure}`);process.exitCode=1}else console.log('\nHome Meals household-API audit passed · private session · rate-limited household code · v12 envelope validation · payload cap · optimistic conflict · generic failure responses · timing-safe secret handling');
+if(failures.length){console.error(`\nHome Meals household-API audit FAILED (${failures.length})`);for(const failure of failures)console.error(` - ${failure}`);process.exitCode=1}else console.log('\nHome Meals household-API audit passed · private session · rate-limited household code · v12 envelope validation · payload cap · optimistic conflict · generic failure responses · timing-safe secret handling · browser security headers');
