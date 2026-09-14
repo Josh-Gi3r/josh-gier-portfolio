@@ -16,7 +16,7 @@ must('components/app/Prep.tsx',/Start with GOLD · SAMBAL · RED/,'small active-
 must('components/app/Cook.tsx',/By prep/,'prep-based recipe browse is missing');
 must('components/app/Cook.tsx',/Never cooked/,'history-aware recipe browse is missing');
 must('components/app/MealHistory.tsx',/mealHistorySummaryV7/,'V7 live meal-history intelligence is not rendered');
-must('components/app/Recipe.tsx',/getCanonicalRecipeV2|getPhase2LiveCandidateV7/,'recipe page must retain culinary evidence provenance');
+must('components/app/Recipe.tsx',/r\.source\.url/,'recipe page must render the evidence source carried by the gated live recipe catalogue');
 
 // V7 live promotion must be visible across every user-facing decision surface, not only the recipe browser.
 for(const [rel,token] of [['components/app/Cook.tsx','allLiveRecipesV7'],['components/app/Home.tsx','allLiveRecipesV7'],['components/app/Plan.tsx','allLiveRecipesV7'],['components/app/Builder.tsx','allLiveRecipesV7'],['components/app/Kitchen.tsx','ingredientUiCatalogV7'],['components/app/Scan.tsx','ingredientUiCatalogV7'],['components/app/Shell.tsx','allLiveRecipesV7'],['components/AskHomeView.tsx','getLiveRecipeV7'],['app/api/ask-home/route.ts','buildAssistantContextV7'],['components/app/PrepDay.tsx','prepJobsForWeekV7']])must(rel,new RegExp(token),`V7 live surface missing ${token}`);
