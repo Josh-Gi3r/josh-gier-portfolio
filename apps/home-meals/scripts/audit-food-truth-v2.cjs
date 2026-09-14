@@ -4,7 +4,7 @@ const fail=m=>failures.push(m),unique=(xs,label)=>{const s=new Set();for(const x
 try{
   fs.rmSync(out,{recursive:true,force:true});
   const tsc=path.join(root,'node_modules','.bin',process.platform==='win32'?'tsc.cmd':'tsc');
-  const r=spawnSync(tsc,['--target','ES2020','--module','commonjs','--moduleResolution','node','--esModuleInterop','--skipLibCheck','--outDir',out,'data/food-truth-v2.ts','data/food-engine-v2.ts','data/home-data.ts'],{cwd:root,stdio:'inherit'});
+  const r=spawnSync(tsc,['--target','ES2020','--module','commonjs','--moduleResolution','node','--esModuleInterop','--skipLibCheck','--outDir',out,'data/food-truth-v2.ts','data/food-engine-v2.ts','data/home-data.ts','data/household-serving-policy-v4.ts'],{cwd:root,stdio:'inherit'});
   if(r.status!==0)process.exit(r.status||1);
 
   const truth=require(path.join(out,'food-truth-v2.js'));
@@ -44,7 +44,8 @@ try{
     }
   }
 
-  const exact=(recipeId,expected)=>{const got=recipes[recipeId]||[];const key=x=>`${x.componentId}:${x.quantity.qty}:${x.quantity.unit}`;const a=got.map(key).sort(),b=expected.sort();if(JSON.stringify(a)!==JSON.stringify(b))fail(`${recipeId} corrected dependency contract drifted: got ${a.join(', ')}`)};
+  // Historical v2 reference contract remains frozen so provenance cannot drift silently.
+  const exact=(recipeId,expected)=>{const got=recipes[recipeId]||[];const key=x=>`${x.componentId}:${x.quantity.qty}:${x.quantity.unit}`;const a=got.map(key).sort(),b=expected.sort();if(JSON.stringify(a)!==JSON.stringify(b))fail(`${recipeId} corrected reference dependency contract drifted: got ${a.join(', ')}`)};
   exact('curry-laksa',['laksa:120:g','clear:450:ml']);
   exact('rempah-chicken-rendang',['rendang:120:g','lemongrass:15:g']);
   exact('massaman-beef',['thai-red:30:g','massaman-finish:7:g']);
@@ -63,19 +64,19 @@ try{
   if(korma?.madeFrom.length)fail('KORMA must not inherit deep ONION as a physical parent');
   if(miso?.workingUnit.qty!==40||miso?.workingUnit.unit!=='g')fail('MISO-G verified working unit drifted');
   if(bul?.workingUnit.qty!==50||bul?.workingUnit.unit!=='g')fail('BUL verified working unit drifted');
-  if(wokBrown?.workingUnit.qty!==150||wokBrown?.workingUnit.unit!=='ml')fail('WOK-B verified two-person working dose drifted');
+  if(wokBrown?.workingUnit.qty!==150||wokBrown?.workingUnit.unit!=='ml')fail('WOK-B modular stock working unit drifted');
 
   const defaultDemand=engine.prepDemandForRecipesV2(current.defaultWeek);
   const zeroStock={};
   const emptyNeeds=engine.prepNeedsForRecipesV2(current.defaultWeek,zeroStock);
   for(const demand of defaultDemand){const need=emptyNeeds.find(x=>x.componentId===demand.componentId);if(!need||need.shortfall.qty!==demand.required.qty||need.shortfall.unit!==demand.required.unit)fail(`v2 empty-stock shortfall mismatch for ${demand.componentId}`)}
   const exactStock=Object.fromEntries(defaultDemand.map(x=>[x.componentId,x.required]));
-  if(engine.prepNeedsForRecipesV2(current.defaultWeek,exactStock).length)fail('v2 exact default-week stock still reports prep shortfalls');
-  const firstRecipe=current.defaultWeek[0],firstReq=recipes[firstRecipe][0];
-  if(firstReq){const batch=engine.createMeasuredPrepBatchV2({batchId:'audit-batch',componentId:firstReq.componentId,measuredOutput:firstReq.quantity,producedAt:'2026-09-14T00:00:00.000Z',recipeVersion:'audit-v1'});const stock=engine.componentStockFromBatchesV2([batch]);if(!engine.recipePrepAvailabilityV2(firstRecipe,stock).ready)fail(`v2 measured stock does not mark ${firstRecipe} ready`)}
+  if(engine.prepNeedsForRecipesV2(current.defaultWeek,exactStock).length)fail('four-serving exact default-week stock still reports prep shortfalls');
+  const firstRecipe=current.defaultWeek[0],firstReq=engine.prepForRecipeAtCookScaleV4(firstRecipe)[0];
+  if(firstReq){const batch=engine.createMeasuredPrepBatchV2({batchId:'audit-batch',componentId:firstReq.componentId,measuredOutput:firstReq.quantity,producedAt:'2026-09-14T00:00:00.000Z',recipeVersion:'audit-v1'});const stock=engine.componentStockFromBatchesV2([batch]);if(!engine.recipePrepAvailabilityV2(firstRecipe,stock).ready)fail(`four-serving measured stock does not mark ${firstRecipe} ready`)}
   if(!engine.recipePrepAvailabilityV2('miso-aubergine-tofu',{}).ready)fail('direct-ingredient dinner with no prep dependency must be prep-ready');
   let mismatchRejected=false;try{engine.createMeasuredPrepBatchV2({batchId:'bad-unit',componentId:'gold',measuredOutput:{qty:120,unit:'ml'},producedAt:'2026-09-14T00:00:00.000Z',recipeVersion:'audit-v1'})}catch{mismatchRejected=true}if(!mismatchRejected)fail('v2 measured batch accepted incompatible units');
 
   if(failures.length){console.error(`\nHome Meals food-truth v2 audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}
-  else console.log(`\nHome Meals food-truth v2 audit passed · ${components.length} prep components · ${v2RecipeIds.length} dinner contracts · no assumed batch yields`);
+  else console.log(`\nHome Meals food-truth v2 audit passed · ${components.length} prep components · ${v2RecipeIds.length} reference dinner contracts · four-serving runtime demand · no assumed batch yields`);
 }finally{fs.rmSync(out,{recursive:true,force:true})}
