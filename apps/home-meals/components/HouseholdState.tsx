@@ -1,9 +1,10 @@
 "use client";
 import {createContext,useContext,useEffect,useMemo,useState} from "react";
-import {getIngredient,ingredients,recipes} from "@/data/home-data";
+import {getIngredient,ingredients} from "@/data/home-data";
+import {allLiveRecipesV7} from "@/data/recipe-catalog-v7";
 import {quantity,type Quantity,type QuantityUnit} from "@/data/food-quantity";
 import {getCanonicalPrepV2} from "@/data/food-truth-v2";
-import {canonicalIngredientKeyV2,getCanonicalIngredientV2} from "@/data/ingredient-catalog-v2";
+import {canonicalIngredientKeyV7,getCanonicalIngredientV7} from "@/data/ingredient-catalog-v7";
 import type {PrepBatchV2} from "@/data/food-engine-v2";
 import type {RecipeCookObservationV2} from "@/data/calibration-v2";
 import {HouseholdStateV12Provider,useHouseholdV12} from "./HouseholdStateV12";
@@ -17,10 +18,10 @@ export type PrepNeedCompat={id:string;unit:QuantityUnit;neededQty:number;onHandQ
 export type ShoppingNeedCompat={id:string;canonicalId:string;qty:number;unit:QuantityUnit|"have";requiredQty:number;onHandQty:number};
 
 const PHOTOS_KEY="home-meals-meal-photos-v1";
-const validRecipeIds=new Set(recipes.map(x=>x.id));
+const validRecipeIds=new Set(allLiveRecipesV7.map(x=>x.id));
 const legacyToCanonical:Record<string,string>={eggs:"egg-large","basmati-rice":"basmati-rice-dry","jasmine-rice":"jasmine-rice-dry",rice:"jasmine-rice-dry",beef:"beef-sirloin","ground-meat":"ground-chicken",mushrooms:"mushroom",onion:"onion-yellow",potatoes:"potato",chickpeas:"chickpeas-drained",tortillas:"tortilla",butter:"butter-unsalted","spring-onion":"spring-onion"};
 const canonicalToLegacy:Record<string,string>={"egg-large":"eggs","basmati-rice-dry":"basmati-rice","jasmine-rice-dry":"jasmine-rice","beef-sirloin":"beef","ground-chicken":"ground-meat",mushroom:"mushrooms","onion-yellow":"onion",potato:"potatoes","chickpeas-drained":"chickpeas",tortilla:"tortillas","butter-unsalted":"butter"};
-function canonicalIdForUi(id:string,unit?:string){const mapped=legacyToCanonical[id]??id;if(unit==="g"||unit==="ml"||unit==="count")return canonicalIngredientKeyV2(mapped,unit);return mapped}
+function canonicalIdForUi(id:string,unit?:string){const mapped=legacyToCanonical[id]??id;if(unit==="g"||unit==="ml"||unit==="count")return canonicalIngredientKeyV7(mapped,unit);return getCanonicalIngredientV7(mapped)?.id??mapped}
 function uiIdForCanonical(id:string){return canonicalToLegacy[id]??id}
 function safePhotos(raw:string|null):MealPhoto[]{if(!raw)return[];try{const value=JSON.parse(raw);if(!Array.isArray(value))return[];const seen=new Set<string>();return value.filter((p:any)=>p&&validRecipeIds.has(p.mealId)&&typeof p.dataUrl==="string"&&p.dataUrl.startsWith("data:image/")&&p.dataUrl.length<900000).map((p:any)=>({mealId:p.mealId,dataUrl:p.dataUrl,at:p.at||new Date().toISOString()})).filter((p:MealPhoto)=>{if(seen.has(p.mealId))return false;seen.add(p.mealId);return true}).slice(0,8)}catch{return[]}}
 
@@ -36,16 +37,16 @@ function Bridge({children}:{children:React.ReactNode}){
  useEffect(()=>{try{setMealPhotos(safePhotos(localStorage.getItem(PHOTOS_KEY)))}catch{setStorageIssue(true)}},[]);
  useEffect(()=>{try{localStorage.setItem(PHOTOS_KEY,JSON.stringify(mealPhotos));setStorageIssue(false)}catch{setStorageIssue(true)}},[mealPhotos]);
  const componentStock=useMemo(()=>Object.fromEntries(Object.entries(v.componentStock).map(([id,q])=>[id,q.qty])),[v.componentStock]);
- const ingredientStock=useMemo(()=>{const out:Record<string,number>={};for(const[id,q]of Object.entries(v.state.ingredientStock))out[uiIdForCanonical(id)]=q.qty;for(const item of ingredients){if(item.tracking==="state")out[item.id]=v.state.qualitativeIngredientStock?.[item.id]??0;else{const key=canonicalIdForUi(item.id,item.unit),q=v.state.ingredientStock[key];if(q)out[item.id]=q.qty}}return out},[v.state.ingredientStock,v.state.qualitativeIngredientStock]);
- const useSoon=useMemo(()=>Object.fromEntries(Object.entries(v.state.useSoon).map(([id,value])=>[uiIdForCanonical(id),value])),[v.state.useSoon]);
- const useSoonAt=useMemo(()=>Object.fromEntries(Object.entries(v.state.useSoonAt).map(([id,value])=>[uiIdForCanonical(id),value])),[v.state.useSoonAt]);
- const groceryChecked=useMemo(()=>Object.fromEntries(Object.entries(v.state.groceryChecked).map(([id,value])=>[uiIdForCanonical(id),value])),[v.state.groceryChecked]);
+ const ingredientStock=useMemo(()=>{const out:Record<string,number>={};for(const[id,q]of Object.entries(v.state.ingredientStock)){out[id]=q.qty;out[uiIdForCanonical(id)]=q.qty}for(const item of ingredients){if(item.tracking==="state")out[item.id]=v.state.qualitativeIngredientStock?.[item.id]??0;else{const key=canonicalIdForUi(item.id,item.unit),q=v.state.ingredientStock[key];if(q)out[item.id]=q.qty}}return out},[v.state.ingredientStock,v.state.qualitativeIngredientStock]);
+ const useSoon=useMemo(()=>Object.fromEntries(Object.entries(v.state.useSoon).flatMap(([id,value])=>[[id,value],[uiIdForCanonical(id),value]])),[v.state.useSoon]);
+ const useSoonAt=useMemo(()=>Object.fromEntries(Object.entries(v.state.useSoonAt).flatMap(([id,value])=>[[id,value],[uiIdForCanonical(id),value]])),[v.state.useSoonAt]);
+ const groceryChecked=useMemo(()=>Object.fromEntries(Object.entries(v.state.groceryChecked).flatMap(([id,value])=>[[id,value],[uiIdForCanonical(id),value]])),[v.state.groceryChecked]);
  const prepNeeds=useMemo<PrepNeedCompat[]>(()=>v.prepNeeds.map(n=>({id:n.componentId,unit:n.shortfall.unit,neededQty:n.required.qty,onHandQty:n.onHand.qty,shortQty:n.shortfall.qty})),[v.prepNeeds]);
  const shoppingNeeds=useMemo<ShoppingNeedCompat[]>(()=>v.shoppingNeeds.map(n=>({id:uiIdForCanonical(n.ingredientId),canonicalId:n.ingredientId,qty:n.shortfall.qty,unit:n.shortfall.unit,requiredQty:n.required.qty,onHandQty:n.onHand.qty})),[v.shoppingNeeds]);
  const prepBatches=useMemo<PrepBatchUi[]>(()=>v.state.componentBatches.map(b=>({...b,at:b.producedAt,unit:b.initial.unit})),[v.state.componentBatches]);
 
  const setComponent=(id:string,requested:number)=>{const c=getCanonicalPrepV2(id);if(!c)return;v.reconcileComponentTotal(id,quantity(Math.max(0,requested),c.workingUnit.unit))};
- const setIngredient=(id:string,qty:number)=>{const item=getIngredient(id);if(item?.tracking==="state"){v.setQualitativeIngredientLevel(id,qty);return}const key=canonicalIdForUi(id,item?.unit),def=getCanonicalIngredientV2(key);if(!def){setStorageIssue(true);return}v.setIngredientObserved(key,quantity(Math.max(0,qty),def.canonicalUnit))};
+ const setIngredient=(id:string,qty:number)=>{const item=getIngredient(id);if(item?.tracking==="state"){v.setQualitativeIngredientLevel(id,qty);return}const key=canonicalIdForUi(id,item?.unit),def=getCanonicalIngredientV7(key);if(!def){setStorageIssue(true);return}v.setIngredientObserved(key,quantity(Math.max(0,qty),def.canonicalUnit))};
  const toggleGrocery=(id:string)=>v.toggleGrocery(canonicalIdForUi(id,getIngredient(id)?.unit));
  const toggleUseSoon=(id:string)=>v.toggleUseSoon(canonicalIdForUi(id,getIngredient(id)?.unit));
  const makeBatch=(_id:string)=>{console.warn("Home Meals v12 logs prep by measured finished output rather than assumed batch yield.")};
