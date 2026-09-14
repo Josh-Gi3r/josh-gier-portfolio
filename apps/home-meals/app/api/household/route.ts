@@ -10,10 +10,12 @@ function validV12Payload(value:unknown){
  if(!record(value)||value.version!==12)return false;
  if(!Array.isArray(value.week)||value.week.length!==7||value.week.some(x=>typeof x!=="string"))return false;
  if(!Array.isArray(value.monthlyPool)||value.monthlyPool.some(x=>typeof x!=="string"))return false;
- if(!Array.isArray(value.activePrepIds)||value.activePrepIds.length>41||value.activePrepIds.some(x=>typeof x!=="string"))return false;
- if(!Array.isArray(value.componentBatches)||!Array.isArray(value.history)||!Array.isArray(value.cookObservations))return false;
- if(value.history.length>100||value.cookObservations.length>200)return false;
- for(const key of ["manualComponentStock","ingredientStock","qualitativeIngredientStock","groceryChecked","ratings","recipeNotes","recipeVersions","useSoon","useSoonAt","favourites"])if(!record(value[key]))return false;
+ if(value.activePrepIds!=null&&(!Array.isArray(value.activePrepIds)||value.activePrepIds.length>41||value.activePrepIds.some((x:unknown)=>typeof x!=="string")))return false;
+ if(!Array.isArray(value.componentBatches)||!Array.isArray(value.history))return false;
+ if(value.cookObservations!=null&&!Array.isArray(value.cookObservations))return false;
+ if(value.history.length>100||(Array.isArray(value.cookObservations)&&value.cookObservations.length>200))return false;
+ for(const key of ["manualComponentStock","ingredientStock","groceryChecked","ratings","recipeNotes","recipeVersions","useSoon","useSoonAt","favourites"])if(!record(value[key]))return false;
+ if(value.qualitativeIngredientStock!=null&&!record(value.qualitativeIngredientStock))return false;
  if(typeof value.kitchenReady!=="boolean"||!Array.isArray(value.migrationWarnings))return false;
  return true;
 }
