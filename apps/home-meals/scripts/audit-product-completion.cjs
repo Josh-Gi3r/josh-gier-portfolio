@@ -19,6 +19,14 @@ must('components/app/Recipe.tsx',/getCanonicalRecipeV2/,'recipe page must render
 // Retired truth/runtime files stay retired so stale quantities and v11 sync cannot creep back into the product.
 for(const rel of ['components/HouseholdSync.tsx','data/foundation.ts','data/foundation-ops.ts','data/meal-plan.ts'])if(exists(rel))fail(`${rel}: retired legacy file was reintroduced`);
 
+// Legacy ml/yield compatibility fields are allowed only inside explicit migration/archive code, never current UI/catalogue math.
+mustNot('components/app/Shell.tsx',/remainingMl|outputMl|shortMl|\bml in the freezer\b/,'local Home answers regressed to ml-only prep assumptions');
+mustNot('components/HouseholdState.tsx',/neededMl|onHandMl|shortMl|outputMl|remainingMl/,'v3 bridge reintroduced ml-only aliases');
+mustNot('lib/tones.ts',/portionLabel|freezeFormat/,'UI shape copy depends on retired freezer-shape assumptions');
+mustNot('data/home-data.ts',/portionMl|batchYield|totalMl|parentMotherIds/,'display catalogue reintroduced unmeasured prep-yield/relationship fields');
+mustNot('data/prep-catalog.ts',/parentMotherIds|portionMl|batchYield/,'prep display metadata reintroduced a parallel relationship/yield truth');
+mustNot('data/stock-math.ts',/neededMl|onHandMl|shortMl|outputMl|remainingMl|batchOutputMl|componentConsumptionMl|prepDemandForWeekMl/,'stock compatibility math regressed to ml-only aliases');
+
 // Food visuals: every current prep object must have a real hero, every mother a process sequence.
 const motherHeroes=read('data/mother-hero-assets.ts'),process=read('data/mother-process-assets.ts'),prepHeroes=read('data/prep-hero-assets.ts');
 const mothers=['red','blond','gold','sambal','rempah','clear','dark','onion'];
@@ -77,8 +85,10 @@ for(const rel of ['components/app/Plan.tsx','components/app/PrepDay.tsx','compon
  mustNot(rel,/canonical prep graph/i,'user-facing dependency jargon returned');
 }
 
-// CI must exercise intelligence as well as food truth.
+// CI must exercise intelligence, journey, endpoint privacy and final product completion as well as food truth.
 must('package.json',/audit-intelligence-v2\.cjs/,'intelligence audit is not in audit:data');
+must('package.json',/audit-household-journey\.cjs/,'household journey audit is not in audit:data');
+must('package.json',/audit-private-ai\.cjs/,'private AI security audit is not in audit:data');
 must('package.json',/audit-product-completion\.cjs/,'product-completion audit is not in audit:data');
 
 if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · stale legacy truth removed · full prep imagery · canonical culinary references · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible scan controls · mobile/PWA/privacy guardrails');
