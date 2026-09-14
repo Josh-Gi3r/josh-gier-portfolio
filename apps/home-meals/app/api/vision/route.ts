@@ -2,6 +2,7 @@ import {NextRequest,NextResponse} from "next/server";
 import {ingredients,type IngredientUnit} from "@/data/home-data";
 import {canonicalPrepComponentsV2,getCanonicalPrepV2} from "@/data/food-truth-v2";
 import type {QuantityUnit} from "@/data/food-quantity";
+import {SESSION_COOKIE,syncConfigured,verifySessionToken} from "@/lib/server-household";
 
 export const dynamic="force-dynamic";
 function noStore(body:unknown,status=200){return NextResponse.json(body,{status,headers:{"Cache-Control":"no-store"}})}
@@ -26,6 +27,7 @@ function canonicalPrepQuantity(value:unknown,unit:unknown,target:QuantityUnit){
 }
 export async function GET(){return noStore({configured:!!process.env.OPENAI_API_KEY?.trim()})}
 export async function POST(req:NextRequest){
+ if(syncConfigured()&&!verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value))return noStore({error:"unauthorized"},401);
  const key=process.env.OPENAI_API_KEY?.trim();if(!key)return noStore({error:"vision_not_configured"},503);
  const body=await req.json().catch(()=>null) as {mode?:unknown;imageDataUrl?:unknown;question?:unknown}|null;
  const mode=typeof body?.mode==="string"&&allowedModes.has(body.mode)?body.mode:"Meal";const imageDataUrl=typeof body?.imageDataUrl==="string"?body.imageDataUrl:"";const question=typeof body?.question==="string"?body.question.trim():"";
