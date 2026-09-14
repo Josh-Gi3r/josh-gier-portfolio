@@ -6,7 +6,7 @@ import {getComponent,motherBases} from "@/data/home-data";
 import {allLiveRecipesV7 as recipes,getLiveRecipeV7} from "@/data/recipe-catalog-v7";
 import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {recipeSupportedByActivePrepV7} from "@/data/prep-repertoire-v7";
-import {mealHistorySummaryV2,recentPenaltyV2} from "@/data/meal-history-v2";
+import {mealHistorySummaryV7,recentPenaltyV7} from "@/data/meal-history-v7";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
 import {recipeAvailabilityV7,stockPortionsV7} from "@/data/stock-math-v7";
 import {feedback} from "@/lib/feedback";
@@ -24,13 +24,13 @@ export function Home(){
  const h=useHousehold(),ready=useReadiness(),day=(new Date().getDay()+6)%7,[idx,setIdx]=useState(0),[welcomeSeen,setWelcomeSeen]=useState(true);
  useEffect(()=>{try{setWelcomeSeen(localStorage.getItem(SEEN_KEY)==="1")}catch{setWelcomeSeen(true)}},[]);
  const dismissWelcome=()=>{try{localStorage.setItem(SEEN_KEY,"1")}catch{}setWelcomeSeen(true)};
- const history=useMemo(()=>mealHistorySummaryV2({history:h.history,favourites:h.favourites,ratings:h.ratings}),[h.history,h.favourites,h.ratings]);
+ const history=useMemo(()=>mealHistorySummaryV7({history:h.history,favourites:h.favourites,ratings:h.ratings}),[h.history,h.favourites,h.ratings]);
  const stack=useMemo(()=>{
   const planned=getLiveRecipeV7(h.week[day]??h.week[0])??recipes[0];
   const rest=recipes.filter(r=>r.id!==planned.id&&(!h.kitchenReady||recipeAvailabilityV7(r.id,h.componentStock,h.ingredientStock).ready)).sort((a,b)=>{
    const aPrep=h.activePrepIds.length?recipeSupportedByActivePrepV7(a.id,h.activePrepIds):false,bPrep=h.activePrepIds.length?recipeSupportedByActivePrepV7(b.id,h.activePrepIds):false;
    const aRating=Math.max(h.ratings[a.id]?.josh??0,h.ratings[a.id]?.g??0),bRating=Math.max(h.ratings[b.id]?.josh??0,h.ratings[b.id]?.g??0);
-   return Number(bPrep)-Number(aPrep)||recentPenaltyV2(a.id,h.history)-recentPenaltyV2(b.id,h.history)||Number(!!h.favourites[b.id])-Number(!!h.favourites[a.id])||bRating-aRating||a.minutes-b.minutes;
+   return Number(bPrep)-Number(aPrep)||recentPenaltyV7(a.id,h.history)-recentPenaltyV7(b.id,h.history)||Number(!!h.favourites[b.id])-Number(!!h.favourites[a.id])||bRating-aRating||a.minutes-b.minutes;
   });
   return[planned,...rest]
  },[h.week,day,h.kitchenReady,h.componentStock,h.ingredientStock,h.favourites,h.ratings,h.history,h.activePrepIds]);
