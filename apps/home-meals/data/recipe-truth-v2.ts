@@ -78,11 +78,13 @@ const identityOverrides:Readonly<Record<string,RecipeIdentityClass>> = {
 // Explicit starch truth mirrors the current dinner formulations so the legacy display layer can never make starch demand ambiguous.
 const explicitStarches:Readonly<Record<string,StarchDefinitionV2>> = {
   "gold-chicken-curry":{id:"basmati-rice",qty:120,unit:"g",basis:"dry"},
+  "gold-punjabi-egg-curry":{id:"basmati-rice",qty:100,unit:"g",basis:"dry"},
   "sambal-udang":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
   "sambal-telur":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
   "curry-laksa":{id:"rice-noodles",qty:240,unit:"g",basis:"fresh"},
   "rempah-coconut-fish":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
   "thai-green-chicken":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
+  "thai-red-chicken":{id:"jasmine-rice",qty:100,unit:"g",basis:"dry"},
   "pad-kra-pao":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
   "pad-see-ew":{id:"rice-noodles",qty:450,unit:"g",basis:"fresh"},
   "beef-broccoli":{id:"rice",qty:120,unit:"g",basis:"dry"},

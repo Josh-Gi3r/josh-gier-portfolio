@@ -37,8 +37,8 @@ export const householdSafetyPolicyV2 = {
   cameraRule: "Vision may assess appearance and cooking state, but must never certify meat, poultry, fish or leftovers as safe without the required time/temperature evidence.",
 } as const;
 
-const poultry: SafetyTargetV2 = { kind:"poultry", minimumC:74, source:"USDA_FSIS" };
-const groundMeat: SafetyTargetV2 = { kind:"ground-meat", minimumC:71, source:"USDA_FSIS" };
+const poultry: SafetyTargetV2 = { kind:"poultry", minimumC:75, source:"SFA" };
+const groundMeat: SafetyTargetV2 = { kind:"ground-meat", minimumC:75, source:"SFA" };
 const fish: SafetyTargetV2 = { kind:"fish-shellfish", minimumC:63, source:"USDA_FSIS" };
 const wholeBeef: SafetyTargetV2 = { kind:"whole-beef", minimumC:63, restMinutes:3, source:"USDA_FSIS" };
 
