@@ -75,17 +75,29 @@ const identityOverrides:Readonly<Record<string,RecipeIdentityClass>> = {
   "chipotle-bean-skillet":"cuisine_inspired",
 };
 
+// Explicit starch truth mirrors the current dinner formulations so the legacy display layer can never make starch demand ambiguous.
 const explicitStarches:Readonly<Record<string,StarchDefinitionV2>> = {
   "gold-chicken-curry":{id:"basmati-rice",qty:120,unit:"g",basis:"dry"},
   "sambal-udang":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
+  "sambal-telur":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
   "curry-laksa":{id:"rice-noodles",qty:240,unit:"g",basis:"fresh"},
+  "rempah-coconut-fish":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
+  "thai-green-chicken":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
   "pad-kra-pao":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
   "pad-see-ew":{id:"rice-noodles",qty:450,unit:"g",basis:"fresh"},
   "beef-broccoli":{id:"rice",qty:120,unit:"g",basis:"dry"},
+  "brown-chicken-mushroom":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
+  "wok-tofu-greenbeans":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
+  "teriyaki-salmon":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
+  "teriyaki-chicken":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
+  "miso-salmon":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
+  "miso-aubergine-tofu":{id:"jasmine-rice",qty:100,unit:"g",basis:"dry"},
+  "gochujang-tofu":{id:"jasmine-rice",qty:100,unit:"g",basis:"dry"},
+  "beef-ragu":{id:"pasta",qty:180,unit:"g",basis:"dry"},
   "chicken-cacciatore":{id:"potatoes",qty:300,unit:"g",basis:"raw"},
   "mustard-mushroom-chicken":{id:"potatoes",qty:300,unit:"g",basis:"raw"},
-  "beef-ragu":{id:"pasta",qty:180,unit:"g",basis:"dry"},
   "harissa-chickpeas":{id:"couscous",qty:120,unit:"g",basis:"dry",optional:true},
+  "chipotle-chicken-bowl":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
 };
 
 const sourceOverrides:Readonly<Record<string,{source:{label:string;url:string};status:"specific"|"adaptation_reference";supporting?:readonly RecipeEvidenceV2[]}>>={
