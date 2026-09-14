@@ -8,11 +8,11 @@
   },
   "scripts": {
     "dev": "next dev",
-    "audit:data": "node scripts/audit-home-data.cjs && node scripts/audit-food-truth-v2.cjs && node scripts/audit-food-system-v4.cjs && node scripts/audit-intelligence-v2.cjs && node scripts/audit-household-journey.cjs && node scripts/audit-household-api.cjs && node scripts/audit-private-ai.cjs && node scripts/audit-sync-recovery.cjs && node scripts/audit-kitchen-accessibility.cjs && node scripts/audit-culinary-reaudit-v3.cjs && node scripts/audit-recipe-expansion-v3.cjs && node scripts/audit-serving-policy-v4.cjs && node scripts/audit-phase2-chinese-v5.cjs && node scripts/audit-phase2-indian-v5.cjs && node scripts/audit-phase2-thai-v5.cjs && node scripts/audit-release-infrastructure.cjs && node scripts/audit-v3-v12-cutover.cjs && node scripts/audit-product-completion.cjs",
+    "audit:data": "node scripts/audit-home-data.cjs && node scripts/audit-food-truth-v2.cjs && node scripts/audit-food-system-v4.cjs && node scripts/audit-intelligence-v2.cjs && node scripts/audit-household-journey.cjs && node scripts/audit-household-api.cjs && node scripts/audit-private-ai.cjs && node scripts/audit-sync-recovery.cjs && node scripts/audit-kitchen-accessibility.cjs && node scripts/audit-culinary-reaudit-v3.cjs && node scripts/audit-recipe-expansion-v3.cjs && node scripts/audit-serving-policy-v4.cjs && node scripts/audit-phase2-chinese-v5.cjs && node scripts/audit-phase2-indian-v5.cjs && node scripts/audit-phase2-thai-v5.cjs && node scripts/audit-phase2-malaysia-v5.cjs && node scripts/audit-release-infrastructure.cjs && node scripts/audit-v3-v12-cutover.cjs && node scripts/audit-product-completion.cjs",
     "audit:culinary": "node scripts/audit-culinary-reaudit-v3.cjs",
     "audit:expansion": "node scripts/audit-recipe-expansion-v3.cjs",
     "audit:servings": "node scripts/audit-serving-policy-v4.cjs",
-    "audit:phase2": "node scripts/audit-phase2-chinese-v5.cjs && node scripts/audit-phase2-indian-v5.cjs && node scripts/audit-phase2-thai-v5.cjs",
+    "audit:phase2": "node scripts/audit-phase2-chinese-v5.cjs && node scripts/audit-phase2-indian-v5.cjs && node scripts/audit-phase2-thai-v5.cjs && node scripts/audit-phase2-malaysia-v5.cjs",
     "build": "npm run audit:data && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
