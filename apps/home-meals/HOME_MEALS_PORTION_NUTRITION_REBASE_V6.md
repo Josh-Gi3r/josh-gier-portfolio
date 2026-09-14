@@ -1,8 +1,10 @@
 # Home Meals — Portion, Nutrition and Recipe Rebase V6
 
-Status: **EXECUTION IN PROGRESS**
+Status: **COMPLETE**
 Date: 2026-09-15
 Baseline: `4ef65aa52854c048d63ced42930c5868a9791e6f`
+Accepted implementation head: `441e1e3ebec1b9d8c89ee790d5eaa8b24c454116`
+Railway acceptance deployment: `034b8c71-d72e-4e7f-a232-a69ae79a24d4` — **SUCCESS**
 
 This work corrects the last major numeric-system ambiguity in Home Meals: **a sensible prep production batch, a frozen/fridge storage packet and a recipe's exact prep requirement are three different quantities.**
 
@@ -19,136 +21,133 @@ It is additive to the accepted four-serving household policy and the 100/100 for
 - **Container capacity is not food mass.** Gram-based prep is weighed; no g↔ml conversion is inferred from a silicone cavity.
 - The 41 prep objects are a library/rotation. Josh + G are not expected to keep every prep stocked simultaneously.
 
-## Scope
+## Scope completed
 
 ### Workstream 1 — Re-audit every prep quantity and every use
 
-Review all **41 prep objects (8 mothers, 26 mids, 7 boosters)** and every place those quantities are consumed or displayed.
+All **41 prep objects (8 mothers, 26 mids, 7 boosters)** and their quantity consumers were re-audited. For each prep object V6 now distinguishes:
 
-For each prep object establish:
-
-1. canonical exact recipe-use quantity for a normal four-serving cook;
+1. exact recipe-use quantity for a normal four-serving cook;
 2. practical storage packet/dose quantity and unit;
 3. storage packet kind (`meal-packet`, `stock-block`, `booster-dose`, `fridge-portion`, `pantry-dose`);
 4. recommended physical container capacity where useful, without treating capacity as weight;
 5. sensible household production scale relative to the source/master formulation;
-6. target rotation depth, normally a small number of future cooks rather than indefinite stock;
+6. small target rotation depth rather than indefinite freezer stock;
 7. measured-output workflow: cook → cool appropriately → weigh/measure actual finished output → divide into full packets + labelled remainder → record exact measured stock;
 8. parent/child prep consumption, FIFO stock arithmetic and no-double-charge rules.
 
-Audit all quantity consumers, including:
+The audit covered live recipe requirements, all 100 researched recipes, prep-to-prep inputs, weekly demand/readiness, Kitchen stock, Prep Day and make sheets, grocery/prep planning, recipe/cooking display, Ask Home, freezer/container guidance, stock consumption and migration/release audits.
 
-- live recipe prep requirements;
-- the 100 Phase 2 researched recipe prep requirements;
-- prep-to-prep parent inputs;
-- weekly prep demand/readiness;
-- Kitchen stock counting/editor;
-- Prep Day and make sheets;
-- grocery/prep planning;
-- recipe/cooking display;
-- Ask Home context;
-- freezer/container guidance;
-- stock consumption after cooking;
-- migration and deterministic audits.
-
-Acceptance: no user-facing path may treat the old tiny `workingUnit` as the canonical freezer packet for a four-serving meal.
+The old tiny `workingUnit` is no longer the user-facing canonical freezer packet for a four-serving meal. Historical/internal unit semantics remain only where needed for compatibility and provenance.
 
 ### Workstream 2 — Methodology-based kcal/nutrition rebase
 
-Build a reference nutrition layer rather than treating unmeasured household food as unknowable.
+V6 implements a reference-energy methodology rather than treating unmeasured household food as unknowable.
 
 Method hierarchy:
 
 1. exact product nutrition label when a household product is bound;
 2. USDA FoodData Central / equivalent authoritative composition value for generic ingredients;
-3. recipe calculation from ingredient weights using FAO/INFOODS methodology;
-4. cooked-food/yield/retention factors for material cooking transformations;
-5. published finished-food proxy for extraction-sensitive stocks/broths;
-6. published fat-uptake/rendering/yield assumptions for frying or draining where direct measurement is not available;
-7. household measured finished yield replaces generic yield assumptions for kcal-per-g/ml density when available.
+3. recipe calculation from ingredient weights using FAO/INFOODS-style recipe arithmetic;
+4. cooked-food/yield/retention treatment for material cooking transformations;
+5. finished-food proxies for extraction-sensitive stocks/broths;
+6. fat-uptake/rendering/yield assumptions for frying or draining when direct measurement is unavailable;
+7. household measured finished yield can supersede generic density assumptions.
 
-Every estimate carries provenance and confidence. Reference kcal is useful before household calibration; calibrated kcal remains a higher-truth state.
+Reference estimates carry provenance/confidence and remain distinct from household-calibrated nutrition. Water-loss-only reductions conserve energy while changing density; strained stock, frying, rendered/discarded fat and discarded marinade are not naively counted as fully eaten.
 
-For normal sauces/pastes:
+Accepted coverage:
 
-`ingredient kcal → batch input kcal → finished output estimate/measurement → kcal per g/ml → kcal per storage packet → kcal contribution to finished recipe`
+- **41 / 41** prep objects have a reference energy method;
+- **136 / 136** recipes have V6 reference kcal/person paths;
+- four-serving nutrition arithmetic is authoritative; the stale two-serving divisor was removed;
+- reference kcal is not labelled as laboratory or household-calibrated nutrition;
+- current deterministic range is **185–1455 kcal/person** across the 136-recipe graph, with per-recipe uncertainty/confidence preserved.
 
-For water-loss-only reduction, energy is conserved while density changes. For strained stock, frying, rendered/discarded fat or discarded marinade, use the appropriate proxy/yield/uptake model instead of counting all inputs as eaten.
+### Workstream 3 — Recipe reconciliation in controlled batches
 
-Acceptance:
+Reconciliation is complete across:
 
-- all prep ingredients and recipe ingredients required by the 36 live + 100 researched recipes have a reference energy path or an explicit documented proxy;
-- all 41 prep objects have a reference kcal method/status;
-- all 136 recipes have methodology-derived reference kcal/person or a clearly identified proxy/fallback with uncertainty;
-- no 2-serving divisor remains in the four-serving nutrition path;
-- reference estimates are not mislabeled as household-calibrated nutrition.
+1. **36 existing live dinners**;
+2. **15 Chinese**;
+3. **10 Indian**;
+4. **8 Thai**;
+5. **10 Malaysia / Singapore / Indonesia**;
+6. **6 Vietnamese**;
+7. **8 Japanese**;
+8. **8 Korean**;
+9. **8 Middle Eastern / Mediterranean**;
+10. **8 Italian / European**;
+11. **6 Mexican / Latin**;
+12. **13 breakfast / lunch / everyday**.
 
-## Workstream 3 — Update recipes in controlled batches
+Recipe prep is now presented in human storage terms plus exact quantity, e.g. a meal packet/dose/block relationship while retaining the exact g/ml requirement underneath. Research provenance remains intact through operational V6 overlays.
 
-Reconcile the complete recipe set against Workstreams 1 and 2.
+The 100 Phase 2 recipes remain deliberately **FORMULATION LOCKED, 0/100 LIVE**. This V6 numeric rebase does not silently promote them into the selectable live catalogue.
 
-Order:
+## Implementation acceptance
 
-1. **36 existing live dinners** — update prep packet language, exact prep use, kcal method and UI/runtime consistency first.
-2. **15 Chinese**
-3. **10 Indian**
-4. **8 Thai**
-5. **10 Malaysia / Singapore / Indonesia**
-6. **6 Vietnamese**
-7. **8 Japanese**
-8. **8 Korean**
-9. **8 Middle Eastern / Mediterranean**
-10. **8 Italian / European**
-11. **6 Mexican / Latin**
-12. **13 breakfast / lunch / everyday**
+### Portion architecture
 
-A recipe should present prep in human terms such as `1 GOLD meal packet · 240 g` when the exact requirement equals one canonical packet. If it requires a fraction or multiple, say so while always preserving the exact g/ml value underneath.
+- **41 / 41** canonical V6 packet policies resolve.
+- Mother, Mid, Booster and Prep Day production log **actual measured finished output**, not `count × workingUnit`.
+- Kitchen shows full packets plus exact loose remainder and exact total stock.
+- Kitchen steppers add/remove the component's V6 packet/dose rather than a legacy micro-unit.
+- Recipe and Cooking views retain exact prep quantity while explaining packet/dose/block relationship.
+- Parent component consumption remains exact and FIFO.
+- g/ml remain separate unit domains.
 
-Research provenance remains immutable; V6 operational overlays may supersede older V2/V5 display/runtime quantities without rewriting history.
+### Nutrition architecture
 
-## Execution plan
+- **41 / 41** prep energy-method records resolve.
+- **136 / 136** recipe energy references resolve.
+- Extraction-sensitive `CLEAR`, `DARK`, `DASHI` and `K-STOCK` use finished-food proxies rather than pretending all raw stock ingredients are eaten.
+- Product-sensitive sauces remain proxy/label-upgradable.
+- Actual measured finished prep output can later improve density truth without changing the architecture.
 
-### Phase A — Numeric graph audit
+### Recipe architecture
 
-- map all 41 prep objects to all 136 recipes and prep-parent relationships;
-- find every UI/runtime path that derives counts from `workingUnit`;
-- define the V6 packet/storage contract and household batch scales;
-- add deterministic graph audits before changing UI.
+- **36 / 36** current live dinners are reconciled to V6 prep/nutrition truth.
+- **100 / 100** Phase 2 recipes are operationally reconciled while remaining not-live.
+- **4 servings** remains the default household cook contract for 2 diners plus leftovers.
 
-### Phase B — Portion architecture implementation
+## Acceptance evidence
 
-- add V6 packet/batch policy data and helpers;
-- update stock math and prep demand to count canonical packets while preserving exact quantities;
-- replace count×old-working-unit production logging with actual measured output entry;
-- update Mother, Mid, Booster, Prep Day and Kitchen stock language/controls;
-- expose full packets + remainder after measured production;
-- update recipe/cooking prep labels to packet + exact quantity.
+Railway deployment `034b8c71-d72e-4e7f-a232-a69ae79a24d4` built and deployed implementation head `441e1e3ebec1b9d8c89ee790d5eaa8b24c454116` successfully.
 
-### Phase C — Nutrition methodology implementation
+Repo-native acceptance passed through the full build chain, including:
 
-- add authoritative ingredient energy reference/provenance layer;
-- add yield/retention/proxy methodology types;
-- calculate prep batch reference energy and packet contribution;
-- fix four-serving nutrition arithmetic;
-- derive recipe reference kcal/person across live and research registries;
-- compare against existing rounded planning references and flag material deltas for review rather than silently overwriting anomalies.
+- catalogue, food-truth, food-system, intelligence and household-journey audits;
+- household API, private AI and sync recovery audits;
+- Kitchen accessibility audit with V6 packet stepper labels;
+- culinary re-audit and four-serving serving-policy audit;
+- all Phase 2 cuisine/wave gates;
+- aggregate Phase 2 100-recipe gate at **100/100 FORMULATION LOCKED · 0/100 LIVE**;
+- V6 portion/nutrition gate at **41/41 prep packets · 41/41 prep energy methods · 136/136 recipe energy references · 100/100 research recipes reconciled not-live**;
+- release-infrastructure audit;
+- v3/v12 cutover audit;
+- product-completion audit;
+- Next.js production compilation;
+- TypeScript validation;
+- static-page generation;
+- production server start;
+- Railway `/` healthcheck.
 
-### Phase D — Recipe reconciliation batches
+Production server acceptance: Next.js 16.3.4 reported **Ready in 166ms** and Railway healthcheck succeeded on the first attempt.
 
-- live 36 first;
-- then each Phase 2 cuisine batch in the research order above;
-- verify every prep reference resolves to exact V6 use and every recipe has nutrition status/confidence;
-- do not promote the 100 research recipes to `LIVE` merely as a side effect of this numeric rebase.
+Playwright was **not rerun in this V6 cycle**; this completion record does not claim otherwise.
 
-### Phase E — Acceptance and deployment
+## Permanent truth boundaries after V6
 
-- repo-native audits only; **no GitHub Actions**;
-- TypeScript and production build;
-- relevant Playwright/browser acceptance where available;
-- Railway production deploy and exact-head verification;
-- close this document with final counts, evidence and remaining household-only calibration boundaries.
+The following are real household-calibration inputs, not unfinished software:
 
-## Non-goals
+- exact product nutrition labels for the products Josh + G actually buy;
+- measured finished yields/densities from real prep batches;
+- better finished-stock proxies where household stock preparation materially differs from the current reference;
+- observed frying/rendering uptake when household technique justifies tighter estimates;
+- Josh/G taste, portion and repeat-preference calibration.
+
+## Non-goals preserved
 
 - no redesign of the Home Meals product;
 - no forced new mother/mid components for symmetry;
