@@ -7,7 +7,7 @@ import {ingredientsForRecipeV7} from "@/data/ingredient-engine-v7";
 import {getCanonicalIngredientV7} from "@/data/ingredient-catalog-v7";
 import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {missingActivePrepForRecipeV7,recipeSupportedByActivePrepV7} from "@/data/prep-repertoire-v7";
-import {mealHistorySummaryV2,recentPenaltyV2} from "@/data/meal-history-v2";
+import {mealHistorySummaryV7,recentPenaltyV7} from "@/data/meal-history-v7";
 import {recipeTitle} from "@/data/recipe-display";
 import {recipeAvailabilityV7} from "@/data/stock-math-v7";
 import {useHousehold} from "../HouseholdState";
@@ -24,7 +24,7 @@ const liveRecipe=(id:string)=>{const r=getLiveRecipeV7(id);if(!r)throw new Error
 export function Plan(){
  const h=useHousehold(),v12=useHouseholdV12(),ready=useReadiness(),today=(new Date().getDay()+6)%7;
  const[day,setDay]=useState(today),[swap,setSwap]=useState<number|null>(null),[q,setQ]=useState(""),[poolOpen,setPoolOpen]=useState(false),[poolFilter,setPoolFilter]=useState("All"),[shopOpen,setShopOpen]=useState(false),[changed,setChanged]=useState<number|null>(null),[suggested,setSuggested]=useState<string[]|null>(null),[toast,setToast]=useState("");
- const history=useMemo(()=>mealHistorySummaryV2({history:h.history,favourites:h.favourites,ratings:h.ratings}),[h.history,h.favourites,h.ratings]);
+ const history=useMemo(()=>mealHistorySummaryV7({history:h.history,favourites:h.favourites,ratings:h.ratings}),[h.history,h.favourites,h.ratings]);
  const useSoonIds=useMemo(()=>new Set(Object.keys(v12.state.useSoon).filter(id=>v12.state.useSoon[id])),[v12.state.useSoon]);
  const useSoonAge=(id:string)=>{const at=v12.state.useSoonAt[id];return at?Math.max(0,Math.floor((Date.now()-new Date(at).getTime())/86400000)):0};
  const usesSoon=(r:RecipeRow)=>ingredientsForRecipeV7(r.id).filter(x=>useSoonIds.has(x.ingredientId));
@@ -32,7 +32,7 @@ export function Plan(){
  const stockGap=(r:RecipeRow)=>{if(!h.kitchenReady)return 0;const a=recipeAvailabilityV7(r.id,h.componentStock,h.ingredientStock);return a.missingPrep.length+a.missingIngredients.length};
  const activeGap=(r:RecipeRow)=>h.activePrepIds.length?missingActivePrepForRecipeV7(r.id,h.activePrepIds).length:0;
  const daysSinceCooked=(id:string)=>history.recipes[id]?.daysSince??9999;
- const rank=(a:RecipeRow,b:RecipeRow)=>activeGap(a)-activeGap(b)||useSoonWeight(b)-useSoonWeight(a)||stockGap(a)-stockGap(b)||recentPenaltyV2(a.id,h.history)-recentPenaltyV2(b.id,h.history)||Number(inMonth(b.id))-Number(inMonth(a.id))||Number(!!h.favourites[b.id])-Number(!!h.favourites[a.id])||Math.max(h.ratings[b.id]?.josh??0,h.ratings[b.id]?.g??0)-Math.max(h.ratings[a.id]?.josh??0,h.ratings[a.id]?.g??0)||a.minutes-b.minutes;
+ const rank=(a:RecipeRow,b:RecipeRow)=>activeGap(a)-activeGap(b)||useSoonWeight(b)-useSoonWeight(a)||stockGap(a)-stockGap(b)||recentPenaltyV7(a.id,h.history)-recentPenaltyV7(b.id,h.history)||Number(inMonth(b.id))-Number(inMonth(a.id))||Number(!!h.favourites[b.id])-Number(!!h.favourites[a.id])||Math.max(h.ratings[b.id]?.josh??0,h.ratings[b.id]?.g??0)-Math.max(h.ratings[a.id]?.josh??0,h.ratings[a.id]?.g??0)||a.minutes-b.minutes;
  const swapResults=recipes.filter(r=>!q||`${recipeTitle(r.id,r.title)} ${r.cuisine}`.toLowerCase().includes(q.toLowerCase())).sort(rank),planned=liveRecipe(h.week[day]),plannedReady=ready(planned);
  const reuse=useMemo(()=>{const m=new Map<string,{count:number;days:number[]}>();h.week.forEach((id,di)=>{const seen=new Set<string>();prepForRecipeAtCookScaleV7(id).forEach(p=>{if(seen.has(p.componentId))return;seen.add(p.componentId);const cur=m.get(p.componentId)??{count:0,days:[]};cur.count++;cur.days.push(di);m.set(p.componentId,cur)})});return[...m.entries()].map(([id,v])=>({id,...v,component:getComponent(id)!})).filter(x=>x.component).sort((a,b)=>b.count-a.count).slice(0,5)},[h.week]);
  const required=useMemo(()=>new Set(h.week.flatMap(id=>ingredientsForRecipeV7(id).filter(x=>!x.optional&&x.ingredientId!=="water").map(x=>x.ingredientId))).size,[h.week]);
@@ -46,7 +46,7 @@ export function Plan(){
   const month=recipes.filter(r=>inMonth(r.id)),pool=month.length>=7?month:recipes,picked:RecipeRow[]=[],reused=new Set<string>(),cuisineCounts=new Map<string,number>();
   for(let di=0;di<7;di++){
    const previous=picked.at(-1),ranked=pool.filter(r=>!picked.some(x=>x.id===r.id)).map(r=>{
-    const a=h.kitchenReady?recipeAvailabilityV7(r.id,h.componentStock,h.ingredientStock):null,gap=a?a.missingPrep.length+a.missingIngredients.length:0,rating=Math.max(h.ratings[r.id]?.josh??0,h.ratings[r.id]?.g??0),overlap=prepForRecipeAtCookScaleV7(r.id).filter(p=>reused.has(p.componentId)).length,weekday=di<5,timeCost=weekday?Math.max(0,r.minutes-35)*.65:Math.max(0,25-r.minutes)*.18,sameCuisine=previous&&previous.cuisine===r.cuisine?10:0,cuisineRepeat=(cuisineCounts.get(r.cuisine)??0)*7,prepOutside=activeGap(r),recent=recentPenaltyV2(r.id,h.history);
+    const a=h.kitchenReady?recipeAvailabilityV7(r.id,h.componentStock,h.ingredientStock):null,gap=a?a.missingPrep.length+a.missingIngredients.length:0,rating=Math.max(h.ratings[r.id]?.josh??0,h.ratings[r.id]?.g??0),overlap=prepForRecipeAtCookScaleV7(r.id).filter(p=>reused.has(p.componentId)).length,weekday=di<5,timeCost=weekday?Math.max(0,r.minutes-35)*.65:Math.max(0,25-r.minutes)*.18,sameCuisine=previous&&previous.cuisine===r.cuisine?10:0,cuisineRepeat=(cuisineCounts.get(r.cuisine)??0)*7,prepOutside=activeGap(r),recent=recentPenaltyV7(r.id,h.history);
     return{r,score:prepOutside*48+gap*20+recent-useSoonWeight(r)*24-Number(!!h.favourites[r.id])*8-rating*2-overlap*5+timeCost+sameCuisine+cuisineRepeat}
    }).sort((a,b)=>a.score-b.score||a.r.minutes-b.r.minutes),next=ranked[0]?.r;
    if(!next)break;picked.push(next);cuisineCounts.set(next.cuisine,(cuisineCounts.get(next.cuisine)??0)+1);prepForRecipeAtCookScaleV7(next.id).forEach(p=>reused.add(p.componentId));
