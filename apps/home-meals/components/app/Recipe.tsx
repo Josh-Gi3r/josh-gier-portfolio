@@ -7,6 +7,7 @@ import {getDinnerFormulationV2} from "@/data/recipe-formulations-v2";
 import {getCanonicalRecipeV2} from "@/data/recipe-truth-v2";
 import {getCanonicalPrepV2} from "@/data/food-truth-v2";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
+import {kcalReferenceForV3} from "@/data/recipe-kcal-reference-v3";
 import {feedback} from "@/lib/feedback";
 import {getHouseholdPerson} from "@/lib/device-profile";
 import {phaseCounts,phaseFor,phases} from "@/lib/steps";
@@ -22,7 +23,7 @@ type Author="josh"|"g";
 const who=(a:Author|"home")=>a==="josh"?"Josh":a==="g"?"G":"Home";
 
 export function Recipe({id}:{id:string}){
- const h=useHousehold();const r=getRecipe(id);const f=getDinnerFormulationV2(id),truth=getCanonicalRecipeV2(id);if(!f||!truth)throw new Error(`Missing canonical dinner formulation: ${id}`);const ready=useReadiness()(r);
+ const h=useHousehold();const r=getRecipe(id);const f=getDinnerFormulationV2(id),truth=getCanonicalRecipeV2(id);if(!f||!truth)throw new Error(`Missing canonical dinner formulation: ${id}`);const ready=useReadiness()(r);const kcal=kcalReferenceForV3(id);
  const[weekOpen,setWeekOpen]=useState(false);const[noteOpen,setNoteOpen]=useState(false);const[note,setNote]=useState("");const[author,setAuthor]=useState<Author>("josh");const[toast,setToast]=useState("");
  useEffect(()=>{const person=getHouseholdPerson();if(person)setAuthor(person)},[]);
  const title=recipeTitle(r.id,r.title),subtitle=recipeSubtitle(r.id,r.subtitle);
@@ -41,8 +42,8 @@ export function Recipe({id}:{id:string}){
   <div className="hm-hero">{r.image?<img src={photo?.dataUrl??r.image} alt={title} width={780} height={840} loading="eager" fetchPriority="high" decoding="async"/>:<div className="initial">{title[0]}</div>}<div className="shade"/><div className="top"><RoundBack href="/cook" onPhoto label="Back to recipes"/><button className={`hm-round onphoto ${favourite?"heart":""}`} aria-label={favourite?"Remove from favourites":"Add to favourites"} onClick={()=>{h.toggleFavourite(id);feedback("change")}}>{favourite?"♥":"♡"}</button></div></div>
   <div className="hm-sheetpage" style={{paddingBottom:140}}>
    <span className="hm-kicker">{r.cuisine} · {inWeek>=0?longDays[inWeek]:"not in the week"}</span><h1 className="hm-recipe-title">{title}</h1><p className="hm-lead" style={{marginTop:8}}>{subtitle}</p>
-   <div className="hm-stats four"><Stat v={r.minutes} k="reference min"/><Stat v="—" k="kcal" tint="var(--tint-peach)"/><Stat v="—" k="protein"/><Stat v={f.targetServings} k="target servings" tint="var(--tint-sky)"/></div>
-   <div className="hm-fine">Nutrition appears only after component yield + product-label truth is resolved · {r.method} · {r.difficulty}</div>
+   <div className="hm-stats four"><Stat v={r.minutes} k="reference min"/><Stat v={kcal?`~${kcal.kcalPerPerson}`:"—"} k="kcal / person" tint="var(--tint-peach)"/><Stat v={kcal?kcal.mealWeight:"—"} k="meal weight"/><Stat v={f.targetServings} k="target servings" tint="var(--tint-sky)"/></div>
+   <div className="hm-fine">{kcal?`Reference energy estimate · ±${kcal.uncertaintyPct}% until measured prep yield + product-label truth resolves`:"Energy not yet estimated"} · {r.method} · {r.difficulty}</div>
    <HomeSays actions={says.actions}>{says.text}</HomeSays>
 
    <SectionHead title="What goes in" action={<span className={ready.state==="missing"?"peach":"muted"} style={{fontSize:13,fontWeight:700,color:ready.state==="ready"?"var(--green)":ready.state==="missing"?"var(--peach-text)":"var(--muted)"}}>{ready.label}</span>}/>
