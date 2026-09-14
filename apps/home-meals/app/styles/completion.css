@@ -12,6 +12,14 @@
 .hm-stepper button{width:44px;height:44px}
 .hm-authors.sm button{min-height:44px;height:44px}
 .hm-scan-panel .modes button{min-height:44px;height:44px}
+.hm-cook-head a{min-height:44px;display:inline-flex;align-items:center;padding-block:6px}
+
+/* Long food/source names must wrap inside a phone viewport rather than widening the page. */
+.hm-ref,.hm-refs{min-width:0;max-width:100%;overflow:hidden}
+.hm-ref{flex-wrap:wrap}
+.hm-ref p{min-width:0;flex:1 1 180px}
+.hm-ref a,.hm-refs a{min-height:44px;max-width:100%;display:inline-flex;align-items:center;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+.hm-chiplist span,.hm-chiplist a{height:auto;min-height:44px;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
 
 /* Bottom navigation is persistent primary navigation, not micro-copy. */
 .hm-bar-tab{font-size:12px;min-height:60px}
