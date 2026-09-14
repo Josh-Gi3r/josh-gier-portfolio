@@ -12,8 +12,8 @@ export type Rating={josh?:number;g?:number;note?:string};
 export type RecipeNote={author:"josh"|"g"|"home";text:string;at:string};
 export type RecipeVersion={number:number;summary:string;author:"josh"|"g"|"home";at:string};
 export type MealPhoto={mealId:string;dataUrl:string;at:string};
-export type PrepBatchUi=PrepBatchV2&{outputMl:number;remainingMl:number;at:string;unit:QuantityUnit};
-export type PrepNeedCompat={id:string;unit:QuantityUnit;neededQty:number;onHandQty:number;shortQty:number;needed:number;onHand:number;short:number;runs:number;neededMl:number;onHandMl:number;shortMl:number;batches:number};
+export type PrepBatchUi=PrepBatchV2&{at:string;unit:QuantityUnit};
+export type PrepNeedCompat={id:string;unit:QuantityUnit;neededQty:number;onHandQty:number;shortQty:number};
 export type ShoppingNeedCompat={id:string;canonicalId:string;qty:number;unit:QuantityUnit|"have";requiredQty:number;onHandQty:number};
 
 const PHOTOS_KEY="home-meals-meal-photos-v1";
@@ -40,9 +40,9 @@ function Bridge({children}:{children:React.ReactNode}){
  const useSoon=useMemo(()=>Object.fromEntries(Object.entries(v.state.useSoon).map(([id,value])=>[uiIdForCanonical(id),value])),[v.state.useSoon]);
  const useSoonAt=useMemo(()=>Object.fromEntries(Object.entries(v.state.useSoonAt).map(([id,value])=>[uiIdForCanonical(id),value])),[v.state.useSoonAt]);
  const groceryChecked=useMemo(()=>Object.fromEntries(Object.entries(v.state.groceryChecked).map(([id,value])=>[uiIdForCanonical(id),value])),[v.state.groceryChecked]);
- const prepNeeds=useMemo<PrepNeedCompat[]>(()=>v.prepNeeds.map(n=>{const c=getCanonicalPrepV2(n.componentId),standard=Math.max(1,c?.workingUnit.qty??1);return{id:n.componentId,unit:n.shortfall.unit,neededQty:n.required.qty,onHandQty:n.onHand.qty,shortQty:n.shortfall.qty,needed:Math.ceil(n.required.qty/standard),onHand:Math.floor(n.onHand.qty/standard),short:Math.ceil(n.shortfall.qty/standard),runs:n.shortfall.qty>0?1:0,neededMl:n.required.qty,onHandMl:n.onHand.qty,shortMl:n.shortfall.qty,batches:n.shortfall.qty>0?1:0}}),[v.prepNeeds]);
+ const prepNeeds=useMemo<PrepNeedCompat[]>(()=>v.prepNeeds.map(n=>({id:n.componentId,unit:n.shortfall.unit,neededQty:n.required.qty,onHandQty:n.onHand.qty,shortQty:n.shortfall.qty})),[v.prepNeeds]);
  const shoppingNeeds=useMemo<ShoppingNeedCompat[]>(()=>v.shoppingNeeds.map(n=>({id:uiIdForCanonical(n.ingredientId),canonicalId:n.ingredientId,qty:n.shortfall.qty,unit:n.shortfall.unit,requiredQty:n.required.qty,onHandQty:n.onHand.qty})),[v.shoppingNeeds]);
- const prepBatches=useMemo<PrepBatchUi[]>(()=>v.state.componentBatches.map(b=>({...b,outputMl:b.initial.qty,remainingMl:b.remaining.qty,at:b.producedAt,unit:b.initial.unit})),[v.state.componentBatches]);
+ const prepBatches=useMemo<PrepBatchUi[]>(()=>v.state.componentBatches.map(b=>({...b,at:b.producedAt,unit:b.initial.unit})),[v.state.componentBatches]);
 
  const setComponent=(id:string,requested:number)=>{const c=getCanonicalPrepV2(id);if(!c)return;v.reconcileComponentTotal(id,quantity(Math.max(0,requested),c.workingUnit.unit))};
  const setIngredient=(id:string,qty:number)=>{const item=getIngredient(id);if(item?.tracking==="state"){v.setQualitativeIngredientLevel(id,qty);return}const key=canonicalIdForUi(id,item?.unit),def=getCanonicalIngredientV2(key);if(!def){setStorageIssue(true);return}v.setIngredientObserved(key,quantity(Math.max(0,qty),def.canonicalUnit))};
