@@ -7,6 +7,7 @@ import {
   type Quantity,
 } from "./food-quantity";
 import { getCanonicalPrepV2, recipePrepV2 } from "./food-truth-v2";
+import { getPhase2LiveRuntimeV7 } from "./phase2-runtime-v7";
 import { DEFAULT_COOK_SERVINGS_V4, prepRequirementsForCookServingsV4, type SupportedCookServingsV4 } from "./household-serving-policy-v4";
 
 export type ComponentStockV2 = Readonly<Record<string, Quantity>>;
@@ -52,8 +53,9 @@ export function emptyComponentStockV2(): ComponentStockV2 {
   return {};
 }
 
-/** Runtime prep truth. The legacy food-truth map is two-serving research provenance. */
+/** Runtime prep truth. Original food-truth map is two-serving provenance; promoted Phase 2 V7 recipes carry locked four-serving prep directly. */
 export function prepForRecipeAtCookScaleV4(recipeId:string,servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4){
+  const promoted=getPhase2LiveRuntimeV7(recipeId,servings);if(promoted)return promoted.prep;
   return prepRequirementsForCookServingsV4(recipeId,recipePrepV2(recipeId),servings);
 }
 
