@@ -1,0 +1,101 @@
+import {phase2ResearchRecipesV5} from "./phase2-research-registry-v5";
+import {getPhase2OperationalRecipeV6} from "./phase2-operational-v6";
+import type {QuantityUnit} from "./food-quantity";
+
+export type PromotionStatusV7="formulation_locked"|"promotion_ready"|"live";
+export type PromotionIssueV7=Readonly<{code:string;detail:string}>;
+
+export type LiveCandidateIngredientV7=Readonly<{
+  ingredientId:string;
+  name:string;
+  qty:number;
+  unit:QuantityUnit;
+  basis:"raw"|"dry"|"fresh"|"prepared";
+  optional?:boolean;
+  note?:string;
+}>;
+
+export type LiveCandidatePrepV7=Readonly<{
+  componentId:string;
+  qty:number;
+  unit:QuantityUnit;
+  display:string;
+}>;
+
+function structuralIssues(recipe:(typeof phase2ResearchRecipesV5)[number]):PromotionIssueV7[]{
+  const issues:PromotionIssueV7[]=[];
+  const operational=getPhase2OperationalRecipeV6(recipe.id);
+  if(recipe.targetServings!==4)issues.push({code:"cook_scale",detail:"Research formulation is not four servings."});
+  if(!recipe.ingredients.length)issues.push({code:"ingredients",detail:"No researched ingredients."});
+  if(!recipe.steps.length)issues.push({code:"steps",detail:"No researched cooking steps."});
+  if(!recipe.equipment.length)issues.push({code:"equipment",detail:"No equipment/capacity guidance."});
+  if(!recipe.evidence.length)issues.push({code:"evidence",detail:"No research evidence."});
+  if(!recipe.imageBrief.trim())issues.push({code:"image_brief",detail:"No locked dish-faithful image brief."});
+  if(!operational)issues.push({code:"v6_overlay",detail:"Missing V6 operational overlay."});
+  else{
+    if(operational.targetServings!==4)issues.push({code:"v6_servings",detail:"V6 overlay is not four servings."});
+    if(operational.prep.length!==recipe.prep.length)issues.push({code:"v6_prep",detail:"V6 prep overlay does not match researched prep count."});
+    if(!operational.nutrition)issues.push({code:"v6_nutrition",detail:"Missing V6 reference nutrition."});
+    else{
+      if(operational.nutrition.unresolvedIngredientIds.length)issues.push({code:"nutrition_ingredients",detail:`Unresolved energy ingredients: ${operational.nutrition.unresolvedIngredientIds.join(", ")}`});
+      if(operational.nutrition.unresolvedPrepIds.length)issues.push({code:"nutrition_prep",detail:`Unresolved prep energy: ${operational.nutrition.unresolvedPrepIds.join(", ")}`});
+      if(operational.nutrition.servings!==4)issues.push({code:"nutrition_servings",detail:"Reference nutrition is not calculated over four servings."});
+    }
+  }
+  const ingredientKeys=new Set<string>();
+  for(const x of recipe.ingredients){
+    if(!x.id.trim()||!x.name.trim())issues.push({code:"ingredient_identity",detail:"Ingredient missing ID/name."});
+    const key=`${x.id}|${x.unit}`;if(ingredientKeys.has(key))issues.push({code:"ingredient_duplicate",detail:`Duplicate ingredient identity ${key}.`});ingredientKeys.add(key);
+  }
+  const prepKeys=new Set<string>();for(const p of recipe.prep){const key=`${p.componentId}|${p.unit}`;if(prepKeys.has(key))issues.push({code:"prep_duplicate",detail:`Duplicate prep identity ${key}.`});prepKeys.add(key)}
+  return issues;
+}
+
+export const phase2LiveCandidatesV7=phase2ResearchRecipesV5.map(recipe=>{
+  const operational=getPhase2OperationalRecipeV6(recipe.id);
+  const issues=structuralIssues(recipe);
+  return {
+    id:recipe.id,
+    title:recipe.title,
+    cuisine:recipe.cuisine,
+    occasion:recipe.occasion,
+    mealWeight:recipe.mealWeight,
+    format:recipe.format,
+    prepStrategy:recipe.prepStrategy,
+    identity:recipe.identity,
+    targetServings:recipe.targetServings,
+    referenceMinutes:recipe.referenceMinutes,
+    cookScaleNote:recipe.cookScaleNote,
+    ingredients:recipe.ingredients.map((x):LiveCandidateIngredientV7=>({ingredientId:x.id,name:x.name,qty:x.qty,unit:x.unit,basis:x.basis,optional:x.optional,note:x.note})),
+    prep:(operational?.prep??recipe.prep.map(p=>({componentId:p.componentId,quantity:{qty:p.qty,unit:p.unit},display:`${p.componentId} · ${p.qty} ${p.unit}`}))).map((p):LiveCandidatePrepV7=>({componentId:p.componentId,qty:p.quantity.qty,unit:p.quantity.unit,display:p.display})),
+    pantryIds:recipe.pantryIds,
+    equipment:recipe.equipment,
+    steps:recipe.steps,
+    allergens:recipe.allergens,
+    substitutions:recipe.substitutions,
+    evidence:recipe.evidence,
+    researchDecision:recipe.researchDecision,
+    imageBrief:recipe.imageBrief,
+    nutrition:operational?.nutrition??null,
+    structuralReady:issues.length===0,
+    promotionIssues:issues,
+    promotionStatus:"formulation_locked" as PromotionStatusV7,
+  } as const;
+});
+
+export type Phase2LiveCandidateV7=(typeof phase2LiveCandidatesV7)[number];
+export const phase2LiveCandidateByIdV7=new Map(phase2LiveCandidatesV7.map(x=>[x.id,x]));
+export function getPhase2LiveCandidateV7(id:string){return phase2LiveCandidateByIdV7.get(id)}
+
+export function validatePhase2LiveCandidatesV7(){
+  const errors:string[]=[];
+  if(phase2LiveCandidatesV7.length!==100)errors.push(`Expected 100 V7 candidates, found ${phase2LiveCandidatesV7.length}`);
+  const ids=new Set<string>();
+  for(const candidate of phase2LiveCandidatesV7){
+    if(ids.has(candidate.id))errors.push(`Duplicate V7 candidate ${candidate.id}`);ids.add(candidate.id);
+    if(!candidate.structuralReady)errors.push(`${candidate.id}: ${candidate.promotionIssues.map(x=>`${x.code}=${x.detail}`).join("; ")}`);
+    if(candidate.promotionStatus!=="formulation_locked")errors.push(`${candidate.id}: research candidate was promoted without the V7 promotion registry`);
+    if(!candidate.nutrition)errors.push(`${candidate.id}: missing V6 nutrition`);
+  }
+  return{valid:errors.length===0,errors,count:phase2LiveCandidatesV7.length,ready:phase2LiveCandidatesV7.filter(x=>x.structuralReady).length,live:phase2LiveCandidatesV7.filter(x=>x.promotionStatus==="live").length};
+}
