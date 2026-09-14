@@ -43,6 +43,19 @@ async function assertHealthyPage(page:Page,route:string,wait:"networkidle"|"domc
       return img.complete&&img.naturalWidth===0;
     }).map(image=>(image as HTMLImageElement).src));
     expect(brokenImages,`${route} has broken visible images: ${brokenImages.join(", ")}`).toEqual([]);
+    const unlabeledControls=await page.locator('button,a[href],input:not([type="hidden"]),select,textarea').evaluateAll(nodes=>nodes.filter(node=>{
+      const el=node as HTMLElement,rect=el.getBoundingClientRect(),style=getComputedStyle(el);
+      if(rect.width<1||rect.height<1||style.display==="none"||style.visibility==="hidden"||style.opacity==="0")return false;
+      const aria=el.getAttribute("aria-label")?.trim();
+      const labelled=el.getAttribute("aria-labelledby")?.split(/\s+/).map(id=>document.getElementById(id)?.textContent?.trim()||"").join(" ").trim();
+      const text=el.textContent?.replace(/\s+/g," ").trim();
+      const title=el.getAttribute("title")?.trim();
+      const imageAlt=el.querySelector("img[alt]")?.getAttribute("alt")?.trim();
+      const form=el as HTMLInputElement;const labels=form.labels?[...form.labels].map(label=>label.textContent?.trim()||"").join(" ").trim():"";
+      const buttonValue=(form.type==="submit"||form.type==="button")?form.value?.trim():"";
+      return !(aria||labelled||text||title||imageAlt||labels||buttonValue);
+    }).map(node=>`${node.tagName.toLowerCase()}${(node as HTMLElement).id?`#${(node as HTMLElement).id}`:""}${(node as HTMLElement).className?`.${String((node as HTMLElement).className).split(/\s+/).slice(0,2).join(".")}`:""}`));
+    expect(unlabeledControls,`${route} has visible controls without an accessible name: ${unlabeledControls.join(", ")}`).toEqual([]);
     expect(pageErrors,`${route} raised page errors`).toEqual([]);
     expect(consoleErrors,`${route} logged console errors`).toEqual([]);
   }finally{
