@@ -1,10 +1,11 @@
 "use client";
 import {createContext,useContext,useEffect,useMemo,useState} from "react";
-import {getIngredient,ingredients} from "@/data/home-data";
+import {getIngredient} from "@/data/home-data";
 import {allLiveRecipesV7} from "@/data/recipe-catalog-v7";
 import {quantity,type Quantity,type QuantityUnit} from "@/data/food-quantity";
 import {getCanonicalPrepV2} from "@/data/food-truth-v2";
 import {canonicalIngredientKeyV7,getCanonicalIngredientV7} from "@/data/ingredient-catalog-v7";
+import {getIngredientUiV7,ingredientUiCatalogV7} from "@/data/ingredient-ui-v7";
 import type {PrepBatchV2} from "@/data/food-engine-v2";
 import type {RecipeCookObservationV2} from "@/data/calibration-v2";
 import {HouseholdStateV12Provider,useHouseholdV12} from "./HouseholdStateV12";
@@ -37,7 +38,7 @@ function Bridge({children}:{children:React.ReactNode}){
  useEffect(()=>{try{setMealPhotos(safePhotos(localStorage.getItem(PHOTOS_KEY)))}catch{setStorageIssue(true)}},[]);
  useEffect(()=>{try{localStorage.setItem(PHOTOS_KEY,JSON.stringify(mealPhotos));setStorageIssue(false)}catch{setStorageIssue(true)}},[mealPhotos]);
  const componentStock=useMemo(()=>Object.fromEntries(Object.entries(v.componentStock).map(([id,q])=>[id,q.qty])),[v.componentStock]);
- const ingredientStock=useMemo(()=>{const out:Record<string,number>={};for(const[id,q]of Object.entries(v.state.ingredientStock)){out[id]=q.qty;out[uiIdForCanonical(id)]=q.qty}for(const item of ingredients){if(item.tracking==="state")out[item.id]=v.state.qualitativeIngredientStock?.[item.id]??0;else{const key=canonicalIdForUi(item.id,item.unit),q=v.state.ingredientStock[key];if(q)out[item.id]=q.qty}}return out},[v.state.ingredientStock,v.state.qualitativeIngredientStock]);
+ const ingredientStock=useMemo(()=>{const out:Record<string,number>={};for(const item of ingredientUiCatalogV7){const legacy=uiIdForCanonical(item.id);if(item.tracking==="state")out[item.id]=v.state.qualitativeIngredientStock?.[item.id]??v.state.qualitativeIngredientStock?.[legacy]??0;else out[item.id]=v.state.ingredientStock[item.id]?.qty??0;if(legacy!==item.id)out[legacy]=out[item.id]}for(const[id,q]of Object.entries(v.state.ingredientStock)){out[id]=q.qty;const legacy=uiIdForCanonical(id);if(legacy!==id)out[legacy]=q.qty}return out},[v.state.ingredientStock,v.state.qualitativeIngredientStock]);
  const useSoon=useMemo(()=>Object.fromEntries(Object.entries(v.state.useSoon).flatMap(([id,value])=>[[id,value],[uiIdForCanonical(id),value]])),[v.state.useSoon]);
  const useSoonAt=useMemo(()=>Object.fromEntries(Object.entries(v.state.useSoonAt).flatMap(([id,value])=>[[id,value],[uiIdForCanonical(id),value]])),[v.state.useSoonAt]);
  const groceryChecked=useMemo(()=>Object.fromEntries(Object.entries(v.state.groceryChecked).flatMap(([id,value])=>[[id,value],[uiIdForCanonical(id),value]])),[v.state.groceryChecked]);
@@ -46,7 +47,7 @@ function Bridge({children}:{children:React.ReactNode}){
  const prepBatches=useMemo<PrepBatchUi[]>(()=>v.state.componentBatches.map(b=>({...b,at:b.producedAt,unit:b.initial.unit})),[v.state.componentBatches]);
 
  const setComponent=(id:string,requested:number)=>{const c=getCanonicalPrepV2(id);if(!c)return;v.reconcileComponentTotal(id,quantity(Math.max(0,requested),c.workingUnit.unit))};
- const setIngredient=(id:string,qty:number)=>{const item=getIngredient(id);if(item?.tracking==="state"){v.setQualitativeIngredientLevel(id,qty);return}const key=canonicalIdForUi(id,item?.unit),def=getCanonicalIngredientV7(key);if(!def){setStorageIssue(true);return}v.setIngredientObserved(key,quantity(Math.max(0,qty),def.canonicalUnit))};
+ const setIngredient=(id:string,qty:number)=>{const legacy=getIngredient(id),key=canonicalIdForUi(id,legacy?.unit),item=getIngredientUiV7(key);if(!item){setStorageIssue(true);return}if(item.tracking==="state"){v.setQualitativeIngredientLevel(item.id,qty);return}const def=getCanonicalIngredientV7(item.id);if(!def){setStorageIssue(true);return}v.setIngredientObserved(item.id,quantity(Math.max(0,qty),def.canonicalUnit))};
  const toggleGrocery=(id:string)=>v.toggleGrocery(canonicalIdForUi(id,getIngredient(id)?.unit));
  const toggleUseSoon=(id:string)=>v.toggleUseSoon(canonicalIdForUi(id,getIngredient(id)?.unit));
  const makeBatch=(_id:string)=>{console.warn("Home Meals v12 logs prep by measured finished output rather than assumed batch yield.")};
