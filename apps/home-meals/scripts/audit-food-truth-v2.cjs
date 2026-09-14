@@ -52,7 +52,7 @@ try{
   exact('brown-chicken-mushroom',['wok-brown:150:ml']);
   exact('wok-tofu-greenbeans',['wok-brown:150:ml','chilli:15:g']);
   exact('moo-goo-gai-pan',['wok-white:150:ml']);
-  exact('pad-kra-pao',['garlic:15:g','chilli:15:g','krapow:30:ml']);
+  exact('pad-kra-pao',['garlic:15:g','chilli:15:g','krapow:45:ml']);
   exact('gold-chicken-curry',['gold:120:g']);
   exact('miso-salmon',['miso-ginger:80:g']);
   exact('miso-aubergine-tofu',[]);
