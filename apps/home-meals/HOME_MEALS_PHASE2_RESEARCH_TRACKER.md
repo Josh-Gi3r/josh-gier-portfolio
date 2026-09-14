@@ -1,12 +1,13 @@
 # Home Meals — Phase 2 Research Tracker
 
-Status: **IN PROGRESS — 43/100 FORMULATION LOCKED**
+Status: **COMPLETE — 100/100 FORMULATION LOCKED**
 Started: 2026-09-14
-Baseline before serving correction: `42ebfcfe5852135a94bf29b1e956e07382299627`
+Research acceptance head: `e6c0dad3d1017de0db5a7c0c63876328a8158379`
+Railway acceptance deployment: `8176f5e1-7879-4118-b4eb-2bc466b69112` — **SUCCESS**
 
 This is the execution ledger for the 100-recipe expansion defined in `HOME_MEALS_CULINARY_REAUDIT_AND_100_RECIPE_PLAN.md` and `data/recipe-expansion-plan-v3.tsv`.
 
-It does not replace the accepted v3/v12 product. Planned recipes remain non-live until they pass the Phase 2 promotion contract.
+The research/formulation phase is complete. The 100 new recipes remain deliberately separate from the existing live catalogue until the controlled Live Promotion phase. `FORMULATION_LOCKED` does **not** mean `LIVE`.
 
 ## Household cook-scale rule
 
@@ -14,152 +15,136 @@ It does not replace the accepted v3/v12 product. Planned recipes remain non-live
 - Canonical default cook batch: **4 servings**.
 - Supported smaller cook: **3 servings**.
 - Normal default outcome: two portions eaten + two leftover portions.
-- Old two-serving formulation records are retained only as research/provenance where needed. Runtime recipe, grocery, prep-readiness and stock-consumption truth must use the four-serving policy.
-- Scaling is not a blind 2× multiplier. Bulk protein/starch/vegetables usually scale close to linearly; oils, strong seasonings, aromatics, slurry/liquid and wok technique are reviewed separately.
-- Crowded wok recipes must be cooked in multiple physical batches when required even though the ingredient contract represents one four-serving household cook.
+- Runtime recipe, grocery, prep-readiness and stock-consumption truth uses the four-serving policy.
+- Scaling is not a blind 2× multiplier. Bulk protein/starch/vegetables usually scale close to linearly; oils, strong seasonings, aromatics, slurry/liquid and physical pan capacity are reviewed separately.
+- Crowded wok, grill, fry, omelette and tray recipes explicitly split into multiple physical batches when needed.
 
-## Promotion contract
-
-A candidate may move from `PLANNED` to `FORMULATION_LOCKED` only after:
-
-- dish identity and adaptation status are explicit;
-- current high-quality culinary references are recorded;
-- a **four-serving default formulation** is explicit in g/ml/count where measurement is meaningful, with 3-serving support where appropriate;
-- mother/mid/booster use is justified rather than forced;
-- pantry foundations are explicit and consistent with the shared cuisine system;
-- cooking order, equipment, visual endpoints and common failure cues are recorded;
-- relevant food-safety endpoints are explicit;
-- reference kcal/person is recorded as an estimate, with exact/calibrated nutrition kept behind ingredient + measured-yield truth;
-- allergens and substitutions are represented without pretending they are equivalent when they are not;
-- grocery/ingredient identities are unambiguous;
-- batch-capacity constraints are explicit for wok/roast/steam methods when four servings materially change technique;
-- an image brief exists, but final imagery is not produced before formulation lock.
-
-`FORMULATION_LOCKED` does **not** mean `LIVE`. Live promotion is a separate integration/release step.
-
-## Batch operating rule
-
-Default research batch: **up to 10 recipes**, while preserving cuisine/technique coherence. Never cross into the next cuisine wave merely to fill a quota.
-
-## Overall progress
+## Final progress
 
 - Planned expansion: **100**
-- Formulation locked: **43 / 100**
+- Formulation locked: **100 / 100**
 - Live from Phase 2: **0 / 100**
 - Household calibrated: **0 / 100**
+- Existing live catalogue: **36 dinners**
+- Existing canonical prep catalogue: **41 prep objects**
 
 ## Wave tracker
 
 | Wave | Scope | Planned | Locked | Live | Status |
 |---|---|---:|---:|---:|---|
-| 1A | Chinese pantry + techniques + Chinese recipes 1–10 | 10 | 10 | 0 | FORMULATION LOCKED · REBASED TO 4 |
-| 1B | Chinese recipes 11–15 | 5 | 5 | 0 | FORMULATION LOCKED |
+| 1A + 1B | Chinese | 15 | 15 | 0 | FORMULATION LOCKED |
 | 2 | Indian | 10 | 10 | 0 | FORMULATION LOCKED |
 | 3A | Thai | 8 | 8 | 0 | FORMULATION LOCKED |
 | 3B | Malaysia / Singapore / Indonesia | 10 | 10 | 0 | FORMULATION LOCKED |
-| 3C | Vietnamese | 6 | 0 | 0 | IN PROGRESS |
-| 4A | Japanese | 8 | 0 | 0 | PENDING |
-| 4B | Korean | 8 | 0 | 0 | PENDING |
-| 5A | Middle Eastern / Mediterranean | 8 | 0 | 0 | PENDING |
-| 5B | Italian / European | 8 | 0 | 0 | PENDING |
-| 5C | Mexican / Latin | 6 | 0 | 0 | PENDING |
-| 6A | Everyday breakfast/lunch 1–10 | 10 | 0 | 0 | PENDING |
-| 6B | Everyday breakfast/lunch 11–13 | 3 | 0 | 0 | PENDING |
+| 3C | Vietnamese | 6 | 6 | 0 | FORMULATION LOCKED |
+| 4A | Japanese | 8 | 8 | 0 | FORMULATION LOCKED |
+| 4B | Korean | 8 | 8 | 0 | FORMULATION LOCKED |
+| 5A | Middle Eastern / Mediterranean | 8 | 8 | 0 | FORMULATION LOCKED |
+| 5B | Italian / European | 8 | 8 | 0 | FORMULATION LOCKED |
+| 5C | Mexican / Latin | 6 | 6 | 0 | FORMULATION LOCKED |
+| 6A + 6B | Everyday breakfast / lunch | 13 | 13 | 0 | FORMULATION LOCKED |
+| **Total** |  | **100** | **100** | **0** | **RESEARCH COMPLETE** |
 
-## Accepted research — Chinese (15)
+## Research truth now present for every recipe
 
-Mapo tofu; Kung pao chicken; Black pepper beef; Tomato & egg stir-fry; Char siu pork; Char siu chicken; Steamed fish with ginger & scallion; Ginger-scallion chicken; Sweet & sour chicken; Garlic aubergine; Dan dan noodles; Beef chow fun; Chicken chow mein; Egg fried rice; Salt & pepper prawns.
+Every Phase 2 record has:
 
-Accepted four-serving research lives in `data/phase2-chinese-recipes-v5.ts` and `data/phase2-chinese-wave1b-v5.ts`. Shared pantry/technique semantics live in `data/chinese-pantry-research-v4.ts`.
+- explicit dish identity and Home-adaptation status;
+- a four-serving ingredient formulation in `g`, `ml` or `count` where measurement is meaningful;
+- explicit prep relationship or an explicit no-base / pantry-sauce decision;
+- pantry dependencies;
+- cooking order, equipment, cues and failure-sensitive technique;
+- four-serving capacity guidance where pan geometry matters;
+- relevant food-safety targets;
+- allergen and substitution notes;
+- rounded reference kcal/person with uncertainty, not false calibrated precision;
+- culinary/source evidence;
+- a dish-faithful image brief;
+- `formulation_locked` status.
 
-Material decisions include Dan Dan staying pantry-sauce rather than forcing DOUBAN; dry Cantonese chow fun/chow mein carrying explicit wok-capacity rules; fried rice being meal-scaled; and salt & pepper prawns remaining a dry no-base fry.
+The aggregate research registry is `data/phase2-research-registry-v5.ts`. The completion record is `HOME_MEALS_PHASE2_RESEARCH_COMPLETION_V5.md`.
 
-## Accepted research — Indian (10)
+## Material architecture corrections preserved
 
-Butter chicken · murgh makhani; Paneer makhani; Dal tadka; Rajma masala · rajma chawal; Chicken korma; Chicken tikka masala; Keema matar; Palak paneer; Aloo gobi; Masala omelette.
+Research corrected initial planning assumptions instead of forcing recipes into existing prep architecture:
 
-Shared Indian semantics live in `data/indian-pantry-research-v5.ts`; formulations live in `data/phase2-indian-recipes-v5.ts`.
+- Butter Chicken uses standalone `MAKHANI`, not GOLD.
+- Chicken Tikka Masala stays distinct and uses `GOLD + RED`, not MAKHANI.
+- Dan Dan Noodles stays pantry/direct rather than forcing DOUBAN.
+- Tom Kha uses direct galangal + lemongrass + makrut rather than LE.
+- Prik King uses `THAI-R` but remains a dry curry without coconut milk.
+- Hainanese Chicken Rice generates its own poaching liquor and does not require CLEAR.
+- Beef Rendang uses `RENDANG + LE` and does not double-charge REMPAH.
+- Chicken Satay remains no-base with fresh marinade and separate peanut sauce.
+- Vietnamese Lemongrass Chicken uses direct lemongrass rather than LE.
+- Chicken Bánh Mì does not use NUOC.
+- Japanese Shioyaki remains no-base and does not use TERI.
+- Dakgalbi and Spicy Pork Bulgogi keep direct gochujang/gochugaru marinades rather than forcing GOCHU.
+- Carbonara remains egg + cheese + guanciale, with no cream and no base.
+- Mushroom Risotto genuinely uses `DUX + CLEAR`.
+- Chicken Enchiladas use `RED + CHIPOTLE`; fajitas, tacos and quesadillas stay direct.
+- Grilled Cheese + Tomato Soup uses RED; the rest of the everyday set is intentionally mostly direct/no-base.
 
-Material decisions include MAKHANI-only Butter Chicken/Paneer Makhani; KORMA-only Chicken Korma; GOLD+RED Chicken Tikka Masala instead of collapsing it into Butter Chicken; restrained GOLD in Dal/Palak/Aloo Gobi; explicit raw-kidney-bean safety in Rajma; and no-base Masala Omelette.
-
-## Accepted research — Thai (8)
-
-Pad Thai with prawns; Tom yum goong; Tom kha gai; Thai omelette · khai jiao; Chicken larb; Prik king tofu & green beans; Thai cashew chicken; Massaman chicken.
-
-Shared Thai semantics live in `data/thai-pantry-research-v5.ts`; formulations live in `data/phase2-thai-recipes-v5.ts`.
-
-Material decisions include direct pantry Pad Thai; NPP as the genuine nam-prik-pao mid for Tom Yum and Thai Cashew Chicken; direct galangal/lemongrass/makrut for Tom Kha rather than LE; dry-curry THAI-R Prik King without coconut milk; base-free larb with khao khua; and THAI-R + MASS Massaman.
-
-## Accepted research — Malaysia / Singapore / Indonesia (10)
-
-Nasi goreng kampung; Mee goreng mamak; Hainanese chicken rice; Ayam masak merah; Beef rendang; Ikan asam pedas; Kari ayam Malaysia; Nasi lemak · Home weeknight version; Chicken satay; Sambal sotong.
-
-Shared semantics live in `data/malaysia-pantry-research-v5.ts`; four-serving formulations live in `data/phase2-malaysia-recipes-v5.ts`. Malaysian cooking caramel / kicap pekat is now represented separately from kecap manis in `data/pantry-foundations-v3.ts`.
-
-Material decisions include:
-
-- Nasi Goreng Kampung remains direct/pantry with belacan + ikan bilis + kangkung rather than forcing SAMBAL.
-- Mee Goreng Mamak keeps its own chilli + dried-shrimp + dhal + peanut paste and uses Malaysian cooking caramel; no one-off freezer mid is created.
-- Hainanese Chicken Rice corrects the initial plan: it **does not require CLEAR**. The whole chicken creates the fresh poaching liquor used for the rice and soup.
-- Ayam Masak Merah uses **RED + SAMBAL** while preserving turmeric-browned chicken and fresh onion/ginger.
-- Beef Rendang uses **RENDANG + LE** only; it does not double-charge REMPAH because RENDANG physically contains that parent. Kerisik and the tender-then-dry reduction remain dinner-specific.
-- Ikan Asam Pedas uses **ASAM** plus dinner-time tamarind and fresh herbs.
-- Kari Ayam Malaysia uses **KARI** plus chicken marinade, potatoes, onion, lemongrass, curry leaves and coconut at dinner.
-- Nasi Lemak uses **SAMBAL** as its only prep dependency; coconut rice, ikan bilis, peanuts, egg and cucumber stay distinct.
-- Chicken Satay remains no-base with a fresh aromatic marinade and separately cooked peanut sauce.
-- Sambal Sotong uses **SAMBAL**, but all sauce reduction happens before squid is added for a brief finish.
-
-## Current live-system serving rebase status
-
-The serving-scale correction applies to the existing live system, not only future research:
-
-- 36 live recipe truth records expose four servings;
-- ingredient demand, shopping, readiness and ingredient consumption default to four servings;
-- prep demand, readiness and FIFO consumption default to reviewed four-serving quantities;
-- cook completion reconciles four-serving stock;
-- recipe and cooking screens render four-serving runtime quantities;
-- Ask Home receives the two-diners/four-serving/leftovers rule;
-- explicit starch/side quantities were rebased;
-- a 3-serving option remains supported by the deterministic scaling layer;
-- old two-serving formulations remain provenance, not runtime quantity truth;
-- repo-native audits protect the serving policy and intentionally fail if a Home Meals GitHub Actions workflow is recreated.
-
-## Truth boundaries
+## Permanent truth boundaries
 
 - Do not convert grams to millilitres without an explicit measured conversion.
 - Do not invent physical prep yields.
 - Do not label reference kcal as calibrated household nutrition.
-- Do not infer internal safety from appearance.
-- Brand-sensitive sodium/allergen/nutrition values remain label-dependent.
+- Do not infer internal food safety from appearance.
+- Brand-sensitive sodium, allergen and nutrition values remain label-dependent.
 - A pantry bottle is not promoted into a freezer component merely for architectural symmetry.
 - A Home adaptation must be named as a Home adaptation.
-- `FORMULATION_LOCKED` does not make a recipe selectable in Cook/Plan; live promotion requires catalogue/grocery/stock/safety/image integration and release acceptance.
-- Home Meals intentionally does **not** use GitHub Actions. Validation uses repo-native audits/build logic and Railway deployment evidence.
+- Josh/G taste and household calibration remain learned from real use rather than fabricated.
+- `FORMULATION_LOCKED` does not make a recipe selectable in Cook/Plan.
+- Home Meals intentionally does **not** use GitHub Actions. Validation is repo-native plus Railway deployment evidence.
 
-## Next research batch — Wave 3C Vietnamese
+## Acceptance evidence
 
-1. Vietnamese lemongrass chicken
-2. Bò lúc lắc · shaking beef
-3. Thịt kho · caramel pork & eggs
-4. Vietnamese caramel fish
-5. Bún chả-style pork bowl
-6. Chicken bánh mì
+At research acceptance head `e6c0dad3d1017de0db5a7c0c63876328a8158379`, Railway deployment `8176f5e1-7879-4118-b4eb-2bc466b69112` succeeded after:
 
-Shared research must lock Vietnamese fish sauce, caramel/sugar technique, fresh lemongrass, nước chấm architecture, quick high-heat beef, pork-braise coconut water, pickles/herbs/noodles and bánh mì assembly before individual recipe acceptance.
+- catalogue, food-truth, food-system, intelligence and household journey audits;
+- household API, private AI, sync recovery and accessibility audits;
+- culinary re-audit and serving-policy audit;
+- all 11 cuisine/wave Phase 2 audit families;
+- aggregate `audit-phase2-100-v5.cjs`, which passed **100/100 FORMULATION LOCKED · 0/100 LIVE**, exact expansion-plan parity, all-four-serving contracts, evidence/kcal/image/cook-scale coverage, resolved prep references, and unchanged 36-live-dinner / 41-prep boundaries;
+- release-infrastructure, v3/v12 cutover and product-completion audits;
+- Next.js production compilation, TypeScript validation, static-page generation and production start.
 
-## Worklog
+## Phase 2 worklog closure
 
-### 2026-09-14 — Serving correction
+### Chinese — 15/15
+Shared Chinese soy/vinegar/Shaoxing/oyster/doubanjiang/chilli-oil and wok/velveting/roast/steam truth locked. Wave 1A was rebased from old two-serving research to the four-serving household policy; Wave 1B was researched directly at four servings.
 
-- Replaced the incorrect assumption that two diners means a two-serving cook.
-- Introduced the default four-serving household policy with a supported three-serving smaller cook.
-- Rebased live ingredient/grocery/prep/cook/UI/assistant paths without blindly doubling oils, seasonings or other nonlinear inputs.
-- Added repo-native serving and food-system regression audits and a permanent guard that Home Meals GitHub Actions stay absent.
+### Indian — 10/10
+MAKHANI/KORMA/GOLD/SAAG/tadka boundaries locked, including Butter Chicken, distinct Tikka Masala architecture and raw kidney-bean safety.
 
-### 2026-09-14 — Phase 2 research progress
+### Thai — 8/8
+Fish sauce/tamarind/palm sugar/coconut/NPP/THAI-R/direct-herb logic locked, including pantry-direct Pad Thai and corrected Tom Kha.
 
-- Chinese Wave 1: **15/15 formulation locked**.
-- Indian Wave 2: **10/10 formulation locked**, including Butter Chicken.
-- Thai Wave 3A: **8/8 formulation locked**.
-- Malaysia / Singapore / Indonesia Wave 3B: **10/10 formulation locked**.
-- Progress: **43/100 FORMULATION LOCKED, 0/100 LIVE**.
+### Malaysia / Singapore / Indonesia — 10/10
+Kecap manis, cooking caramel, belacan, coconut rice, kerisik, KARI/ASAM/SAMBAL, chicken-rice stock, satay and squid timing locked.
+
+### Vietnamese — 6/6
+Fish sauce, direct lemongrass, NUOC/nước chấm, caramel, coconut-water braise, pickles, vermicelli and bánh-mì assembly locked.
+
+### Japanese — 8/8
+DASHI, Japanese soy/mirin/sake, JP-CURRY, karaage, shioyaki, yakisoba and rice/egg technique locked.
+
+### Korean — 8/8
+Kimchi, gochujang, doenjang, K-STOCK, soy/sesame, dangmyeon, direct marinades and rolled-omelette geometry locked. The final Korean type defect in optional Japchae egg metadata was corrected before accepted deployment.
+
+### Middle Eastern / Mediterranean — 8/8
+Tahini/hummus, za'atar, sumac, kofta, falafel, couscous and halloumi logic locked.
+
+### Italian / European — 8/8
+Pasta-water emulsions, Pecorino/guanciale, RED/DUX/CLEAR boundaries, aglio e olio and frittata technique locked.
+
+### Mexican / Latin — 6/6
+Tortillas, fajita sear, taco meat, quesadilla, ranchero/RED, beans and RED+CHIPOTLE enchilada logic locked.
+
+### Everyday breakfast / lunch — 13/13
+Egg geometry, toastie/melt, Caesar/BLT, tomato soup, breakfast burrito and meal-scale salad technique locked.
+
+## Next phase — Controlled Live Promotion
+
+Research is no longer the bottleneck. The next phase is to promote the 100 researched recipes into the actual product in coherent batches: bind canonical ingredient identities and aliases; add deterministic grocery/stock/safety/allergen/reference-nutrition contracts; generate dish-faithful hero imagery from the locked briefs; expose recipes in Cook/Plan/Ask Home/history/readiness; extend route/browser/mobile acceptance; validate repo-native audits/build and Railway; then mark each promoted recipe `LIVE`.
