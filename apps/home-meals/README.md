@@ -1,81 +1,105 @@
-# Home Meals · V1
+# Home Meals
 
-Private, mobile-first household food operating system for Josh + G, intended for `meals.josh-gier.com`.
+Private, mobile-first home cooking system for Josh + G.
 
-## Product state
+Home Meals connects the dinners they actually want to eat with reusable prep, Kitchen inventory, weekly planning, groceries, cooking guidance and household memory.
 
-V1 is usable without the Phase 2 AI stack. The authoritative content is the researched freezer-first foundation and meal library, not the original UI fixture data.
+## Product model
 
-### Foundation
+Current food universe:
 
-- 6 mother bases: RED, GOLD, REMPAH, SAMBAL, DARK, BLOND
-- 15 directional mid-bases
-- 11 booster portions
-- measured 15 / 30 / 60 / 90 ml freezer language
-- First Run split into two realistic sessions rather than manufacturing the full 32-component library at once
-- First Run grocery list plus Full Library restock list
-- guided, persistent prep-day mode
-- visual cooking cues, storage rules and JB/SG notes
-- source / tutorial links on prep component pages
-- 6 mother hero images, 24 mother process images and 4 system/prep photographs
+- **8 mothers**
+- **26 mids**
+- **7 boosters**
+- **36 current dinners**
 
-### Meals
+The app is not a generic recipe site. It is a shared kitchen notebook + smart fridge door + personal sous-chef with memory.
 
-- 36 researched two-person meals across Indian, Malaysian/SEA, Thai, Chinese-style, Japanese, Korean, European/Mediterranean/Middle Eastern and Mexican-ish lanes
-- exact foundation modules + fresh ingredients
-- why each meal belongs in the system
-- balance / health rationale
-- source benchmark for technique
-- complete meal photography library
-- search/filter, recipe detail, ratings and cooking-mode timer/stepper
-- first operating week + fresh top-up checklist
-- valid-combination Meal Builder: does not invent arbitrary sauce/protein pairings
+## Food truth v2
 
-### Household state
+The canonical non-visual food engine now lives behind:
 
-- foundation freezer counts persisted locally
-- one-tap First Run inventory seeding
-- lightweight fridge and pantry counts
-- persistent grocery and prep checklists
-- Ask Home V1 grounded in the researched foundation and cookbook
-- camera surface accepts real photos; interpretation remains clearly simulated in V1
+```ts
+@/data/food-v2-index
+```
 
-## Main routes
+Key rules:
 
-- `/` — daily operating Home
-- `/prep` — foundation hub
-- `/prep/groceries` — Foundation Shop
-- `/prep/day` — guided prep sessions
-- `/prep/[slug]` — mother detail / process story
-- `/prep/mids` and `/prep/boosters` — modifier libraries
-- `/cook` — researched cookbook
-- `/cook/[slug]` — recipe detail
-- `/cook/[slug]/cook` — hands-friendly cooking mode
-- `/cook/builder` — valid-combination builder
-- `/plan` — first week + fresh top-up
-- `/kitchen` — freezer / fridge / pantry state
-- `/learn` — visual operating manual
-- `/scan` — V1 camera / scan surface
+- food quantities are unit-aware: `g`, `ml`, or `count`;
+- no implicit g ↔ ml conversions;
+- `madeFrom`, `usedWith`, and `unlocks` are different relationships;
+- made-from parents are consumed when the child prep is produced, not charged again at dinner;
+- cooked prep does not receive an invented batch yield;
+- a batch becomes Kitchen stock only after its actual finished output is weighed/measured;
+- nutrition is deterministic and remains unavailable when ingredient/product bindings or measured component density are missing;
+- allergens and safety targets come from structured data, not AI guesses;
+- camera may assess visual cooking state but may not certify internal meat/fish safety;
+- Josh/G household observations are separate from research/source confidence.
 
-## Phase 2 connection points
+See:
 
-- live vision for fridge/freezer/receipt/prep interpretation
-- realtime voice while cooking
-- household Postgres persistence / multi-device sync
-- automatic inventory deduction and receipt ingestion
-- consumption prediction / use-soon logic
-- richer recipe version history and preference learning
+- `HOME_MEALS_FOOD_ENGINE_V2.md`
+- `HOME_MEALS_V2_INTEGRATION.md`
+- `data/food-truth-v2.ts`
+- `data/prep-formulations-v2.ts`
+- `data/recipe-formulations-v2.ts`
+- `data/household-v12.ts`
 
-## Deployment
+## Frontend transition
 
-Railway project: `home-meals`
-Service: `home-meals-web`
-Root directory: `apps/home-meals`
-Source branch: `home-meals-content-v1`
+The current visible UI still mounts the legacy v11 provider while the separate UI/UX track is being rebuilt. A parallel unit-safe v12 provider and sync layer are already implemented.
 
-## Local run
+Do **not** write gram-based v2 values into the old v11 ml-only component store.
+
+Frontend cutover happens only after Kitchen, Prep, Plan, Cook and confirmation surfaces consume the new quantity/view-model contracts. The migration is deliberately conservative: old ml-only component stock and ambiguous legacy ingredient stock are archived for reconciliation rather than silently converted.
+
+## Household calibration
+
+Research can lock formulations and technique. Only the actual kitchen can prove physical yield and household preference.
+
+Batch flow:
+
+```text
+make → cool safely → weigh/measure → confirm → log exact batch stock
+```
+
+Dinner calibration can capture actual cook time, finished weight, plate weights, leftovers and Josh/G ratings. A component may be considered household-calibrated only from repeated actual observations, not from a research target.
+
+## Deterministic vs AI responsibility
+
+Deterministic engine owns:
+
+- quantities and units;
+- stock / FIFO;
+- prep demand and shortages;
+- shopping deltas;
+- validated substitutions/variants;
+- nutrition arithmetic;
+- allergens;
+- safety temperatures;
+- cook history and household ratings.
+
+AI owns:
+
+- natural-language understanding;
+- explanation and ranking among valid options;
+- conversational cooking guidance;
+- conservative interpretation of camera results;
+- combining household preferences with structured truth.
+
+AI must never invent inventory, yield, calories/macros, allergens, expiry, food temperature or household history.
+
+## Development
+
+From `apps/home-meals`:
 
 ```bash
 npm install
-npm run dev
+npm run typecheck
+npm run audit:data
+npm run build
 ```
+
+`audit:data` includes the legacy regression audit plus the v2 food-truth and full food-system audits.
+
+A dedicated GitHub Actions workflow runs typecheck, data audits and the production build for Home Meals changes.
