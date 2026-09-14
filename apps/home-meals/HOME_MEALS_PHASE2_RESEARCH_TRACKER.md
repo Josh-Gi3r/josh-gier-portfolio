@@ -1,6 +1,6 @@
 # Home Meals — Phase 2 Research Tracker
 
-Status: **IN PROGRESS — 33/100 FORMULATION LOCKED**
+Status: **IN PROGRESS — 43/100 FORMULATION LOCKED**
 Started: 2026-09-14
 Baseline before serving correction: `42ebfcfe5852135a94bf29b1e956e07382299627`
 
@@ -44,7 +44,7 @@ Default research batch: **up to 10 recipes**, while preserving cuisine/technique
 ## Overall progress
 
 - Planned expansion: **100**
-- Formulation locked: **33 / 100**
+- Formulation locked: **43 / 100**
 - Live from Phase 2: **0 / 100**
 - Household calibrated: **0 / 100**
 
@@ -56,8 +56,8 @@ Default research batch: **up to 10 recipes**, while preserving cuisine/technique
 | 1B | Chinese recipes 11–15 | 5 | 5 | 0 | FORMULATION LOCKED |
 | 2 | Indian | 10 | 10 | 0 | FORMULATION LOCKED |
 | 3A | Thai | 8 | 8 | 0 | FORMULATION LOCKED |
-| 3B | Malaysia / Singapore / Indonesia | 10 | 0 | 0 | IN PROGRESS |
-| 3C | Vietnamese | 6 | 0 | 0 | PENDING |
+| 3B | Malaysia / Singapore / Indonesia | 10 | 10 | 0 | FORMULATION LOCKED |
+| 3C | Vietnamese | 6 | 0 | 0 | IN PROGRESS |
 | 4A | Japanese | 8 | 0 | 0 | PENDING |
 | 4B | Korean | 8 | 0 | 0 | PENDING |
 | 5A | Middle Eastern / Mediterranean | 8 | 0 | 0 | PENDING |
@@ -80,16 +80,7 @@ Butter chicken · murgh makhani; Paneer makhani; Dal tadka; Rajma masala · rajm
 
 Shared Indian semantics live in `data/indian-pantry-research-v5.ts`; formulations live in `data/phase2-indian-recipes-v5.ts`.
 
-Material decisions include:
-
-- Butter Chicken and Paneer Makhani use standalone **MAKHANI** without GOLD.
-- Chicken Korma uses **KORMA** and stays tomato-free at prep level.
-- Chicken Tikka Masala uses **GOLD + RED**, not MAKHANI, preserving its onion-forward/textured distinction from Butter Chicken.
-- Dal Tadka still receives fresh tadka rather than another freezer component.
-- Rajma has explicit raw-kidney-bean safety.
-- Palak Paneer is spinach-led with restrained GOLD.
-- Aloo Gobi remains dry/semi-dry with only a small late GOLD shortcut.
-- Masala Omelette is no-base and cooked in multiple omelettes rather than an eight-egg slab.
+Material decisions include MAKHANI-only Butter Chicken/Paneer Makhani; KORMA-only Chicken Korma; GOLD+RED Chicken Tikka Masala instead of collapsing it into Butter Chicken; restrained GOLD in Dal/Palak/Aloo Gobi; explicit raw-kidney-bean safety in Rajma; and no-base Masala Omelette.
 
 ## Accepted research — Thai (8)
 
@@ -97,16 +88,26 @@ Pad Thai with prawns; Tom yum goong; Tom kha gai; Thai omelette · khai jiao; Ch
 
 Shared Thai semantics live in `data/thai-pantry-research-v5.ts`; formulations live in `data/phase2-thai-recipes-v5.ts`.
 
+Material decisions include direct pantry Pad Thai; NPP as the genuine nam-prik-pao mid for Tom Yum and Thai Cashew Chicken; direct galangal/lemongrass/makrut for Tom Kha rather than LE; dry-curry THAI-R Prik King without coconut milk; base-free larb with khao khua; and THAI-R + MASS Massaman.
+
+## Accepted research — Malaysia / Singapore / Indonesia (10)
+
+Nasi goreng kampung; Mee goreng mamak; Hainanese chicken rice; Ayam masak merah; Beef rendang; Ikan asam pedas; Kari ayam Malaysia; Nasi lemak · Home weeknight version; Chicken satay; Sambal sotong.
+
+Shared semantics live in `data/malaysia-pantry-research-v5.ts`; four-serving formulations live in `data/phase2-malaysia-recipes-v5.ts`. Malaysian cooking caramel / kicap pekat is now represented separately from kecap manis in `data/pantry-foundations-v3.ts`.
+
 Material decisions include:
 
-- Pad Thai stays pantry-sauce/direct cooking around tamarind + fish sauce + palm sugar; no freezer mid is invented.
-- Tom Yum uses existing **NPP** as a genuine nam-prik-pao component but keeps lemongrass/galangal/makrut direct.
-- Tom Kha corrects the initial plan: it does **not** use blended LE. Direct galangal, lemongrass and makrut are identity-bearing.
-- Thai Omelette is an eight-egg four-serving batch cooked as multiple omelettes.
-- Larb stays base-free and uses fresh herbs + khao khua/toasted rice powder.
-- Prik King uses **THAI-R** and is explicitly a dry curry with no coconut milk.
-- Thai Cashew Chicken uses existing **NPP** rather than inventing a new freezer sauce.
-- Massaman Chicken uses the deliberate Home hybrid **THAI-R + MASS**, with coconut, tamarind, fish sauce, palm sugar, potato, onion and peanuts built at dinner.
+- Nasi Goreng Kampung remains direct/pantry with belacan + ikan bilis + kangkung rather than forcing SAMBAL.
+- Mee Goreng Mamak keeps its own chilli + dried-shrimp + dhal + peanut paste and uses Malaysian cooking caramel; no one-off freezer mid is created.
+- Hainanese Chicken Rice corrects the initial plan: it **does not require CLEAR**. The whole chicken creates the fresh poaching liquor used for the rice and soup.
+- Ayam Masak Merah uses **RED + SAMBAL** while preserving turmeric-browned chicken and fresh onion/ginger.
+- Beef Rendang uses **RENDANG + LE** only; it does not double-charge REMPAH because RENDANG physically contains that parent. Kerisik and the tender-then-dry reduction remain dinner-specific.
+- Ikan Asam Pedas uses **ASAM** plus dinner-time tamarind and fresh herbs.
+- Kari Ayam Malaysia uses **KARI** plus chicken marinade, potatoes, onion, lemongrass, curry leaves and coconut at dinner.
+- Nasi Lemak uses **SAMBAL** as its only prep dependency; coconut rice, ikan bilis, peanuts, egg and cucumber stay distinct.
+- Chicken Satay remains no-base with a fresh aromatic marinade and separately cooked peanut sauce.
+- Sambal Sotong uses **SAMBAL**, but all sauce reduction happens before squid is added for a brief finish.
 
 ## Current live-system serving rebase status
 
@@ -135,20 +136,16 @@ The serving-scale correction applies to the existing live system, not only futur
 - `FORMULATION_LOCKED` does not make a recipe selectable in Cook/Plan; live promotion requires catalogue/grocery/stock/safety/image integration and release acceptance.
 - Home Meals intentionally does **not** use GitHub Actions. Validation uses repo-native audits/build logic and Railway deployment evidence.
 
-## Next research batch — Wave 3B Malaysia / Singapore / Indonesia
+## Next research batch — Wave 3C Vietnamese
 
-1. Nasi goreng kampung
-2. Mee goreng mamak
-3. Hainanese chicken rice
-4. Ayam masak merah
-5. Beef rendang
-6. Ikan asam pedas
-7. Kari ayam Malaysia
-8. Nasi lemak · home weeknight version
-9. Chicken satay
-10. Sambal sotong
+1. Vietnamese lemongrass chicken
+2. Bò lúc lắc · shaking beef
+3. Thịt kho · caramel pork & eggs
+4. Vietnamese caramel fish
+5. Bún chả-style pork bowl
+6. Chicken bánh mì
 
-Shared research must lock kecap manis, belacan, coconut milk/rice, tamarind, sambal/rempah relationships, Hainanese poaching stock, kerisik/rendang reduction, Malaysian curry powder/paste, satay marinade/peanut sauce and squid high-heat timing before individual acceptance.
+Shared research must lock Vietnamese fish sauce, caramel/sugar technique, fresh lemongrass, nước chấm architecture, quick high-heat beef, pork-braise coconut water, pickles/herbs/noodles and bánh mì assembly before individual recipe acceptance.
 
 ## Worklog
 
@@ -159,9 +156,10 @@ Shared research must lock kecap manis, belacan, coconut milk/rice, tamarind, sam
 - Rebased live ingredient/grocery/prep/cook/UI/assistant paths without blindly doubling oils, seasonings or other nonlinear inputs.
 - Added repo-native serving and food-system regression audits and a permanent guard that Home Meals GitHub Actions stay absent.
 
-### 2026-09-14 — Chinese + Indian + Thai research
+### 2026-09-14 — Phase 2 research progress
 
 - Chinese Wave 1: **15/15 formulation locked**.
 - Indian Wave 2: **10/10 formulation locked**, including Butter Chicken.
 - Thai Wave 3A: **8/8 formulation locked**.
-- Progress: **33/100 FORMULATION LOCKED, 0/100 LIVE**.
+- Malaysia / Singapore / Indonesia Wave 3B: **10/10 formulation locked**.
+- Progress: **43/100 FORMULATION LOCKED, 0/100 LIVE**.
