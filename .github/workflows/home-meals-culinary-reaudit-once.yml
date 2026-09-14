@@ -16,89 +16,27 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: main
-      - name: Apply culinary re-audit corrections
+      - name: Surface reference kcal and meal weight
         run: |
           python - <<'PY'
           from pathlib import Path
-
-          def read(rel): return Path(rel).read_text()
-          def write(rel,s): Path(rel).write_text(s)
-          def one(s,old,new,label):
-              if old not in s: raise SystemExit(f'missing target: {label}')
-              return s.replace(old,new,1)
-          def block(s,rid):
-              start=s.index(f'R("{rid}",[')
-              nxt=s.find('\nR("',start+4)
-              end=nxt if nxt!=-1 else s.index('\n];',start)
-              return start,end,s[start:end]
-          def patch_block(s,rid,replacements):
-              start,end,b=block(s,rid)
-              for old,new,label in replacements: b=one(b,old,new,f'{rid}: {label}')
-              return s[:start]+b+s[end:]
-
-          # Component truth: pad kra pao sauce dose now follows the current 2-person reference formula.
-          p='apps/home-meals/data/food-truth-v2.ts';s=read(p)
-          marker='c({ id:"krapow", code:"KRAPOW", name:"Pad-kra-pao seasoning sauce"'
-          a=s.index(marker);z=s.index('\n',a);line=s[a:z]
-          line=one(line,'workingUnit:q(30,"ml")','workingUnit:q(45,"ml")','KRAPOW working unit')
-          s=s[:a]+line+s[z:]
-          s=one(s,'"pad-kra-pao":[r("garlic",15,"g"),r("chilli",15,"g"),r("krapow",30,"ml")]', '"pad-kra-pao":[r("garlic",15,"g"),r("chilli",15,"g"),r("krapow",45,"ml")]', 'pad kra pao KRAPOW requirement')
-          write(p,s)
-
-          # Dinner formulations: locally conservative poultry/ground-meat endpoint, missing starches, pad kra pao and Massaman fixes.
-          p='apps/home-meals/data/recipe-formulations-v2.ts';s=read(p)
-          s=one(s,'const CHICKEN=74,FISH=63,WHOLE_BEEF=63,GROUND_MEAT=71;','const CHICKEN=75,FISH=63,WHOLE_BEEF=63,GROUND_MEAT=75;','SFA-aligned meat endpoints')
-          s=patch_block(s,'gold-punjabi-egg-curry',[
-            ('i("coriander","Fresh coriander",10,"g","fresh")','i("coriander","Fresh coriander",10,"g","fresh"),i("basmati-rice-dry","Basmati rice",100,"g","dry")','explicit rice'),
-            ('["saucepan or deep skillet"]','["saucepan or deep skillet","rice cooker or saucepan"]','rice equipment'),
-            ('],[s("Optional but better textured:','],[s("Cook the rice separately."),s("Optional but better textured:','rice step')
-          ])
-          s=patch_block(s,'thai-red-chicken',[
-            ('i("makrut-lime","Makrut lime leaves",3,"count","fresh")','i("makrut-lime","Makrut lime leaves",3,"count","fresh"),i("jasmine-rice-dry","Jasmine rice",100,"g","dry")','explicit rice'),
-            ('["saucepan","digital thermometer"]','["saucepan","rice cooker or saucepan","digital thermometer"]','rice equipment'),
-            ('],[s("Fry THAI-R','],[s("Cook the rice separately."),s("Fry THAI-R','rice step')
-          ])
-          s=patch_block(s,'massaman-beef',[
-            ('i("coconut-milk","Coconut milk",400,"ml","prepared")','i("coconut-milk","Coconut milk",400,"ml","prepared"),i("water","Water",400,"ml")','braising liquid'),
-            ('s("Braise gently until beef begins to tenderise; then add potato and onion.")','s("Add water and braise gently, covered, until the beef is genuinely fork-tender, usually 90–120 minutes for chuck; only then add potato and onion.",true,"Beef yields easily to a fork before potato goes in.")','fork-tender braise')
-          ])
-          s=patch_block(s,'pad-kra-pao',[
-            ('i("ground-chicken","Ground chicken thigh",350,"g"),i("holy-basil"','i("ground-chicken","Ground chicken thigh",350,"g"),i("fish-sauce","Fish sauce for seasoning the raw chicken",5,"ml","prepared"),i("onion-yellow","Onion, thinly sliced",50,"g","fresh"),i("water","Water",30,"ml"),i("holy-basil"','direct seasoning + onion + water'),
-            ('s("Heat wok very hot; fry G and CH briefly.")','s("Heat wok very hot; fry G and CH briefly, then add onion and stir-fry until just translucent.")','onion step'),
-            ('s("Add ground chicken and cook quickly without drying it out.")','s("Season the ground chicken with the measured fish sauce, add it to the wok and cook quickly without drying it out.")','raw protein seasoning'),
-            ('s("Add KRAPOW and toss until glossy; cook chicken to the safety target.','s("Add KRAPOW with the measured water and toss until glossy; cook chicken to the safety target.','sauce water')
-          ])
-          write(p,s)
-
-          # Safety policy: use Singapore's >=75C household endpoint for poultry and ground meat.
-          p='apps/home-meals/data/food-safety-v2.ts';s=read(p)
-          s=one(s,'const poultry: SafetyTargetV2 = { kind:"poultry", minimumC:74, source:"USDA_FSIS" };','const poultry: SafetyTargetV2 = { kind:"poultry", minimumC:75, source:"SFA" };','poultry safety')
-          s=one(s,'const groundMeat: SafetyTargetV2 = { kind:"ground-meat", minimumC:71, source:"USDA_FSIS" };','const groundMeat: SafetyTargetV2 = { kind:"ground-meat", minimumC:75, source:"SFA" };','ground meat safety')
-          write(p,s)
-
-          # Recipe truth: where the intended meal copy already called for rice, make it explicit in grocery/planning truth.
-          p='apps/home-meals/data/recipe-truth-v2.ts';s=read(p)
-          s=one(s,'"gold-chicken-curry":{id:"basmati-rice",qty:120,unit:"g",basis:"dry"},','"gold-chicken-curry":{id:"basmati-rice",qty:120,unit:"g",basis:"dry"},\n  "gold-punjabi-egg-curry":{id:"basmati-rice",qty:100,unit:"g",basis:"dry"},','egg curry explicit starch')
-          s=one(s,'"thai-green-chicken":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},','"thai-green-chicken":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},\n  "thai-red-chicken":{id:"jasmine-rice",qty:100,unit:"g",basis:"dry"},','red curry explicit starch')
-          write(p,s)
-
-          # Historical display/research layer must agree with the canonical corrections users see in cards and time estimates.
-          p='apps/home-meals/data/meals-researched.ts';s=read(p)
-          s=one(s,'"coriander 10 g"],steps:["Warm oil and green chilli."','"coriander 10 g","basmati rice 2 small portions"],steps:["Cook the rice separately.","Warm oil and green chilli."','egg curry display rice')
-          s=one(s,'"Thai basil 15 g","makrut lime leaves 3"],steps:["Fry THAI-R','"Thai basil 15 g","makrut lime leaves 3","jasmine rice 2 modest portions"],steps:["Cook the rice separately.","Fry THAI-R','thai red display rice')
-          s=one(s,'cuisine:"Thai",time:70,method:"braise",difficulty:"Weekend"','cuisine:"Thai",time:150,method:"braise",difficulty:"Weekend"','massaman time')
-          s=one(s,'"coconut milk 400 ml","potatoes 300 g"','"coconut milk 400 ml","water 400 ml","potatoes 300 g"','massaman water')
-          s=one(s,'"Simmer gently until beef begins to tenderise, then add potato and onion."','"Add water and simmer gently, covered, until beef is genuinely fork-tender, usually 90–120 minutes for chuck; then add potato and onion."','massaman braise step') if '"Simmer gently until beef begins to tenderise, then add potato and onion."' in s else s
-          # Current old copy uses a slightly different wording; patch that form too when present.
-          if '"Simmer gently until beef begins to tenderise, then add potato and onion."' not in s and '"Simmer gently until beef begins to tenderise, then add potato and onion."' not in s: pass
-          s=one(s,'parts:[p("GG",1,15),p("CH",1,15)],ingredients:["ground chicken or pork 350 g"','parts:[p("GG",1,15),p("CH",1,15),p("KRAPOW",1,45)],ingredients:["ground chicken or pork 350 g","fish sauce 5 ml","onion 50 g","water 30 ml"','pad kra pao legacy parts')
-          s=one(s,'"Stir-fry GG and CH briefly, then add meat and cook over high heat.","Add fish sauce, oyster sauce, soy and sugar; toss until glossy."','"Stir-fry GG and CH briefly, add onion, then add seasoned meat and cook over high heat.","Add KRAPOW with water; toss until glossy."','pad kra pao display method')
-          write(p,s)
+          p=Path('apps/home-meals/components/app/Recipe.tsx')
+          s=p.read_text()
+          reps=[
+            ('import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";','import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";\nimport {kcalReferenceForV3} from "@/data/recipe-kcal-reference-v3";'),
+            ('if(!f||!truth)throw new Error(`Missing canonical dinner formulation: ${id}`);const ready=useReadiness()(r);','if(!f||!truth)throw new Error(`Missing canonical dinner formulation: ${id}`);const ready=useReadiness()(r);const kcal=kcalReferenceForV3(id);'),
+            ('<div className="hm-stats four"><Stat v={r.minutes} k="reference min"/><Stat v="—" k="kcal" tint="var(--tint-peach)"/><Stat v="—" k="protein"/><Stat v={f.targetServings} k="target servings" tint="var(--tint-sky)"/></div>','<div className="hm-stats four"><Stat v={r.minutes} k="reference min"/><Stat v={kcal?`~${kcal.kcalPerPerson}`:"—"} k="kcal / person" tint="var(--tint-peach)"/><Stat v={kcal?kcal.mealWeight:"—"} k="meal weight"/><Stat v={f.targetServings} k="target servings" tint="var(--tint-sky)"/></div>'),
+            ('<div className="hm-fine">Nutrition appears only after component yield + product-label truth is resolved · {r.method} · {r.difficulty}</div>','<div className="hm-fine">{kcal?`Reference energy estimate · ±${kcal.uncertaintyPct}% until measured prep yield + product-label truth resolves`:"Energy not yet estimated"} · {r.method} · {r.difficulty}</div>')
+          ]
+          for old,new in reps:
+              if old not in s: raise SystemExit('Recipe kcal UI target not found: '+old[:100])
+              s=s.replace(old,new,1)
+          p.write_text(s)
           PY
-      - name: Commit corrections
+      - name: Commit patch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/home-meals/data/food-truth-v2.ts apps/home-meals/data/recipe-formulations-v2.ts apps/home-meals/data/food-safety-v2.ts apps/home-meals/data/recipe-truth-v2.ts apps/home-meals/data/meals-researched.ts
-          git commit -m "Home Meals: apply culinary re-audit corrections"
+          git add apps/home-meals/components/app/Recipe.tsx
+          git commit -m "Home Meals: show reference kcal and meal weight"
           git push origin HEAD:main
