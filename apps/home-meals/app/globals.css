@@ -1,2 +1,3 @@
-/* The Home Meals design system. One stylesheet: tokens, shell, components, screens. */
+/* The Home Meals design system. Core v3 styles plus completion/accessibility guardrails. */
 @import "./styles/home-meals.css";
+@import "./styles/completion.css";
