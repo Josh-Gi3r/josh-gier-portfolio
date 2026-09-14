@@ -16,7 +16,17 @@ export const phase2RecipeAssetsV7:Readonly<Record<string,string>>={
   "beef-chow-fun":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_201544_1d2f841f-e5b8-4bee-a6c6-81d88212de1a_min.webp",
   "chicken-chow-mein":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_201556_31753eb1-1768-4da8-8d03-45e5ad67d019_min.webp",
   "egg-fried-rice":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_201604_037949b7-3a34-4e98-91a4-a30a16a37594_min.webp",
-  "salt-pepper-prawns":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_201610_33803932-a638-4acf-8900-b93cca8b7cf1_min.webp"
+  "salt-pepper-prawns":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_201610_33803932-a638-4acf-8900-b93cca8b7cf1_min.webp",
+  "butter-chicken":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202843_2d3f3d2a-d21f-4054-9b04-ff66b48d8cd7_min.webp",
+  "paneer-makhani":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202843_87ed2f8b-34b7-4637-b6d5-db5f50066acb_min.webp",
+  "dal-tadka":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202843_4d6cd1ed-6d02-42d5-a7b4-be011e9613d1_min.webp",
+  "rajma-masala":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202845_331d7480-321a-49c8-bbfe-7e8feca13fd0_min.webp",
+  "chicken-korma":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202843_8f1bd810-adb1-4b5f-82a3-20e221211180_min.webp",
+  "chicken-tikka-masala":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202843_526464fb-7ae8-4a3a-88fd-06cfa64f012c_min.webp",
+  "keema-matar":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202855_f68e632d-0e20-41ce-a194-af2cfdff8e1d_min.webp",
+  "palak-paneer":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202855_52865dc9-e0b4-41de-a605-2dcc9dfb1e35_min.webp",
+  "aloo-gobi":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202855_2a0c74da-c289-40c8-9174-bc5aa70b207b_min.webp",
+  "masala-omelette":"https://d8j0ntlcm91z4.cloudfront.net/user_33B38CK6rN3xZGtZllRALJXPhHT/hf_20260914_202855_52f4c088-2a1d-47d7-9b00-f0da92f1ba34_min.webp"
 };
 export function getPhase2RecipeAssetV7(recipeId:string){return phase2RecipeAssetsV7[recipeId]}
 export function validatePhase2RecipeAssetsV7(){const errors:string[]=[];for(const id of livePhase2RecipeIdsV7){const url=phase2RecipeAssetsV7[id];if(!url)errors.push(`${id}: live recipe has no hero image`);else if(!/^https:\/\//.test(url)&&!url.startsWith("/"))errors.push(`${id}: invalid hero image URL`)}return{valid:errors.length===0,errors,liveRequired:livePhase2RecipeIdsV7.length,assets:Object.keys(phase2RecipeAssetsV7).length}}
