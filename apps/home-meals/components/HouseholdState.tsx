@@ -1,7 +1,7 @@
 "use client";
 import {createContext,useContext,useEffect,useMemo,useState} from "react";
 import {getIngredient,ingredients,recipes} from "@/data/home-data";
-import {quantity,type QuantityUnit} from "@/data/food-quantity";
+import {quantity,type Quantity,type QuantityUnit} from "@/data/food-quantity";
 import {getCanonicalPrepV2} from "@/data/food-truth-v2";
 import {canonicalIngredientKeyV2,getCanonicalIngredientV2} from "@/data/ingredient-catalog-v2";
 import type {PrepBatchV2} from "@/data/food-engine-v2";
@@ -27,7 +27,7 @@ function safePhotos(raw:string|null):MealPhoto[]{if(!raw)return[];try{const valu
 export type HouseholdUiState={
  week:string[];monthlyPool:string[];activePrepIds:string[];componentStock:Record<string,number>;ingredientStock:Record<string,number>;groceryChecked:Record<string,boolean>;ratings:Record<string,Rating>;recipeNotes:Record<string,RecipeNote[]>;recipeVersions:Record<string,RecipeVersion[]>;mealPhotos:MealPhoto[];history:{mealId:string;variantId?:string;at:string}[];prepBatches:PrepBatchUi[];kitchenReady:boolean;useSoon:Record<string,boolean>;useSoonAt:Record<string,string>;favourites:Record<string,boolean>;storageIssue:boolean;migrationWarnings:string[];
  prepNeeds:PrepNeedCompat[];shoppingNeeds:ShoppingNeedCompat[];
- setDay:(index:number,mealId:string)=>void;toggleMonthlyPool:(recipeId:string)=>void;setActivePrepSet:(ids:readonly string[])=>void;toggleActivePrep:(id:string,active?:boolean)=>void;setComponent:(id:string,qty:number)=>void;setIngredient:(id:string,qty:number)=>void;toggleGrocery:(id:string)=>void;makeBatch:(id:string)=>void;recordMeasuredProduction:(id:string,qty:number,unit?:QuantityUnit)=>void;recordPortionedProduction:(id:string,workingPortions:number)=>void;cookMeal:(mealId:string,variantId?:string)=>boolean;logMealWithoutStock:(mealId:string,variantId?:string)=>void;recordCookObservation:(observation:RecipeCookObservationV2)=>void;rateMeal:(mealId:string,who:"josh"|"g",value:number)=>void;noteMeal:(mealId:string,note:string,author?:"josh"|"g"|"home")=>void;promoteRecipeVersion:(mealId:string,summary:string,author?:"josh"|"g"|"home")=>void;saveMealPhoto:(mealId:string,dataUrl:string)=>void;confirmKitchen:()=>void;confirmEmptyKitchen:()=>void;toggleUseSoon:(id:string)=>void;toggleFavourite:(recipeId:string)=>void;clearStorageIssue:()=>void;resetDemo:()=>void;
+ setDay:(index:number,mealId:string)=>void;toggleMonthlyPool:(recipeId:string)=>void;setActivePrepSet:(ids:readonly string[])=>void;toggleActivePrep:(id:string,active?:boolean)=>void;setComponent:(id:string,qty:number)=>void;setIngredient:(id:string,qty:number)=>void;toggleGrocery:(id:string)=>void;makeBatch:(id:string)=>void;recordMeasuredProduction:(id:string,measuredOutput:Quantity,recipeVersion?:string)=>void;recordPortionedProduction:(id:string,workingPortions:number)=>void;cookMeal:(mealId:string,variantId?:string)=>boolean;logMealWithoutStock:(mealId:string,variantId?:string)=>void;recordCookObservation:(observation:RecipeCookObservationV2)=>void;rateMeal:(mealId:string,who:"josh"|"g",value:number)=>void;noteMeal:(mealId:string,note:string,author?:"josh"|"g"|"home")=>void;promoteRecipeVersion:(mealId:string,summary:string,author?:"josh"|"g"|"home")=>void;saveMealPhoto:(mealId:string,dataUrl:string)=>void;confirmKitchen:()=>void;confirmEmptyKitchen:()=>void;toggleUseSoon:(id:string)=>void;toggleFavourite:(recipeId:string)=>void;clearStorageIssue:()=>void;resetDemo:()=>void;
 };
 const Ctx=createContext<HouseholdUiState|null>(null);
 
@@ -48,8 +48,8 @@ function Bridge({children}:{children:React.ReactNode}){
  const setIngredient=(id:string,qty:number)=>{const item=getIngredient(id);if(item?.tracking==="state"){v.setQualitativeIngredientLevel(id,qty);return}const key=canonicalIdForUi(id,item?.unit),def=getCanonicalIngredientV2(key);if(!def){setStorageIssue(true);return}v.setIngredientObserved(key,quantity(Math.max(0,qty),def.canonicalUnit))};
  const toggleGrocery=(id:string)=>v.toggleGrocery(canonicalIdForUi(id,getIngredient(id)?.unit));
  const toggleUseSoon=(id:string)=>v.toggleUseSoon(canonicalIdForUi(id,getIngredient(id)?.unit));
- const makeBatch=(_id:string)=>{console.warn("Home Meals v12 logs prep by standardized working portions rather than assumed batch yield.")};
- const recordMeasuredProduction=(id:string,qty:number,unit?:QuantityUnit)=>{const c=getCanonicalPrepV2(id);if(!c||!(qty>0))return;v.recordMeasuredProduction(id,quantity(qty,unit??c.workingUnit.unit),"culinary-verified-v2")};
+ const makeBatch=(_id:string)=>{console.warn("Home Meals v12 logs prep by measured finished output rather than assumed batch yield.")};
+ const recordMeasuredProduction=(id:string,measuredOutput:Quantity,recipeVersion="portion-v6")=>{const c=getCanonicalPrepV2(id);if(!c||!(measuredOutput.qty>0)||measuredOutput.unit!==c.workingUnit.unit)return;v.recordMeasuredProduction(id,measuredOutput,recipeVersion)};
  const recordPortionedProduction=(id:string,workingPortions:number)=>{if(!(workingPortions>0))return;v.recordPortionedProduction(id,workingPortions,"culinary-verified-v2")};
  const saveMealPhoto=(mealId:string,dataUrl:string)=>{if(!validRecipeIds.has(mealId)||!dataUrl.startsWith("data:image/")||dataUrl.length>=900000){setStorageIssue(true);return}setMealPhotos(prev=>[{mealId,dataUrl,at:new Date().toISOString()},...prev.filter(p=>p.mealId!==mealId)].slice(0,8))};
  const resetDemo=()=>{v.resetV12();setMealPhotos([]);try{localStorage.removeItem(PHOTOS_KEY)}catch{}setStorageIssue(false)};const clearStorageIssue=()=>setStorageIssue(false);
