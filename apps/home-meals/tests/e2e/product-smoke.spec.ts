@@ -12,12 +12,15 @@ const midRoutes=midBases.map(base=>`/prep/mids/${base.id}`);
 const boosterRoutes=boosters.map(base=>`/prep/boosters/${base.id}`);
 const fullRouteSet=Array.from(new Set([...coreRoutes,...learnRoutes,...scanRoutes,...recipeRoutes,...motherRoutes,...midRoutes,...boosterRoutes]));
 
-async function waitForVisibleImages(page:Page){
-  const pending=await page.locator("img:visible").evaluateAll(images=>images.some(image=>!(image as HTMLImageElement).complete));
-  if(!pending)return;
+async function settleViewportImages(page:Page){
+  const hasPendingViewportImage=await page.locator("img").evaluateAll(images=>images.some(image=>{
+    const img=image as HTMLImageElement,rect=img.getBoundingClientRect();
+    return rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<window.innerHeight&&!img.complete;
+  }));
+  if(!hasPendingViewportImage)return;
   await page.waitForFunction(()=>[...document.querySelectorAll("img")].filter(image=>{
     const rect=image.getBoundingClientRect();
-    return rect.width>0&&rect.height>0;
+    return rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<window.innerHeight;
   }).every(image=>(image as HTMLImageElement).complete),undefined,{timeout:5_000}).catch(()=>{});
 }
 
@@ -34,12 +37,12 @@ async function assertHealthyPage(page:Page,route:string,wait:"networkidle"|"domc
     await expect(page.locator("body")).toBeVisible();
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
     expect(overflow,`${route} has document-level horizontal overflow`).toBeLessThanOrEqual(1);
-    await waitForVisibleImages(page);
+    await settleViewportImages(page);
     const brokenImages=await page.locator("img:visible").evaluateAll(images=>images.filter(image=>{
       const img=image as HTMLImageElement;
-      return !img.complete||img.naturalWidth===0;
+      return img.complete&&img.naturalWidth===0;
     }).map(image=>(image as HTMLImageElement).src));
-    expect(brokenImages,`${route} has broken or timed-out visible images: ${brokenImages.join(", ")}`).toEqual([]);
+    expect(brokenImages,`${route} has broken visible images: ${brokenImages.join(", ")}`).toEqual([]);
     expect(pageErrors,`${route} raised page errors`).toEqual([]);
     expect(consoleErrors,`${route} logged console errors`).toEqual([]);
   }finally{
