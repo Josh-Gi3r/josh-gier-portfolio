@@ -5,9 +5,9 @@ must(/aria-label=\{`Find in the \$\{tab\.toLowerCase\(\)\}`\}/,'Kitchen search f
 must(/role="tablist" aria-label="Kitchen sections"/,'Kitchen tab group needs an accessible name');
 must(/aria-label="Clear Kitchen search"/,'Kitchen search clear button needs a meaningful name');
 must(/aria-label=\{`Edit \$\{m\.name\}`\}/,'mother image-only edit control needs a meaningful name');
-must(/aria-label=\{`Remove one \$\{m\.name\} working portion`\}/,'mother decrement control needs a meaningful name');
-must(/aria-label=\{`Add one \$\{m\.name\} working portion`\}/,'mother increment control needs a meaningful name');
+must(/aria-label=\{`Remove one \$\{m\.name\} \$\{packetNoun\(x\.policy\.kind\)\}`\}/,'mother decrement packet control needs a meaningful name');
+must(/aria-label=\{`Add one \$\{m\.name\} \$\{packetNoun\(x\.policy\.kind\)\}`\}/,'mother increment packet control needs a meaningful name');
 must(/aria-label=\{`Edit \$\{c\.name\}`\}/,'mid/booster image-only edit control needs a meaningful name');
-must(/aria-label=\{`Remove one \$\{c\.name\} working portion`\}/,'mid/booster decrement control needs a meaningful name');
-must(/aria-label=\{`Add one \$\{c\.name\} working portion`\}/,'mid/booster increment control needs a meaningful name');
-if(failures.length){console.error(`\nHome Meals Kitchen accessibility audit FAILED (${failures.length})`);for(const f of failures)console.error(` - ${f}`);process.exitCode=1}else console.log('\nHome Meals Kitchen accessibility audit passed · search · tabs · image controls · portion steppers labelled');
+must(/aria-label=\{`Remove one \$\{c\.name\} \$\{packetNoun\(x\.policy\.kind\)\}`\}/,'mid/booster decrement packet control needs a meaningful name');
+must(/aria-label=\{`Add one \$\{c\.name\} \$\{packetNoun\(x\.policy\.kind\)\}`\}/,'mid/booster increment packet control needs a meaningful name');
+if(failures.length){console.error(`\nHome Meals Kitchen accessibility audit FAILED (${failures.length})`);for(const f of failures)console.error(` - ${f}`);process.exitCode=1}else console.log('\nHome Meals Kitchen accessibility audit passed · search · tabs · image controls · V6 packet steppers labelled');
