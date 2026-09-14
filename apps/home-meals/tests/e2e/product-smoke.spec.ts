@@ -12,6 +12,15 @@ const midRoutes=midBases.map(base=>`/prep/mids/${base.id}`);
 const boosterRoutes=boosters.map(base=>`/prep/boosters/${base.id}`);
 const fullRouteSet=Array.from(new Set([...coreRoutes,...learnRoutes,...scanRoutes,...recipeRoutes,...motherRoutes,...midRoutes,...boosterRoutes]));
 
+async function waitForVisibleImages(page:Page){
+  const pending=await page.locator("img:visible").evaluateAll(images=>images.some(image=>!(image as HTMLImageElement).complete));
+  if(!pending)return;
+  await page.waitForFunction(()=>[...document.querySelectorAll("img")].filter(image=>{
+    const rect=image.getBoundingClientRect();
+    return rect.width>0&&rect.height>0;
+  }).every(image=>(image as HTMLImageElement).complete),undefined,{timeout:5_000}).catch(()=>{});
+}
+
 async function assertHealthyPage(page:Page,route:string,wait:"networkidle"|"domcontentloaded"="networkidle"){
   const pageErrors:string[]=[];
   const consoleErrors:string[]=[];
@@ -23,11 +32,14 @@ async function assertHealthyPage(page:Page,route:string,wait:"networkidle"|"domc
     expect(response,`${route} returned no main-document response`).not.toBeNull();
     expect(response!.status(),`${route} returned HTTP ${response!.status()}`).toBeLessThan(400);
     await expect(page.locator("body")).toBeVisible();
-    await page.waitForTimeout(35);
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
     expect(overflow,`${route} has document-level horizontal overflow`).toBeLessThanOrEqual(1);
-    const brokenImages=await page.locator("img:visible").evaluateAll(images=>images.filter(image=>!(image as HTMLImageElement).complete||(image as HTMLImageElement).naturalWidth===0).map(image=>(image as HTMLImageElement).src));
-    expect(brokenImages,`${route} has broken visible images: ${brokenImages.join(", ")}`).toEqual([]);
+    await waitForVisibleImages(page);
+    const brokenImages=await page.locator("img:visible").evaluateAll(images=>images.filter(image=>{
+      const img=image as HTMLImageElement;
+      return !img.complete||img.naturalWidth===0;
+    }).map(image=>(image as HTMLImageElement).src));
+    expect(brokenImages,`${route} has broken or timed-out visible images: ${brokenImages.join(", ")}`).toEqual([]);
     expect(pageErrors,`${route} raised page errors`).toEqual([]);
     expect(consoleErrors,`${route} logged console errors`).toEqual([]);
   }finally{
@@ -40,12 +52,20 @@ test.describe("canonical 390px household app",()=>{
 });
 
 test(`full catalogue route crawl (${fullRouteSet.length} routes)`,async({page})=>{
-  test.setTimeout(180_000);
+  test.setTimeout(240_000);
   for(const route of fullRouteSet)await assertHealthyPage(page,route,"domcontentloaded");
 });
 
-test("primary app navigation remains usable on phone",async({page})=>{
+test("first-run truth gates navigation, then primary navigation remains usable",async({page})=>{
   await page.goto("/",{waitUntil:"networkidle"});
+  const dialog=page.getByRole("dialog",{name:"Start Home Meals"});
+  await expect(dialog).toBeVisible();
+  const cookBeforeSetup=page.getByRole("link",{name:/^Cook$/i}).last();
+  await expect(cookBeforeSetup).toBeVisible();
+  await expect(dialog).toContainText("Unknown and empty are different");
+  await dialog.getByRole("button",{name:/Kitchen is empty/i}).click();
+  await expect(page).toHaveURL(/\/prep$/);
+  await expect(dialog).toBeHidden();
   for(const [label,path] of [["Cook","/cook"],["Prep","/prep"],["Kitchen","/kitchen"],["Plan","/plan"],["Home","/"]] as const){
     const link=page.getByRole("link",{name:new RegExp(`^${label}$`,"i")}).last();
     await expect(link).toBeVisible();
