@@ -18,8 +18,10 @@ mustNot('components/HouseholdState.tsx',/portionMl/,'runtime bridge still uses l
 must('data/household-v12.ts',/activePrepIds:string\[\]/,'v12 state must persist active prep repertoire');
 must('data/household-v12.ts',/confirmEmptyKitchenV12/,'v12 state must distinguish confirmed empty from unknown Kitchen');
 
-must('components/app/Recipe.tsx',/getDinnerFormulationV2/,'recipe page is not rendering canonical v2 formulation');
-must('components/app/Cooking.tsx',/getDinnerFormulationV2/,'cooking mode is not rendering canonical v2 formulation');
+must('components/app/Recipe.tsx',/getRuntimeDinnerFormulationV4/,'recipe page is not rendering four-serving runtime formulation');
+must('components/app/Cooking.tsx',/getRuntimeDinnerFormulationV4/,'cooking mode is not rendering four-serving runtime formulation');
+must('data/runtime-dinner-v4.ts',/getDinnerFormulationV2/,'runtime formulation must retain v2 culinary reference provenance');
+must('data/runtime-dinner-v4.ts',/targetServings:servings/,'runtime formulation must expose selected household cook servings');
 must('components/app/PrepDay.tsx',/recordPortionedProduction/,'Prep Day must log usable standardized working portions');
 mustNot('components/app/PrepDay.tsx',/batchOutputMl|batchYield|portionMl/,'Prep Day still contains assumed batch-yield arithmetic');
 for(const rel of ['components/app/Kitchen.tsx','components/app/StockSheets.tsx','components/app/Scan.tsx','components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx'])mustNot(rel,/batchOutputMl|batchYield|portionMl/,'active stock/prep UI still contains legacy quantity assumptions');
@@ -59,6 +61,7 @@ must('app/api/ask-home/route.ts',/set_week/,'Ask Home API must support complete 
 must('data/assistant-context-v2.ts',/qualitativeStock/,'assistant context must preserve qualitative pantry truth');
 must('data/assistant-context-v2.ts',/mealHistory/,'assistant context must include deterministic meal history');
 must('data/assistant-context-v2.ts',/activePrep/,'assistant context must include active prep repertoire and expansion value');
+must('data/assistant-context-v2.ts',/default cook batch is four servings/,'assistant context must preserve household cook-scale truth');
 
 const motherHeroes=read('data/mother-hero-assets.ts');for(const id of ['red','blond','gold','sambal','rempah','clear','dark','onion'])if(!new RegExp(`\\b${id}:hf\\(`).test(motherHeroes))fail(`mother hero missing: ${id}`);
 const processes=read('data/mother-process-assets.ts');for(const id of ['red','blond','gold','sambal','rempah','clear','dark','onion'])if(!new RegExp(`\\b${id}:\\[`).test(processes))fail(`mother process sequence missing: ${id}`);
@@ -72,4 +75,4 @@ must('components/app/Boosters.tsx',/prepHero/,'Boosters must render prep photogr
 for(const rel of ['components/app/Home.tsx','components/app/Cook.tsx','components/app/Recipe.tsx','components/app/Cooking.tsx','components/app/Plan.tsx','components/app/Builder.tsx'])mustNot(rel,/recipe-nutrition|nutritionFor\s*\(/,'active v3 UI still consumes placeholder nutrition');
 const nutrition=read('data/recipe-nutrition.ts');if(/"[a-z0-9-]+"\s*:\s*\{\s*kcal/i.test(nutrition))fail('data/recipe-nutrition.ts still contains hard-coded recipe nutrition');
 
-if(failures.length){console.error(`\nHome Meals v3/v12 cutover audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals v3/v12 cutover audit passed · v3 design preserved · repertoire/history/AI flows locked · complete prep imagery · portion-first prep · no placeholder nutrition or assumed prep yields');
+if(failures.length){console.error(`\nHome Meals v3/v12 cutover audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals v3/v12 cutover audit passed · v3 design preserved · v12 state + four-serving runtime locked · repertoire/history/AI flows locked · complete prep imagery · portion-first prep · no placeholder nutrition or assumed prep yields');
