@@ -4,7 +4,6 @@ import {useMemo,useState,type CSSProperties} from "react";
 import {useHousehold} from "../HouseholdState";
 import {baseRecipesV2} from "@/data/base-recipes-v2";
 import {motherProcessImages} from "@/data/mother-process-assets";
-import {findMother} from "@/data/foundation";
 import {midBases,motherBases,recipes} from "@/data/home-data";
 import {batchOutputMl,prepDemandForWeekMl,stockPortions} from "@/data/stock-math";
 import {freezerAge} from "@/data/freezer-guide";
@@ -15,7 +14,7 @@ import {MealTile,RoundBack,SectionHead,Sheet,Toast} from "./Primitives";
 import {ComponentSheet} from "./StockSheets";
 
 export function Mother({id}:{id:string}){
- const h=useHousehold();const m=motherBases.find(x=>x.id===id)!;const recipe=baseRecipesV2[id];const info=findMother(id);const process=motherProcessImages[id]??[];const hero=motherHero(id);
+ const h=useHousehold();const m=motherBases.find(x=>x.id===id)!;const recipe=baseRecipesV2[id];const process=motherProcessImages[id]??[];const hero=motherHero(id);
  const[confirm,setConfirm]=useState(false);const[count,setCount]=useState(false);const[toast,setToast]=useState("");
  const ml=h.componentStock[id]??0;const portions=stockPortions(id,h.componentStock);const batchMl=batchOutputMl(id);
  const short=h.prepNeeds.find(x=>x.id===id);const weekDemand=prepDemandForWeekMl(h.week).find(x=>x.id===id);
@@ -62,7 +61,7 @@ export function Mother({id}:{id:string}){
    <SectionHead title="Becomes" action={<span style={{color:tone,fontWeight:700,fontSize:13}}>{linked.length} dinners</span>}/>
    {linked.length?<div className="hm-rail">{linked.map(r=><MealTile key={r.id} recipe={r}/>)}</div>:<div className="hm-chiplist">{m.examples.map(x=><span key={x}>{x}</span>)}</div>}
 
-   {(recipe||info)&&<div className="hm-card hm-refs">{recipe?.storage&&<p><b>Storage · </b>{recipe.storage}</p>}{recipe?.local&&<p><b>Here · </b>{recipe.local}</p>}{recipe&&<a href={recipe.sourceUrl} target="_blank" rel="noreferrer">{recipe.sourceLabel} ↗</a>}</div>}
+   {recipe&&<div className="hm-card hm-refs">{recipe.storage&&<p><b>Storage · </b>{recipe.storage}</p>}{recipe.local&&<p><b>Here · </b>{recipe.local}</p>}<a href={recipe.sourceUrl} target="_blank" rel="noreferrer">{recipe.sourceLabel} ↗</a></div>}
   </div>
 
   <Sheet open={confirm} onClose={()=>setConfirm(false)} label={`Make a ${m.code} batch`} title={`Make ${m.code}`} action={<span className="muted">{m.batchYield} × {m.portionMl} ml</span>}>

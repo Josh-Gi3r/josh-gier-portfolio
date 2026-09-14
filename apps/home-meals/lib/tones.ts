@@ -2,7 +2,7 @@
 // base so photos, chips and badges agree across screens; anything not listed
 // falls back to the tone stored with the component data.
 import {getComponent,motherBases} from "@/data/home-data";
-import {mothers as foundationMothers} from "@/data/foundation";
+import {motherHeroImages} from "@/data/mother-hero-assets";
 
 const baseTones:Record<string,string>={
  red:"#e65f45",gold:"#c48a1c",rempah:"#a86a2a",sambal:"#b83a2c",dark:"#7a5a48",blond:"#a88a2a",clear:"#b9a16a",onion:"#8b5b32",
@@ -17,11 +17,9 @@ export function toneSoft(id:string){return `${toneFor(id)}22`}
 
 function lighten(hex:string){const n=parseInt(hex.slice(1),16);const r=Math.min(255,(n>>16)+38),g=Math.min(255,((n>>8)&255)+38),b=Math.min(255,(n&255)+38);return `#${((r<<16)|(g<<8)|b).toString(16).padStart(6,"0")}`}
 
-// Hero photography for the mother bases. Six bases have a rendered hero; the
-// others render a tone-coloured tile with their code until a photo exists.
-const heroes:Record<string,string|undefined>=Object.fromEntries(foundationMothers.map(x=>[x.slug,x.heroImage]));
-export function motherHero(id:string){return heroes[id]}
-export const motherHasPhoto=(id:string)=>!!heroes[id];
+// Hero photography for the mother bases; bases without one render a tone tile.
+export function motherHero(id:string):string|undefined{return motherHeroImages[id]}
+export const motherHasPhoto=(id:string)=>!!motherHeroImages[id];
 
 // Short household word for one frozen portion of a base: "puck", "cube" or "portion".
 export function portionWord(id:string,count=1){const m=(motherBases.find(x=>x.id===id)??getComponent(id)) as {portionLabel?:string;freezeFormat?:string}|undefined;const label=`${m?.portionLabel??""} ${m?.freezeFormat??""}`;const word=/puck/i.test(label)?"puck":/cube/i.test(label)?"cube":"portion";return count===1?word:`${word}s`}
