@@ -22,6 +22,10 @@
 /* Maintain comfortable targets for unlabeled action buttons that use the shared pill language. */
 button.hm-pill,a.hm-pill{min-height:44px;padding-block:7px}
 
+/* Household hydration/sync must never flash an empty white page. */
+[aria-label="Loading Home Meals"]{min-height:100dvh;display:grid;place-items:center;background:var(--page);color:var(--green-deep);font-weight:800;letter-spacing:-.02em}
+[aria-label="Loading Home Meals"]::after{content:"Home Meals";padding:14px 20px;border-radius:999px;background:linear-gradient(180deg,#fff,#ecf8f1);box-shadow:var(--shadow-card)}
+
 @media (pointer:coarse){
   a,button,label[role="button"]{touch-action:manipulation}
 }
