@@ -24,6 +24,7 @@ export type HouseholdStateV12Context={
  setDay:(index:number,recipeId:string)=>void;
  toggleMonthlyPool:(recipeId:string)=>void;
  setComponentObserved:(componentId:string,value:Quantity)=>void;
+ reconcileComponentTotal:(componentId:string,value:Quantity)=>void;
  setIngredientObserved:(ingredientId:string,value:Quantity)=>void;
  recordMeasuredBatch:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
  recordMeasuredProduction:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
@@ -59,6 +60,7 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  const setDay=(index:number,recipeId:string)=>{if(index<0||index>6||!validRecipeIds.has(recipeId))return;setState(prev=>({...prev,week:prev.week.map((x,i)=>i===index?recipeId:x),groceryChecked:{}}))};
  const toggleMonthlyPool=(recipeId:string)=>{if(!validRecipeIds.has(recipeId))return;setState(prev=>({...prev,monthlyPool:prev.monthlyPool.includes(recipeId)?prev.monthlyPool.filter(id=>id!==recipeId):[...prev.monthlyPool,recipeId]}))};
  const setComponentObserved=(componentId:string,value:Quantity)=>setState(prev=>setManualComponentStockV12(prev,componentId,value));
+ const reconcileComponentTotal=(componentId:string,value:Quantity)=>setState(prev=>{const current=componentStockV12(prev)[componentId];if(!current)throw new Error(`Unknown component ${componentId}`);if(current.unit!==value.unit)throw new Error(`Observed unit mismatch for ${componentId}`);if(value.qty<0)throw new Error(`Observed stock cannot be negative for ${componentId}`);if(value.qty<current.qty)return consumeComponentV12(prev,componentId,quantity(current.qty-value.qty,current.unit));const manual=prev.manualComponentStock[componentId]??quantity(0,current.unit);return setManualComponentStockV12(prev,componentId,quantity(manual.qty+(value.qty-current.qty),current.unit))});
  const setIngredientObserved=(ingredientId:string,value:Quantity)=>setState(prev=>{let next=setIngredientStockV12(prev,ingredientId,value);if(value.qty<=0&&next.useSoon[ingredientId]){const useSoon={...next.useSoon,[ingredientId]:false},useSoonAt={...next.useSoonAt};delete useSoonAt[ingredientId];next={...next,useSoon,useSoonAt}}return next});
 
  const recordMeasuredBatch=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>addMeasuredBatchV12(prev,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion})));
@@ -77,7 +79,7 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  const clearMigrationWarnings=()=>setState(prev=>({...prev,migrationWarnings:[]}));
  const resetV12=()=>setState(freshState());
 
- const value:HouseholdStateV12Context={state,componentStock,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setComponentObserved,setIngredientObserved,recordMeasuredBatch,recordMeasuredProduction,cookMeal,logMealWithoutStock,recordCookObservation,rateMeal,noteMeal,promoteRecipeVersion,toggleUseSoon,toggleFavourite,toggleGrocery,confirmKitchen,clearMigrationWarnings,resetV12};
+ const value:HouseholdStateV12Context={state,componentStock,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setComponentObserved,reconcileComponentTotal,setIngredientObserved,recordMeasuredBatch,recordMeasuredProduction,cookMeal,logMealWithoutStock,recordCookObservation,rateMeal,noteMeal,promoteRecipeVersion,toggleUseSoon,toggleFavourite,toggleGrocery,confirmKitchen,clearMigrationWarnings,resetV12};
  if(!hydrated)return<div aria-label="Loading Home Meals"/>;
  return<Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
