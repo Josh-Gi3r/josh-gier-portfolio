@@ -17,13 +17,9 @@ const specs:readonly {id:PromotionWaveIdV7;label:string;count:number}[]=[
  {id:"everyday",label:"Breakfast / lunch / everyday",count:13},
 ] as const;
 
-/**
- * Machine-readable promotion ledger. Research order is already grouped by the accepted
- * cuisine waves, so the ledger binds those exact records without duplicating recipe IDs.
- * Change a wave state only after its full promotion gate (including imagery) passes.
- */
+/** Machine-readable promotion ledger. A wave is live only after its complete gate, including final imagery, passes. */
 export const promotionWaveStateV7:Readonly<Record<PromotionWaveIdV7,PromotionWaveStateV7>>={
- chinese:"formulation_locked",
+ chinese:"live",
  indian:"formulation_locked",
  thai:"formulation_locked",
  "malaysia-sg-id":"formulation_locked",
