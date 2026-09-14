@@ -5,6 +5,7 @@ import {canonicalIngredientCatalogV2} from "@/data/ingredient-catalog-v2";
 import {recipeTitle} from "@/data/recipe-display";
 import {buildAssistantContextV2} from "@/data/assistant-context-v2";
 import type {HouseholdStateV12} from "@/data/household-v12";
+import {SESSION_COOKIE,syncConfigured,verifySessionToken} from "@/lib/server-household";
 
 export const dynamic="force-dynamic";
 const validRecipeIds=new Set(recipes.map(r=>r.id)),legacyIngredientIds=new Set(ingredients.map(i=>i.id)),v2IngredientIds=new Set(canonicalIngredientCatalogV2.map(i=>i.id)),validComponentIds=new Set(canonicalPrepComponentsV2.map(c=>c.id));
@@ -42,6 +43,7 @@ function cleanMutation(raw:any,stateVersion:number|undefined):Mutation|null{
 
 export async function GET(){return noStore({configured:!!process.env.OPENAI_API_KEY?.trim()})}
 export async function POST(req:NextRequest){
+ if(syncConfigured()&&!verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value))return noStore({error:"unauthorized"},401);
  const key=process.env.OPENAI_API_KEY?.trim();if(!key)return noStore({error:"ai_not_configured"},503);
  const body=await req.json().catch(()=>null) as {question?:unknown;state?:unknown}|null,question=typeof body?.question==="string"?body.question.trim():"";if(!question)return noStore({error:"question_required"},400);
  const state=(body?.state??{}) as any,stateVersion=Number(state?.version)||11,context=validV12State(state)?buildAssistantContextV2(state):legacyContext(state as LegacyState);
