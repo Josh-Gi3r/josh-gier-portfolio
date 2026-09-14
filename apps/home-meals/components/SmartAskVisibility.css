@@ -1,1 +1,1 @@
-html[data-hm-smart-ask="1"] .hm-sheet-backdrop-v5:has(.hm-ask-sheet-v5){display:none!important}
+html[data-hm-smart-ask="1"] [data-local] .hm-ask{display:none!important}

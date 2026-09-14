@@ -8,7 +8,7 @@ import {batchOutputMl,stockPortions} from "@/data/stock-math";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
 import {useSheet} from "@/lib/useSheet";
-import {Back,MealCard,SectionHead} from "./Primitives";
+import {Back,MealCard,LegacySectionHead as SectionHead} from "./Primitives";
 
 const google=(q:string)=>`https://www.google.com/search?q=${encodeURIComponent(q)}`;
 const youtube=(q:string)=>`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;

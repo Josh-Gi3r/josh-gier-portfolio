@@ -1,51 +1,87 @@
 "use client";
 import Link from "next/link";
-import {useEffect,useMemo,useRef,useState} from "react";
+import {useEffect,useMemo,useRef,useState,type CSSProperties} from "react";
 import {useHousehold} from "../HouseholdState";
 import {getComponent,getIngredient,getRecipe} from "@/data/home-data";
 import {recipeTitle} from "@/data/recipe-display";
 import {feedback} from "@/lib/feedback";
 import {getHouseholdPerson} from "@/lib/device-profile";
-import {formatQty} from "./Primitives";
+import {phaseFor,stepCue,stepMinutes} from "@/lib/steps";
+import {portionWord,toneFor} from "@/lib/tones";
+import {HomeSays} from "./HomeSays";
+import {Orb} from "./Orb";
+import {Avatar,formatQty} from "./Primitives";
 
-function stepMinutes(s:string){const m=s.match(/(\d+)(?:[–-](\d+))?\s*(?:minutes?|mins?)/i);return m?Number(m[1]):0}
 type CookSession={step:number;timerEnd:number|null;timerDone:boolean;updatedAt:number};
 type StockReceipt={prep:{id:string;plannedMl:number;deductedMl:number}[];ingredients:{id:string;plannedQty:number;deductedQty:number;unit:string;display:string}[]};
+type Author="josh"|"g";
+const noteChips=["More chilli","Less salt","Bigger portion","Perfect as is"];
 function readCookSession(id:string,totalSteps:number):CookSession|null{if(typeof window==="undefined")return null;try{const raw=sessionStorage.getItem(`home-meals-cook:${id}`);if(!raw)return null;const s=JSON.parse(raw) as CookSession;if(!s||Date.now()-(s.updatedAt??0)>6*60*60*1000){sessionStorage.removeItem(`home-meals-cook:${id}`);return null}return {step:Math.max(0,Math.min(totalSteps-1,Number(s.step)||0)),timerEnd:Number(s.timerEnd)>Date.now()?Number(s.timerEnd):null,timerDone:!!s.timerDone&&!(Number(s.timerEnd)>Date.now()),updatedAt:Number(s.updatedAt)||Date.now()}}catch{return null}}
+
 export function Cooking({id}:{id:string}){
- const h=useHousehold();const r=getRecipe(id);const initial=useRef<CookSession|null>(null);if(initial.current===null)initial.current=readCookSession(id,r.steps.length);const[step,setStep]=useState(()=>initial.current?.step??0);const[done,setDone]=useState(false);const[timer,setTimer]=useState(()=>initial.current?.timerEnd?Math.max(0,Math.ceil((initial.current.timerEnd-Date.now())/1000)):0);const[timerEnd,setTimerEnd]=useState<number|null>(()=>initial.current?.timerEnd??null);const[timerDone,setTimerDone]=useState(()=>initial.current?.timerDone??false);const[note,setNote]=useState("");const[noteAuthor,setNoteAuthor]=useState<"josh"|"g">("josh");const[saved,setSaved]=useState(false);const[stockReceipt,setStockReceipt]=useState<StockReceipt|null>(null);const tick=useRef<ReturnType<typeof setInterval>|null>(null);const title=recipeTitle(r.id,r.title);const sessionKey=`home-meals-cook:${id}`;const resumed=(initial.current?.step??0)>0||!!initial.current?.timerEnd||!!initial.current?.timerDone;const firstCook=!h.history.some(x=>x.mealId===id);
+ const h=useHousehold();const r=getRecipe(id);const total=r.steps.length;
+ const initial=useRef<CookSession|null>(null);if(initial.current===null)initial.current=readCookSession(id,total);
+ const[step,setStep]=useState(()=>initial.current?.step??0);const[done,setDone]=useState(false);const[startedAt]=useState(()=>Date.now());
+ const[timer,setTimer]=useState(()=>initial.current?.timerEnd?Math.max(0,Math.ceil((initial.current.timerEnd-Date.now())/1000)):0);const[timerEnd,setTimerEnd]=useState<number|null>(()=>initial.current?.timerEnd??null);const[timerDone,setTimerDone]=useState(()=>initial.current?.timerDone??false);
+ const[note,setNote]=useState("");const[author,setAuthor]=useState<Author>("josh");const[receipt,setReceipt]=useState<StockReceipt|null>(null);const[elapsed,setElapsed]=useState(0);
+ const tick=useRef<ReturnType<typeof setInterval>|null>(null);const title=recipeTitle(r.id,r.title);const sessionKey=`home-meals-cook:${id}`;
+ const versions=h.recipeVersions[id]??[];const currentVersion=versions[0]?.number??1;const latest=versions[0];
  const suggested=useMemo(()=>stepMinutes(r.steps[step]),[r.steps,step]);
- const trackedIngredients=useMemo(()=>r.ingredients.filter(x=>!x.optional&&getIngredient(x.id)?.tracking!=="state"),[r.ingredients]);
- const versions=h.recipeVersions[id]??[];const currentVersion=versions[0]?.number??1;const latestVersionSummary=versions[0]?.summary;const latestVersionAuthor=versions[0]?.author;const personalPhoto=h.mealPhotos.find(x=>x.mealId===id);
- const oldestPrepBatch=(componentId:string)=>h.prepBatches.filter(b=>b.componentId===componentId&&(b.remainingMl??b.outputMl)>0).sort((a,b)=>new Date(a.at).getTime()-new Date(b.at).getTime())[0];
+ const tracked=useMemo(()=>r.ingredients.filter(x=>!x.optional&&getIngredient(x.id)?.tracking!=="state"),[r.ingredients]);
+ const phase=phaseFor(step,total);
  const clearTick=()=>{if(tick.current){clearInterval(tick.current);tick.current=null}};
  const stopTimer=()=>{clearTick();setTimer(0);setTimerEnd(null);setTimerDone(false)};
  const armTimer=(end:number)=>{clearTick();setTimerDone(false);setTimerEnd(end);setTimer(Math.max(0,Math.ceil((end-Date.now())/1000)));tick.current=setInterval(()=>{const left=Math.max(0,Math.ceil((end-Date.now())/1000));setTimer(left);if(!left){clearTick();setTimerEnd(null);setTimerDone(true);feedback("success")}},1000)};
- useEffect(()=>{const person=getHouseholdPerson();if(person)setNoteAuthor(person)},[]);
+ useEffect(()=>{const person=getHouseholdPerson();if(person)setAuthor(person)},[]);
  useEffect(()=>{let lock:any;const wake=async()=>{try{if("wakeLock" in navigator)lock=await (navigator as any).wakeLock.request("screen")}catch{}};wake();if(initial.current?.timerEnd)armTimer(initial.current.timerEnd);return()=>{lock?.release?.();clearTick()}},[]);
  useEffect(()=>{if(done)return;try{sessionStorage.setItem(sessionKey,JSON.stringify({step,timerEnd,timerDone,updatedAt:Date.now()} satisfies CookSession))}catch{}},[sessionKey,step,timerEnd,timerDone,done]);
- const startTimer=(mins:number)=>armTimer(Date.now()+mins*60000);
- const next=()=>{stopTimer();setStep(s=>Math.min(r.steps.length-1,s+1));feedback("tap")};
+ const startTimer=(mins:number)=>{armTimer(Date.now()+mins*60000);feedback("tap")};
+ const next=()=>{stopTimer();setStep(s=>Math.min(total-1,s+1));feedback("tap")};
  const back=()=>{stopTimer();setStep(s=>Math.max(0,s-1));feedback("tap")};
- const leaveRecipe=()=>{stopTimer();try{sessionStorage.removeItem(sessionKey)}catch{}};
- const finish=()=>{if(done)return;stopTimer();try{sessionStorage.removeItem(sessionKey)}catch{}setStockReceipt({prep:r.prep.map(x=>({id:x.id,plannedMl:x.totalMl,deductedMl:Math.min(Math.max(0,h.componentStock[x.id]??0),x.totalMl)})),ingredients:trackedIngredients.map(x=>({id:x.id,plannedQty:x.qty,deductedQty:Math.min(Math.max(0,h.ingredientStock[x.id]??0),x.qty),unit:x.unit,display:x.display}))});h.cookMeal(id);setDone(true);feedback("success")};
- const saveNote=()=>{const clean=note.trim();if(!clean)return;h.noteMeal(id,clean,noteAuthor);setSaved(true);feedback("success");setTimeout(()=>setSaved(false),1400)};
- const promote=()=>{const clean=note.trim();if(!clean||clean===latestVersionSummary)return;h.promoteRecipeVersion(id,clean,noteAuthor);feedback("success")};
+ const leave=()=>{stopTimer();try{sessionStorage.removeItem(sessionKey)}catch{}};
+ const finish=()=>{if(done)return;stopTimer();try{sessionStorage.removeItem(sessionKey)}catch{}setReceipt({prep:r.prep.map(x=>({id:x.id,plannedMl:x.totalMl,deductedMl:Math.min(Math.max(0,h.componentStock[x.id]??0),x.totalMl)})),ingredients:tracked.map(x=>({id:x.id,plannedQty:x.qty,deductedQty:Math.min(Math.max(0,h.ingredientStock[x.id]??0),x.qty),unit:x.unit,display:x.display}))});h.cookMeal(id);setElapsed(Math.max(1,Math.round((Date.now()-startedAt)/60000)));setDone(true);feedback("success")};
  const askHome=()=>{window.dispatchEvent(new Event("home-meals:ask"));feedback("tap")};
- const receiptHasGap=!!stockReceipt&&(stockReceipt.prep.some(x=>x.deductedMl<x.plannedMl)||stockReceipt.ingredients.some(x=>x.deductedQty<x.plannedQty));
- if(done)return <div className="hm-cooking-v5 hm-cooking-complete-v5" style={{paddingBottom:8}}><main style={{padding:"8px 0"}}><section className="hm-cook-finished-v5 hm-rate-v5" style={{marginTop:0}}><span>✓</span><h2>Dinner logged</h2><p>{title} · our v{currentVersion}</p><section className={`hm-cook-stock-v20 ${receiptHasGap?"has-gap-v56":""}`}><div><span>KITCHEN UPDATED</span><strong>What Home deducted</strong><small>{receiptHasGap?"Home only deducted stock that was actually logged. Any recipe amount above that was not invented as inventory use.":"These logged amounts now match the same stock used by Plan and Prep."}</small></div>{stockReceipt?.prep.length?<div className="hm-cook-stock-group-v20"><b>FREEZER</b>{stockReceipt.prep.map(x=><p key={x.id}><span>{getComponent(x.id)?.code??getComponent(x.id)?.name??x.id}{x.deductedMl<x.plannedMl&&<small> · recipe {x.plannedMl} ml</small>}</span><strong>{x.deductedMl} ml</strong></p>)}</div>:null}{stockReceipt?.ingredients.length?<div className="hm-cook-stock-group-v20"><b>INGREDIENTS</b>{stockReceipt.ingredients.slice(0,6).map(x=><p key={x.id}><span>{getIngredient(x.id)?.name??x.id}{x.deductedQty<x.plannedQty&&<small> · recipe {x.display}</small>}</span><strong>{formatQty(x.deductedQty,x.unit)}</strong></p>)}{stockReceipt.ingredients.length>6&&<small>+{stockReceipt.ingredients.length-6} more tracked ingredients</small>}</div>:null}<Link href="/kitchen">See Kitchen after dinner →</Link></section><h3 style={{fontSize:15,margin:"16px 0 8px"}}>How was it?</h3>{(["josh","g"] as const).map(who=><div className="hm-rate-person-v5" key={who}><strong>{who==="josh"?"Josh":"G"}</strong><div>{[1,2,3,4,5].map(n=><button key={n} className={(h.ratings[id]?.[who]??0)>=n?"on":""} aria-label={`${who} ${n} stars`} onClick={()=>{h.rateMeal(id,who,n);feedback("change")}}>★</button>)}</div></div>)}<label><span>Next time</span><div className="hm-note-author-v7" aria-label="Who is leaving this note?"><button type="button" className={noteAuthor==="josh"?"active":""} onClick={()=>{setNoteAuthor("josh");feedback("tap")}}>Josh</button><button type="button" className={noteAuthor==="g"?"active":""} onClick={()=>{setNoteAuthor("g");feedback("tap")}}>G</button></div><textarea value={note} onChange={e=>setNote(e.target.value)} placeholder="More chilli? Less sweet? Different side?"/><button disabled={!note.trim()} onClick={saveNote}>{saved?"Saved ✓":`Save ${noteAuthor==="josh"?"Josh":"G"}'s note`}</button>{note.trim()&&note.trim()!==latestVersionSummary&&<button type="button" className="hm-version-inline-v22" onClick={promote}>Adopt as v{currentVersion+1}</button>}</label><div className="hm-help-links-v5 hm-after-dinner-links-v24"><Link href={`/scan?mode=Meal&meal=${id}&back=${encodeURIComponent(`/cook/${id}`)}`}>{personalPhoto?"Replace photo":"Save dinner photo"}</Link><Link href={`/cook/${id}`}>Recipe</Link><Link href="/">Home</Link></div></section></main></div>;
- return <div className="hm-cooking-v5 hm-cooking-v6 hm-cooking-v7">
-  <header><Link href={`/cook/${id}`} onClick={leaveRecipe}>‹ Recipe</Link><div><span>{step+1} of {r.steps.length} · v{currentVersion}</span><div className="hm-cook-progress-v5"><i style={{width:`${((step+1)/r.steps.length)*100}%`}}/></div></div></header>
-  <main>
-   <div className="hm-cook-tools-v5"><Link href={`/scan?mode=Prep&back=${encodeURIComponent(`/cook/${id}/cook`)}`} onClick={()=>feedback("tap")}>⌁ Camera</Link><button onClick={askHome}>✦ Ask Home</button></div>
-   {firstCook&&!resumed&&<div className="hm-first-cook-v49" role="note"><span>FIRST COOK</span><p>We haven’t cooked this one yet. Follow the researched recipe, then rate it so the next version becomes ours.</p></div>}
-   {resumed&&<div className="hm-cook-resume-v38" role="status"><span>RESUMED</span><p>Step {step+1} restored{timer>0?` · timer still running`:timerDone?` · timer finished while you were away`:""}.</p></div>}
-   <div className="hm-cooking-title-v5"><h1>{title}</h1><strong>{String(step+1).padStart(2,"0")}</strong></div>
-   {latestVersionSummary&&<aside className="hm-cook-version-v35" aria-label={`Our recipe version ${currentVersion}`}><span>OUR v{currentVersion}</span><p>“{latestVersionSummary}”</p><small>{latestVersionAuthor==="josh"?"Josh":latestVersionAuthor==="g"?"G":"Home"} · keep this in mind while cooking</small></aside>}
-   <p key={step} className="hm-cooking-step-v5">{r.steps[step]}</p>
-   {suggested>0&&<div className={`hm-timer-v5 ${timerDone?"done":""}`} aria-live="polite">{timerDone?<><strong>Timer done ✓</strong><button onClick={()=>startTimer(suggested)}>Run again</button><span className="hm-timer-caption-v7">This step can move on when the food looks right.</span></>:timer>0?<><strong>{Math.floor(timer/60)}:{String(timer%60).padStart(2,"0")}</strong><button onClick={()=>startTimer(suggested)}>Restart</button><span className="hm-timer-caption-v7">Timer stays tied to this step, even if you open the camera.</span></>:<button onClick={()=>startTimer(suggested)}>Start {suggested} min timer</button>}</div>}
-   <details className="hm-cook-drawer-v5"><summary>Ingredients & prep</summary><div><h3>Prep</h3>{r.prep.map(x=>{const batch=oldestPrepBatch(x.id);const component=getComponent(x.id);return <p key={x.id}><span className="hm-cook-prep-label-v55"><strong>{component?.name??x.id}</strong><small>{batch?`Use oldest · made ${new Date(batch.at).toLocaleDateString(undefined,{day:"numeric",month:"short"})}`:(h.componentStock[x.id]??0)>0?"Stock is undated":"No stock logged"}</small></span><strong>{x.totalMl} ml</strong></p>})}<h3>Ingredients</h3>{r.ingredients.map(x=><p key={`${x.id}-${x.raw}`}><span>{getIngredient(x.id)?.name}{x.optional?" · optional":""}</span><strong>{x.display}</strong></p>)}</div></details>
-  </main>
-  <footer><button disabled={step===0} onClick={back}>Back</button>{step<r.steps.length-1?<button className="primary" onClick={next}>Next</button>:<button className="primary" onClick={finish}>Dinner’s ready</button>}</footer>
- </div>
+ const touch=useRef<{x:number;y:number}|null>(null);
+ const onTouchStart=(e:React.TouchEvent)=>{touch.current={x:e.touches[0].clientX,y:e.touches[0].clientY}};
+ const onTouchEnd=(e:React.TouchEvent)=>{const s=touch.current;touch.current=null;if(!s)return;const dx=e.changedTouches[0].clientX-s.x,dy=e.changedTouches[0].clientY-s.y;if(Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.5)return;if(dx<0){if(step<total-1)next()}else back()};
+ const tip=stepCue(r.steps[step])??(latest?`Our v${currentVersion}: “${latest.summary}”`:step===total-1?"Say “done” and I’ll log the cook and take the stock off.":"Swipe or say “next” when you’re ready.");
+
+ if(done){
+  const prepLine=receipt?.prep.filter(x=>x.deductedMl>0).map(x=>{const c=getComponent(x.id);const portions=c?Math.round(x.deductedMl/Math.max(1,c.portionMl)):0;return c&&portions?`${portions} ${c.code}`:null}).filter(Boolean).join(" and ");
+  const ingLine=receipt?.ingredients.filter(x=>x.deductedQty>0).slice(0,3).map(x=>`${formatQty(x.deductedQty,x.unit)} ${getIngredient(x.id)?.name?.toLowerCase()??x.id}`).join(", ");
+  const finishUp=()=>{const clean=note.trim();if(clean){h.noteMeal(id,clean,author);if(clean!==latest?.summary)h.promoteRecipeVersion(id,clean,author)}feedback("success")};
+  return <div className="hm-done hm-screen flush" style={{paddingBottom:140}}>
+   <div className="stage">{r.image&&<img src={r.image} alt={title}/>}<div className="shade"/><div className="logged"><span className="hm-pill white">DINNER LOGGED</span></div></div>
+   <div className="body">
+    <h1 className="title">That’s {title}<br/>done in {elapsed} min.</h1>
+    <HomeSays>{prepLine||ingLine?<>I took {prepLine?`${prepLine} from the freezer`:""}{prepLine&&ingLine?", ":""}{ingLine?`${ingLine} from the fridge`:""}. How was it?</>:<>Logged. Nothing was deducted because the kitchen wasn’t stocked yet. How was it?</>}</HomeSays>
+    <div className="hm-list">
+     {(["josh","g"] as const).map(w=><div key={w} className="hm-card lg hm-rate-row"><Avatar who={w} size="lg"/><div><div className="who">{w==="josh"?"Josh":"G"}</div><div className="hm-stars">{[1,2,3,4,5].map(n=><button key={n} className={(h.ratings[id]?.[w]??0)>=n?"on":""} aria-label={`${w==="josh"?"Josh":"G"} ${n} stars`} onClick={()=>{h.rateMeal(id,w,n);feedback("change")}}>★</button>)}</div></div></div>)}
+     <div className="hm-card lg hm-notebox"><div className="who">Next time</div><div className="hm-authors sm" style={{marginTop:8}}>{(["josh","g"] as const).map(a=><button key={a} className={author===a?"on":""} onClick={()=>{setAuthor(a);feedback("tap")}}><Avatar who={a} size="sm"/>{a==="josh"?"Josh":"G"}</button>)}</div><textarea value={note} onChange={e=>setNote(e.target.value)} placeholder="More chilli. Two CH cubes." aria-label="Note for next time"/><div className="chips">{noteChips.map(c=><button key={c} className="hm-chip tint" onClick={()=>setNote(v=>v?`${v.replace(/\.?\s*$/,"")}. ${c}.`:`${c}.`)}>{c}</button>)}</div></div>
+     <Link className="hm-card hm-version hm-lift" href={`/scan?mode=Meal&meal=${id}&back=${encodeURIComponent(`/cook/${id}`)}`}><div><span className="kick">PHOTO</span><strong>Save a photo of tonight</strong><small>Kept with the recipe on this phone.</small></div><span style={{fontSize:22,color:"var(--muted)"}}>›</span></Link>
+    </div>
+   </div>
+   <div className="hm-cta"><Link className="hm-btn primary" href={`/cook/${id}`} onClick={finishUp}>{note.trim()?`Save as our v${(latest?.summary===note.trim()?currentVersion:currentVersion+1)} →`:"Done →"}</Link></div>
+  </div>;
+ }
+
+ return <div className="hm-cooking" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+  <div className="stage">
+   {r.image&&<img src={r.image} alt={title} loading="eager" fetchPriority="high"/>}
+   <div className="shade"/>
+   <div className="top"><Link href={`/cook/${id}`} className="hm-round onphoto" aria-label="Leave cooking mode" onClick={leave}>×</Link><span className="hm-pill onphoto" style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:"60%"}}>{title} · {step+1}/{total}</span><button onClick={askHome} aria-label="Ask Home" style={{display:"grid",placeItems:"center"}}><Orb size={44}/></button></div>
+   <div className="dots" aria-hidden="true">{r.steps.map((_,i)=><i key={i} style={i<=step?{background:phaseFor(i,total).gradient}:undefined}/>)}</div>
+  </div>
+  <div className="body">
+   <div className="phase" style={{"--phase":phase.gradient} as CSSProperties}><b>{step+1}</b><span>{phase.name}{latest&&step===0?` · our v${currentVersion}`:""}</span></div>
+   <p className="text" key={step}>{r.steps[step]}</p>
+   {suggested>0&&<div className="timer" aria-live="polite">{timerDone?<><strong className="done">Done ✓</strong><button onClick={()=>startTimer(suggested)}>Run again</button></>:timer>0?<><strong>{Math.floor(timer/60)}:{String(timer%60).padStart(2,"0")}</strong><button onClick={()=>startTimer(suggested)}>Restart</button></>:<><strong>{suggested}:00</strong><button onClick={()=>startTimer(suggested)}>Start timer</button></>}</div>}
+   <details className="drawer"><summary>Ingredients &amp; prep ›</summary><div className="hm-ing">{r.prep.map(p=>{const c=getComponent(p.id);return c?<span key={p.id}><i style={{background:toneFor(p.id)}}/>{c.code} · {p.portions} {portionWord(p.id,p.portions)}</span>:null})}{r.ingredients.map(x=><span key={`${x.id}-${x.raw}`} className={`plain ${x.optional?"optional":""}`}>{getIngredient(x.id)?.name??x.id} · {x.display}</span>)}</div></details>
+   <div className="hm-card tip"><Orb size={30}/><span>{tip}</span></div>
+  </div>
+  <div className="foot">
+   <div className="nav"><button className="hm-btn ghost" disabled={step===0} onClick={back}>Back</button>{step<total-1?<button className="hm-btn primary" onClick={next}>Next</button>:<button className="hm-btn primary" onClick={finish}>Done — log it</button>}</div>
+   <div className="hint">‹ swipe · or say “next” ›</div>
+  </div>
+ </div>;
 }

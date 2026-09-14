@@ -7,7 +7,7 @@ type Status="idle"|"connecting"|"listening"|"thinking"|"error";
 type Mutation={type:string;[key:string]:unknown};
 type Reply={text:string;mealIds?:string[];tags?:string[];href?:string|null;action?:string|null;mutation?:Mutation|null};
 function householdState(){try{const raw=localStorage.getItem(STATE_KEY);if(!raw)return {};const value=JSON.parse(raw);if(value&&typeof value==="object")delete value.mealPhotos;return value}catch{return {}}}
-function fillAsk(text:string){window.dispatchEvent(new Event("home-meals:ask"));window.setTimeout(()=>{const input=document.querySelector<HTMLInputElement>(".hm-composer-v5 input");if(!input)return;const setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value")?.set;setter?.call(input,text);input.dispatchEvent(new Event("input",{bubbles:true}));window.setTimeout(()=>input.form?.requestSubmit(),30)},120)}
+function fillAsk(text:string){window.dispatchEvent(new Event("home-meals:ask"));window.setTimeout(()=>{const input=document.querySelector<HTMLInputElement>("[data-ask-composer] input");if(!input)return;const setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value")?.set;setter?.call(input,text);input.dispatchEvent(new Event("input",{bubbles:true}));window.setTimeout(()=>input.form?.requestSubmit(),30)},120)}
 function sleep(ms:number){return new Promise(resolve=>window.setTimeout(resolve,ms))}
 
 export function VoiceRuntime(){

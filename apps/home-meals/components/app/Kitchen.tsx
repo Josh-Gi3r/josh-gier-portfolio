@@ -1,93 +1,151 @@
 "use client";
 import Link from "next/link";
-import {useMemo,useState} from "react";
-import {getComponent,ingredients,motherBases,prepComponents,getRecipe} from "@/data/home-data";
-import {motherProcessImages} from "@/data/mother-process-assets";
+import {useEffect,useMemo,useRef,useState,type CSSProperties} from "react";
+import {getComponent,getRecipe,ingredients,motherBases,prepComponents,type IngredientDef} from "@/data/home-data";
 import {foundationImages} from "@/data/foundation-assets";
 import {stockPortions} from "@/data/stock-math";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
-import {formatQty,PageHead,SectionHead} from "./Primitives";
+import {motherHero,portionWord,toneFor,toneGradient} from "@/lib/tones";
+import {HomeSays} from "./HomeSays";
+import {formatQty,SectionHead,Sheet} from "./Primitives";
 
 const tabs=["Fridge","Freezer","Pantry"] as const;
 type Tab=typeof tabs[number];
+const levels=["Out","Low","Some","Plenty"];
 const smallHerbs=new Set(["coriander","parsley","thai-basil"]);
-const stateLevels=[{value:0,label:"Out"},{value:1,label:"Low"},{value:2,label:"Some"},{value:3,label:"Plenty"}] as const;
-function stateLevelLabel(value:number){return value>=3?"Plenty":value>=2?"Some":value>=1?"Low":"Out"}
-function useSoonLabel(at?:string){if(!at)return "";const days=Math.max(0,Math.floor((Date.now()-new Date(at).getTime())/86400000));return days===0?"today":days===1?"1d":`${days}d`}
-function stepFor(item:{id:string;category:string;unit:string}){
- if(item.unit==="count"||item.unit==="portion")return 1;
- if(item.unit==="ml")return item.category==="Dairy"?50:25;
- if(item.unit==="g"){
-  if(smallHerbs.has(item.id))return 10;
-  if(item.category==="Protein"||item.category==="Fresh")return 100;
-  if(item.category==="Dairy")return 50;
-  return 50;
- }
- return 1;
-}
+function stepFor(item:IngredientDef){if(item.unit==="count"||item.unit==="portion")return 1;if(item.unit==="ml")return item.category==="Dairy"?50:25;if(item.unit==="g"){if(smallHerbs.has(item.id))return 10;if(item.category==="Protein"||item.category==="Fresh")return 100;return 50}return 1}
+// Where a quantity sits on the Out → Plenty scale, relative to what one shopping step buys.
+function levelOf(item:IngredientDef,n:number){if(item.tracking==="state")return Math.max(0,Math.min(3,n));const s=stepFor(item);return n<=0?0:n<2*s?1:n<4*s?2:3}
+const pctOf=(level:number)=>[12,38,62,88][level];
+const bars=["linear-gradient(90deg,#ffb48f,#ff8a5c)","linear-gradient(90deg,#ffb48f,#ff8a5c)","linear-gradient(90deg,#6fd39a,#2fae6e)","linear-gradient(90deg,#a8e6c3,#4cc487)"];
+function ageDays(at?:string){return at?Math.max(0,Math.floor((Date.now()-new Date(at).getTime())/86400000)):null}
+function useHold(fn:()=>void){const t=useRef<ReturnType<typeof setInterval>|null>(null);const stop=()=>{if(t.current){clearInterval(t.current);t.current=null}};useEffect(()=>stop,[]);return {onPointerDown:()=>{fn();stop();t.current=setInterval(fn,160)},onPointerUp:stop,onPointerLeave:stop,onPointerCancel:stop}}
 
 export function Kitchen(){
  const h=useHousehold();
- const[tab,setTab]=useState<Tab>("Fridge");
- const[q,setQ]=useState("");
- const[showAll,setShowAll]=useState(false);
+ const[tab,setTab]=useState<Tab>("Fridge");const[q,setQ]=useState("");const[showAll,setShowAll]=useState(false);const[edit,setEdit]=useState<string|null>(null);const[editComponent,setEditComponent]=useState<string|null>(null);
  const relevantIds=useMemo(()=>new Set(h.week.flatMap(id=>getRecipe(id).ingredients.map(x=>x.id))),[h.week]);
- const list=ingredients
-  .filter(i=>tab==="Fridge"?["Fresh","Protein","Dairy"].includes(i.category):tab==="Pantry"&&i.category==="Pantry")
-  .filter(i=>!q||i.name.toLowerCase().includes(q.toLowerCase()))
-  .sort((a,b)=>Number(!!h.useSoon[b.id])-Number(!!h.useSoon[a.id])||(h.useSoon[a.id]&&h.useSoon[b.id]?new Date(h.useSoonAt[a.id]??0).getTime()-new Date(h.useSoonAt[b.id]??0).getTime():0)||Number(relevantIds.has(b.id))-Number(relevantIds.has(a.id))||Number((h.ingredientStock[b.id]??0)>0)-Number((h.ingredientStock[a.id]??0)>0)||a.name.localeCompare(b.name));
+ const list=ingredients.filter(i=>tab==="Fridge"?["Fresh","Protein","Dairy"].includes(i.category):tab==="Pantry"&&i.category==="Pantry").filter(i=>!q||i.name.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>Number(!!h.useSoon[b.id])-Number(!!h.useSoon[a.id])||(h.useSoon[a.id]&&h.useSoon[b.id]?new Date(h.useSoonAt[a.id]??0).getTime()-new Date(h.useSoonAt[b.id]??0).getTime():0)||Number(relevantIds.has(b.id))-Number(relevantIds.has(a.id))||Number((h.ingredientStock[b.id]??0)>0)-Number((h.ingredientStock[a.id]??0)>0)||a.name.localeCompare(b.name));
  const priority=list.filter(i=>h.useSoon[i.id]||relevantIds.has(i.id)||(h.ingredientStock[i.id]??0)>0);
- const shown=q||showAll?list:(priority.length?priority:list).slice(0,14);
- const changeIngredient=(id:string,delta:number)=>{h.setIngredient(id,Math.max(0,(h.ingredientStock[id]??0)+delta));feedback("change")};
- const setStateLevel=(id:string,value:number)=>{h.setIngredient(id,value);feedback("change")};
- const switchTab=(t:Tab)=>{setTab(t);setQ("");setShowAll(false);feedback("tap")};
- const scanMode=tab==="Freezer"?"Freezer":tab==="Pantry"?"Pantry":"Fridge";
- const scanHref=`/scan?mode=${scanMode}&back=${encodeURIComponent("/kitchen")}`;
+ const shown=q||showAll?list:(priority.length?priority:list).slice(0,12);
  const stockedFridge=ingredients.filter(i=>["Fresh","Protein","Dairy"].includes(i.category)&&(h.ingredientStock[i.id]??0)>0);
- const stockedPantry=ingredients.filter(i=>i.category==="Pantry"&&(h.ingredientStock[i.id]??0)>0);
- const lowPantry=stockedPantry.filter(i=>i.tracking==="state"&&(h.ingredientStock[i.id]??0)===1);
  const useSoon=stockedFridge.filter(i=>h.useSoon[i.id]).sort((a,b)=>new Date(h.useSoonAt[a.id]??0).getTime()-new Date(h.useSoonAt[b.id]??0).getTime());
- const thisWeek=ingredients.filter(i=>relevantIds.has(i.id)&&(h.ingredientStock[i.id]??0)>0);
- return <div className="hm-page-v5 hm-kitchen-v5 hm-kitchen-v6">
-  <PageHead title="Kitchen" sub="What’s at home, what needs using, and what is running low." action={<Link className="hm-round-link-v5" href={scanHref} aria-label={`Open ${scanMode.toLowerCase()} camera`}>⌁</Link>}/>
-  {!h.kitchenReady&&<section className="hm-setup-banner-v5 hm-kitchen-setup-v6"><div><span>FIRST CHECK</span><h2>Teach Home the kitchen once.</h2><p>Start with what this week uses. Exact quantities only where they help; simple levels are enough for sauces and staples.</p></div><button onClick={()=>{h.confirmKitchen();feedback("success")}}>Kitchen checked</button></section>}
+ const uncoveredSoon=useSoon.filter(i=>!h.week.some(rid=>getRecipe(rid).ingredients.some(x=>x.id===i.id)));
+ const lowPantry=ingredients.filter(i=>i.category==="Pantry"&&i.tracking==="state"&&(h.ingredientStock[i.id]??0)===1);
+ const pucks=motherBases.reduce((n,m)=>n+stockPortions(m.id,h.componentStock),0);const stockedMothers=motherBases.filter(m=>(h.componentStock[m.id]??0)>0).length;
+ const activeBatches=h.prepBatches.filter(b=>(b.remainingMl??b.outputMl)>0).sort((a,b)=>new Date(a.at).getTime()-new Date(b.at).getTime());const oldest=activeBatches[0];const oldestC=oldest?getComponent(oldest.componentId):null;
+ const lowMother=motherBases.find(m=>h.week.some(id=>getRecipe(id).motherIds.includes(m.id))&&stockPortions(m.id,h.componentStock)<2);
+ const switchTab=(t:Tab)=>{setTab(t);setQ("");setShowAll(false);feedback("tap")};
+ const scanHref=`/scan?mode=${tab}&back=${encodeURIComponent("/kitchen")}`;
+ const setLevel=(item:IngredientDef,level:number)=>{if(item.tracking==="state")h.setIngredient(item.id,level);else h.setIngredient(item.id,[0,1,3,5][level]*stepFor(item));feedback("change")};
+ const hero={Fridge:{img:foundationImages.groceries,heading:h.kitchenReady?(useSoon.length?"Use soon first":"Nothing urgent"):"Show me the fridge",sub:h.kitchenReady?(useSoon.length?`${useSoon.length} ${useSoon.length===1?"thing needs":"things need"} a dinner`:`${stockedFridge.length} things in the fridge`):"once, and the week gets real"},
+  Freezer:{img:foundationImages.freezer,heading:h.kitchenReady?`${stockedMothers} bases · ${pucks} portions`:"Count the bases",sub:h.kitchenReady?(oldest&&oldestC?`oldest first: ${oldestC.code} from ${new Date(oldest.at).toLocaleDateString(undefined,{day:"numeric",month:"short"})}`:lowMother?`${lowMother.code} is low for this week`:"all dated batches used in order"):"pucks and cubes, per base"},
+  Pantry:{img:foundationImages.cubes,heading:h.kitchenReady?(lowPantry.length?"Running low":"Pantry looks fine"):"Just the staples",sub:h.kitchenReady?(lowPantry.length?`${lowPantry.slice(0,3).map(i=>i.name).join(", ")}`:"only what changes dinner"):"Plenty · Some · Low · Out is enough"}}[tab];
+ const says=(()=>{
+  if(!h.kitchenReady)return {text:<>Teach me the kitchen once. Levels are enough for sauces and staples — exact amounts only where they change dinner.</>,actions:<><button className="primary" onClick={()=>{h.confirmKitchen();feedback("success")}}>Kitchen checked</button><Link className="ghost" href={scanHref}>Use the camera</Link></>};
+  if(tab==="Fridge"){if(uncoveredSoon.length){const i=uncoveredSoon[0];const age=ageDays(h.useSoonAt[i.id]);return {text:<><b>{i.name}</b>{age?` has been marked ${age} ${age===1?"day":"days"}`:" is marked use soon"} and nothing this week uses it. Want me to fit it in?</>,actions:<><Link className="primary" href="/plan">Fit it in</Link><button className="ghost" onClick={()=>{h.toggleUseSoon(i.id);feedback("change")}}>It’s fine</button></>}}if(useSoon.length){const i=useSoon[0];const dayIdx=h.week.findIndex(rid=>getRecipe(rid).ingredients.some(x=>x.id===i.id));return {text:<><b>{i.name}</b> is covered — {["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"][dayIdx]}’s dinner uses it.</>}}return {text:<>Nothing is marked use soon. Tap anything to update it, or drag a handle.</>}}
+  if(tab==="Freezer"){if(lowMother)return {text:<><b>{lowMother.code}</b> is down to {stockPortions(lowMother.id,h.componentStock)} and this week wants it. Prep Sunday fixes it.</>,actions:<><Link className="primary" href="/prep/day">Book Sunday</Link><Link className="ghost" href={`/prep/${lowMother.id}`}>Open {lowMother.code}</Link></>};if(oldest&&oldestC)return {text:<><b>{oldestC.code}</b> from {new Date(oldest.at).toLocaleDateString(undefined,{day:"numeric",month:"short"})} is the oldest — use it first.</>,actions:<Link className="primary" href="/cook/builder">Cook from it</Link>};return {text:<>The bases are in good shape for this week. Tap a row to count pucks.</>}}
+  if(lowPantry.length)return {text:<>{lowPantry.slice(0,2).map(i=>i.name).join(" and ")} {lowPantry.length===1?"is":"are"} low — one bottle each covers the month.</>,actions:<Link className="primary" href="/plan">Add to the list</Link>};
+  return {text:<>Pantry levels look fine for the current week.</>};
+ })();
+ const editItem=edit?ingredients.find(i=>i.id===edit):null;const editComp=editComponent?getComponent(editComponent):null;
 
-  <div className="hm-segment-v5 hm-kitchen-tabs-v5 hm-kitchen-tabs-v6">{tabs.map(t=><button key={t} className={tab===t?"active":""} onClick={()=>switchTab(t)}>{t}</button>)}</div>
+ return <div className="hm-screen">
+  <div className="hm-kitchen-head"><h1 className="hm-h1">Kitchen</h1><Link className="hm-btn xs primary" href={scanHref} onClick={()=>feedback("tap")}>Scan the {tab.toLowerCase()}</Link></div>
+  <div className="hm-seg" role="tablist" aria-label="Kitchen area">{tabs.map(t=><button key={t} role="tab" aria-selected={tab===t} className={tab===t?"on":""} onClick={()=>switchTab(t)}>{t}</button>)}</div>
+  <div className="hm-kitchen-hero" key={tab}><img src={hero.img} alt=""/><div className="shade"/><div className="copy"><h3>{hero.heading}</h3><p>{hero.sub}</p></div></div>
+  <HomeSays className="tight" actions={says.actions}>{says.text}</HomeSays>
 
-  {tab==="Fridge"&&<section className="hm-kitchen-focus-v6">
-   <div className={`hm-use-first-v6 ${useSoon.length?"urgent":"calm"}`}><span>{useSoon.length?"USE FIRST":"FRIDGE"}</span><strong>{useSoon.length?`${useSoon.length} ${useSoon.length===1?"thing needs":"things need"} attention`:"Nothing urgent"}</strong><p>{useSoon.length?useSoon.slice(0,5).map(x=>`${x.name}${useSoonLabel(h.useSoonAt[x.id])?` (${useSoonLabel(h.useSoonAt[x.id])})`:""}`).join(" · "):"Keep this light. Mark something use-soon only when it will actually change dinner decisions."}</p>{useSoon.length>0&&<Link href="/plan">Fit them into the week →</Link>}</div>
-   <div className="hm-kitchen-pulse-v6"><div><b>{stockedFridge.length}</b><span>in fridge</span></div><div><b>{thisWeek.filter(i=>["Fresh","Protein","Dairy"].includes(i.category)).length}</b><span>used this week</span></div><div><b>{useSoon.length}</b><span>use soon</span></div></div>
-  </section>}
-
-  {tab==="Pantry"&&<section className="hm-kitchen-focus-v6"><div className="hm-use-first-v6 pantry"><span>PANTRY</span><strong>{stockedPantry.length?`${stockedPantry.length} staples on hand`:"Pantry not checked yet"}</strong><p>{lowPantry.length?`${lowPantry.slice(0,4).map(i=>i.name).join(" · ")}${lowPantry.length>4?` +${lowPantry.length-4} more`:""} ${lowPantry.length===1?"is":"are"} running low.`:h.shoppingNeeds.filter(x=>ingredients.find(i=>i.id===x.id)?.category==="Pantry").length?"A few pantry gaps are already feeding the shopping list.":"Nothing in the current week is asking for an urgent pantry top-up."}</p></div><div className="hm-kitchen-pulse-v6"><div><b>{stockedPantry.length}</b><span>on hand</span></div><div><b>{lowPantry.length}</b><span>running low</span></div><div><b>{h.shoppingNeeds.filter(x=>ingredients.find(i=>i.id===x.id)?.category==="Pantry").length}</b><span>to buy</span></div></div></section>}
-
-  {tab==="Freezer"?<Freezer/>:<>
-   <section className="hm-block-v5 hm-kitchen-editor-v6"><SectionHead title={tab==="Fridge"?"Update the fridge":"Update the pantry"} action={<Link href={scanHref}>Use camera ›</Link>}/><label className="hm-search-v5"><span>⌕</span><input value={q} onChange={e=>setQ(e.target.value)} placeholder={`Find in ${tab.toLowerCase()}`} aria-label={`Find in ${tab.toLowerCase()}`}/></label>
-    {shown.length?<div className="hm-stock-list-v5">{shown.map(i=>{const n=h.ingredientStock[i.id]??0;const relevant=relevantIds.has(i.id);const soon=!!h.useSoon[i.id];const step=stepFor(i);const level=stateLevelLabel(n);const marked=useSoonLabel(h.useSoonAt[i.id]);return <article key={i.id} className={`${tab==="Fridge"?"with-soon":""} ${i.tracking==="state"?"state-level-v21":""}`}><div><strong>{i.name}</strong><span>{soon&&<b className="soon">Use soon{marked?` · ${marked}`:""}</b>}{relevant&&<b>This week</b>}{i.tracking==="state"?level:n>0?formatQty(n,i.unit):"Out"}</span></div>{tab==="Fridge"&&<button className={`hm-soon-toggle-v5 ${soon?"on":""}`} aria-label={`${soon?"Remove":"Mark"} ${i.name} ${soon?"from":"as"} use soon`} onClick={()=>{if(n>0){h.toggleUseSoon(i.id);feedback("change")}}} disabled={n<=0}>◷</button>}{i.tracking==="state"?<div className="hm-stock-level-v21" role="group" aria-label={`${i.name} stock level`}>{stateLevels.map(option=><button key={option.value} className={n===option.value?"on":""} aria-pressed={n===option.value} onClick={()=>setStateLevel(i.id,option.value)}><i/>{option.label}</button>)}</div>:<div className="hm-stepper-v5"><button aria-label={`Decrease ${i.name} by ${step} ${i.unit}`} onClick={()=>changeIngredient(i.id,-step)}>−</button><b>{n?Math.round(n*10)/10:"0"}</b><span>{i.unit==="count"?"":i.unit==="portion"?(n===1?"portion":"portions"):i.unit}</span><button aria-label={`Increase ${i.name} by ${step} ${i.unit}`} onClick={()=>changeIngredient(i.id,step)}>+</button></div>}</article>})}</div>:<div className="hm-empty-v5"><strong>Nothing matches.</strong><p>Try another name or clear the search.</p>{q&&<button className="hm-text-button-v5" onClick={()=>{setQ("");feedback("tap")}}>Clear search</button>}</div>}
-    {!q&&list.length>shown.length&&<button className="hm-text-button-v5" onClick={()=>{setShowAll(v=>!v);feedback("tap")}}>{showAll?"Show less":`Show all ${list.length}`}</button>}
-   </section>
+  {tab==="Freezer"?<>
+   <div className="hm-card lg hm-wheel-card">
+    <div className="hm-wheel" style={{background:wheel(h.componentStock)}}><div className="inner"><div><b>{pucks}</b><span>portions ready</span>{lowMother&&<small>{lowMother.code} low</small>}</div></div></div>
+    <div className="hm-wheel-legend">{motherBases.map(m=><span key={m.id} style={{"--tone":toneFor(m.id)} as CSSProperties}><i/>{m.code} <small>{stockPortions(m.id,h.componentStock)}</small></span>)}</div>
+   </div>
+   <div className="hm-list">{motherBases.map(m=>{const n=stockPortions(m.id,h.componentStock);const hero=motherHero(m.id);const old=activeBatches.find(b=>b.componentId===m.id);const planned=h.week.some(id=>getRecipe(id).motherIds.includes(m.id));return <div key={m.id} className="hm-card hm-freezer-row" style={{"--tone":toneFor(m.id),"--tone-grad":toneGradient(m.id)} as CSSProperties}>
+    <button className="thumb" onClick={()=>{setEditComponent(m.id);feedback("tap")}} aria-label={`Update ${m.code}`} style={{overflow:"hidden",padding:0}}>{hero?<img src={hero} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:m.code}</button>
+    <button style={{textAlign:"left",minWidth:0}} onClick={()=>{setEditComponent(m.id);feedback("tap")}}><strong>{m.code} <small>· {m.name}</small></strong><div className="hm-segs" aria-hidden="true">{[0,1,2,3,4,5,6,7].map(i=><i key={i} className={i<n?"on":""}/>)}</div><span className="sub">{n<=0?"Out":n<2&&planned?"Low · Prep Sunday":old?`oldest ${new Date(old.at).toLocaleDateString(undefined,{day:"numeric",month:"short"})} · use first`:planned?"used this week":"good"}</span></button>
+    <div className="hm-stepper"><button className="minus" aria-label={`One less ${m.code}`} onClick={()=>{h.setComponent(m.id,Math.max(0,(h.componentStock[m.id]??0)-m.portionMl));feedback("change")}}>−</button><b>{n}</b><button className="plus" aria-label={`One more ${m.code}`} onClick={()=>{h.setComponent(m.id,(h.componentStock[m.id]??0)+m.portionMl);feedback("change")}}>+</button></div>
+   </div>})}</div>
+   <MidsAndBoosters onEdit={id=>setEditComponent(id)}/>
+  </>:<>
+   <label className="hm-search"><input value={q} onChange={e=>setQ(e.target.value)} placeholder={`Find in the ${tab.toLowerCase()}`} aria-label={`Find in the ${tab.toLowerCase()}`}/>{q&&<button type="button" className="clear" aria-label="Clear" onClick={()=>setQ("")}>×</button>}</label>
+   <div className="hm-list">{shown.map(item=>{const n=h.ingredientStock[item.id]??0;const level=levelOf(item,n);const soon=!!h.useSoon[item.id];const age=ageDays(h.useSoonAt[item.id]);const relevant=relevantIds.has(item.id);
+    const tag=soon?{label:age?`${age} ${age===1?"day":"days"}`:"Use soon",cls:"peach"}:relevant?{label:"This week",cls:""}:level===1?{label:"Low",cls:"peach"}:level===0?{label:"Out",cls:"neutral"}:{label:"Fine",cls:"sky"};
+    return <div key={item.id} className="hm-card hm-stock" style={{padding:0}}>
+     <button style={{textAlign:"left",padding:"14px 0 14px 16px",minWidth:0}} onClick={()=>{setEdit(item.id);feedback("tap")}} aria-label={`Update ${item.name}`}>
+      <div className="name"><strong>{item.name}</strong><span className={`hm-pill ${tag.cls}`}>{tag.label}</span></div>
+      <LevelBar level={level} onChange={l=>setLevel(item,l)} label={item.name}/>
+      <div className="hm-level-labels">{levels.map((l,i)=><span key={l} className={i===level?"on":""}>{l}</span>)}</div>
+     </button>
+     <button className="qty" style={{padding:"14px 16px 14px 0"}} onClick={()=>{setEdit(item.id);feedback("tap")}} aria-label={`Update ${item.name} amount`}>{item.tracking==="state"?levels[level]:n>0?formatQty(n,item.unit):"Out"}<small>{item.tracking==="state"?"level":"tap for exact"}</small></button>
+    </div>})}</div>
+   {!q&&list.length>shown.length&&<button className="hm-cook-more" onClick={()=>{setShowAll(v=>!v);feedback("tap")}}>{showAll?"Show less":`Show all ${list.length}`}</button>}
+   {shown.length===0&&<div className="hm-empty"><strong>Nothing matches.</strong>Try another name or clear the search.</div>}
+   <p className="hm-kitchen-foot">Drag the handle · tap for exact · or just tell Home</p>
   </>}
-  <div className="hm-kitchen-bottom-v5 hm-kitchen-bottom-v6"><Link href={scanHref}>Show Home</Link><button onClick={()=>{h.confirmKitchen();feedback("success")}}>{h.kitchenReady?"Kitchen up to date ✓":"Kitchen checked ✓"}</button></div>
- </div>
+  <div className="hm-gut" style={{marginTop:18}}><button className="hm-btn ghost full sm" onClick={()=>{h.confirmKitchen();feedback("success")}}>{h.kitchenReady?"Kitchen up to date ✓":"Kitchen checked ✓"}</button></div>
+
+  <Sheet open={!!editItem} onClose={()=>setEdit(null)} label="Update stock" title="Update" action={<span className="muted">tap outside to close</span>} className="hm-stock-sheet">
+   {editItem&&<StockEditor item={editItem} onDone={()=>setEdit(null)}/>}
+  </Sheet>
+  <Sheet open={!!editComp} onClose={()=>setEditComponent(null)} label="Update freezer stock" title="Update" action={<span className="muted">tap outside to close</span>} className="hm-stock-sheet">
+   {editComp&&<ComponentEditor id={editComp.id} onDone={()=>setEditComponent(null)}/>}
+  </Sheet>
+ </div>;
 }
 
-function Freezer(){
- const h=useHousehold();
- const[more,setMore]=useState(false);
- const activeIds=new Set(h.week.flatMap(id=>getRecipe(id).prep.map(x=>x.id)));
- const other=prepComponents.filter(c=>!motherBases.some(m=>m.id===c.id)).sort((a,b)=>Number(activeIds.has(b.id))-Number(activeIds.has(a.id))||a.code.localeCompare(b.code));
- const shown=more?other:other.filter(x=>activeIds.has(x.id)||(h.componentStock[x.id]??0)>0).slice(0,14);
- const setByPortion=(id:string,delta:number)=>{const c=getComponent(id);if(!c)return;h.setComponent(id,Math.max(0,(h.componentStock[id]??0)+delta*c.portionMl));feedback("change")};
- const stocked=motherBases.filter(m=>(h.componentStock[m.id]??0)>0).length;const weekMothers=motherBases.filter(m=>activeIds.has(m.id)).length;const low=motherBases.filter(m=>activeIds.has(m.id)&&(h.componentStock[m.id]??0)<m.portionMl).length;
- const activeBatches=h.prepBatches.filter(b=>(b.remainingMl??b.outputMl)>0).sort((a,b)=>new Date(a.at).getTime()-new Date(b.at).getTime());const fifo=activeBatches[0];const fifoComponent=fifo?getComponent(fifo.componentId):null;const fifoAge=fifo?Math.max(0,Math.floor((Date.now()-new Date(fifo.at).getTime())/86400000)):0;const fifoHref=fifoComponent?(fifoComponent.kind==="mother"?`/prep/${fifoComponent.id}`:fifoComponent.kind==="mid"?`/prep/mids/${fifoComponent.id}`:`/prep/boosters/${fifoComponent.id}`):"/prep";
- const datedMl=(id:string)=>activeBatches.filter(b=>b.componentId===id).reduce((sum,b)=>sum+(b.remainingMl??b.outputMl),0);const undated=prepComponents.map(c=>({c,ml:Math.max(0,(h.componentStock[c.id]??0)-datedMl(c.id))})).filter(x=>x.ml>0);const undatedCodes=undated.slice(0,5).map(x=>x.c.code).join(" · ");
- const oldestBatch=(id:string)=>activeBatches.find(b=>b.componentId===id);
+function wheel(stock:Record<string,number>){const parts=motherBases.map(m=>({tone:toneFor(m.id),n:stockPortions(m.id,stock)}));const total=parts.reduce((s,p)=>s+p.n,0);if(!total)return "conic-gradient(#e6ece8 0 100%)";let acc=0;return `conic-gradient(${parts.filter(p=>p.n).map(p=>{const from=acc/total*100;acc+=p.n;return `${p.tone} ${from}% ${acc/total*100}%`}).join(",")})`}
+
+function LevelBar({level,onChange,label}:{level:number;onChange:(l:number)=>void;label:string}){
+ const ref=useRef<HTMLDivElement>(null);
+ const pick=(clientX:number)=>{const el=ref.current;if(!el)return;const r=el.getBoundingClientRect();const x=Math.max(0,Math.min(1,(clientX-r.left)/r.width));onChange(Math.min(3,Math.floor(x*4)))};
+ return <div ref={ref} className="hm-level" role="slider" aria-label={`${label} level`} aria-valuemin={0} aria-valuemax={3} aria-valuenow={level} aria-valuetext={levels[level]} tabIndex={0}
+  onPointerDown={e=>{e.stopPropagation();(e.target as HTMLElement).setPointerCapture?.(e.pointerId);pick(e.clientX)}} onPointerMove={e=>{if(e.buttons)pick(e.clientX)}} onClick={e=>e.stopPropagation()}
+  onKeyDown={e=>{if(e.key==="ArrowRight"){e.preventDefault();onChange(Math.min(3,level+1))}if(e.key==="ArrowLeft"){e.preventDefault();onChange(Math.max(0,level-1))}}}>
+  <div className="fill" style={{width:`${pctOf(level)}%`,"--bar":bars[level]} as CSSProperties}/><div className="knob" style={{left:`calc(${pctOf(level)}% - 26px)`}}/>
+ </div>;
+}
+
+function StockEditor({item,onDone}:{item:IngredientDef;onDone:()=>void}){
+ const h=useHousehold();const n=h.ingredientStock[item.id]??0;const step=stepFor(item);const level=levelOf(item,n);const soon=!!h.useSoon[item.id];const age=ageDays(h.useSoonAt[item.id]);
+ const set=(v:number)=>{h.setIngredient(item.id,Math.max(0,item.tracking==="state"?Math.min(3,v):v));feedback("change")};
+ const dec=useHold(()=>set((h.ingredientStock[item.id]??0)-(item.tracking==="state"?1:step)));const inc=useHold(()=>set((h.ingredientStock[item.id]??0)+(item.tracking==="state"?1:step)));
+ const place=["Fresh","Protein","Dairy"].includes(item.category)?"Fridge":"Pantry";
  return <>
-  <section className="hm-freezer-overview-v6" style={{backgroundImage:`linear-gradient(90deg,rgba(25,34,28,.78),rgba(25,34,28,.16)),url(${foundationImages.freezer})`}}><div><span>FREEZER</span><strong>{stocked}/8 mothers stocked</strong><p>{low?`${low} planned ${low===1?"mother is":"mothers are"} low for this week.`:"The foundations are in good shape for the current week."}</p></div><Link href="/prep">Prep next →</Link><div className="hm-freezer-pulse-v6"><b>{weekMothers}<small>used this week</small></b><b>{activeBatches.length}<small>dated batches</small></b></div></section>
-  {fifo&&fifoComponent&&<Link href={fifoHref} className="hm-freezer-fifo-v25"><span><small>USE OLDEST FIRST</small><strong>{fifoComponent.code} · {fifoComponent.name}</strong><p>{fifo.remainingMl??fifo.outputMl} ml left · made {new Date(fifo.at).toLocaleDateString(undefined,{day:"numeric",month:"short"})} · {fifoAge===0?"today":`${fifoAge} ${fifoAge===1?"day":"days"} ago`}</p></span><b>›</b></Link>}
-  {undated.length>0&&<div className="hm-freezer-undated-v28"><span><small>NO BATCH DATE</small><strong>{undated.length} {undated.length===1?"prep item has":"prep items have"} manually entered stock</strong><p>{undatedCodes}{undated.length>5?` +${undated.length-5} more`:""}. We count it for meals, but we do not invent a made date.</p></span><Link href="/prep/day">Next Prep Day ›</Link></div>}
-  <section className="hm-block-v5 hm-freezer-mothers-section-v6"><SectionHead title="Mother bases" action={<Link href="/prep">Open Prep ›</Link>}/><div className="hm-freezer-mothers-v6">{motherBases.map(m=>{const n=stockPortions(m.id,h.componentStock);const photo=motherProcessImages[m.id]?.at(-1)?.url;const oldest=oldestBatch(m.id);const oldestLabel=oldest?new Date(oldest.at).toLocaleDateString(undefined,{day:"numeric",month:"short"}):null;const manualMl=Math.max(0,(h.componentStock[m.id]??0)-datedMl(m.id));return <article key={m.id} style={{"--tone":m.tone} as React.CSSProperties}><Link href={`/prep/${m.id}`} className="hm-freezer-object-v6">{photo?<img src={photo} alt={`${m.name} freezer portions`} loading="lazy"/>:<div/>}<span>{m.code}</span></Link><div className="hm-freezer-copy-v6"><strong>{m.name}</strong><small>{h.componentStock[m.id]??0} ml · {activeIds.has(m.id)?"this week":"foundation"}{oldestLabel?` · oldest ${oldestLabel}`:""}{manualMl?` · ${manualMl} ml undated`:""}</small><em className="hm-stock-segments-v5" aria-label={`${n} ${n===1?"portion":"portions"} of ${m.code}`}>{[0,1,2,3,4].map(i=><i key={i} className={i<Math.min(n,5)?"on":""}/>)}</em></div><div className="hm-stepper-v5"><button aria-label={`Decrease ${m.code}`} onClick={()=>setByPortion(m.id,-1)}>−</button><b>{n}</b><button aria-label={`Increase ${m.code}`} onClick={()=>setByPortion(m.id,1)}>+</button></div></article>})}</div></section>
-  <section className="hm-block-v5"><SectionHead title="Mids + boosters" action={<Link href="/prep/mids">Explore ›</Link>}/><div className="hm-freezer-other-v5">{shown.map(c=>{const n=stockPortions(c.id,h.componentStock);const oldest=oldestBatch(c.id);const oldestLabel=oldest?new Date(oldest.at).toLocaleDateString(undefined,{day:"numeric",month:"short"}):null;const manualMl=Math.max(0,(h.componentStock[c.id]??0)-datedMl(c.id));return <article key={c.id} style={{"--tone":c.tone} as React.CSSProperties}><i/><span><strong>{c.code}</strong><small>{c.name}{activeIds.has(c.id)?" · this week":""}{oldestLabel?` · oldest ${oldestLabel}`:""}{manualMl?` · ${manualMl} ml undated`:""}</small></span><div className="hm-stepper-v5"><button aria-label={`Decrease ${c.code}`} onClick={()=>setByPortion(c.id,-1)}>−</button><b>{n}</b><button aria-label={`Increase ${c.code}`} onClick={()=>setByPortion(c.id,1)}>+</button></div></article>})}</div><button className="hm-text-button-v5" onClick={()=>{setMore(v=>!v);feedback("tap")}}>{more?"Show less":"Show all prep"}</button></section>
+  <div className="item"><div className="ic">{item.name[0]}</div><div><h3>{item.name}</h3><small>{place}{soon?` · marked use soon ${age?`${age} ${age===1?"day":"days"} ago`:"today"}`:""}</small></div></div>
+  <div className="big"><button className="minus" aria-label="Less" {...dec}>−</button><div className="val"><b>{item.tracking==="state"?levels[level]:Math.round(n*10)/10}</b><small>{item.tracking==="state"?"level":`${item.unit==="count"?"count":item.unit==="portion"?"portions":item.unit} · hold to count fast`}</small></div><button className="plus" aria-label="More" {...inc}>+</button></div>
+  <div className="hm-levels">{levels.map((l,i)=><button key={l} className={i===level?"on":""} onClick={()=>{if(item.tracking==="state")set(i);else set([0,1,3,5][i]*step)}}>{l}</button>)}</div>
+  <div className="acts">{place==="Fridge"?<button className={`soon ${soon?"on":""}`} disabled={n<=0} onClick={()=>{h.toggleUseSoon(item.id);feedback("change")}}>{soon?"Use soon ✓":"Use soon ◷"}</button>:<span/>}<button onClick={()=>{set(0);feedback("change")}}>Threw it out</button></div>
+  <button className="hm-btn primary full" style={{marginTop:18,height:56}} onClick={onDone}>Done</button>
+ </>;
+}
+
+function ComponentEditor({id,onDone}:{id:string;onDone:()=>void}){
+ const h=useHousehold();const c=getComponent(id)!;const ml=h.componentStock[id]??0;const n=stockPortions(id,h.componentStock);const hero=motherHero(id);
+ const set=(portions:number)=>{h.setComponent(id,Math.max(0,portions)*c.portionMl);feedback("change")};
+ const dec=useHold(()=>set(stockPortions(id,h.componentStock)-1));const inc=useHold(()=>set(stockPortions(id,h.componentStock)+1));
+ const batches=h.prepBatches.filter(b=>b.componentId===id&&(b.remainingMl??b.outputMl)>0).sort((a,b)=>new Date(a.at).getTime()-new Date(b.at).getTime());
+ return <>
+  <div className="item"><div className="ic" style={{background:toneGradient(id),color:"#fff",fontSize:13,overflow:"hidden"}}>{hero?<img src={hero} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:c.code}</div><div><h3>{c.code}</h3><small>{c.name} · {c.portionMl} ml per {portionWord(id)}{batches[0]?` · oldest ${new Date(batches[0].at).toLocaleDateString(undefined,{day:"numeric",month:"short"})}`:""}</small></div></div>
+  <div className="big"><button className="minus" aria-label="One less" {...dec}>−</button><div className="val"><b>{n}</b><small>{portionWord(id,n)} · {ml} ml · hold to count fast</small></div><button className="plus" aria-label="One more" {...inc}>+</button></div>
+  <div className="acts"><Link className="hm-btn ghost" style={{height:52,fontSize:14}} href={c.kind==="mother"?`/prep/${id}`:c.kind==="mid"?`/prep/mids/${id}`:"/prep"} onClick={onDone}>Open {c.code}</Link><button onClick={()=>set(0)}>Used it all</button></div>
+  <button className="hm-btn primary full" style={{marginTop:18,height:56}} onClick={onDone}>Done</button>
+ </>;
+}
+
+function MidsAndBoosters({onEdit}:{onEdit:(id:string)=>void}){
+ const h=useHousehold();const[more,setMore]=useState(false);
+ const activeIds=new Set(h.week.flatMap(id=>getRecipe(id).prep.map(x=>x.id)));
+ const other=prepComponents.filter(c=>c.kind!=="mother").sort((a,b)=>Number(activeIds.has(b.id))-Number(activeIds.has(a.id))||Number((h.componentStock[b.id]??0)>0)-Number((h.componentStock[a.id]??0)>0)||a.code.localeCompare(b.code));
+ const shown=more?other:other.filter(x=>activeIds.has(x.id)||(h.componentStock[x.id]??0)>0).slice(0,8);
+ return <>
+  <SectionHead title="Mids & boosters" action={<Link href="/prep/mids">Explore ›</Link>}/>
+  {shown.length?<div className="hm-list tight">{shown.map(c=>{const n=stockPortions(c.id,h.componentStock);return <div key={c.id} className="hm-card hm-row" style={{padding:"8px 14px 8px 10px"}}>
+   <button className="hm-dot" style={{"--tone":toneFor(c.id),width:44,height:44,borderRadius:14,background:toneGradient(c.id),color:"#fff",fontSize:10,fontWeight:800,display:"grid",placeItems:"center"} as CSSProperties} onClick={()=>onEdit(c.id)} aria-label={`Update ${c.code}`}>{c.code.length>5?c.code.slice(0,5):c.code}</button>
+   <button style={{textAlign:"left",minWidth:0}} onClick={()=>onEdit(c.id)}><strong>{c.code}</strong><small>{c.name}{activeIds.has(c.id)?" · this week":""}</small></button>
+   <div className="hm-stepper"><button className="minus" aria-label={`One less ${c.code}`} onClick={()=>{h.setComponent(c.id,Math.max(0,(h.componentStock[c.id]??0)-c.portionMl));feedback("change")}}>−</button><b>{n}</b><button className="plus" aria-label={`One more ${c.code}`} onClick={()=>{h.setComponent(c.id,(h.componentStock[c.id]??0)+c.portionMl);feedback("change")}}>+</button></div>
+  </div>})}</div>:<div className="hm-empty"><strong>No mids or boosters counted yet.</strong>This week doesn’t need any — add them when you make a batch.</div>}
+  <button className="hm-cook-more" onClick={()=>{setMore(v=>!v);feedback("tap")}}>{more?"Show less":`Show all ${other.length}`}</button>
  </>;
 }

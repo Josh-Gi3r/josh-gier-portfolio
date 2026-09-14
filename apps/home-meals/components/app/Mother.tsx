@@ -8,7 +8,7 @@ import {midBases,motherBases,recipes} from "@/data/home-data";
 import {batchOutputMl,prepDemandForWeekMl,stockPortions} from "@/data/stock-math";
 import {feedback} from "@/lib/feedback";
 import {useSheet} from "@/lib/useSheet";
-import {Back,MealCard,SectionHead} from "./Primitives";
+import {Back,MealCard,LegacySectionHead as SectionHead} from "./Primitives";
 
 export function Mother({id}:{id:string}){
  const h=useHousehold();const m=motherBases.find(x=>x.id===id)!;const recipe=baseRecipesV2[id];const process=motherProcessImages[id]??[];const mids=midBases.filter(x=>x.parentMotherIds.includes(id));const[confirm,setConfirm]=useState(false);const[added,setAdded]=useState(false);useSheet(confirm,()=>setConfirm(false));const ml=h.componentStock[id]??0;const portions=stockPortions(id,h.componentStock);const batchMl=batchOutputMl(id);

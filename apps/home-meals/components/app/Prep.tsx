@@ -1,29 +1,58 @@
 "use client";
 import Link from "next/link";
+import {useMemo,type CSSProperties} from "react";
 import {useHousehold} from "../HouseholdState";
 import {getComponent,getRecipe,midBases,motherBases,recipes} from "@/data/home-data";
-import {prepDemandForWeekMl,stockPortions} from "@/data/stock-math";
 import {foundationImages} from "@/data/foundation-assets";
-import {motherProcessImages} from "@/data/mother-process-assets";
-import {PageHead,SectionHead} from "./Primitives";
+import {prepDemandForWeekMl,stockPortions} from "@/data/stock-math";
+import {feedback} from "@/lib/feedback";
+import {motherHero,portionWord,toneFor,toneGradient} from "@/lib/tones";
+import {HomeSays} from "./HomeSays";
+import {MealTile,SectionHead,Tile} from "./Primitives";
+
+const statusOf=(portions:number)=>portions<=0?{label:"Out",bg:"linear-gradient(135deg,#ff8a70,#e65f45)"}:portions<2?{label:"Low",bg:"linear-gradient(135deg,#ffb48f,#ff8a5c)"}:{label:"Good",bg:"linear-gradient(135deg,#6fd39a,#2fae6e)"};
+const quick=[{href:"/prep/day",label:"Prep Day",glyph:"✓",bg:"var(--grad-green-short)"},{href:"/prep/mids",label:"Mid-bases",glyph:"→",bg:"linear-gradient(135deg,#ffc2a8,#ff9f7a)"},{href:"/learn/portions",label:"Cube sizes",glyph:"▦",bg:"linear-gradient(135deg,#9fc0ff,#4f8cff)"},{href:"/learn/freezer",label:"Freezer",glyph:"❄",bg:"var(--ink)"}];
 
 export function Prep(){
- const h=useHousehold();const demand=prepDemandForWeekMl(h.week);const activeNeeds=h.kitchenReady?h.prepNeeds:demand.map(x=>({id:x.id,neededMl:x.neededMl,onHandMl:0,shortMl:x.neededMl,needed:x.neededPortions,onHand:0,short:x.neededPortions,batches:0}));
- const lowMothers=motherBases.filter(m=>h.kitchenReady&&(h.componentStock[m.id]??0)<m.portionMl*2);
- const weeklyMidIds=new Set(h.week.flatMap(id=>getRecipe(id).midIds));
- return <div className="hm-page-v5 hm-prep-v5 hm-prep-v6 hm-prep-v11">
-  <PageHead title="Prep" sub="Make only what the week is short of." action={<Link className="hm-round-link-v5" href="/learn/prep-day" aria-label="Prep help">?</Link>}/>
+ const h=useHousehold();
+ const demand=prepDemandForWeekMl(h.week);
+ const needs=h.kitchenReady?h.prepNeeds:[];
+ const needLine=needs.slice(0,3).map(n=>{const c=getComponent(n.id);return c?`${c.code} ×${n.short}`:null}).filter(Boolean).join(" · ");
+ const batches=needs.reduce((s,n)=>s+Math.max(1,n.batches),0);const minutes=batches*45;
+ const focusId=needs[0]?.id??demand.sort((a,b)=>b.neededMl-a.neededMl)[0]?.id??"gold";
+ const focus=getComponent(focusId)??getComponent("gold")!;
+ const becomes=useMemo(()=>{const viaMid=new Set(midBases.filter(m=>m.parentMotherIds.includes(focusId)).map(m=>m.id));return recipes.filter(r=>r.prep.some(p=>p.id===focusId)||r.midIds.some(m=>viaMid.has(m)))},[focusId]);
+ const says=(()=>{
+  if(!h.kitchenReady)return {text:<>I can’t plan prep until I know the freezer. Count the bases once and I’ll only ask you to make what the week is short of.</>,actions:<><Link className="primary" href="/kitchen">Count the freezer</Link><Link className="ghost" href="/prep/day">Stock up anyway</Link></>};
+  if(needs.length)return {text:<>Short <b>{needLine}</b> this week. One {minutes}‑min session Sunday covers it. Book it?</>,actions:<><Link className="primary" href="/prep/day">Sunday works</Link><Link className="ghost" href="/plan">Swap a dinner instead</Link></>};
+  return {text:<>The freezer covers this week — nothing to make. A stock‑up session is there if you want a quiet Sunday in the kitchen.</>,actions:<><Link className="primary" href="/prep/day">Stock up</Link><Link className="ghost" href="/prep/mids">Explore mids</Link></>};
+ })();
+ return <div className="hm-screen">
+  <h1 className="hm-h1 hm-gut">Prep</h1>
+  <HomeSays actions={says.actions}>{says.text}</HomeSays>
 
-  <section className="hm-prep-hero-v6 hm-prep-hero-v11" style={{backgroundImage:`linear-gradient(90deg,rgba(22,24,18,.78),rgba(22,24,18,.24)),url(${foundationImages.prepDay})`}}><div><span>FOUNDATIONS</span><h2>Do the slow work once.</h2><p>Keep the freezer ready, then let the week stay flexible.</p></div><div className="hm-prep-hero-metrics-v6"><b>❧ <span>Less waste</span></b><b>◷ <span>More time</span></b><b>♡ <span>Better dinners</span></b></div></section>
+  <SectionHead title="Our bases" action={<span className="muted">in the freezer</span>}/>
+  <div className="hm-bases">
+   {motherBases.map(m=>{const portions=stockPortions(m.id,h.componentStock);const st=statusOf(portions);const hero=motherHero(m.id);return <Tile key={m.id} href={`/prep/${m.id}`} img={hero} alt={m.name} style={{"--tone":toneFor(m.id),"--tone-grad":toneGradient(m.id)} as CSSProperties}>
+    {!hero&&<div className="initial">{m.code}<small>{m.name}</small></div>}
+    <span className="badge code">{m.code}</span>
+    {h.kitchenReady&&<span className="badge right status" style={{"--status":st.bg} as CSSProperties}>{st.label}</span>}
+    <div className="copy"><div className="n">{h.kitchenReady?portions:"—"} <small>{portionWord(m.id,portions)}</small></div><span className="name">{m.name}</span></div>
+   </Tile>})}
+  </div>
 
-  <section className="hm-prep-week-v5 hm-prep-week-v6"><div><span>THIS WEEK</span><h2>{h.kitchenReady?(h.prepNeeds.length?`${h.prepNeeds.length} ${h.prepNeeds.length===1?"thing needs":"things need"} topping up`:"We’re covered"):`${demand.length} prep ${demand.length===1?"item":"items"} in the plan`}</h2><p>{h.kitchenReady?(h.prepNeeds.length?"Only make what the week is short of.":"Nothing needs making for the current plan."):"Check the freezer to turn this into a real shortfall list."}</p></div><div>{h.kitchenReady?<Link href={h.prepNeeds.length?"/prep/day":"/kitchen"}>{h.prepNeeds.length?"Start Prep Day":"Freezer"}</Link>:<Link href="/kitchen">Check freezer</Link>}</div></section>
-  {activeNeeds.length>0&&<><div className="hm-prep-needs-v5">{activeNeeds.slice(0,4).map(n=>{const c=getComponent(n.id);if(!c)return null;return <article key={n.id} style={{"--tone":c.tone} as React.CSSProperties}><i/><div><strong>{c.code}</strong><span>{c.name}</span><small>{h.kitchenReady?`${n.shortMl} ml short`:`${n.neededMl} ml used this week`}</small></div>{h.kitchenReady&&<b>{n.batches} {n.batches===1?"batch":"batches"}</b>}</article>})}</div>{activeNeeds.length>4&&<Link className="hm-text-button-v5" href="/prep/day">{activeNeeds.length-4} more in Prep Day</Link>}</>}
+  <Link href="/prep/day" className={`hm-session hm-lift ${needs.length?"":"calm"}`} onClick={()=>feedback("tap")}>
+   <img src={foundationImages.prepDay} alt="" loading="lazy"/><div className="shade"/>
+   <div className="copy"><div><span className="kick">{needs.length?"SUNDAY SESSION":"STOCK-UP SESSION"}</span><h3>{needs.length?<>{needLine}<br/>≈ {minutes} min hands‑on</>:<>Top up any base<br/>while a pot simmers</>}</h3></div><span className="hm-btn">{needs.length?"Start session":"Open Prep Day"}</span></div>
+  </Link>
 
-  <nav className="hm-prep-shortcuts-v11" aria-label="Prep tools"><Link href="/prep/day"><b>01</b><span><strong>Prep Day</strong><small>Cook · cool · label · freeze</small></span><em>›</em></Link><Link href="/prep/mids"><b>02</b><span><strong>Mid-bases</strong><small>Mother → mid → dinner</small></span><em>›</em></Link><Link href="/learn/portions"><b>03</b><span><strong>Portion guide</strong><small>30 · 60 · 120 · 250 ml</small></span><em>›</em></Link></nav>
+  {h.prepBatches.length>0&&<><SectionHead title="Recent batches" action={<span className="muted">newest first</span>}/><div className="hm-batches">{h.prepBatches.slice(0,4).map((b,i)=>{const c=getComponent(b.componentId);const left=b.remainingMl??b.outputMl;return <div key={`${b.at}-${i}`} className="hm-card" style={{"--tone":toneFor(b.componentId)} as CSSProperties}><i/><span><strong>{c?.code} · {c?.name}</strong><small>{new Date(b.at).toLocaleDateString(undefined,{day:"numeric",month:"short"})} · {left>0?`${left} ml left`:"used up"}</small></span><b>{b.outputMl} ml</b></div>})}</div></>}
 
-  <section className="hm-block-v5 hm-mothers-v6"><SectionHead title="Mother bases" action={<span>{motherBases.length} foundations</span>}/><div className="hm-mother-grid-v6">{motherBases.map(m=>{const count=stockPortions(m.id,h.componentStock);const planned=h.week.filter(id=>getRecipe(id).motherIds.includes(m.id)).length;const photo=motherProcessImages[m.id]?.at(-1)?.url;return <Link href={`/prep/${m.id}`} key={m.id} style={{"--tone":m.tone} as React.CSSProperties}><div className="hm-mother-object-v6">{photo?<img src={photo} alt={`${m.name} freezer portions`} loading="lazy"/>:<div className="hm-base-cube-v5"><i/><b>{m.code}</b></div>}<span>{m.code}</span></div><strong>{m.name}</strong><small>{h.kitchenReady?count?`${count} ${count===1?"portion":"portions"}`:"Out":"not checked"}{planned>0?` · ${planned} this week`:""}</small></Link>})}</div>{lowMothers.length>0&&<div className="hm-inline-note-v5"><strong>Low:</strong> {lowMothers.map(x=>x.code).join(" · ")}</div>}</section>
+  <SectionHead title={`What ${focus.code} becomes`} action={<span style={{color:toneFor(focusId),fontWeight:700,fontSize:13}}>{becomes.length} dinners</span>}/>
+  <div className="hm-rail">{becomes.slice(0,10).map(r=><MealTile key={r.id} recipe={r}/>)}</div>
 
-  {h.prepBatches.length>0&&<section className="hm-block-v5"><SectionHead title="Recent batches"/><div className="hm-batch-history-v5">{h.prepBatches.slice(0,6).map((b,i)=>{const c=getComponent(b.componentId);const left=b.remainingMl??b.outputMl;return <div key={`${b.at}-${i}`} className={left<=0?"used":""}><i style={{background:c?.tone}}/><span><strong>{c?.code}</strong><small>{new Date(b.at).toLocaleDateString(undefined,{day:"numeric",month:"short"})} · {left>0?`${left} ml left`:"used up"}</small></span><b>{b.outputMl} ml made</b></div>})}</div></section>}
-
-  <section className="hm-block-v5 hm-mids-v6"><SectionHead title="Mid-bases" action={<Link href="/prep/mids">Explore ›</Link>}/><p className="hm-section-deck-v6">Turn a foundation in a different direction without starting dinner from zero.</p><div className="hm-mid-quick-v5">{midBases.filter(m=>weeklyMidIds.has(m.id)||recipes.some(r=>r.midIds.includes(m.id))).slice(0,8).map(m=>{const used=recipes.filter(r=>r.midIds.includes(m.id)).length;return <Link href={`/prep/mids/${m.id}`} key={m.id} style={{"--tone":m.tone} as React.CSSProperties}><i/><div><strong>{m.code}</strong><span>{m.name}</span><small>{weeklyMidIds.has(m.id)?"used this week":used?`${used} ${used===1?"recipe":"recipes"}`:"not in our rotation yet"}</small></div></Link>})}</div></section>
- </div>}
+  <SectionHead title="More" action={<span className="muted">guides & tools</span>}/>
+  <div className="hm-quick">{quick.map(q=><Link key={q.href} href={q.href} className="hm-card hm-lift" style={{"--bg":q.bg} as CSSProperties} onClick={()=>feedback("tap")}><span className="ic">{q.glyph}</span><strong>{q.label}</strong></Link>)}</div>
+  <p className="hm-note hm-gut" style={{marginTop:14}}>{demand.length} prep {demand.length===1?"item":"items"} in this week’s plan · {getRecipe(h.week[0])?"7 dinners":""}</p>
+ </div>;
+}

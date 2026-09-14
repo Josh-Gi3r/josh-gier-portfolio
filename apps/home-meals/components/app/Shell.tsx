@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
-import {useEffect,useMemo,useState} from "react";
-import {Icon} from "../Icons";
+import {useEffect,useState} from "react";
 import {useHousehold} from "../HouseholdState";
+import {AskHomeView,type AskMessage} from "../AskHomeView";
 import {getIngredient,getRecipe,ingredients,prepComponents,recipes} from "@/data/home-data";
 import {recipeTitle} from "@/data/recipe-display";
 import {recipeAvailability} from "@/data/stock-math";
@@ -12,29 +12,21 @@ import {formatQty} from "./Primitives";
 import {bindGlobalHaptics,feedback} from "@/lib/feedback";
 import {useSheet} from "@/lib/useSheet";
 
-const nav=[
- {href:"/",label:"Home",icon:"home" as const},
- {href:"/cook",label:"Cook",icon:"cook" as const},
- {href:"/prep",label:"Prep",icon:"prep" as const},
- {href:"/kitchen",label:"Kitchen",icon:"kitchen" as const},
- {href:"/plan",label:"Plan",icon:"plan" as const}
-];
-type AskMessage={who:"you"|"home";text:string;mealIds?:string[];tags?:string[];href?:string;action?:string};
 type HomeReply=Omit<AskMessage,"who">;
+const quick=[{label:"Tonight",text:"What should we cook tonight?"},{label:"Ready now",text:"What can we make now?"},{label:"Under 30 min",text:"Something quick under 30 minutes"},{label:"No rice",text:"G doesn't want rice"},{label:"Use soon",text:"What should we use soon?"},{label:"Freezer life",text:"How long will the oldest batch last in the freezer?"},{label:"Low stock",text:"What is running low in the pantry?"},{label:"Prep",text:"What should we prep?"}];
 function pantryLevel(value:number){return value>=3?"plenty":value>=2?"some":value>=1?"low":"out"}
 const riceIds=new Set(["rice","jasmine-rice","basmati-rice"]);
 function usesRice(r:(typeof recipes)[number]){return r.ingredients.some(i=>riceIds.has(i.id))}
 function componentMention(text:string,component:(typeof prepComponents)[number]){const name=component.name.toLowerCase();if(text.includes(name))return true;const code=component.code.toLowerCase();if(code.length<3)return false;const escaped=code.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`).test(text)}
 
 export function Shell({children}:{children:React.ReactNode}){
- const path=usePathname();const h=useHousehold();const[ask,setAsk]=useState(false);const[q,setQ]=useState("");const[voiceState,setVoiceState]=useState<"idle"|"listening"|"unsupported">("idle");
- const[messages,setMessages]=useState<AskMessage[]>([{who:"home",text:"What do you need?"}]);
- const active=useMemo(()=>nav.find(x=>x.href==="/"?path==="/":path.startsWith(x.href))?.href,[path]);
+ const path=usePathname();const h=useHousehold();const[ask,setAsk]=useState(false);const[q,setQ]=useState("");
+ const[messages,setMessages]=useState<AskMessage[]>([{who:"home",text:"What do you need? Tonight, something quick, what needs using — or just say it."}]);
  const cookingRoute=/^\/cook\/[^/]+\/cook$/.test(path);
  const day=(new Date().getDay()+6)%7;const tonight=getRecipe(h.week[day]??h.week[0])??recipes[0];
- const cameraMode=cookingRoute||path.startsWith("/prep")?"Prep":path.startsWith("/kitchen")?"Fridge":"Fridge";
+ const cameraMode=cookingRoute||path.startsWith("/prep")?"Prep":"Fridge";
  const cameraHref=`/scan?mode=${cameraMode}&back=${encodeURIComponent(path)}`;
- useEffect(()=>{bindGlobalHaptics();const openAsk=()=>setAsk(true);window.addEventListener("home-meals:ask",openAsk);return()=>window.removeEventListener("home-meals:ask",openAsk)},[]);useSheet(ask,()=>{setAsk(false);setVoiceState("idle")});
+ useEffect(()=>{bindGlobalHaptics();const openAsk=()=>setAsk(true);window.addEventListener("home-meals:ask",openAsk);return()=>window.removeEventListener("home-meals:ask",openAsk)},[]);useSheet(ask,()=>setAsk(false));
  const answer=(text:string):HomeReply=>{const s=text.toLowerCase();const mentionedComponent=()=>prepComponents.find(x=>componentMention(s,x));
   if((s.includes("how long")||s.includes("freezer life")||s.includes("storage guide")||s.includes("keep in the freezer")||s.includes("last in the freezer"))&&s.includes("freezer")){const named=mentionedComponent();const activeBatches=h.prepBatches.filter(b=>(b.remainingMl??b.outputMl)>0).sort((a,b)=>new Date(a.at).getTime()-new Date(b.at).getTime());const target=named??(activeBatches[0]?prepComponents.find(x=>x.id===activeBatches[0].componentId):undefined);if(!target)return {text:"There isn’t a dated prep batch to check yet. Prep Day will create the first real freezer label.",href:"/prep/day",action:"Start Prep Day"};const guide=freezerGuide(target.id);const oldest=activeBatches.find(b=>b.componentId===target.id);if(!guide)return {text:`${target.code} has no freezer-life guide saved yet. I won’t invent one.`,tags:[target.name],href:target.kind==="mother"?`/prep/${target.id}`:"/prep",action:"Open prep guide"};const age=oldest?freezerAge(target.id,oldest.at):null;const batchNote=oldest&&age?` Oldest dated batch is ${age.ageDays===0?"from today":`${age.ageDays} ${age.ageDays===1?"day":"days"} old`}, with ${oldest.remainingMl??oldest.outputMl} ml left.`:" There is no dated batch for it right now.";return {text:`${target.code}: freezer guide ${guide.label}.${batchNote}`,tags:[target.name,age?.status==="past-lower-guide"?"Use first":age?.status==="approaching-guide"?"Use soon":"Freezer guide"],href:target.kind==="mother"?`/prep/${target.id}`:"/kitchen",action:target.kind==="mother"?"Open guide":"Open Freezer"}}
   const needsKitchen=s.includes("have")||s.includes("buy")||s.includes("shop")||s.includes("grocery")||s.includes("prep")||s.includes("freezer")||s.includes("pantry")||s.includes("staple")||s.includes("soon")||s.includes("low")||s.includes("make now")||s.includes("ready now");
@@ -57,34 +49,9 @@ export function Shell({children}:{children:React.ReactNode}){
   return {text:"Ask me about tonight, quick or no-rice dinners, freezer life, what we have, what can be made now, groceries, pantry levels, prep, use-soon food, favourites, or the last dinner."};
  }
  const send=(text=q)=>{const clean=text.trim();if(!clean)return;const reply=answer(clean);setMessages(v=>[...v,{who:"you",text:clean},{who:"home",...reply}]);setQ("");feedback("change")};
- const startVoice=()=>{
-  setAsk(true);feedback("tap");
-  const W=window as typeof window & {SpeechRecognition?:new()=>any;webkitSpeechRecognition?:new()=>any};
-  const Recognition=W.SpeechRecognition||W.webkitSpeechRecognition;
-  if(!Recognition){setVoiceState("unsupported");setMessages(v=>[...v,{who:"home",text:"Voice input isn’t available in this browser yet. You can still type or show me something with the camera."}]);return;}
-  const rec=new Recognition();rec.lang="en-SG";rec.interimResults=false;rec.maxAlternatives=1;
-  rec.onstart=()=>setVoiceState("listening");
-  rec.onresult=(e:any)=>{const text=e.results?.[0]?.[0]?.transcript??"";setVoiceState("idle");if(text)send(text)};
-  rec.onerror=()=>setVoiceState("idle");rec.onend=()=>setVoiceState(v=>v==="listening"?"idle":v);rec.start();
- };
- return <div className="hm-shell-v5 hm-shell-v6">
-  {cookingRoute?<div className="hm-main-v5">{children}</div>:<main className="hm-main-v5">{children}</main>}
-  {h.storageIssue&&<div className="hm-storage-warning-v5" role="status"><span><strong>Changes aren’t saving on this device.</strong><small>Keep this tab open and try again before closing Home Meals.</small></span><button onClick={h.clearStorageIssue} aria-label="Dismiss save warning">×</button></div>}
-  {!cookingRoute&&<>
-   <nav className="hm-nav-v5 hm-nav-v6" aria-label="Main navigation">{nav.map(item=>{const current=active===item.href;return <Link href={item.href} key={item.href} className={current?"active":""} aria-current={current?"page":undefined}><Icon name={item.icon} size={22}/><span>{item.label}</span></Link>})}</nav>
-   <div className="hm-home-tools-v6" aria-label="Home inputs">
-    <Link href={cameraHref} className="hm-input-orb-v6 camera" aria-label="Show Home with camera"><Icon name="camera" size={23}/></Link>
-    <button className="hm-ask-orb-v6" onClick={()=>setAsk(true)} aria-label="Ask Home"><Icon name="spark" size={24}/><span>Ask Home</span></button>
-    <button className={`hm-input-orb-v6 mic ${voiceState==="listening"?"listening":""}`} onClick={startVoice} aria-label={voiceState==="listening"?"Listening to Home":"Talk to Home"}><Icon name="mic" size={23}/></button>
-   </div>
-  </>}
-  {ask&&<div className="hm-sheet-backdrop-v5" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setAsk(false)}}><section className="hm-sheet-v5 hm-ask-sheet-v5 hm-ask-sheet-v6 hm-ask-sheet-v10" role="dialog" aria-modal="true" aria-label="Ask Home">
-   <div className="hm-sheet-handle-v5"/><header><div><span>HOME</span><h2>Ask Home</h2><p>Camera, voice or text. It all uses the same kitchen, plan and cookbook.</p></div><button className="hm-icon-button-v5" onClick={()=>setAsk(false)} aria-label="Close">×</button></header>
-   <div className="hm-ask-modes-v6"><Link href={cameraHref} onClick={()=>setAsk(false)}><Icon name="camera" size={20}/><span><strong>Show</strong><small>fridge, prep, receipt</small></span></Link><button className="active" aria-pressed="true" onClick={()=>document.querySelector<HTMLInputElement>(".hm-composer-v5 input")?.focus()}><Icon name="spark" size={20}/><span><strong>Ask</strong><small>what should we do?</small></span></button><button className={voiceState==="listening"?"active":""} aria-pressed={voiceState==="listening"} onClick={startVoice}><Icon name="mic" size={20}/><span><strong>{voiceState==="listening"?"Listening…":"Tell"}</strong><small>hands-free input</small></span></button></div>
-   <div className="hm-ask-context-v5"><div><span>Tonight</span><strong>{recipeTitle(tonight.id,tonight.title)}</strong></div><Link href={`/cook/${tonight.id}`} onClick={()=>setAsk(false)}>Open</Link></div>
-   <div className="hm-ask-messages-v5 hm-ask-messages-v10" tabIndex={0} aria-label="Ask Home conversation" aria-live="polite">{messages.slice(-6).map((m,i)=><div key={i} className={m.who}><p>{m.text}</p>{m.tags&&<div className="hm-ask-tags-v10">{m.tags.filter(Boolean).map(tag=><span key={tag}>{tag}</span>)}</div>}{m.mealIds&&<div className="hm-ask-meals-v10">{m.mealIds.map(id=>{const r=getRecipe(id);const title=recipeTitle(r.id,r.title);return <Link key={id} href={`/cook/${id}`} onClick={()=>setAsk(false)}>{r.image?<img src={r.image} alt={title}/>:<i/>}<span><strong>{title}</strong><small>{r.minutes} min · {r.cuisine}</small></span><b>›</b></Link>})}</div>}{m.href&&m.action&&<Link className="hm-ask-action-v10" href={m.href} onClick={()=>setAsk(false)}>{m.action} <b>→</b></Link>}</div>)}</div>
-   <div className="hm-ask-quick-v5"><button onClick={()=>send("What should we cook tonight?")}>Tonight</button><button onClick={()=>send("What can we make now?")}>Ready now</button><button onClick={()=>send("Something quick under 30 minutes")}>Quick</button><button onClick={()=>send("G doesn't want rice")}>No rice</button><button onClick={()=>send("How long will the oldest batch last in the freezer?")}>Freezer life</button><button onClick={()=>send("What should we use soon?")}>Use soon</button><button onClick={()=>send("What is running low in the pantry?")}>Low stock</button><button onClick={()=>send("What should we prep?")}>Prep</button></div>
-   <form className="hm-composer-v5" onSubmit={e=>{e.preventDefault();send()}}><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Ask about home…" aria-label="Ask Home" autoFocus/><button aria-label="Send"><Icon name="arrow" size={18}/></button></form>
-  </section></div>}
+ return <div className="hm-shell">
+  {cookingRoute?<div className="hm-main cooking">{children}</div>:<main className="hm-main">{children}</main>}
+  {h.storageIssue&&<div className="hm-warning" role="status"><span><strong>Changes aren’t saving on this device.</strong><small>Keep this tab open and try again before closing Home Meals.</small></span><button onClick={h.clearStorageIssue} aria-label="Dismiss save warning">×</button></div>}
+  {ask&&<div data-local=""><AskHomeView messages={messages} q={q} setQ={setQ} onSend={send} onClose={()=>setAsk(false)} cameraHref={cameraHref} quick={quick}/></div>}
  </div>
 }

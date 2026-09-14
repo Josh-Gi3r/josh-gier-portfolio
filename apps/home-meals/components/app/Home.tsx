@@ -1,42 +1,104 @@
 "use client";
 import Link from "next/link";
+import {useEffect,useMemo,useRef,useState,type CSSProperties} from "react";
 import {useHousehold} from "../HouseholdState";
-import {getComponent,getIngredient,getRecipe,ingredients,motherBases} from "@/data/home-data";
+import {getComponent,getIngredient,getRecipe,motherBases,recipes} from "@/data/home-data";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
-import {recipeAvailability} from "@/data/stock-math";
-import {foundationImages} from "@/data/foundation-assets";
-import {freezerAge} from "@/data/freezer-guide";
-import {MealCard,PageHead,RecipeReady,SectionHead} from "./Primitives";
+import {recipeAvailability,stockPortions} from "@/data/stock-math";
+import {feedback} from "@/lib/feedback";
+import {toneFor} from "@/lib/tones";
+import {HomeSays} from "./HomeSays";
+import {Orb} from "./Orb";
+import {Avatar,mealMeta,MealTile,SectionHead,useReadiness} from "./Primitives";
 
 const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const longDays=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const SEEN_KEY="home-meals-welcome-seen-v1";
+function partOfDay(){const hour=new Date().getHours();return hour<12?"morning":hour<17?"afternoon":"evening"}
+
 export function Home(){
- const h=useHousehold();const day=(new Date().getDay()+6)%7;const tonight=getRecipe(h.week[day]??h.week[0]);const last=h.history[0]?getRecipe(h.history[0].mealId):null;const tonightTitle=recipeTitle(tonight.id,tonight.title);const lastPhoto=last?h.mealPhotos.find(x=>x.mealId===last.id):undefined;const lastVersion=last?(h.recipeVersions[last.id]?.[0]?.number??1):1;
- const fridgeItems=ingredients.filter(x=>["Fresh","Protein","Dairy"].includes(x.category)&&(h.ingredientStock[x.id]??0)>0).length;
- const pantryItems=ingredients.filter(x=>x.category==="Pantry"&&(h.ingredientStock[x.id]??0)>0).length;const pantryLowItems=ingredients.filter(x=>x.category==="Pantry"&&x.tracking==="state"&&(h.ingredientStock[x.id]??0)===1);const pantryLow=pantryLowItems.length;
- const stockedMothers=motherBases.filter(x=>(h.componentStock[x.id]??0)>0).length;
- const firstPrep=h.prepNeeds[0];const firstBuy=h.shoppingNeeds[0];
- const soonIds=Object.keys(h.useSoon).filter(id=>h.useSoon[id]&&(h.ingredientStock[id]??0)>0).sort((a,b)=>new Date(h.useSoonAt[a]??0).getTime()-new Date(h.useSoonAt[b]??0).getTime());const uncoveredSoon=soonIds.filter(id=>!h.week.some(rid=>getRecipe(rid).ingredients.some(x=>x.id===id)));const prioritySoon=uncoveredSoon[0]??soonIds[0];const soonName=prioritySoon?getIngredient(prioritySoon)?.name:null;const soonDay=prioritySoon?h.week.findIndex(id=>getRecipe(id).ingredients.some(x=>x.id===prioritySoon)):-1;const soonMarked=prioritySoon?h.useSoonAt[prioritySoon]:undefined;const soonAge=soonMarked?Math.max(0,Math.floor((Date.now()-new Date(soonMarked).getTime())/86400000)):null;const soonAgeText=soonAge===null?"":soonAge===0?"Marked use soon today":soonAge===1?"Marked use soon yesterday":`Marked use soon ${soonAge} days ago`;
- const agingBatch=h.prepBatches.filter(b=>(b.remainingMl??b.outputMl)>0).map(b=>({batch:b,age:freezerAge(b.componentId,b.at),component:getComponent(b.componentId)})).filter(x=>x.component?.kind==="mother"&&x.age.status!=="recorded").sort((a,b)=>{const ar=a.age.guide?a.age.ageDays/a.age.guide.lowerDays:0;const br=b.age.guide?b.age.ageDays/b.age.guide.lowerDays:0;return br-ar})[0];
- const readyTonight=h.kitchenReady&&recipeAvailability(tonight.id,h.componentStock,h.ingredientStock).ready;
- const heroHref=readyTonight?`/cook/${tonight.id}/cook`:`/cook/${tonight.id}`;const heroLabel=readyTonight?"Cook now":h.kitchenReady?"See what’s missing":"Open recipe";
- return <div className="hm-page-v5 hm-home-v5 hm-home-v6">
-  <PageHead title="Home Meals" sub="Josh & G" action={<div className="hm-us-v5 hm-us-v6"><b>J</b><b>G</b></div>}/>
-  <section className="hm-tonight-v5 hm-tonight-v6">{tonight.image?<img src={tonight.image} alt={tonightTitle} width={780} height={520} loading="eager" fetchPriority="high" decoding="async"/>:<div/>}<div className="hm-tonight-shade-v5"/><div className="hm-tonight-content-v5"><span className="hm-hero-kicker-v6">TONIGHT’S DINNER</span><h2>{tonightTitle}</h2><p>{recipeSubtitle(tonight.id,tonight.subtitle)}</p><div className="hm-tonight-meta-v5"><RecipeReady recipe={tonight}/><span>{tonight.minutes} min</span></div><div className="hm-tonight-actions-v5"><Link href={heroHref}>{heroLabel} <b>→</b></Link><Link href="/plan">Swap</Link></div></div></section>
-  {!h.kitchenReady?<Link href="/kitchen" className="hm-priority-v5 setup"><span>Kitchen</span><strong>Tell Home what we have</strong><p>Check the fridge, freezer and pantry once so shopping and prep are real.</p><b>›</b></Link>:
-   uncoveredSoon.length>0?<Link href="/plan" className="hm-priority-v5 soon"><span>Use soon</span><strong>{soonName} needs a dinner</strong><p>{soonAgeText?`${soonAgeText}. `:""}Nothing in the current week uses it yet.{uncoveredSoon.length>1?` +${uncoveredSoon.length-1} more.`:""}</p><b>›</b></Link>:
-   firstBuy?<Link href="/plan" className="hm-priority-v5 shop"><span>Shopping</span><strong>{getIngredient(firstBuy.id)?.name} is on the list</strong><p>{h.shoppingNeeds.length} {h.shoppingNeeds.length===1?"item":"items"} to buy this week.</p><b>›</b></Link>:
-   firstPrep?<Link href="/prep" className="hm-priority-v5 prep"><span>Prep</span><strong>{getComponent(firstPrep.id)?.code} needs topping up</strong><p>{firstPrep.shortMl} ml short for this week.</p><b>›</b></Link>:
-   prioritySoon?<Link href={`/cook/${h.week[soonDay]}`} className="hm-priority-v5 soon"><span>Use soon</span><strong>{soonName} is covered</strong><p>{soonAgeText?`${soonAgeText}. `:""}{soonDay>=0?`${days[soonDay]}'s dinner already uses it.`:"It is already in the plan."}</p><b>›</b></Link>:
-   agingBatch?<Link href={`/prep/${agingBatch.component!.id}`} className="hm-priority-v5 prep"><span>Freezer first</span><strong>{agingBatch.component!.code} {agingBatch.age.status==="past-lower-guide"?"has reached its storage guide":"is getting close to its storage guide"}</strong><p>{agingBatch.age.ageDays} days since the dated batch · freezer guide {agingBatch.age.guide?.label}. Use the oldest portion before making more.</p><b>›</b></Link>:
-   pantryLow?<Link href="/kitchen" className="hm-priority-v5 shop"><span>Next shop</span><strong>{pantryLow===1?`${pantryLowItems[0].name} is running low`:`${pantryLow} pantry staples are running low`}</strong><p>Still enough for this week. Check them before the next grocery run.</p><b>›</b></Link>:
-   <div className="hm-priority-v5 good"><span>This week</span><strong>We’re covered</strong><p>No urgent shop or prep job.</p></div>}
-  <section className="hm-block-v5 hm-home-week-v6"><SectionHead title="This week" action={<Link href="/plan">See all ›</Link>}/><div className="hm-meal-rail-v5">{h.week.map((id,i)=><MealCard recipe={getRecipe(id)} key={`${id}-${i}`} compact day={`${days[i]}${i===day?" · today":""}`}/>)}</div></section>
-  <section className="hm-block-v5 hm-kitchen-status-v6"><SectionHead title="Kitchen status" action={<Link href="/kitchen">Kitchen ›</Link>}/><div className="hm-kitchen-grid-v6">
-   <Link href="/kitchen" className="fridge"><div className="hm-kitchen-icon-v6">▥</div><span><strong>Fridge</strong><small>{h.kitchenReady?`${fridgeItems} items`:"Check stock"}</small></span><b>›</b></Link>
-   <Link href="/kitchen" className="freezer" style={{"--status-image":`url(${foundationImages.freezer})`} as React.CSSProperties}><div className="hm-kitchen-icon-v6">❄</div><span><strong>Freezer</strong><small>{h.kitchenReady?(agingBatch?`${agingBatch.component!.code} use first`:`${stockedMothers}/8 mothers`):"Check freezer"}</small></span><b>›</b></Link>
-   <Link href="/kitchen" className="pantry"><div className="hm-kitchen-icon-v6">◫</div><span><strong>Pantry</strong><small>{h.kitchenReady?(pantryLow?`${pantryLow} running low`:`${pantryItems} items`):"Check pantry"}</small></span><b>›</b></Link>
-   <Link href="/plan" className="shopping" style={{"--status-image":`url(${foundationImages.groceries})`} as React.CSSProperties}><div className="hm-kitchen-icon-v6">⌑</div><span><strong>Shopping</strong><small>{h.shoppingNeeds.length?`${h.shoppingNeeds.length} items`:"Nothing urgent"}</small></span><b>›</b></Link>
-  </div></section>
-  <section className="hm-block-v5 hm-memory-v6"><SectionHead title="Our cookbook" action={<Link href="/cook">Recipes ›</Link>}/>{last?<Link href={`/cook/${last.id}`} className={`hm-memory-card-v5 ${lastPhoto?"personal-photo-v24":""}`}>{(lastPhoto?.dataUrl||last.image)&&<img src={lastPhoto?.dataUrl??last.image} alt={lastPhoto?`${recipeTitle(last.id,last.title)} we cooked`:recipeTitle(last.id,last.title)} width={148} height={148} loading="lazy" decoding="async"/>}<div><small className="hm-memory-version-v24">OUR v{lastVersion}{lastPhoto?" · OUR PHOTO":""}</small><strong>{recipeTitle(last.id,last.title)}</strong><span>{h.ratings[last.id]?.josh?`Josh ${h.ratings[last.id].josh}★`:"Josh —"} · {h.ratings[last.id]?.g?`G ${h.ratings[last.id].g}★`:"G —"}</span>{h.recipeNotes[last.id]?.[0]&&<p>“{h.recipeNotes[last.id][0].text}”</p>}</div><b>›</b></Link>:<div className="hm-empty-v5"><strong>Nothing cooked yet.</strong><p>Cook something and Home will remember what worked for us.</p><Link href="/cook">Choose a recipe</Link></div>}</section>
- </div>
+ const h=useHousehold();const ready=useReadiness();
+ const day=(new Date().getDay()+6)%7;
+ const[idx,setIdx]=useState(0);const[welcomeSeen,setWelcomeSeen]=useState(true);
+ useEffect(()=>{try{setWelcomeSeen(localStorage.getItem(SEEN_KEY)==="1")}catch{setWelcomeSeen(true)}},[]);
+ const dismissWelcome=()=>{try{localStorage.setItem(SEEN_KEY,"1")}catch{}setWelcomeSeen(true)};
+ // Tonight's stack: the planned dinner first, then everything the kitchen can cover right now.
+ const stack=useMemo(()=>{const planned=getRecipe(h.week[day]??h.week[0]);const rest=recipes.filter(r=>r.id!==planned.id&&(!h.kitchenReady||recipeAvailability(r.id,h.componentStock,h.ingredientStock).ready)).sort((a,b)=>Number(!!h.favourites[b.id])-Number(!!h.favourites[a.id])||Math.max(h.ratings[b.id]?.josh??0,h.ratings[b.id]?.g??0)-Math.max(h.ratings[a.id]?.josh??0,h.ratings[a.id]?.g??0)||a.minutes-b.minutes);return [planned,...rest]},[h.week,day,h.kitchenReady,h.componentStock,h.ingredientStock,h.favourites,h.ratings]);
+ useEffect(()=>{setIdx(0)},[h.week]);
+ const tonight=stack[idx%stack.length];const tonightTitle=recipeTitle(tonight.id,tonight.title);const tonightReady=ready(tonight);
+ const cookHref=tonightReady.state==="ready"?`/cook/${tonight.id}/cook`:`/cook/${tonight.id}`;
+ const notTonight=()=>{setIdx(i=>i+1);feedback("change")};
+ const touch=useRef<{x:number;y:number}|null>(null);
+ const onTouchStart=(e:React.TouchEvent)=>{touch.current={x:e.touches[0].clientX,y:e.touches[0].clientY}};
+ const onTouchEnd=(e:React.TouchEvent)=>{const s=touch.current;touch.current=null;if(!s)return;const dx=e.changedTouches[0].clientX-s.x,dy=e.changedTouches[0].clientY-s.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)notTonight()};
+
+ // Pulse numbers straight from household state.
+ const soonIds=Object.keys(h.useSoon).filter(id=>h.useSoon[id]&&(h.ingredientStock[id]??0)>0);
+ const pucks=motherBases.reduce((n,m)=>n+stockPortions(m.id,h.componentStock),0);
+ const stockedMothers=motherBases.filter(m=>(h.componentStock[m.id]??0)>0).length;
+ const lowMother=motherBases.find(m=>h.week.some(id=>getRecipe(id).motherIds.includes(m.id))&&stockPortions(m.id,h.componentStock)<2);
+ const last=h.history[0]?getRecipe(h.history[0].mealId):null;const lastPhoto=last?h.mealPhotos.find(x=>x.mealId===last.id):undefined;
+
+ const says=(()=>{
+  if(!h.kitchenReady)return {text:<>I don’t know the kitchen yet. Show me the fridge and freezer once and tonight, shopping and prep all get real.</>,actions:<><Link className="primary" href="/kitchen">Check the kitchen</Link><Link className="ghost" href="/scan?mode=Fridge&back=%2F">Use the camera</Link></>};
+  if(idx>0)return {text:<>Okay, not that one. Here’s the next from what we have — {tonight.minutes} minutes{tonightReady.state==="ready"?", nothing to buy.":"."}</>};
+  if(tonightReady.state==="ready")return {text:<>Tonight looks like <b>{tonightTitle}</b> — {tonight.minutes} minutes, everything’s here. Not feeling it? Say so and I’ll pull the next idea.</>};
+  const a=recipeAvailability(tonight.id,h.componentStock,h.ingredientStock);const missing=[...a.missingIngredients.map(x=>getIngredient(x.id)?.name),...a.missingPrep.map(x=>getComponent(x.id)?.code)].filter(Boolean).slice(0,3).join(", ");
+  return {text:<>Tonight is <b>{tonightTitle}</b>, but we’re short {missing||"a few things"}. Swap it, or pick one from what we have.</>,actions:<><Link className="primary" href="/plan">Swap it</Link><button className="ghost" onClick={notTonight}>Show me what we have</button></>};
+ })();
+
+ if(!welcomeSeen&&!h.kitchenReady&&h.history.length===0)return <div className="hm-screen hm-home-empty">
+  <header className="hm-home-head"><h1 className="hm-h1">Hey Josh &amp; G</h1></header>
+  <div className="stage"><Orb size={140} label="Home"/></div>
+  <div className="copy"><h2>Let’s start with what’s in the kitchen.</h2><p className="hm-lead">Show me the fridge and freezer once, and everything else — the week, shopping, prep — gets real.</p></div>
+  <div className="acts"><Link className="hm-btn primary" href="/scan?mode=Fridge&back=%2Fkitchen" onClick={dismissWelcome}>Show Home the fridge</Link><Link className="hm-btn ghost" href="/plan" onClick={dismissWelcome}>Pick this week’s dinners first</Link></div>
+  <button className="foot" onClick={()=>{dismissWelcome();window.dispatchEvent(new Event("home-meals:ask"))}}>Or just say “what’s for dinner?”</button>
+ </div>;
+
+ return <div className="hm-screen">
+  <header className="hm-home-head">
+   <div><div className="hm-eyebrow">{longDays[day]} {partOfDay()}</div><h1 className="hm-h1">Hey Josh &amp; G</h1></div>
+   <Link href="/learn" className="hm-us" aria-label="Household"><Avatar who="josh"/><Avatar who="g"/></Link>
+  </header>
+  <HomeSays actions={says.actions}>{says.text}</HomeSays>
+
+  <section className="hm-tonight" aria-label="Tonight">
+   <div className="under"/>
+   <div className="card" key={tonight.id} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+    {tonight.image&&<img src={tonight.image} alt={tonightTitle} width={780} height={872} loading="eager" fetchPriority="high" decoding="async"/>}
+    <div className="shade"/>
+    <div className="tags"><span className="hm-pill white">{idx===0?"TONIGHT":"INSTEAD"}</span><span className="hm-pill onphoto">{mealMeta(tonight)}</span></div>
+    <div className="copy">
+     <h2>{tonightTitle}</h2>
+     <p>{recipeSubtitle(tonight.id,tonight.subtitle)}</p>
+     <div className="prep">
+      {tonight.prep.map(p=>{const c=getComponent(p.id);return c?<span key={p.id} style={{"--tone":toneFor(p.id)} as CSSProperties}><i/>{c.code}</span>:null})}
+      <span className={`stock ${tonightReady.state==="missing"?"missing":""}`}>{tonightReady.label}</span>
+     </div>
+     <div className="actions">
+      <button className="hm-btn glass" onClick={notTonight}>Not tonight</button>
+      <Link className="hm-btn light" href={cookHref} onClick={()=>feedback("tap")}>{tonightReady.state==="ready"?"Cook it →":"Open recipe →"}</Link>
+     </div>
+    </div>
+   </div>
+   <div className="swipe">Swipe · {Math.max(0,stack.length-1-(idx%stack.length))} more ideas from what we have</div>
+  </section>
+
+  <SectionHead title="This week" action={<Link href="/plan">Plan ›</Link>}/>
+  <div className="hm-rail week" aria-label="This week's dinners">
+   {h.week.map((id,i)=><MealTile key={`${id}-${i}`} recipe={getRecipe(id)} badge={days[i]} badgeClass={i===day?"today":""}/>)}
+  </div>
+
+  <div className="hm-pulse" aria-label="Kitchen pulse">
+   <Link href="/kitchen" style={{"--accent":"var(--peach-text)","--tint-grad":"linear-gradient(180deg,#fff,#fff1ea)"} as CSSProperties}><span>Fridge</span><b>{h.kitchenReady?soonIds.length:"—"}</b><small>{h.kitchenReady?(soonIds.length?"use soon":"nothing urgent"):"not checked"}</small></Link>
+   <Link href="/kitchen"><span>Freezer</span><b>{h.kitchenReady?pucks:"—"}</b><small>{h.kitchenReady?(lowMother?`portions · ${lowMother.code} low`:`portions · ${stockedMothers}/${motherBases.length} bases`):"not checked"}</small></Link>
+   <Link href="/plan"><span>To buy</span><b>{h.kitchenReady?h.shoppingNeeds.length:"—"}</b><small>{h.kitchenReady?"for the week":"check kitchen"}</small></Link>
+  </div>
+
+  {last&&<Link href={`/cook/${last.id}`} className="hm-card hm-memory hm-lift">
+   {(lastPhoto?.dataUrl||last.image)&&<img src={lastPhoto?.dataUrl??last.image} alt={recipeTitle(last.id,last.title)} loading="lazy"/>}
+   <div><span className="kick">LAST COOKED{lastPhoto?" · OUR PHOTO":""}</span><strong>{recipeTitle(last.id,last.title)}</strong><small>{h.ratings[last.id]?.josh?`Josh ${h.ratings[last.id].josh}★`:"Josh —"} · {h.ratings[last.id]?.g?`G ${h.ratings[last.id].g}★`:"G —"}{h.recipeNotes[last.id]?.[0]?` · “${h.recipeNotes[last.id][0].text}”`:""}</small></div>
+   <span className="arrow">›</span>
+  </Link>}
+ </div>;
 }

@@ -1,3 +1,5 @@
+/* Legacy cascade — still needed by routes that have not been rebuilt on the v3 system yet
+   (Builder, Prep Day, Base, Mids, Mid, Scan, Guides). Remove files here as routes move over. */
 @import "./styles/final/app-final-01.css";
 @import "./styles/final/app-final-02.css";
 @import "./styles/final/app-final-03.css";
@@ -24,3 +26,6 @@
 @import "./styles/final/app-final-24.css";
 @import "./styles/final/app-final-25.css";
 @import "./styles/final/app-final-26.css";
+
+/* The active design system. Loaded last so it wins. */
+@import "./styles/home-meals.css";

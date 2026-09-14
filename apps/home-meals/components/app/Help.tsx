@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {Back,PageHead,SectionHead} from "./Primitives";
+import {Back,PageHead,LegacySectionHead as SectionHead} from "./Primitives";
 import {motherBases} from "@/data/home-data";
 import {foundationImages} from "@/data/foundation-assets";
 import {motherProcessImages} from "@/data/mother-process-assets";

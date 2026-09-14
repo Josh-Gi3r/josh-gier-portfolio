@@ -5,7 +5,7 @@ import {midBases,midsByCuisine,motherBases,recipes,getRecipe} from "@/data/home-
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
 import {useSheet} from "@/lib/useSheet";
-import {Back,PageHead,SectionHead} from "./Primitives";
+import {Back,PageHead,LegacySectionHead as SectionHead} from "./Primitives";
 import {BaseExplorer} from "./BaseExplorer";
 
 type Scope="week"|"rotation"|"ideas"|"all";

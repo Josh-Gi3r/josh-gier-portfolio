@@ -1,39 +1,103 @@
 "use client";
 import Link from "next/link";
-import {useEffect,useMemo,useState} from "react";
+import {useEffect,useMemo,useState,type CSSProperties} from "react";
 import {useHousehold} from "../HouseholdState";
 import {getComponent,getIngredient,getRecipe} from "@/data/home-data";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
+import {nutritionFor} from "@/data/recipe-nutrition";
+import {ingredientRequirementMissing} from "@/data/stock-math";
 import {feedback} from "@/lib/feedback";
 import {getHouseholdPerson} from "@/lib/device-profile";
-import {ingredientRequirementMissing} from "@/data/stock-math";
-import {useSheet} from "@/lib/useSheet";
-import {Back,ComponentPill,formatQty,RecipeReady} from "./Primitives";
+import {phaseCounts,phaseFor,phases,stepMinutes,stepSeconds} from "@/lib/steps";
+import {portionWord,toneFor} from "@/lib/tones";
+import {HomeSays} from "./HomeSays";
+import {Orb,Waves} from "./Orb";
+import {Avatar,RoundBack,SectionHead,Sheet,Stat,Toast,useReadiness} from "./Primitives";
 
 const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-function stateLevelLabel(value:number){return value>=3?"plenty":value>=2?"some":value>=1?"low":"out"}
+const longDays=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const noteChips=["More chilli","Less salt","Bigger portion","Faster next time","Perfect as is"];
+type Author="josh"|"g";
+const who=(a:Author|"home")=>a==="josh"?"Josh":a==="g"?"G":"Home";
+
 export function Recipe({id}:{id:string}){
- const h=useHousehold();const r=getRecipe(id);const[chooseDay,setChooseDay]=useState(false);const[note,setNote]=useState(h.ratings[id]?.note??"");const[noteAuthor,setNoteAuthor]=useState<"josh"|"g">("josh");const[saved,setSaved]=useState(false);const[versionSaved,setVersionSaved]=useState(false);useSheet(chooseDay,()=>setChooseDay(false));
- useEffect(()=>{const person=getHouseholdPerson();if(person)setNoteAuthor(person)},[]);
- const cooked=h.history.filter(x=>x.mealId===id);const lastNote=h.recipeNotes[id]?.[0];const rating=h.ratings[id]??{};const favourite=!!h.favourites[id];const versions=h.recipeVersions[id]??[];const currentVersion=versions[0]?.number??1;const latestVersionSummary=versions[0]?.summary;const personalPhoto=h.mealPhotos.find(x=>x.mealId===id);
- const events=useMemo(()=>[...cooked.map(x=>({at:x.at,label:"Cooked",detail:"Dinner logged"})),...(h.recipeNotes[id]??[]).map(x=>({at:x.at,label:x.author==="josh"?"Josh note":x.author==="g"?"G note":"Our note",detail:x.text})),...versions.map(v=>({at:v.at,label:`v${v.number} adopted`,detail:v.summary}))].sort((a,b)=>new Date(b.at).getTime()-new Date(a.at).getTime()).slice(0,7),[cooked,h.recipeNotes,id,versions]);
- const cues=useMemo(()=>r.steps.filter(s=>/(until|fragrant|aromatic|glossy|clings?|tender|golden|brown|crisp|wilt|thicken|reduce|coats?|soft|sizzling|bubbl)/i.test(s)).slice(0,4),[r.steps]);
- const saveNote=()=>{const clean=note.trim();if(!clean)return;h.noteMeal(id,clean,noteAuthor);setSaved(true);setVersionSaved(false);feedback("success");setTimeout(()=>setSaved(false),1400)};
- const promote=(summary:string,author:"josh"|"g"|"home"="home")=>{const clean=summary.trim();if(!clean||clean===latestVersionSummary)return;h.promoteRecipeVersion(id,clean,author);setVersionSaved(true);feedback("success");setTimeout(()=>setVersionSaved(false),1600)};
- const title=recipeTitle(r.id,r.title),subtitle=recipeSubtitle(r.id,r.subtitle);
- return <div className="hm-page-v5 hm-recipe-v5">
-  <div className="hm-recipe-top-v5"><Back href="/cook" label="Recipes"/><button className={`hm-favourite-v5 ${favourite?"on":""}`} aria-label={favourite?"Remove from favourites":"Add to favourites"} onClick={()=>{h.toggleFavourite(id);feedback("change")}}>{favourite?"♥":"♡"}</button></div>
-  <section className="hm-recipe-hero-v5">{r.image?<img src={r.image} alt={title} width={780} height={520} loading="eager" fetchPriority="high" decoding="async"/>:<div className="hm-photo-placeholder-v5">{title[0]}</div>}<div className="hm-recipe-hero-shade-v5"/><div className="hm-recipe-hero-copy-v5"><div><span>{r.cuisine}</span><RecipeReady recipe={r}/></div><h1>{title}</h1><p>{subtitle}</p><small>{r.minutes} min · {r.method} · serves 2</small></div></section>
-  <div className="hm-sticky-actions-v5"><Link href={`/cook/${r.id}/cook`}>Cook</Link><button onClick={()=>setChooseDay(true)}>Add to week</button></div>
-  {cooked.length===0&&!lastNote&&<div className="hm-not-cooked-v7"><strong>Not cooked by us yet.</strong> This stays a test recipe until Josh or G actually makes it and leaves a rating or note.</div>}
-  {(cooked.length>0||lastNote||favourite)&&<section className="hm-our-note-v5 hm-version-card-v22"><span>OUR VERSION · v{currentVersion}</span>{personalPhoto&&<figure className="hm-version-photo-v24"><img src={personalPhoto.dataUrl} alt={`${title} we cooked`}/><figcaption>Our dinner · {new Date(personalPhoto.at).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"})}</figcaption></figure>}<div className="hm-couple-rating-v5"><b>J</b><strong>{rating.josh?`${rating.josh}★`:"—"}</strong><b>G</b><strong>{rating.g?`${rating.g}★`:"—"}</strong>{favourite&&<em>♥ Favourite</em>}</div>{lastNote&&<p>“{lastNote.text}” <small>— {lastNote.author==="josh"?"Josh":lastNote.author==="g"?"G":"us"}</small></p>}<small>{cooked.length?`Cooked ${cooked.length} ${cooked.length===1?"time":"times"}`:"Not cooked yet"}</small>{lastNote&&lastNote.text!==latestVersionSummary&&<button className="hm-version-adopt-v22" onClick={()=>promote(lastNote.text,lastNote.author)}>{versionSaved?`v${currentVersion+1} saved ✓`:`Make this v${currentVersion+1}`}</button>}{versions.length>0&&<div className="hm-version-latest-v22"><b>v{versions[0].number}</b><span>{versions[0].summary}</span><small>{new Date(versions[0].at).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"})}</small></div>}<Link className="hm-version-photo-link-v24" href={`/scan?mode=Meal&meal=${id}&back=${encodeURIComponent(`/cook/${id}`)}`}>{personalPhoto?"Replace dinner photo":"Save a dinner photo"} →</Link></section>}
-  <section className="hm-recipe-section-v5"><h2>What we need</h2><div className="hm-ingredient-list-v5">{r.ingredients.map(x=>{const d=getIngredient(x.id);const onHand=h.ingredientStock[x.id]??0;const missing=h.kitchenReady&&ingredientRequirementMissing(x,h.ingredientStock);const status=x.optional?"optional":!h.kitchenReady?"not checked":d?.tracking==="state"?(onHand>0?stateLevelLabel(onHand):"out"):missing?(onHand>0?`${formatQty(onHand,x.unit)} at home`:"out"):"have enough";return <div key={`${x.id}-${x.raw}`}><span>{d?.name??x.id}</span><div style={{textAlign:"right"}}><strong style={{display:"block"}}>{x.display}</strong><small style={{display:"block",fontSize:13,marginTop:2,color:x.optional?"#806f5d":h.kitchenReady?(missing?"#9b4737":d?.tracking==="state"&&onHand===1?"#956025":"#2f684d"):"var(--muted)",fontWeight:h.kitchenReady&&!x.optional?750:400}}>{status}</small></div></div>})}</div></section>
-  {r.prep.length>0&&<section className="hm-recipe-section-v5"><h2>From prep</h2><div className="hm-prep-list-v5">{r.prep.map(x=>{const have=h.componentStock[x.id]??0;return <div key={x.id}><ComponentPill id={x.id} amountMl={x.totalMl}/><span className={h.kitchenReady&&have>=x.totalMl?"ok":"need"}>{h.kitchenReady?have>=x.totalMl?"have it":`${Math.max(0,x.totalMl-have)} ml short`:"not checked"}</span></div>})}</div></section>}
-  <section className="hm-recipe-section-v5"><h2>Method</h2><ol className="hm-step-list-v5">{r.steps.map((s,i)=><li key={s}><b>{i+1}</b><p>{s}</p></li>)}</ol></section>
-  {cues.length>0&&<section className="hm-recipe-section-v5 hm-recipe-cues-v64"><h2>What you’re looking for</h2><div>{cues.map((cue,i)=><p key={`${i}-${cue}`}><b>✓</b><span>{cue}</span></p>)}</div></section>}
-  <section className="hm-recipe-section-v5 hm-why-v5"><details><summary>Serving notes</summary><p>{r.balance}</p></details><a href={r.source.url} target="_blank" rel="noreferrer">Recipe reference ↗</a></section>
-  {events.length>0&&<section className="hm-recipe-history-v5"><header><span>OUR HISTORY</span><h2>How this one is changing</h2></header><div>{events.map((e,i)=><article key={`${e.at}-${i}`}><i/><span><strong>{e.label}</strong><p>{e.detail}</p><small>{new Date(e.at).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"})}</small></span></article>)}</div></section>}
-  <section className="hm-rate-v5"><div><span>AFTER DINNER</span><h2>How was it?</h2></div>{(["josh","g"] as const).map(who=><div className="hm-rate-person-v5" key={who}><strong>{who==="josh"?"Josh":"G"}</strong><div>{[1,2,3,4,5].map(n=><button key={n} className={(rating[who]??0)>=n?"on":""} aria-label={`${who} ${n} stars`} onClick={()=>{h.rateMeal(id,who,n);feedback("change")}}>★</button>)}</div></div>)}<label><span>Next time</span><div className="hm-note-author-v7" aria-label="Who is leaving this note?"><button type="button" className={noteAuthor==="josh"?"active":""} onClick={()=>{setNoteAuthor("josh");feedback("tap")}}>Josh</button><button type="button" className={noteAuthor==="g"?"active":""} onClick={()=>{setNoteAuthor("g");feedback("tap")}}>G</button></div><textarea value={note} onChange={e=>{setNote(e.target.value);setVersionSaved(false)}} placeholder="More chilli? Less sweet? Different side?"/><button disabled={!note.trim()} onClick={saveNote}>{saved?"Saved ✓":`Save ${noteAuthor==="josh"?"Josh":"G"}'s note`}</button>{note.trim()&&note.trim()!==latestVersionSummary&&<button type="button" className="hm-version-inline-v22" onClick={()=>promote(note,noteAuthor)}>{versionSaved?`Saved as v${currentVersion+1} ✓`:`Adopt as v${currentVersion+1}`}</button>}</label></section>
-  {chooseDay&&<div className="hm-sheet-backdrop-v5" onMouseDown={e=>{if(e.target===e.currentTarget)setChooseDay(false)}}><section className="hm-sheet-v5" role="dialog" aria-modal="true" aria-label="Add recipe to week"><div className="hm-sheet-handle-v5"/><header><div><span>ADD TO WEEK</span><h2>Which day?</h2></div><button className="hm-icon-button-v5" onClick={()=>setChooseDay(false)} aria-label="Close">×</button></header><div className="hm-day-picker-v5">{days.map((d,i)=>{const current=getRecipe(h.week[i]);return <button key={d} onClick={()=>{h.setDay(i,id);setChooseDay(false);feedback("change")}}><span>{d}</span><strong>{recipeTitle(current.id,current.title)}</strong></button>})}</div></section></div>}
- </div>
+ const h=useHousehold();const r=getRecipe(id);const ready=useReadiness()(r);
+ const[weekOpen,setWeekOpen]=useState(false);const[noteOpen,setNoteOpen]=useState(false);const[note,setNote]=useState("");const[author,setAuthor]=useState<Author>("josh");const[toast,setToast]=useState("");
+ useEffect(()=>{const person=getHouseholdPerson();if(person)setAuthor(person)},[]);
+ const title=recipeTitle(r.id,r.title),subtitle=recipeSubtitle(r.id,r.subtitle);const n=nutritionFor(r.id);
+ const today=(new Date().getDay()+6)%7;const inWeek=h.week.indexOf(id);
+ const cooked=h.history.filter(x=>x.mealId===id);const rating=h.ratings[id]??{};const lastNote=h.recipeNotes[id]?.[0];const versions=h.recipeVersions[id]??[];const currentVersion=versions[0]?.number??1;const favourite=!!h.favourites[id];const photo=h.mealPhotos.find(x=>x.mealId===id);
+ const events=useMemo(()=>[...cooked.map(x=>({at:x.at,title:"Cooked",text:"Dinner logged",dot:"#6fd39a"})),...(h.recipeNotes[id]??[]).map(x=>({at:x.at,title:`${who(x.author)}’s note`,text:x.text,dot:"#2fae6e"})),...versions.map(v=>({at:v.at,title:`v${v.number} · ${v.summary}`,text:`Adopted by ${who(v.author)}`,dot:"#2fae6e"}))].sort((a,b)=>new Date(b.at).getTime()-new Date(a.at).getTime()).slice(0,6),[cooked,h.recipeNotes,id,versions]);
+ const have=r.ingredients.filter(x=>!x.optional&&!ingredientRequirementMissing(x,h.ingredientStock)).length;const need=r.ingredients.filter(x=>!x.optional).length;
+ const counts=phaseCounts(r.steps.length);
+ const flash=(t:string)=>{setToast(t);window.setTimeout(()=>setToast(""),1600)};
+ const promote=(summary:string,by:Author|"home"="home")=>{const clean=summary.trim();if(!clean||clean===versions[0]?.summary)return;h.promoteRecipeVersion(id,clean,by);feedback("success");flash(`Saved as our v${currentVersion+1}`)};
+ const saveNote=()=>{const clean=note.trim();if(!clean)return;h.noteMeal(id,clean,author);setNote("");setNoteOpen(false);feedback("success");flash("Note saved")};
+ const suggestedDay=useMemo(()=>{for(let d=0;d<7;d++){const i=(today+d)%7;if(h.week[i]!==id)return i}return today},[today,h.week,id]);
+ const[pickedDay,setPickedDay]=useState<number|null>(null);const targetDay=pickedDay??suggestedDay;
+ const addToWeek=()=>{h.setDay(targetDay,id);setWeekOpen(false);feedback("change");flash(`On ${longDays[targetDay]}`)};
+
+ const says=(()=>{
+  const topRating=Math.max(rating.josh??0,rating.g??0);const topWho=(rating.g??0)>=(rating.josh??0)?"G":"Josh";
+  if(cooked.length===0&&!lastNote)return {text:ready.state==="ready"?<>We haven’t cooked this one yet, and everything for it is here. Want it tonight?</>:ready.state==="missing"?<>We haven’t cooked this one yet. We’d need {ready.missing} {ready.missing===1?"thing":"things"} from the shop first.</>:<>We haven’t cooked this one yet. Check the kitchen and I’ll tell you what’s missing.</>,actions:ready.state==="ready"?<><Link className="primary" href={`/cook/${id}/cook`}>Cook it now</Link><button className="ghost" onClick={()=>setWeekOpen(true)}>Add to week</button></>:<><button className="primary" onClick={()=>setWeekOpen(true)}>Add to week</button><Link className="ghost" href="/plan">See the list</Link></>};
+  if(lastNote&&lastNote.text!==versions[0]?.summary)return {text:<>{topRating?`${topWho} gave this ${topRating}★ last time. `:""}{who(lastNote.author)} wrote “{lastNote.text}”. Make that our v{currentVersion+1}?</>,actions:<><button className="primary" onClick={()=>promote(lastNote.text,lastNote.author)}>Yes, v{currentVersion+1}</button><button className="ghost" onClick={()=>flash("Kept as is")}>Keep it</button></>};
+  return {text:<>{topRating?`${topWho} gave this ${topRating}★ last time. `:""}Cooked {cooked.length} {cooked.length===1?"time":"times"}{versions[0]?`, now on our v${currentVersion} — “${versions[0].summary}”`:""}.</>,actions:<><button className="primary" onClick={()=>setWeekOpen(true)}>Add to week</button><button className="ghost" onClick={()=>setNoteOpen(true)}>Add a note</button></>};
+ })();
+
+ return <div className="hm-screen flush">
+  <div className="hm-hero">
+   {r.image?<img src={photo?.dataUrl??r.image} alt={title} width={780} height={840} loading="eager" fetchPriority="high" decoding="async"/>:<div className="initial">{title[0]}</div>}
+   <div className="shade"/>
+   <div className="top"><RoundBack href="/cook" onPhoto label="Back to recipes"/><button className={`hm-round onphoto ${favourite?"heart":""}`} aria-label={favourite?"Remove from favourites":"Add to favourites"} onClick={()=>{h.toggleFavourite(id);feedback("change")}}>{favourite?"♥":"♡"}</button></div>
+  </div>
+  <div className="hm-sheetpage" style={{paddingBottom:140}}>
+   <span className="hm-kicker">{r.cuisine} · {inWeek>=0?longDays[inWeek]:"not in the week"}</span>
+   <h1 className="hm-recipe-title">{title}</h1>
+   <p className="hm-lead" style={{marginTop:8}}>{subtitle}</p>
+   <div className="hm-stats four"><Stat v={r.minutes} k="min"/><Stat v={n?.kcal??"—"} k="kcal" tint="var(--tint-peach)"/><Stat v={n?`${n.protein} g`:"—"} k="protein"/><Stat v="2" k="portions" tint="var(--tint-sky)"/></div>
+   <div className="hm-fine">Per portion · {r.method} · {r.difficulty}</div>
+   <HomeSays actions={says.actions}>{says.text}</HomeSays>
+
+   <SectionHead title="What goes in" action={<span className={h.kitchenReady?(have===need?"":"peach"):"muted"} style={{fontSize:13,fontWeight:700,color:h.kitchenReady?(have===need?"var(--green)":"var(--peach-text)"):"var(--muted)"}}>{h.kitchenReady?`${have}/${need} at home`:"kitchen not checked"}</span>}/>
+   <div className="hm-ing">
+    {r.prep.map(p=>{const c=getComponent(p.id);if(!c)return null;const has=(h.componentStock[p.id]??0)>=p.totalMl;return <span key={p.id} className={!h.kitchenReady?"unknown":has?"":"missing"}><i style={{background:toneFor(p.id)}}/>{c.code} · {p.portions} {portionWord(p.id,p.portions)}{h.kitchenReady&&!has?" · short":""}</span>})}
+    {r.ingredients.map(x=>{const d=getIngredient(x.id);const missing=h.kitchenReady&&ingredientRequirementMissing(x,h.ingredientStock);return <span key={`${x.id}-${x.raw}`} className={`${x.optional?"optional":""} ${!h.kitchenReady?"unknown":missing?"missing":""}`}><i/>{d?.name??x.id} · {x.display}{x.optional?" · optional":""}</span>})}
+   </div>
+
+   <SectionHead title="How it goes" action={<span className="muted">{r.steps.length} steps · {r.minutes} min</span>}/>
+   <div className="hm-overview">{phases.map((p,i)=>counts[i]?<i key={p.name} style={{flex:counts[i],background:p.bar}}/>:null)}</div>
+   <div className="hm-overview-labels">{phases.map((p,i)=>counts[i]?<span key={p.name}>{p.name}</span>:null)}</div>
+   <div className="hm-steps">{r.steps.map((s,i)=>{const p=phaseFor(i,r.steps.length);const mins=stepMinutes(s),secs=stepSeconds(s);return <div key={i} className="hm-card hm-step" style={{"--phase":p.gradient} as CSSProperties}><b>{i+1}</b><div><p>{s}</p></div>{mins?<span className="timer">{mins}:00</span>:secs?<span className="timer">0:{String(secs).padStart(2,"0")}</span>:<span/>}</div>})}</div>
+
+   {(cooked.length>0||lastNote||versions.length>0||photo)&&<>
+    <SectionHead title="Our history" action={<button onClick={()=>setNoteOpen(true)}>Add a note</button>}/>
+    <div className="hm-stats"><Stat v={`${cooked.length}×`} k="cooked"/><Stat v={`v${currentVersion}`} k="our version" tint="var(--tint-peach)"/><Stat v={rating.josh||rating.g?`${(((rating.josh??0)+(rating.g??0))/((rating.josh?1:0)+(rating.g?1:0)||1)).toFixed(1)}★`:"—"} k={rating.josh||rating.g?`J ${rating.josh??"—"} · G ${rating.g??"—"}`:"not rated"} tint="var(--tint-sky)"/></div>
+    {events.length>0&&<div className="hm-history"><i className="line"/><div className="items">{events.map((e,i)=><article key={`${e.at}-${i}`} className="hm-card" style={{"--dot":e.dot} as CSSProperties}><i className="dot"/><div className="head"><strong>{e.title}</strong><small>{new Date(e.at).toLocaleDateString(undefined,{day:"numeric",month:"short"})}</small></div><p>{e.text}</p></article>)}</div></div>}
+    <Link className="hm-card hm-version hm-lift" href={`/scan?mode=Meal&meal=${id}&back=${encodeURIComponent(`/cook/${id}`)}`}><div><span className="kick">{photo?"OUR PHOTO":"DINNER PHOTO"}</span><strong>{photo?"Replace our dinner photo":"Save a photo of our dinner"}</strong><small>Kept with this recipe on this phone.</small></div><span style={{fontSize:22,color:"var(--muted)"}}>›</span></Link>
+   </>}
+   {cooked.length===0&&!lastNote&&<div className="hm-empty" style={{marginInline:0,marginTop:28}}><strong>Not cooked by us yet.</strong>Cook it once and rate it — then it becomes ours.</div>}
+
+   <div className="hm-card hm-ref"><p>{r.balance}</p><a href={r.source.url} target="_blank" rel="noreferrer">Reference ↗</a></div>
+  </div>
+
+  <div className="hm-cta split">
+   <button className="hm-btn ghost icon" onClick={()=>{setPickedDay(null);setWeekOpen(true);feedback("tap")}} aria-label="Add to week">＋</button>
+   <Link className="hm-btn primary" href={`/cook/${id}/cook`} onClick={()=>feedback("tap")}>Start cooking →</Link>
+  </div>
+
+  <Sheet open={weekOpen} onClose={()=>setWeekOpen(false)} label="Add recipe to week" title="Add to the week" action={<span className="muted">{title}</span>}>
+   <div className="hm-days">{days.map((d,i)=>{const current=getRecipe(h.week[i]);const on=i===targetDay;return <button key={d} className={`${on?"on":""} ${i<today?"dim":""}`} onClick={()=>{setPickedDay(i);feedback("tap")}} aria-label={`${longDays[i]}, currently ${recipeTitle(current.id,current.title)}`}><span>{d}</span><div className="tile">{current.image&&<img src={current.image} alt=""/>}{on&&<span className="tick">✓</span>}{!on&&<small>{recipeTitle(current.id,current.title)}</small>}</div></button>})}</div>
+   <HomeSays className="tight">{longDays[targetDay]} {targetDay===today?"is tonight":"is open"} — {inWeek>=0&&inWeek!==targetDay?`this is already on ${longDays[inWeek]}, so this adds it a second time.`:"put it there?"}</HomeSays>
+   <button className="hm-btn primary full" style={{marginTop:18,height:56}} onClick={addToWeek}>Put it on {longDays[targetDay]}</button>
+  </Sheet>
+
+  <Sheet open={noteOpen} onClose={()=>setNoteOpen(false)} label="Save a note" title="Next time" action={<span className="muted">{title} · v{currentVersion}</span>}>
+   <div className="hm-authors" style={{marginTop:18}}>{(["josh","g"] as const).map(a=><button key={a} className={author===a?"on":""} aria-pressed={author===a} onClick={()=>{setAuthor(a);feedback("tap")}}><Avatar who={a} size="sm"/>{who(a)}</button>)}</div>
+   <div className="hm-card solid hm-notebox" style={{marginTop:14}}><textarea value={note} onChange={e=>setNote(e.target.value)} placeholder="More chilli — two CH cubes. Egg crispier at the edge." aria-label="Note for next time" autoFocus/><div className="chips">{noteChips.map(c=><button key={c} className="hm-chip tint" onClick={()=>setNote(v=>v?`${v.replace(/\.?\s*$/,"")}. ${c}.`:`${c}.`)}>{c}</button>)}</div></div>
+   <div className="hm-notebox foot" style={{padding:"14px 0 0",display:"flex",alignItems:"center",gap:10,color:"var(--muted-2)",fontSize:13,fontWeight:600}}><button className="hm-round" aria-label="Talk to Home"><Waves/></button>or just say it</div>
+   <div className="hm-sheet-actions"><button className="hm-btn ghost" disabled={!note.trim()} onClick={()=>{promote(note,author);setNote("");setNoteOpen(false)}}>Make it v{currentVersion+1}</button><button className="hm-btn primary" disabled={!note.trim()} onClick={saveNote}>Save note</button></div>
+  </Sheet>
+  {toast&&<Toast text={toast}/>}
+  <span hidden><Orb size={1}/></span>
+ </div>;
 }

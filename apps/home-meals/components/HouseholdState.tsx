@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { defaultWeek, getIngredient, initialComponentStock, initialIngredientStock, recipes, shoppingNeedsForWeek } from "@/data/home-data";
 import { batchOutputMl, componentConsumptionMl, ingredientConsumptionExact, prepNeedsForWeekMl } from "@/data/stock-math";
+import { Orb } from "./app/Orb";
 
 type Rating={josh?:number;g?:number;note?:string};
 type RecipeNote={author:"josh"|"g"|"home";text:string;at:string};
@@ -47,6 +48,6 @@ export function HouseholdStateProvider({children}:{children:React.ReactNode}){
  const confirmKitchen=()=>setKitchenReady(true);const toggleUseSoon=(id:string)=>{const next=!useSoon[id];setUseSoon(prev=>({...prev,[id]:next}));setUseSoonAt(prev=>{const copy={...prev};if(next)copy[id]=new Date().toISOString();else delete copy[id];return copy})};const toggleFavourite=(recipeId:string)=>{if(!validRecipeIds.has(recipeId))return;setFavourites(prev=>({...prev,[recipeId]:!prev[recipeId]}))};const clearStorageIssue=()=>setStorageIssue(false);
  const resetDemo=()=>{setWeek(defaultWeek);setMonthlyPool(defaultMonthPool);setComponentStock(initialComponentStock);setIngredientStock(initialIngredientStock);setGroceryChecked({});setRatings({});setRecipeNotes({});setRecipeVersions({});setMealPhotos([]);setHistory([]);setPrepBatches([]);setKitchenReady(false);setUseSoon({});setUseSoonAt({});setFavourites({})};
  const value={week,monthlyPool,componentStock,ingredientStock,groceryChecked,ratings,recipeNotes,recipeVersions,mealPhotos,history,prepBatches,kitchenReady,useSoon,useSoonAt,favourites,storageIssue,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setComponent,setIngredient,toggleGrocery,makeBatch,cookMeal,rateMeal,noteMeal,promoteRecipeVersion,saveMealPhoto,confirmKitchen,toggleUseSoon,toggleFavourite,clearStorageIssue,resetDemo};
- return <Ctx.Provider value={value}>{hydrated?children:<div className="hm-boot-v5" aria-label="Loading Home Meals"><div><span>♥</span><strong>Home Meals</strong><small>Josh + G</small><i/></div></div>}</Ctx.Provider>
+ return <Ctx.Provider value={value}>{hydrated?children:<div className="hm-state" aria-label="Loading Home Meals"><div className="center"><Orb size={140}/><h1>Home Meals</h1><p>Josh &amp; G</p><div className="bar"><i/></div></div><div className="foot"/></div>}</Ctx.Provider>
 }
 export function useHousehold(){const v=useContext(Ctx);if(!v)throw new Error("useHousehold must be inside HouseholdStateProvider");return v}
