@@ -1,5 +1,6 @@
 import {phase2ResearchRecipesV5} from "./phase2-research-registry-v5";
 import {getPhase2OperationalRecipeV6} from "./phase2-operational-v6";
+import {canonicalIngredientKeyV7,getCanonicalIngredientV7} from "./ingredient-catalog-v7";
 import type {QuantityUnit} from "./food-quantity";
 
 export type PromotionStatusV7="formulation_locked"|"promotion_ready"|"live";
@@ -7,6 +8,7 @@ export type PromotionIssueV7=Readonly<{code:string;detail:string}>;
 
 export type LiveCandidateIngredientV7=Readonly<{
   ingredientId:string;
+  canonicalIngredientId:string;
   name:string;
   qty:number;
   unit:QuantityUnit;
@@ -45,7 +47,10 @@ function structuralIssues(recipe:(typeof phase2ResearchRecipesV5)[number]):Promo
   const ingredientKeys=new Set<string>();
   for(const x of recipe.ingredients){
     if(!x.id.trim()||!x.name.trim())issues.push({code:"ingredient_identity",detail:"Ingredient missing ID/name."});
-    const key=`${x.id}|${x.unit}`;if(ingredientKeys.has(key))issues.push({code:"ingredient_duplicate",detail:`Duplicate ingredient identity ${key}.`});ingredientKeys.add(key);
+    const canonicalId=canonicalIngredientKeyV7(x.id,x.unit),def=getCanonicalIngredientV7(canonicalId);
+    if(!def)issues.push({code:"canonical_ingredient",detail:`${x.id}/${x.unit} does not resolve to ${canonicalId}.`});
+    else if(def.canonicalUnit!==x.unit)issues.push({code:"canonical_unit",detail:`${canonicalId} is ${def.canonicalUnit}, recipe requires ${x.unit}.`});
+    const key=`${canonicalId}|${x.unit}`;if(ingredientKeys.has(key))issues.push({code:"ingredient_duplicate",detail:`Duplicate canonical ingredient ${key}.`});ingredientKeys.add(key);
   }
   const prepKeys=new Set<string>();for(const p of recipe.prep){const key=`${p.componentId}|${p.unit}`;if(prepKeys.has(key))issues.push({code:"prep_duplicate",detail:`Duplicate prep identity ${key}.`});prepKeys.add(key)}
   return issues;
@@ -66,7 +71,7 @@ export const phase2LiveCandidatesV7=phase2ResearchRecipesV5.map(recipe=>{
     targetServings:recipe.targetServings,
     referenceMinutes:recipe.referenceMinutes,
     cookScaleNote:recipe.cookScaleNote,
-    ingredients:recipe.ingredients.map((x):LiveCandidateIngredientV7=>({ingredientId:x.id,name:x.name,qty:x.qty,unit:x.unit,basis:x.basis,optional:x.optional,note:x.note})),
+    ingredients:recipe.ingredients.map((x):LiveCandidateIngredientV7=>({ingredientId:x.id,canonicalIngredientId:canonicalIngredientKeyV7(x.id,x.unit),name:x.name,qty:x.qty,unit:x.unit,basis:x.basis,optional:x.optional,note:x.note})),
     prep:(operational?.prep??recipe.prep.map(p=>({componentId:p.componentId,quantity:{qty:p.qty,unit:p.unit},display:`${p.componentId} · ${p.qty} ${p.unit}`}))).map((p):LiveCandidatePrepV7=>({componentId:p.componentId,qty:p.quantity.qty,unit:p.quantity.unit,display:p.display})),
     pantryIds:recipe.pantryIds,
     equipment:recipe.equipment,
