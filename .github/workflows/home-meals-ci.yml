@@ -36,3 +36,7 @@ jobs:
         run: npm run audit:data
       - name: Production build
         run: npm run build
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Browser acceptance
+        run: npm run test:e2e
