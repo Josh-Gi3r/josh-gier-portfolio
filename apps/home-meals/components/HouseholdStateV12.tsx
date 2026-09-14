@@ -8,7 +8,7 @@ import {getPrepFormulationV2} from "@/data/prep-formulations-v2";
 import type {RecipeCookObservationV2} from "@/data/calibration-v2";
 import {
  addMeasuredBatchV12,componentStockV12,consumeComponentV12,cookRecipeV12,migrateHouseholdV11ToV12,recordCookObservationV12,
- setIngredientStockV12,setManualComponentStockV12,type HouseholdStateV12,type RatingV12,type RecipeNoteV12,type RecipeVersionV12
+ setIngredientStockV12,setManualComponentStockV12,setQualitativeIngredientLevelV12,type HouseholdStateV12,type RatingV12,type RecipeNoteV12,type RecipeVersionV12
 } from "@/data/household-v12";
 
 const KEY="home-meals-household-v12",LEGACY_KEY="home-meals-household-v11";
@@ -26,6 +26,7 @@ export type HouseholdStateV12Context={
  setComponentObserved:(componentId:string,value:Quantity)=>void;
  reconcileComponentTotal:(componentId:string,value:Quantity)=>void;
  setIngredientObserved:(ingredientId:string,value:Quantity)=>void;
+ setQualitativeIngredientLevel:(ingredientId:string,level:number)=>void;
  recordMeasuredBatch:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
  recordMeasuredProduction:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
  cookMeal:(recipeId:string,variantId?:string)=>void;
@@ -44,7 +45,7 @@ export type HouseholdStateV12Context={
 
 const Ctx=createContext<HouseholdStateV12Context|null>(null);
 function freshState(){return migrateHouseholdV11ToV12({},defaults)}
-function restoreV12(raw:string):HouseholdStateV12|null{try{const parsed=JSON.parse(raw);if(parsed?.version!==12||!Array.isArray(parsed.week)||!parsed.manualComponentStock||!parsed.ingredientStock)return null;return{...parsed,cookObservations:Array.isArray(parsed.cookObservations)?parsed.cookObservations:[]} as HouseholdStateV12}catch{return null}}
+function restoreV12(raw:string):HouseholdStateV12|null{try{const parsed=JSON.parse(raw);if(parsed?.version!==12||!Array.isArray(parsed.week)||!parsed.manualComponentStock||!parsed.ingredientStock)return null;return{...parsed,qualitativeIngredientStock:parsed.qualitativeIngredientStock&&typeof parsed.qualitativeIngredientStock==="object"?parsed.qualitativeIngredientStock:{},cookObservations:Array.isArray(parsed.cookObservations)?parsed.cookObservations:[]} as HouseholdStateV12}catch{return null}}
 function uid(prefix:string){return`${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`}
 function historyOnly(prev:HouseholdStateV12,recipeId:string,variantId?:string){return{...prev,history:[{mealId:recipeId,variantId,at:new Date().toISOString()},...prev.history].slice(0,100)}}
 
@@ -55,13 +56,14 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
 
  const componentStock=useMemo(()=>componentStockV12(state),[state.componentBatches,state.manualComponentStock]);
  const prepNeeds=useMemo(()=>prepNeedsForRecipesV2(state.week,componentStock),[state.week,componentStock]);
- const shoppingNeeds=useMemo(()=>shoppingNeedsForPlanV2(state.week.map(recipeId=>({recipeId})),state.ingredientStock),[state.week,state.ingredientStock]);
+ const shoppingNeeds=useMemo(()=>shoppingNeedsForPlanV2(state.week.map(recipeId=>({recipeId})),state.ingredientStock,state.qualitativeIngredientStock),[state.week,state.ingredientStock,state.qualitativeIngredientStock]);
 
  const setDay=(index:number,recipeId:string)=>{if(index<0||index>6||!validRecipeIds.has(recipeId))return;setState(prev=>({...prev,week:prev.week.map((x,i)=>i===index?recipeId:x),groceryChecked:{}}))};
  const toggleMonthlyPool=(recipeId:string)=>{if(!validRecipeIds.has(recipeId))return;setState(prev=>({...prev,monthlyPool:prev.monthlyPool.includes(recipeId)?prev.monthlyPool.filter(id=>id!==recipeId):[...prev.monthlyPool,recipeId]}))};
  const setComponentObserved=(componentId:string,value:Quantity)=>setState(prev=>setManualComponentStockV12(prev,componentId,value));
  const reconcileComponentTotal=(componentId:string,value:Quantity)=>setState(prev=>{const current=componentStockV12(prev)[componentId];if(!current)throw new Error(`Unknown component ${componentId}`);if(current.unit!==value.unit)throw new Error(`Observed unit mismatch for ${componentId}`);if(value.qty<0)throw new Error(`Observed stock cannot be negative for ${componentId}`);if(value.qty<current.qty)return consumeComponentV12(prev,componentId,quantity(current.qty-value.qty,current.unit));const manual=prev.manualComponentStock[componentId]??quantity(0,current.unit);return setManualComponentStockV12(prev,componentId,quantity(manual.qty+(value.qty-current.qty),current.unit))});
  const setIngredientObserved=(ingredientId:string,value:Quantity)=>setState(prev=>{let next=setIngredientStockV12(prev,ingredientId,value);if(value.qty<=0&&next.useSoon[ingredientId]){const useSoon={...next.useSoon,[ingredientId]:false},useSoonAt={...next.useSoonAt};delete useSoonAt[ingredientId];next={...next,useSoon,useSoonAt}}return next});
+ const setQualitativeIngredientLevel=(ingredientId:string,level:number)=>setState(prev=>setQualitativeIngredientLevelV12(prev,ingredientId,level));
 
  const recordMeasuredBatch=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>addMeasuredBatchV12(prev,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion})));
  const recordMeasuredProduction=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>{const formulation=getPrepFormulationV2(componentId);if(!formulation)throw new Error(`Missing canonical prep formulation for ${componentId}`);let next=prev;for(const parent of formulation.componentInputs)next=consumeComponentV12(next,parent.componentId,quantity(parent.qty,parent.unit));return addMeasuredBatchV12(next,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion}))});
@@ -79,7 +81,7 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  const clearMigrationWarnings=()=>setState(prev=>({...prev,migrationWarnings:[]}));
  const resetV12=()=>setState(freshState());
 
- const value:HouseholdStateV12Context={state,componentStock,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setComponentObserved,reconcileComponentTotal,setIngredientObserved,recordMeasuredBatch,recordMeasuredProduction,cookMeal,logMealWithoutStock,recordCookObservation,rateMeal,noteMeal,promoteRecipeVersion,toggleUseSoon,toggleFavourite,toggleGrocery,confirmKitchen,clearMigrationWarnings,resetV12};
+ const value:HouseholdStateV12Context={state,componentStock,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setComponentObserved,reconcileComponentTotal,setIngredientObserved,setQualitativeIngredientLevel,recordMeasuredBatch,recordMeasuredProduction,cookMeal,logMealWithoutStock,recordCookObservation,rateMeal,noteMeal,promoteRecipeVersion,toggleUseSoon,toggleFavourite,toggleGrocery,confirmKitchen,clearMigrationWarnings,resetV12};
  if(!hydrated)return<div aria-label="Loading Home Meals"/>;
  return<Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
