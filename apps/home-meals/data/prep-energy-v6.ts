@@ -60,11 +60,11 @@ export const prepEnergyReferencesV6:readonly PrepEnergyReferenceV6[]=[
  R("pesto",4.50,"g","recipe_composition_proxy","C",22,"Basil/nut/cheese/olive-oil pesto proxy."),
  R("duxelles",1.20,"g","recipe_composition_proxy","C",25,"Reduced mushroom/onion/fat concentrate proxy."),
 
- R("gg",1.10,"g","recipe_composition_proxy","C",20,"Ginger-garlic paste proxy."),
+ R("ginger-garlic",1.10,"g","recipe_composition_proxy","C",20,"Ginger-garlic paste proxy."),
  R("garlic",1.50,"g","recipe_composition_proxy","C",18,"Garlic booster proxy."),
  R("chilli",0.60,"g","recipe_composition_proxy","C",20,"Fresh/dried chilli booster proxy."),
  R("lemongrass",0.70,"g","recipe_composition_proxy","C",22,"Lemongrass/aromatic booster proxy."),
- R("massaman-finish",3.00,"g","recipe_composition_proxy","C",25,"Dry warm-spice/nut finish proxy; dose is tiny."),
+ R("massaman-finish",3.00,"g","recipe_composition_proxy","C",25,"Dry warm-spice finish proxy; dose is tiny."),
  R("miso-ginger",2.20,"g","recipe_composition_proxy","C",25,"Miso/sweetener/ginger meal-scale glaze proxy."),
  R("bulgogi",1.40,"g","recipe_composition_proxy","C",25,"Soy/sugar/fruit/aromatic bulgogi marinade proxy."),
 ] as const;
