@@ -6,7 +6,7 @@ import {getCanonicalPrepV2} from "@/data/food-truth-v2";
 import {stockPortions} from "@/data/stock-math";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
-import {motherHero,portionWord,toneGradient} from "@/lib/tones";
+import {prepHero,portionWord,toneGradient} from "@/lib/tones";
 import {Sheet} from "./Primitives";
 
 export const levels=["Out","Low","Some","Plenty"];
@@ -24,7 +24,7 @@ export function StockEditor({item,onDone}:{item:IngredientDef;onDone:()=>void}){
  const place=["Fresh","Protein","Dairy"].includes(item.category)?"Fridge":"Pantry";
  return <>
   <div className="item"><div className="ic">{item.name[0]}</div><div><h3>{item.name}</h3><small>{place}{soon?` · marked use soon ${age?`${age} ${age===1?"day":"days"} ago`:"today"}`:""}</small></div></div>
-  <div className="big"><button className="minus" aria-label="Less" {...dec}>−</button><div className="val"><b>{item.tracking==="state"?levels[level]:Math.round(n*10)/10}</b><small>{item.tracking==="state"?"qualitative level — no fake ml":`${item.unit==="count"?"count":item.unit==="portion"?"portions":item.unit} · hold to count fast`}</small></div><button className="plus" aria-label="More" {...inc}>+</button></div>
+  <div className="big"><button className="minus" aria-label="Less" {...dec}>−</button><div className="val"><b>{item.tracking==="state"?levels[level]:Math.round(n*10)/10}</b><small>{item.tracking==="state"?"qualitative level":`${item.unit==="count"?"count":item.unit==="portion"?"portions":item.unit} · hold to count fast`}</small></div><button className="plus" aria-label="More" {...inc}>+</button></div>
   <div className="hm-levels">{levels.map((l,i)=><button key={l} className={i===level?"on":""} onClick={()=>set(levelQty(item,i))}>{l}</button>)}</div>
   <div className="acts">{place==="Fridge"?<button className={`soon ${soon?"on":""}`} disabled={n<=0} onClick={()=>{h.toggleUseSoon(item.id);feedback("change")}}>{soon?"Use soon ✓":"Use soon ◷"}</button>:<span/>}<button onClick={()=>set(0)}>Threw it out</button></div>
   <button className="hm-btn primary full" style={{marginTop:18,height:56}} onClick={onDone}>Done</button>
@@ -32,7 +32,7 @@ export function StockEditor({item,onDone}:{item:IngredientDef;onDone:()=>void}){
 }
 
 export function ComponentEditor({id,onDone}:{id:string;onDone:()=>void}){
- const h=useHousehold();const c=getComponent(id)!;const truth=getCanonicalPrepV2(id);if(!truth)return null;const qty=h.componentStock[id]??0;const n=stockPortions(id,h.componentStock);const hero=motherHero(id);
+ const h=useHousehold();const c=getComponent(id)!;const truth=getCanonicalPrepV2(id);if(!truth)return null;const qty=h.componentStock[id]??0;const n=stockPortions(id,h.componentStock);const hero=prepHero(id);
  const set=(portions:number)=>{h.setComponent(id,Math.max(0,portions)*truth.workingUnit.qty);feedback("change")};
  const dec=useHold(()=>set(stockPortions(id,h.componentStock)-1));const inc=useHold(()=>set(stockPortions(id,h.componentStock)+1));
  const batches=h.prepBatches.filter(b=>b.componentId===id&&b.remaining.qty>0).sort((a,b)=>new Date(a.producedAt).getTime()-new Date(b.producedAt).getTime());
