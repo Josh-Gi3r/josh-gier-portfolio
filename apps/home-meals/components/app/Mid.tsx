@@ -1,27 +1,50 @@
 "use client";
 import Link from "next/link";
-import {useState} from "react";
+import {useState,type CSSProperties} from "react";
 import {midContent} from "@/data/mid-content-v3";
-import {motherProcessImages} from "@/data/mother-process-assets";
+import {findMid} from "@/data/foundation";
 import {midBases,motherBases,recipes,getRecipe} from "@/data/home-data";
 import {batchOutputMl,stockPortions} from "@/data/stock-math";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
-import {useSheet} from "@/lib/useSheet";
-import {Back,MealCard,LegacySectionHead as SectionHead} from "./Primitives";
+import {motherHero,portionWord,toneFor,toneGradient} from "@/lib/tones";
+import {HomeSays} from "./HomeSays";
+import {MealTile,RoundBack,SectionHead,Sheet,Stat,Toast} from "./Primitives";
+import {ComponentSheet} from "./StockSheets";
 
 const google=(q:string)=>`https://www.google.com/search?q=${encodeURIComponent(q)}`;
 const youtube=(q:string)=>`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+
 export function Mid({id}:{id:string}){
- const h=useHousehold();const m=midBases.find(x=>x.id===id)!;const c=midContent[id];const linked=recipes.filter(r=>r.midIds.includes(id));const usedThisWeek=h.week.some(rid=>getRecipe(rid).midIds.includes(id));const researchOnly=linked.length===0;const[confirm,setConfirm]=useState(false);const[added,setAdded]=useState(false);useSheet(confirm,()=>setConfirm(false));const ml=h.componentStock[id]??0;const portions=stockPortions(id,h.componentStock);const batchMl=batchOutputMl(id);const parents=m.parentMotherIds.map(pid=>motherBases.find(x=>x.id===pid)).filter(Boolean) as typeof motherBases;
- const finishBatch=()=>{h.makeBatch(id);setConfirm(false);setAdded(true);feedback("success");setTimeout(()=>setAdded(false),1800)};
- return <div className="hm-page-v5 hm-mid-v5 hm-mid-v6"><Back href="/prep/mids" label="Mids"/>
-  <header className="hm-mid-head-v5 hm-mid-head-v6" style={{"--tone":m.tone} as React.CSSProperties}><div className="hm-mid-object-v6"><i/><b>{m.code}</b><span>MID</span></div><div><span>{usedThisWeek?"THIS WEEK":researchOnly?"IDEA TO TRY":"MID-BASE"}</span><h1>{m.name}</h1><p>{c?.what??"A make-ahead flavour direction."}</p><div className="hm-mid-parent-links-v6">{parents.length?parents.map(parent=><Link href={`/prep/${parent.id}`} key={parent.id}>{parent.code}</Link>):<b>Standalone</b>}</div></div></header>
-  <section className={`hm-stock-action-v5 hm-stock-action-v6 ${researchOnly?"research":""}`}><div><span>{researchOnly?"Status":"In the kitchen"}</span><strong>{researchOnly?"Not in our rotation yet":h.kitchenReady?`${ml} ml`:"Not checked"}</strong><small>{added?`${m.code} added to freezer ✓`:researchOnly?"Keep this idea here until we add a dinner that really uses it.":h.kitchenReady?`${portions} standard ${portions===1?"portion":"portions"}`:`Standard portion: ${m.portionMl} ml`}</small></div>{!researchOnly&&<button onClick={()=>setConfirm(true)}>{usedThisWeek?"Make for this week":"Make batch"}</button>}</section>
+ const h=useHousehold();const m=midBases.find(x=>x.id===id)!;const c=midContent[id];const info=findMid(id);
+ const linked=recipes.filter(r=>r.midIds.includes(id));const usedThisWeek=h.week.some(rid=>getRecipe(rid).midIds.includes(id));const researchOnly=linked.length===0;
+ const[confirm,setConfirm]=useState(false);const[count,setCount]=useState(false);const[toast,setToast]=useState("");
+ const portions=stockPortions(id,h.componentStock);const batchMl=batchOutputMl(id);const parents=m.parentMotherIds.map(pid=>motherBases.find(x=>x.id===pid)).filter(Boolean) as typeof motherBases;
+ const tone=toneFor(id),grad=toneGradient(id);const word=portionWord(id);
+ const batch=c?.batch??info?.ingredients??[];const method=c?.method??info?.method??[];const what=c?.what??info?.summary??"A make-ahead flavour direction.";
+ const finishBatch=()=>{h.makeBatch(id);setConfirm(false);feedback("success");setToast(`${m.code} · ${m.batchYield} ${portionWord(id,m.batchYield)} added`);window.setTimeout(()=>setToast(""),1800)};
+ return <div className="hm-screen flush" style={{"--tone":tone,"--tone-grad":grad} as CSSProperties}>
+  <div className="hm-hero-grad" style={{"--tone-light":`${tone}99`,"--tone-deep":tone} as CSSProperties}><div className="glow"/><div className="top"><RoundBack href="/prep/mids" onPhoto label="Back to mids"/></div><div className="code"><span className="kick">MID‑BASE · {parents.length?`FROM ${parents.map(p=>p.code).join(" + ")}`:"STANDALONE"}</span><b>{m.code}</b></div></div>
+  <div className="hm-sheetpage" style={{paddingBottom:140}}>
+   <h1 className="hm-h1" style={{fontSize:28,lineHeight:1.1}}>{m.name}</h1>
+   <p className="hm-lead" style={{marginTop:8}}>{what}</p>
+   <div className="hm-stats"><Stat v={h.kitchenReady?portions:"—"} k={`${portionWord(id,2)} left`}/><Stat v={`${m.portionMl} ml`} k={`per ${word}`} tint="var(--tint-peach)"/><Stat v={linked.length} k={linked.length===1?"dinner":"dinners"} tint="var(--tint-sky)"/></div>
+   {parents.length>0&&<div className="hm-chiplist" style={{marginTop:14}}>{parents.map(p=>{const hero=motherHero(p.id);return <Link key={p.id} href={`/prep/${p.id}`} className="tinted" style={{"--tone":toneFor(p.id),paddingLeft:6} as CSSProperties}>{hero?<img src={hero} alt="" style={{width:26,height:26,borderRadius:"50%",objectFit:"cover"}}/>:<i/>}Built from {p.code}<small>{p.name}</small></Link>})}</div>}
+   <HomeSays>{researchOnly?<>Nothing we’ve saved uses <b>{m.code}</b> yet. {c?.dinners?.length?`Good first candidates: ${c.dinners.slice(0,3).join(", ")}.`:"Keep it here until a dinner really needs it."}</>:usedThisWeek?<>This week needs <b>{m.code}</b>{h.kitchenReady?portions?` — ${portions} ${portionWord(id,portions)} in the freezer.`:" and the freezer is empty of it. Make a batch before then.":"."}</>:<>{linked.length} of our dinners start from <b>{m.code}</b>. {h.kitchenReady?`${portions} ${portionWord(id,portions)} in the freezer.`:"Count the freezer to see what’s left."}</>}</HomeSays>
 
-  {parents.length>0&&<section className="hm-mid-lineage-v6"><span>BUILT FROM</span><div>{parents.map(parent=>{const image=motherProcessImages[parent.id]?.at(-1)?.url;return <Link href={`/prep/${parent.id}`} key={parent.id} style={{"--parent-tone":parent.tone} as React.CSSProperties}>{image?<img src={image} alt={`${parent.name} freezer portions`} loading="lazy"/>:<i/>}<b>{parent.code}</b><small>{parent.name}</small></Link>})}<em>→</em><div className="hm-mid-lineage-object-v6" style={{"--tone":m.tone} as React.CSSProperties}><i/><b>{m.code}</b><small>{m.name}</small></div></div></section>}
+   {batch.length>0&&<><SectionHead title={`Batch of ${m.batchYield}`} action={<span className="muted">{m.portionLabel}</span>}/><div className="hm-chiplist">{batch.map(x=><span key={x}>{x}</span>)}</div></>}
+   {method.length>0&&<div className="hm-steps" style={{marginTop:20}}>{method.map((s,i)=><div key={s} className="hm-card hm-step" style={{"--phase":grad} as CSSProperties}><b>{i+1}</b><div><p>{s}</p></div><span/></div>)}</div>}
+   {(c||info)&&<div className="hm-card hm-refs">{(c?.storage??info?.storage)&&<p><b>Storage · </b>{c?.storage??info?.storage}</p>}{c&&<><p>{c.source}</p><a href={google(`${c.source} ${m.name} recipe`)} target="_blank" rel="noreferrer">Find written source ↗</a>{c.youtube&&<a href={youtube(c.youtube)} target="_blank" rel="noreferrer">Watch: {c.youtube} ↗</a>}</>}</div>}
 
-  {c&&<><section className="hm-block-v5 hm-batch-recipe-v5 hm-batch-recipe-v6"><SectionHead title="What goes in" action={<span>{researchOnly?"Test batch":"Batch recipe"}</span>}/><ul>{c.batch.map(x=><li key={x}>{x}</li>)}</ul></section><section className="hm-block-v5"><SectionHead title="Make it"/><ol className="hm-step-list-v5">{c.method.map((x,i)=><li key={x}><b>{i+1}</b><p>{x}</p></li>)}</ol></section><section className="hm-practical-grid-v5 hm-practical-grid-v6"><div><span>Storage</span><p>{c.storage}</p></div><div><span>References</span><p>{c.source}</p><a href={google(`${c.source} ${m.name} recipe`)} target="_blank" rel="noreferrer">Find written source ↗</a>{c.youtube&&<><small>{c.youtube}</small><a href={youtube(c.youtube)} target="_blank" rel="noreferrer">Find tutorial ↗</a></>}</div></section></>}
-  <section className="hm-block-v5"><SectionHead title={linked.length?`${linked.length} ${linked.length===1?"dinner":"dinners"} using ${m.code}`:"Not in our rotation yet"}/>{linked.length?<div className="hm-meal-rail-v5">{linked.map(r=><MealCard recipe={r} key={r.id} compact/>)}</div>:<div className="hm-empty-v5"><strong>No saved dinner uses this yet.</strong>{c?.dinners?.length&&<p>Good next candidates: {c.dinners.slice(0,4).join(" · ")}</p>}</div>}</section>
-  {confirm&&<div className="hm-sheet-backdrop-v5" onMouseDown={e=>{if(e.target===e.currentTarget)setConfirm(false)}}><section className="hm-sheet-v5" role="dialog" aria-modal="true" aria-label={`Add ${m.code} batch`}><div className="hm-sheet-handle-v5"/><header><div><span>ADD A BATCH</span><h2>{m.code}</h2></div><button className="hm-icon-button-v5" onClick={()=>setConfirm(false)} aria-label="Close">×</button></header><p>One batch adds <strong>{batchMl} ml</strong> ({m.batchYield} × {m.portionMl} ml).</p><button className="hm-primary-button-v5" onClick={finishBatch}>Batch finished</button></section></div>}
- </div>}
+   <SectionHead title="Becomes" action={<span style={{color:tone,fontWeight:700,fontSize:13}}>{linked.length?`${linked.length} dinners`:"ideas"}</span>}/>
+   {linked.length?<div className="hm-rail">{linked.map(r=><MealTile key={r.id} recipe={r}/>)}</div>:<div className="hm-chiplist">{(c?.dinners??m.examples).slice(0,6).map(x=><span key={x}>{x}</span>)}</div>}
+  </div>
+  <div className="hm-cta split"><button className="hm-btn ghost icon" aria-label={`Count ${m.code}`} onClick={()=>setCount(true)}>＋</button><button className="hm-btn primary" style={{background:grad}} onClick={()=>setConfirm(true)}>Make {m.batchYield} {portionWord(id,m.batchYield)}</button></div>
+  <Sheet open={confirm} onClose={()=>setConfirm(false)} label={`Make a ${m.code} batch`} title={`Make ${m.code}`} action={<span className="muted">{m.batchYield} × {m.portionMl} ml</span>}>
+   <HomeSays className="tight">One batch adds <b>{batchMl} ml</b> — {m.batchYield} {portionWord(id,m.batchYield)}, dated today.</HomeSays>
+   <div className="hm-sheet-actions"><button className="hm-btn ghost" onClick={()=>setConfirm(false)}>Not yet</button><button className="hm-btn primary" onClick={finishBatch}>Batch finished</button></div>
+  </Sheet>
+  <ComponentSheet id={count?id:null} onClose={()=>setCount(false)}/>
+  {toast&&<Toast text={toast}/>}
+ </div>;
+}

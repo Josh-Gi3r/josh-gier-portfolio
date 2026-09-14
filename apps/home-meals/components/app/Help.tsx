@@ -1,37 +1,80 @@
+"use client";
 import Link from "next/link";
-import {Back,PageHead,LegacySectionHead as SectionHead} from "./Primitives";
-import {motherBases} from "@/data/home-data";
+import type {CSSProperties} from "react";
+import {motherBases,prepComponents,recipes} from "@/data/home-data";
 import {foundationImages} from "@/data/foundation-assets";
 import {motherProcessImages} from "@/data/mother-process-assets";
-import {PortionScale} from "../PortionScale";
+import {useHousehold} from "../HouseholdState";
+import {feedback} from "@/lib/feedback";
+import {motherHero,toneFor,toneGradient} from "@/lib/tones";
+import {HomeSays} from "./HomeSays";
+import {RoundBack,SectionHead,Tile} from "./Primitives";
 
-const cards=[
- {href:"/learn/system",mark:"↻",title:"From plan to dinner",copy:"How one dinner moves through Kitchen, shopping, Prep, cooking and our notes.",image:foundationImages.prepDay},
- {href:"/learn/portions",mark:"▦",title:"Freezer portions",copy:"When to freeze 30, 60, 120, 250 or 500 ml.",image:foundationImages.cubes},
- {href:"/learn/prep-day",mark:"✓",title:"Prep day",copy:"Cook, cool, portion, label and freeze without turning Sunday into a marathon.",image:foundationImages.prepDay},
- {href:"/learn/freezer",mark:"❄",title:"Freezer layout",copy:"A simple place for mothers, mids, proteins and carbs so we can find them fast.",image:foundationImages.freezer}
+const guides=[
+ {slug:"portions",kicker:"PORTIONS",title:"Cube sizes, to scale",sub:"What each freezer size is for",img:foundationImages.cubes},
+ {slug:"freezer",kicker:"FREEZER",title:"Label it, front to back",sub:"CODE / ML / DATE · oldest first",img:foundationImages.freezer},
+ {slug:"prep-day",kicker:"PREP DAY",title:"Chop → cook → cue → cool → freeze",sub:"The Sunday pipeline",img:foundationImages.prepDay},
+ {slug:"system",kicker:"THE WEEK",title:"Plan minus what’s home",sub:"How the list and prep are built",img:foundationImages.groceries}
+];
+const actions=[
+ {href:"#household",label:"Household",glyph:"J·G",bg:"linear-gradient(135deg,#ffc2a8,#ff9f7a)"},
+ {href:"#memory",label:"Our history",glyph:"★",bg:"var(--grad-green-short)"},
+ {href:"/prep/day",label:"Prep Day",glyph:"✓",bg:"linear-gradient(135deg,#9fc0ff,#4f8cff)"},
+ {href:"/cook/builder",label:"From what we have",glyph:"✦",bg:"var(--ink)"}
 ];
 
-export function Help(){return <div className="hm-page-v5 hm-help-v5 hm-help-v6"><Back href="/" label="Home"/><PageHead title="Kitchen guides" sub="Quick references for when we’re actually cooking."/>
- <section className="hm-learn-hero-v6" style={{backgroundImage:`linear-gradient(90deg,rgba(27,31,24,.78),rgba(27,31,24,.16)),url(${foundationImages.prepDay})`}}><span>OUR RHYTHM</span><h2>Do the slow work once.<br/>Cook the rest by feel.</h2><p>Only the references worth reaching for in the kitchen.</p></section>
- <div className="hm-help-cards-v6">{cards.map(c=><Link href={c.href} key={c.href} style={{"--guide-image":`url(${c.image})`} as React.CSSProperties}><div className="hm-guide-card-photo-v6"><b>{c.mark}</b></div><span><strong>{c.title}</strong><small>{c.copy}</small></span><i>›</i></Link>)}</div>
- <section className="hm-block-v5 hm-learn-system-v6"><SectionHead title="How dinner moves" action={<Link href="/learn/system">Open guide ›</Link>}/><div className="hm-loop-v6" aria-label="From recipe to dinner and back to our notes"><Link href="/cook">Recipes</Link><i>→</i><Link href="/plan">Week</Link><i>→</i><Link href="/kitchen">Kitchen</Link><i>→</i><Link href="/plan">Shop</Link><i>→</i><Link href="/prep">Prep</Link><i>→</i><Link href="/cook">Cook</Link><i>→</i><Link href="/cook">Rate</Link><b>↺</b></div><p>The week decides what to buy and prep. Cooking uses those same quantities. Our ratings and notes stay with the recipe for next time.</p></section>
- <section className="hm-block-v5"><SectionHead title="The eight foundations" action={<Link href="/prep">Prep ›</Link>}/><div className="hm-mother-mini-v6">{motherBases.map(m=>{const photo=motherProcessImages[m.id]?.at(-1)?.url;return <Link href={`/prep/${m.id}`} key={m.id} style={{"--tone":m.tone} as React.CSSProperties}>{photo?<img src={photo} alt={`${m.name} frozen in measured portions`} loading="lazy"/>:<i/>}<span><strong>{m.code}</strong><small>{m.name}</small></span></Link>})}</div></section>
- </div>}
+export function Help(){
+ const h=useHousehold();
+ return <div className="hm-screen">
+  <h1 className="hm-h1 hm-gut">More</h1>
+  <div className="hm-more-actions">{actions.map(a=><Link key={a.href} href={a.href} className="hm-card hm-lift" style={{"--bg":a.bg} as CSSProperties} onClick={()=>feedback("tap")}><span className="ic">{a.glyph}</span><strong>{a.label}</strong></Link>)}</div>
+  <HomeSays className="tight">{h.history.length?<>{h.history.length} {h.history.length===1?"dinner":"dinners"} logged so far. Everything I remember about them is under Our history.</>:<>Cook something and rate it — what worked lands here, not in a settings page.</>}</HomeSays>
+  <SectionHead title="Guides" action={<span className="muted">short, visual</span>}/>
+  <div className="hm-guides">{guides.map(g=><Tile key={g.slug} href={`/learn/${g.slug}`} img={g.img} alt=""><div className="shade side"/><div className="gcopy"><span className="kick">{g.kicker}</span><div><h3>{g.title}</h3><p>{g.sub}</p></div></div></Tile>)}</div>
+ </div>;
+}
 
-const guideData:Record<string,{title:string;sub:string;hero:string;eyebrow:string;steps:string[]}>={
- system:{title:"From plan to dinner",sub:"The dinner, shopping list, freezer and our notes all stay tied to the same week.",hero:foundationImages.prepDay,eyebrow:"THE RHYTHM",steps:["Choose the month’s pool and the week’s dinners.","Check what is already in the fridge, freezer and pantry.","Buy only the gap between the plan and what is already home.","Prep only the slow pieces the week is short of.","Cook from the same quantities used by the plan.","Rate dinner and leave the note we want next time."]},
- portions:{title:"Freezer portions",sub:"Strong things stay small. Bulky foundations and stock get more room.",hero:foundationImages.cubes,eyebrow:"PORTIONS",steps:["30 ml: boosters, concentrates and little flavour hits.","60 ml: small sauces and strong everyday bases.","90–120 ml: useful dinner-size base portions.","250 ml: larger meal or batch-cooking portions.","500 ml: stock, tomato sauce or anything bulky.","Label the name, amount and date before it disappears into the freezer."]},
- "prep-day":{title:"Prep day",sub:"Do the slow work once, then get out of the kitchen.",hero:foundationImages.prepDay,eyebrow:"WORKBENCH",steps:["Start from this week’s actual prep shortfalls, not a random batch list.","Put the longest mother bases on first.","Make quicker mids and boosters while the slow pans cook.","Cool completely before covering and freezing.","Portion into the size the recipes actually use.","Label and put new stock behind older stock."]},
- freezer:{title:"Freezer layout",sub:"A predictable freezer is quicker to use, easier to count and less likely to grow mystery tubs.",hero:foundationImages.freezer,eyebrow:"FREEZER",steps:["Keep mother bases together so the foundations are visible at a glance.","Keep mids and boosters together in their own section.","Pack raw proteins by dinner-size portions.","Keep rice and other carb portions separate from sauces.","Old stock stays in front; new stock goes behind it.","No mystery tubs: every container gets a name, amount and date."]}
-};
+// Freezer sizes grouped by what actually uses them in our data.
+const buckets=[{ml:15,px:34,label:"Boosters",test:(x:number)=>x<=15,grad:"linear-gradient(135deg,#f0d27a,#d4a93a)"},{ml:30,px:43,label:"Concentrates",test:(x:number)=>x>15&&x<=45,grad:"linear-gradient(135deg,#9a7a68,#7a5a48)"},{ml:60,px:54,label:"Everyday bases",test:(x:number)=>x>45&&x<=60,grad:"linear-gradient(135deg,#e8b64a,#c48a1c)"},{ml:120,px:68,label:"Dinner bases",test:(x:number)=>x>60&&x<=150,grad:"linear-gradient(135deg,#ff8a70,#e65f45)"},{ml:250,px:86,label:"Big portions",test:(x:number)=>x>150&&x<400,grad:"linear-gradient(135deg,#c98a48,#a86a2a)"},{ml:500,px:108,label:"Stock",test:(x:number)=>x>=400,grad:"linear-gradient(135deg,#9fc0ff,#4f8cff)"}];
+const pipeline=[["Chop","0–15 min","Trim, peel, weigh. Everything measured before any heat.","#6fd39a"],["Cook","15–90 min","Onions first, slow. Patience here is the whole flavour.","#2fae6e"],["Cue","watch","Each base has one visual sign it’s done. Home shows the photo.","#4cc487"],["Cool","1–2 h","Shallow trays, quickly. Never freeze warm.","#4f8cff"],["Portion","10 min","Into the right cube size. Level, not heaped.","#ff9f7a"],["Label","2 min","CODE / ML / DATE on the tray or bag.","#e8825f"],["Freeze","overnight","Flat first, then into bags once solid.","#a8e6c3"]];
+const loop=[["Choose","Recipes + week","/plan"],["Check","Kitchen","/kitchen"],["Fill the gap","Shop + prep","/prep"],["Use it","Cook + rate","/cook"]];
 
-export function Guide({slug}:{slug:string}){const g=guideData[slug];if(!g)return null;return <div className="hm-page-v5 hm-guide-v5 hm-guide-v6"><Back href="/learn" label="Guides"/>
- <section className="hm-guide-hero-v6" style={{backgroundImage:`linear-gradient(90deg,rgba(26,29,23,.8),rgba(26,29,23,.16)),url(${g.hero})`}}><span>{g.eyebrow}</span><h1>{g.title}</h1><p>{g.sub}</p></section>
- {slug==="system"&&<section className="hm-guide-system-v6"><div><b>1</b><span>Choose</span><strong>Recipes + week</strong></div><i>→</i><div><b>2</b><span>Check</span><strong>Kitchen</strong></div><i>→</i><div><b>3</b><span>Fill the gap</span><strong>Shop + prep</strong></div><i>→</i><div><b>4</b><span>Use it</span><strong>Cook + rate</strong></div></section>}
- {slug==="freezer"&&<section className="hm-freezer-layout-v6"><div className="mothers"><span>MOTHER DRAWER</span><strong>RED · GOLD · BLOND · SAMBAL · REMPAH · DARK · CLEAR · ONION</strong></div><div className="mids"><span>MIDS + BOOSTERS</span><strong>small flavour portions</strong></div><div className="protein"><span>PROTEIN</span><strong>dinner-size packs</strong></div><div className="carbs"><span>CARBS</span><strong>rice · breads · backup portions</strong></div></section>}
- <section className="hm-block-v5 hm-guide-steps-v6"><SectionHead title="The guide"/><ol>{g.steps.map((s,i)=><li key={s}><b>{String(i+1).padStart(2,"0")}</b><span>{s}</span></li>)}</ol></section>
- {slug==="portions"&&<PortionScale/>}
- {slug==="prep-day"&&<section className="hm-guide-prep-cues-v6"><SectionHead title="Trust the visual cues"/><div>{motherBases.slice(0,4).map(m=>{const p=motherProcessImages[m.id]?.at(-1);return <Link href={`/prep/${m.id}`} key={m.id} style={{"--tone":m.tone} as React.CSSProperties}>{p?<img src={p.url} alt={`${m.name}: ${p.stage.replace(/^\d+\s*·\s*/,"").toLowerCase()}`} loading="lazy"/>:<i/>}<span><strong>{m.code}</strong><small>{p?.caption??m.name}</small></span></Link>})}</div></section>}
- <div className="hm-help-links-v5 hm-help-links-v6"><Link href="/prep">Prep</Link><Link href="/plan">Plan</Link><Link href="/kitchen">Kitchen</Link></div>
- </div>}
+export function Guide({slug}:{slug:string}){
+ const h=useHousehold();
+ const header={portions:{img:foundationImages.cubes,title:"Six cube sizes, to scale.",lead:"Every base and booster freezes into one of these. The recipe still says exactly how many."},freezer:{img:foundationImages.freezer,title:"Label it. Oldest in front.",lead:"Three things on every label. Home reads the date back so nothing gets forgotten."},"prep-day":{img:foundationImages.prepDay,title:"Seven moves, every base.",lead:"Same rhythm whichever base you’re making. Prep Day orders them so pans overlap."},system:{img:foundationImages.groceries,title:"The week decides the list.",lead:"Dinners set the demand. What’s already home comes off. What’s left is the shop and the prep."}}[slug];
+ if(!header)return null;
+ const today=new Date();const useBy=new Date(today.getTime()+90*86400000);const fmt=(d:Date)=>d.toLocaleDateString(undefined,{day:"numeric",month:"short"}).toUpperCase();
+ const required=new Set<string>();h.week.forEach(id=>recipes.find(r=>r.id===id)?.ingredients.forEach(x=>{if(!x.optional)required.add(x.id)}));
+ return <div className="hm-screen flush">
+  <div className="hm-hero sm"><img src={header.img} alt="" loading="eager"/><div className="shade fade"/><div className="top"><RoundBack href="/learn" onPhoto label="Back to More"/></div></div>
+  <div className="hm-guide-head"><span className="hm-kicker">Guide</span><h1>{header.title}</h1><p className="hm-lead">{header.lead}</p></div>
+
+  {slug==="portions"&&<>
+   <div className="hm-cubes">{buckets.map(b=><div key={b.ml}><div className="cube" style={{width:b.px,height:b.px,borderRadius:Math.round(b.px/4),"--grad":b.grad} as CSSProperties}/><b>{b.ml}</b></div>)}</div>
+   <p className="hm-note hm-gut" style={{textAlign:"center",marginTop:8}}>millilitres · silhouettes to scale</p>
+   <div className="hm-guide-rows">{buckets.map(b=>{const codes=prepComponents.filter(c=>b.test(c.portionMl)).map(c=>c.code);return <div key={b.ml} className="hm-card"><span className="sw" style={{"--grad":b.grad} as CSSProperties}>{b.ml} ml</span><span><strong>{b.label}</strong><small>{codes.length?codes.slice(0,8).join(" · ")+(codes.length>8?` +${codes.length-8}`:""):"nothing uses this size yet"}</small></span></div>})}</div>
+  </>}
+
+  {slug==="freezer"&&<>
+   <div className="hm-label" style={{"--tone":toneFor("gold")} as CSSProperties}><div className="head"><span className="code">GOLD</span><span className="kind">BASE</span></div><div className="cells"><div><small>ML</small><b>60</b></div><div><small>DATE</small><b>{fmt(today)}</b></div><div><small>USE BY</small><b className="green">{fmt(useBy)}</b></div></div></div>
+   <div className="hm-guide-rows">{[["1","Code","The base name in caps. GOLD, not ‘curry base’.","var(--tint-green)","var(--green)"],["2","Millilitres","So you can count cubes into a recipe without guessing.","var(--tint-sky)","var(--sky)"],["3","Date made","Home works out use‑by from the freezer guide and nudges you.","var(--tint-peach)","var(--peach-text)"],["↺","Oldest in front","When a new batch goes in, the old one moves forward. Home tells you which to grab.","var(--track)","var(--ink-soft)"]].map(([v,t,x,bg,fg])=><div key={t} className="hm-card"><span className="sw sq" style={{"--grad":bg,"--fg":fg} as CSSProperties}>{v}</span><span><strong>{t}</strong><small>{x}</small></span></div>)}</div>
+   <SectionHead title="Where things live" action={<span className="muted">one drawer each</span>}/>
+   <div className="hm-guide-rows" style={{paddingTop:14}}>{[["Bases",motherBases.map(m=>m.code).join(" · "),"var(--grad-green-short)"],["Mids + boosters","small flavour portions, coded trays","linear-gradient(135deg,#ffb48f,#ff8a5c)"],["Protein","dinner‑size packs","linear-gradient(135deg,#9fc0ff,#4f8cff)"],["Carbs","rice · breads · backup portions","linear-gradient(135deg,#d4b65a,#a88a2a)"]].map(([t,x,g])=><div key={t} className="hm-card"><span className="sw sq" style={{"--grad":g} as CSSProperties}>❄</span><span><strong>{t}</strong><small>{x}</small></span></div>)}</div>
+  </>}
+
+  {slug==="prep-day"&&<>
+   <div className="hm-pipeline">{pipeline.map(([name],i)=><div key={name}><span className={i===1?"on":""}>{name}</span>{i<pipeline.length-1&&<i>›</i>}</div>)}</div>
+   <div className="hm-timeline"><i className="line"/><div className="items">{pipeline.map(([name,time,text,dot])=><article key={name} className="hm-card" style={{"--dot":dot} as CSSProperties}><i className="dot"/><div className="head"><strong>{name}</strong><small>{time}</small></div><p>{text}</p></article>)}</div></div>
+   <SectionHead title="Trust the cues" action={<Link href="/prep">Bases ›</Link>}/>
+   <div className="hm-rail">{motherBases.map(m=>{const p=motherProcessImages[m.id]?.at(-2);const img=p?.url??motherHero(m.id);return <Tile key={m.id} href={`/prep/${m.id}`} img={img} alt={m.name} title={m.code} sub={p?p.stage.replace(/^\d+\s*·\s*/,"").toLowerCase():m.name} style={{"--tone-grad":toneGradient(m.id)} as CSSProperties}/>})}</div>
+   <div className="hm-gut" style={{marginTop:22}}><Link className="hm-btn primary full" href="/prep/day">Open Prep Day</Link></div>
+  </>}
+
+  {slug==="system"&&<>
+   <div className="hm-gap" style={{marginTop:26}}><div><b>{required.size}</b><small>week needs</small></div><span>−</span><div className="sky"><b>{h.kitchenReady?Math.max(0,required.size-h.shoppingNeeds.length):"—"}</b><small>at home</small></div><span>=</span><div className="green"><b>{h.kitchenReady?h.shoppingNeeds.length:"—"}</b><small>to buy</small></div></div>
+   <div className="hm-guide-rows">{loop.map(([step,what,href],i)=><Link key={step} href={href} className="hm-card hm-lift"><span className="sw sq">{i+1}</span><span><strong>{step}</strong><small>{what}</small></span></Link>)}</div>
+   <HomeSays>Cooking takes off exactly what the plan counted, so the freezer, the list and the ratings all stay honest. Swap a dinner and the numbers move with it.</HomeSays>
+  </>}
+  <div style={{height:40}}/>
+ </div>;
+}

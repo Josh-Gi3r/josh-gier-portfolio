@@ -10,5 +10,5 @@ export function PwaRuntime(){
   return()=>{window.removeEventListener("online",sync);window.removeEventListener("offline",sync);window.removeEventListener("focus",check);if(focusTimer)clearTimeout(focusTimer)};
  },[]);
  const applyUpdate=()=>{const worker=waiting.current;if(!worker){window.location.reload();return}worker.postMessage({type:"SKIP_WAITING"})};
- return <>{offline&&<div className="hm-offline-v8" role="status">Offline · saved household data still works on this device</div>}{updateReady&&<div className="hm-update-ready-v39" role="status"><span><strong>Home Meals updated</strong><small>Refresh when you’re ready. Nothing will interrupt cooking automatically.</small></span><button onClick={applyUpdate}>Refresh</button></div>}</>
+ return <>{offline&&<div className="hm-offline" role="status">Offline · the week, recipes and kitchen still work on this phone</div>}{updateReady&&<div className="hm-update" role="status"><span><strong>Home Meals updated</strong><small>Refresh when you’re ready. Nothing interrupts cooking.</small></span><button onClick={applyUpdate}>Refresh</button></div>}</>
 }

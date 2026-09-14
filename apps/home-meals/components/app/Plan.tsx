@@ -9,7 +9,7 @@ import {feedback} from "@/lib/feedback";
 import {toneFor} from "@/lib/tones";
 import {HomeSays} from "./HomeSays";
 import {Orb} from "./Orb";
-import {Check,formatQty,mealMeta,MealTile,Progress,SectionHead,Sheet,Stat,Toast,useReadiness} from "./Primitives";
+import {Avatar,Check,formatQty,mealMeta,MealTile,Progress,SectionHead,Sheet,Stat,Toast,useReadiness} from "./Primitives";
 
 const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const longDays=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
@@ -96,6 +96,9 @@ export function Plan(){
 
   <SectionHead title="Where the list comes from"/>
   <div className="hm-gap"><div><b>{required}</b><small>week needs</small></div><span>−</span><div className="sky"><b>{h.kitchenReady?Math.max(0,required-h.shoppingNeeds.length):"—"}</b><small>at home</small></div><span>=</span><div className="green"><b>{h.kitchenReady?h.shoppingNeeds.length:"—"}</b><small>to buy</small></div></div>
+
+  {h.history.some(x=>h.ratings[x.mealId]?.josh||h.ratings[x.mealId]?.g)&&<><SectionHead title="How we did" action={<span className="muted">last 7 dinners</span>}/>
+  <div className="hm-ratings">{(["josh","g"] as const).map(w=>{const last=h.history.slice(0,7).map(x=>h.ratings[x.mealId]?.[w]??0);const rated=last.filter(Boolean);const avg=rated.length?(rated.reduce((s,n)=>s+n,0)/rated.length).toFixed(1):"—";const note=Object.entries(h.recipeNotes).flatMap(([,l])=>l).filter(n=>n.author===w).sort((a,b)=>new Date(b.at).getTime()-new Date(a.at).getTime())[0];return <div key={w} className="hm-card lg" style={{"--bar":w==="josh"?"linear-gradient(180deg,#ffb48f,#ff8a5c)":"linear-gradient(180deg,#6fd39a,#2fae6e)"} as CSSProperties}><div className="head"><Avatar who={w} size="sm" className="hm-avatar"/><b className="avg">{avg}{avg!=="—"?"★":""}</b></div><div className="bars">{Array.from({length:7},(_,i)=>{const v=last[6-i]??0;return <i key={i} className={v?"":"empty"} style={{height:v?`${v/5*100}%`:"12%"}}/>})}</div>{note&&<q>{note.text}</q>}</div>})}</div></>}
 
   <SectionHead title="This month" action={<button onClick={()=>{setPoolOpen(true);setPoolFilter("All");feedback("tap")}}>{monthRecipes.length} in pool · Edit</button>}/>
   {monthRecipes.length?<div className="hm-rail">{monthRecipes.map(r=><MealTile key={r.id} recipe={r}/>)}</div>:<div className="hm-empty"><strong>The pool is empty.</strong>Add a few dinners we actually want this month.<br/><button onClick={()=>setPoolOpen(true)}>Pick dinners ›</button></div>}

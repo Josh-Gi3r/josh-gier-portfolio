@@ -1,31 +1,45 @@
 "use client";
 import Link from "next/link";
-import {useMemo,useState} from "react";
-import {midBases,midsByCuisine,motherBases,recipes,getRecipe} from "@/data/home-data";
+import {useMemo,useState,type CSSProperties} from "react";
+import {midBases,motherBases,recipes,getRecipe} from "@/data/home-data";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
-import {useSheet} from "@/lib/useSheet";
-import {Back,PageHead,LegacySectionHead as SectionHead} from "./Primitives";
-import {BaseExplorer} from "./BaseExplorer";
+import {motherHero,toneFor,toneGradient} from "@/lib/tones";
+import {HomeSays} from "./HomeSays";
+import {MealTile,RoundBack,SectionHead} from "./Primitives";
 
-type Scope="week"|"rotation"|"ideas"|"all";
-type ParentFilter="all"|"standalone"|string;
-const scopes:[Scope,string][]=[["week","This week"],["rotation","In our recipes"],["ideas","Ideas to try"],["all","All"]];
+// Mid-bases explorer: tap a base, its mids fan out, then the dinners they unlock.
 export function Mids(){
- const h=useHousehold();const[q,setQ]=useState("");const[scope,setScope]=useState<Scope>("week");const[showMap,setShowMap]=useState(true);const[filterOpen,setFilterOpen]=useState(false);const[cuisine,setCuisine]=useState("All");const[parent,setParent]=useState<ParentFilter>("all");useSheet(filterOpen,()=>setFilterOpen(false));
+ const h=useHousehold();
+ const[selected,setSelected]=useState(motherBases.find(m=>m.id==="gold")?.id??motherBases[0].id);const[q,setQ]=useState("");const[showAll,setShowAll]=useState(false);
+ const mother=motherBases.find(x=>x.id===selected)??motherBases[0];
  const counts=useMemo(()=>Object.fromEntries(midBases.map(m=>[m.id,recipes.filter(r=>r.midIds.includes(m.id)).length])),[]);
  const weekIds=useMemo(()=>new Set(h.week.flatMap(id=>getRecipe(id).midIds)),[h.week]);
- const cuisineIds=useMemo(()=>cuisine==="All"?null:new Set(midsByCuisine.find(x=>x.label===cuisine)?.ids??[]),[cuisine]);
- const scoped=midBases.filter(m=>scope==="week"?weekIds.has(m.id):scope==="rotation"?(counts[m.id]??0)>0:scope==="ideas"?(counts[m.id]??0)===0:true).filter(m=>!cuisineIds||cuisineIds.has(m.id)).filter(m=>parent==="all"?true:parent==="standalone"?m.standalone:m.parentMotherIds.includes(parent));
- const filtered=scoped.filter(m=>(`${m.code} ${m.name} ${m.examples.join(" ")} ${m.parentMotherIds.map(id=>motherBases.find(x=>x.id===id)?.code).join(" ")}`).toLowerCase().includes(q.toLowerCase())).sort((a,b)=>Number(weekIds.has(b.id))-Number(weekIds.has(a.id))||(counts[b.id]??0)-(counts[a.id]??0)||a.name.localeCompare(b.name));
- const activeFilters=Number(cuisine!=="All")+Number(parent!=="all");
- const chooseCuisine=(value:string)=>{setCuisine(value);if(value!=="All")setScope("all");feedback("tap")};
- const chooseParent=(value:ParentFilter)=>{setParent(value);if(value!=="all")setScope("all");feedback("tap")};
- return <div className="hm-page-v5 hm-mids-v5 hm-mids-v6"><Back href="/prep" label="Prep"/><PageHead title="Mid-bases" sub="The small flavour turns that make one foundation become a completely different dinner."/>
-  <section className="hm-mids-map-wrap-v6"><SectionHead title="Mother → mid → dinner" action={<button onClick={()=>{setShowMap(v=>!v);feedback("tap")}}>{showMap?"Hide":"Show"}</button>}/>{showMap&&<BaseExplorer/>}</section>
-  <section className="hm-block-v5 hm-mid-library-v6"><SectionHead title="Choose a mid" action={<button className={activeFilters?"active":""} onClick={()=>{setFilterOpen(true);feedback("tap")}}>Filter{activeFilters?` · ${activeFilters}`:""}</button>}/><label className="hm-search-v5"><span>⌕</span><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Find a mid-base" aria-label="Search mid-bases"/></label>
-   <div className="hm-filter-rail-v5" aria-label="Mid-base view">{scopes.map(([id,label])=><button key={id} className={scope===id?"active":""} onClick={()=>{setScope(id);feedback("tap")}}>{label}{id==="week"&&weekIds.size?` · ${weekIds.size}`:""}</button>)}</div>
-   {filtered.length?<div className="hm-mid-list-v5 hm-mid-list-v6">{filtered.map(m=>{const n=counts[m.id]??0;const thisWeek=weekIds.has(m.id);return <Link href={`/prep/mids/${m.id}`} key={m.id} style={{"--tone":m.tone} as React.CSSProperties}><i/><div><strong>{m.code}</strong><span>{m.name}</span><small>{m.parentMotherIds.length?m.parentMotherIds.map(id=>motherBases.find(x=>x.id===id)?.code).filter(Boolean).join(" + "):"stands alone"}</small></div><div className={`hm-mid-maturity-v5 ${n?"active":"idle"}`}>{thisWeek?"this week":n?`${n} saved ${n===1?"recipe":"recipes"}`:"idea to try"}</div><b>›</b></Link>})}</div>:<div className="hm-empty-v5"><strong>{scope==="week"&&!activeFilters?"No mid-base needed this week.":"Nothing matches."}</strong><p>{scope==="week"&&!activeFilters?"The current dinners use mothers directly or standalone prep.":"Clear a filter or try another search."}</p>{activeFilters>0&&<button className="hm-text-button-v5" onClick={()=>{setCuisine("All");setParent("all");feedback("tap")}}>Clear filters</button>}</div>}
-  </section>
-  {filterOpen&&<div className="hm-sheet-backdrop-v5" onMouseDown={e=>{if(e.target===e.currentTarget)setFilterOpen(false)}}><section className="hm-sheet-v5 hm-mid-filter-sheet-v5" role="dialog" aria-modal="true" aria-label="Filter mid-bases"><div className="hm-sheet-handle-v5"/><header><div><span>FILTER</span><h2>Mid-bases</h2></div><button className="hm-icon-button-v5" onClick={()=>setFilterOpen(false)} aria-label="Close">×</button></header><div className="hm-filter-sheet-v5"><h3>Cuisine</h3><div className="hm-filter-rail-v5"><button className={cuisine==="All"?"active":""} onClick={()=>chooseCuisine("All")}>All</button>{midsByCuisine.map(x=><button key={x.label} className={cuisine===x.label?"active":""} onClick={()=>chooseCuisine(x.label)}>{x.label}</button>)}</div><h3>Built from</h3><div className="hm-filter-rail-v5"><button className={parent==="all"?"active":""} onClick={()=>chooseParent("all")}>Any</button><button className={parent==="standalone"?"active":""} onClick={()=>chooseParent("standalone")}>Standalone</button>{motherBases.map(m=><button key={m.id} className={parent===m.id?"active":""} onClick={()=>chooseParent(m.id)}>{m.code}</button>)}</div><button className="hm-primary-button-v5" onClick={()=>{setFilterOpen(false);feedback("change")}}>Done</button></div></section></div>}
- </div>}
+ const mids=useMemo(()=>midBases.filter(x=>x.parentMotherIds.includes(mother.id)),[mother.id]);
+ const dinners=useMemo(()=>{const viaMid=new Set(mids.map(m=>m.id));return recipes.filter(r=>r.motherIds.includes(mother.id)||r.midIds.some(id=>viaMid.has(id)))},[mother.id,mids]);
+ const standalone=midBases.filter(m=>m.standalone);
+ const all=midBases.filter(m=>!q||`${m.code} ${m.name} ${m.examples.join(" ")}`.toLowerCase().includes(q.toLowerCase())).sort((a,b)=>Number(weekIds.has(b.id))-Number(weekIds.has(a.id))||(counts[b.id]??0)-(counts[a.id]??0)||a.name.localeCompare(b.name));
+ const shownAll=q||showAll?all:all.slice(0,8);
+ const weekMid=midBases.find(m=>weekIds.has(m.id));
+ return <div className="hm-screen">
+  <div className="hm-title-row"><RoundBack href="/prep" label="Back to prep"/><h1 className="hm-h1">What a base becomes</h1></div>
+  <p className="hm-lead hm-gut" style={{marginTop:10,fontSize:14}}>Tap a base. Its mid‑bases fan out, then the dinners they unlock.</p>
+  <div className="hm-mothers-rail" aria-label="Choose a base">{motherBases.map(m=>{const on=m.id===mother.id;const hero=motherHero(m.id);return <button key={m.id} className={on?"on":""} aria-pressed={on} style={{"--tone-grad":toneGradient(m.id)} as CSSProperties} onClick={()=>{setSelected(m.id);feedback("tap")}}><span className="ball">{hero?<img src={hero} alt=""/>:m.code}</span><small>{m.code}</small></button>})}</div>
+  <div className="hm-card lg hm-explore" style={{"--tone":toneFor(mother.id)} as CSSProperties}>
+   <div className="head"><h3>{mother.code} → {mids.length?"mids":"dinner"}</h3><span>{dinners.length} {dinners.length===1?"dinner":"dinners"}</span></div>
+   {mids.length?<div className="hm-chiplist" style={{marginTop:14}}>{mids.map(x=><Link key={x.id} href={`/prep/mids/${x.id}`} className="tinted" style={{"--tone":toneFor(x.id)} as CSSProperties}><i/>{x.code}<small>{x.name}</small></Link>)}</div>
+   :<p className="hm-lead" style={{marginTop:12,fontSize:14}}>{mother.code} goes straight into dinner — no mid needed.</p>}
+   {dinners.length?<div className="hm-rail sm">{dinners.slice(0,10).map(r=><MealTile key={r.id} recipe={r}/>)}</div>:<div className="hm-chiplist" style={{marginTop:14}}>{mother.examples.slice(0,6).map(x=><span key={x}>{x}</span>)}</div>}
+  </div>
+  <HomeSays className="tight">{weekMid?<>This week uses <b>{weekMid.code}</b>{weekIds.size>1?` and ${weekIds.size-1} other ${weekIds.size===2?"mid":"mids"}`:""}. {counts[weekMid.id]?`${counts[weekMid.id]} of our dinners lean on it.`:""}</>:<>Nothing this week needs a mid‑base — the dinners use bases directly or standalone pastes.</>}</HomeSays>
+
+  <SectionHead title="Standalone mids" action={<span className="muted">no base underneath</span>}/>
+  <div className="hm-standalone">{standalone.map(x=>{const n=counts[x.id]??0;return <Link key={x.id} href={`/prep/mids/${x.id}`} className="hm-card hm-lift" style={{"--tone":toneFor(x.id)} as CSSProperties}><i/><span><strong>{x.code}</strong><small>{x.name}</small><small className="uses">{n?`${n} ${n===1?"dinner":"dinners"}`:x.examples.slice(0,3).join(" · ").toLowerCase()}</small></span></Link>})}</div>
+
+  <SectionHead title="All mids" action={<span className="muted">{midBases.length} in the library</span>}/>
+  <label className="hm-search"><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Find a mid‑base" aria-label="Find a mid-base"/>{q&&<button type="button" className="clear" aria-label="Clear" onClick={()=>setQ("")}>×</button>}</label>
+  <div className="hm-list tight">{shownAll.map(m=>{const n=counts[m.id]??0;const parents=m.parentMotherIds.map(id=>motherBases.find(x=>x.id===id)?.code).filter(Boolean).join(" + ");return <Link key={m.id} href={`/prep/mids/${m.id}`} className="hm-card hm-row hm-lift" style={{padding:"10px 14px 10px 10px"}}><span style={{width:44,height:44,borderRadius:14,background:toneGradient(m.id),color:"#fff",fontSize:10,fontWeight:800,display:"grid",placeItems:"center",textAlign:"center",padding:"0 4px"}}>{m.code.length>6?m.code.slice(0,6):m.code}</span><span><strong>{m.name}</strong><small>{parents||"stands alone"}</small></span><span className={`hm-pill ${weekIds.has(m.id)?"":n?"sky":"neutral"}`}>{weekIds.has(m.id)?"this week":n?`${n} ${n===1?"dinner":"dinners"}`:"idea"}</span></Link>})}</div>
+  {!q&&all.length>8&&<button className="hm-cook-more" onClick={()=>{setShowAll(v=>!v);feedback("tap")}}>{showAll?"Show fewer":`Show all ${all.length}`}</button>}
+  {shownAll.length===0&&<div className="hm-empty"><strong>Nothing matches.</strong>Try another name.</div>}
+ </div>;
+}

@@ -1,2 +1,2 @@
-import { redirect } from "next/navigation";
-export default function BoosterPage(){redirect("/prep")}
+import {Boosters} from "@/components/app/Boosters";
+export default function BoostersPage(){return <Boosters/>}

@@ -34,7 +34,7 @@ export function HomeBar(){
   const short=h.prepNeeds[0];if(short){const c=getComponent(short.id);if(c)return {text:`${c.code} is short for this week`,href:"/prep"}}
   return null;
  },[path,h.kitchenReady,h.useSoon,h.useSoonAt,h.ingredientStock,h.week,h.prepNeeds]);
- if(cookingRoute)return null;
+ if(cookingRoute||path==="/scan")return null;
  const openAsk=()=>{feedback("tap");window.dispatchEvent(new Event("home-meals:ask"))};
  const startVoice=()=>{feedback("tap");window.dispatchEvent(new Event("home-meals:voice"))};
  return <div className="hm-bar">

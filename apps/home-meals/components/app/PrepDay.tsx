@@ -1,64 +1,88 @@
 "use client";
 import Link from "next/link";
-import {useMemo,useState} from "react";
+import {useEffect,useMemo,useState,type CSSProperties} from "react";
 import {getComponent,getRecipe,midBases,motherBases} from "@/data/home-data";
-import {foundationImages} from "@/data/foundation-assets";
-import {motherProcessImages} from "@/data/mother-process-assets";
+import {baseRecipesV2} from "@/data/base-recipes-v2";
 import {recipeTitle} from "@/data/recipe-display";
-import {batchOutputMl} from "@/data/stock-math";
+import {batchOutputMl,stockPortions} from "@/data/stock-math";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
-import {Back,PageHead} from "./Primitives";
+import {motherHero,portionWord,toneFor,toneGradient} from "@/lib/tones";
+import {HomeSays} from "./HomeSays";
+import {Check,Progress,RoundBack,SectionHead} from "./Primitives";
 
 type Mode="week"|"stock";
-type Job={id:string;shortMl:number;batches:number;neededMl:number;onHandMl:number};
-type SessionJob=Job&{doneBatches:number};
-type WrapKey="cool"|"label"|"freeze";
+type Job={id:string;batches:number;shortMl:number};
+type Wrap="cool"|"label"|"freeze";
 const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const longDays=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+// Rough hands-on minutes per batch; long pots start first so they simmer while the rest happens.
+const minutesFor=(id:string)=>({clear:60,dark:75,red:60,onion:60,gold:90,blond:70,sambal:50,rempah:60} as Record<string,number>)[id]??(midBases.some(m=>m.id===id)?25:10);
 const longCook=new Set(["clear","dark","red","onion"]);
 const panCook=new Set(["blond","gold","sambal","rempah","rendang","laksa","malaysian-kari","asam-pedas","nam-prik-pao","douban","duxelles"]);
-const motherIds=new Set(motherBases.map(x=>x.id));
-function phase(id:string){return longCook.has(id)?0:panCook.has(id)?1:2}
-function phaseName(p:number){return p===0?"Start first":p===1?"While those cook":"Finish with the quick ones"}
-function phaseNote(p:number){return p===0?"Get the long pots on. They can simmer while you do everything else.":p===1?"Use the stove space that opens up. Cook bases and fried pastes to their visual cue.":"Mix, blend and portion the shorter jobs at the end."}
-function equipment(id:string){if(["clear","dark"].includes(id))return "large pot";if(longCook.has(id)||panCook.has(id))return "wide pan / pot";if(midBases.some(x=>x.id===id))return "pan / blender";return "small bowl / blender"}
-function prepHref(id:string){const c=getComponent(id);return c?.kind==="mother"?`/prep/${id}`:c?.kind==="mid"?`/prep/mids/${id}`:c?.kind==="booster"?`/prep/boosters/${id}`:"/prep"}
-const emptyWrap=()=>({cool:false,label:false,freeze:false});
+const phase=(id:string)=>longCook.has(id)?0:panCook.has(id)?1:2;
+const equipment=(id:string)=>["clear","dark"].includes(id)?"large pot":longCook.has(id)||panCook.has(id)?"wide pan":"blender";
+const hrefFor=(id:string)=>{const c=getComponent(id);return c?.kind==="mother"?`/prep/${id}`:c?.kind==="mid"?`/prep/mids/${id}`:c?.kind==="booster"?`/prep/boosters/${id}`:"/prep"};
+const cueFor=(id:string)=>baseRecipesV2[id]?.cues?.[1]??baseRecipesV2[id]?.cues?.[0]??null;
+const fmtMin=(m:number)=>m>=60?`${Math.floor(m/60)} h${m%60?` ${m%60}`:""}`:`${m} min`;
 
 export function PrepDay(){
- const h=useHousehold();const[mode,setMode]=useState<Mode>("week");const[session,setSession]=useState<SessionJob[]|null>(null);const[setupPart,setSetupPart]=useState<0|1>(0);const[firstRunActive,setFirstRunActive]=useState(false);const[wrap,setWrap]=useState(emptyWrap);const[committed,setCommitted]=useState(false);
- const stockJobs=useMemo<Job[]>(()=>motherBases.map(m=>{const target=m.portionMl*2;const ml=h.componentStock[m.id]??0;return{id:m.id,shortMl:Math.max(0,target-ml),batches:ml<target?1:0,neededMl:target,onHandMl:ml}}).filter(x=>x.shortMl>0),[h.componentStock]);
- const baseJobs=(mode==="week"?h.prepNeeds:stockJobs).map(x=>({...x,batches:Math.max(1,x.batches)})).sort((a,b)=>phase(a.id)-phase(b.id));
- const setupA=baseJobs.filter(x=>motherIds.has(x.id)),setupB=baseJobs.filter(x=>!motherIds.has(x.id));
- const shouldSplit=mode==="week"&&!session&&!firstRunActive&&h.prepBatches.length===0&&baseJobs.length>6&&setupA.length>0&&setupB.length>0;
- const split=firstRunActive||shouldSplit;
- const liveJobs=split?(setupPart===0?setupA:setupB):baseJobs;
- const jobs=session??liveJobs.map(x=>({...x,doneBatches:0}));
- const totalBatches=jobs.reduce((n,x)=>n+x.batches,0);const completed=jobs.reduce((n,x)=>n+x.doneBatches,0);const pct=totalBatches?Math.round(completed/totalBatches*100):100;
- const resetWrap=()=>{setWrap(emptyWrap());setCommitted(false)};
- const start=()=>{if(shouldSplit)setFirstRunActive(true);setSession(liveJobs.map(x=>({...x,doneBatches:0})));resetWrap();feedback("change")};
- const reset=(next:Mode)=>{setMode(next);setSession(null);setSetupPart(0);setFirstRunActive(false);resetWrap();feedback("tap")};
- const chooseSetup=(part:0|1)=>{setSetupPart(part);setSession(null);resetWrap();feedback("tap")};
- const nextSetup=()=>{setSetupPart(1);setSession(null);resetWrap();feedback("change")};
- const run=(id:string)=>{if(!session)return;const job=session.find(x=>x.id===id);if(!job||job.doneBatches>=job.batches)return;setSession(prev=>prev?.map(x=>x.id===id?{...x,doneBatches:x.doneBatches+1}:x)??null);feedback("success")};
- const grouped=[0,1,2].map(p=>({p,jobs:jobs.filter(x=>phase(x.id)===p)})).filter(x=>x.jobs.length);
- const batchesFinished=!!session&&totalBatches>0&&completed>=totalBatches;
- const wrapDone=wrap.cool&&wrap.label&&wrap.freeze;
- const finished=batchesFinished&&wrapDone;
- const commitSession=()=>{if(!session||committed)return;for(const job of session){for(let i=0;i<job.doneBatches;i++)h.makeBatch(job.id)}setCommitted(true)};
- const completeWrap=(key:WrapKey)=>{if(!batchesFinished)return;if(key==="label"&&!wrap.cool)return;if(key==="freeze"&&!wrap.label)return;if(key==="freeze")commitSession();setWrap(prev=>({...prev,[key]:true}));feedback(key==="freeze"?"success":"change")};
- const usedBy=(componentId:string)=>h.week.map((rid,i)=>{const r=getRecipe(rid);return r.prep.some(x=>x.id===componentId)?`${days[i]} ${recipeTitle(r.id,r.title)}`:null}).filter(Boolean) as string[];
- const firstA=baseJobs.filter(x=>motherIds.has(x.id)).length,firstB=baseJobs.filter(x=>!motherIds.has(x.id)).length;
- const workbenchTitle=!session?"Set up the bench":batchesFinished&&!wrapDone?"Finish the prep":finished?"Everything is away":"Cook through the list";
- const workbenchNote=!session?"Long cooks first. Quick mixes last. Keep trays and labels ready before the pans finish.":batchesFinished&&!wrapDone?"Cooking is done. Cool, portion, label and freeze before this session counts as finished.":finished?"Stock is now logged in Kitchen with today’s batch date.":`${completed} of ${totalBatches} batches cooked.`;
- return <div className="hm-page-v5 hm-prepday-v5"><Back href="/prep" label="Prep"/><PageHead eyebrow="PREP DAY" title="Prep session" sub="Set the long cooks going, then work around them."/>
-  {!session&&<div className="hm-segment-v5"><button className={mode==="week"?"active":""} onClick={()=>reset("week")}>This week</button><button className={mode==="stock"?"active":""} onClick={()=>reset("stock")}>Stock up</button></div>}
-  <section className="hm-prepday-workbench-v7" style={{backgroundImage:`url(${foundationImages.prepDay})`}}><div><span><span>{session?"ON THE BENCH":"PREP WORKBENCH"}</span><strong>{workbenchTitle}</strong><small>{workbenchNote}</small></span><b>{session?`${completed}/${totalBatches}`:`${jobs.length}`}</b></div></section>
-  {split&&!session&&mode==="week"&&<section className="hm-first-run-v5"><span>STARTING FROM EMPTY</span><h2>Two sessions. Not one marathon.</h2><p>Do the mother bases first. Come back for the smaller mids and quick prep after the foundations are in the freezer.</p><div><button className={setupPart===0?"active":""} onClick={()=>chooseSetup(0)}>A · Foundations <b>{firstA}</b></button><button className={setupPart===1?"active":""} onClick={()=>chooseSetup(1)}>B · Mids + quick <b>{firstB}</b></button></div></section>}
-  <div className="hm-prep-progress-v5"><div><span>{session?"Session progress":split?`Session ${setupPart===0?"A":"B"}`:"Session plan"}</span><strong>{jobs.length?`${totalBatches} ${totalBatches===1?"batch":"batches"} · ${jobs.length} ${jobs.length===1?"job":"jobs"}`:"Nothing to make"}</strong></div><em><i style={{width:`${session?pct:0}%`}}/></em></div>
-  {!session&&jobs.length>0&&<section className="hm-prep-start-v5"><div><strong>{split?(setupPart===0?"Foundations first":"Mids + quick prep"):"Order is already sorted"}</strong><p>{split&&setupPart===0?"These are the big reusable pieces. Start the long pots, then cook the other mothers around them.":split?"These smaller jobs finish the week once the main foundations are handled.":"Long stocks and reductions first, cooked bases next, quick mixes last. Open each recipe if you need its exact method or visual cue."}</p></div><button onClick={start}>Start session</button></section>}
-  {jobs.length&&!batchesFinished?<div className={`hm-prep-phases-v5 ${session?"running":"preview"}`}>{grouped.map(group=><section key={group.p}><header><span>{String(group.p+1).padStart(2,"0")}</span><div><strong>{phaseName(group.p)}</strong><small>{phaseNote(group.p)}</small></div></header><div className="hm-prepday-list-v5">{group.jobs.map((j,i)=>{const c=getComponent(j.id);if(!c)return null;const done=j.doneBatches>=j.batches;const meals=usedBy(j.id);const photo=motherProcessImages[j.id]?.[2]?.url??motherProcessImages[j.id]?.[0]?.url;return <article key={j.id} className={done?"done":""} style={{"--tone":c.tone} as React.CSSProperties}><b>{done?"✓":String(i+1).padStart(2,"0")}</b><span className="hm-prep-job-photo-v7">{photo?<img src={photo} alt={`${c.name} prep cue`} loading="lazy"/>:<i/>}</span><div><strong>{c.code} · {c.name}</strong><span>{mode==="week"?`${j.shortMl} ml short`:`${j.onHandMl} ml now`} · {equipment(j.id)}</span><small>{j.batches} {j.batches===1?"batch":"batches"} · {batchOutputMl(j.id)} ml each{j.doneBatches?` · ${j.doneBatches} cooked`:""}</small>{mode==="week"&&meals.length>0&&<small className="hm-prep-usedby-v5">For {meals.slice(0,3).join(" · ")}{meals.length>3?` +${meals.length-3}`:""}</small>}</div>{session?<div className="hm-prep-job-actions-v37"><Link href={prepHref(j.id)} target="_blank" rel="noreferrer" onClick={()=>feedback("tap")}>Guide ↗</Link><button disabled={done} onClick={()=>run(j.id)}>{done?"Cooked":"Batch cooked"}</button></div>:<Link href={prepHref(j.id)}>Recipe</Link>}</article>})}</div></section>)}</div>:null}
-  {batchesFinished&&!wrapDone&&<section className="hm-prep-wrap-v7"><header><span>FINISH THE SESSION</span><h2>Cooked isn’t stored yet.</h2><p>These three steps keep the freezer useful and make the stock count truthful.</p></header><div><button className={wrap.cool?"done":""} onClick={()=>completeWrap("cool")}><i>{wrap.cool?"✓":"1"}</i><span><strong>Cool safely</strong><small>Get the hot prep out of deep pots and cool before sealing.</small></span><b>›</b></button><button disabled={!wrap.cool} className={wrap.label?"done":""} onClick={()=>completeWrap("label")}><i>{wrap.label?"✓":"2"}</i><span><strong>Portion + label</strong><small>Name, amount and today’s date. Use the recipe portion size.</small></span><b>›</b></button><button disabled={!wrap.label} className={wrap.freeze?"done":""} onClick={()=>completeWrap("freeze")}><i>{wrap.freeze?"✓":"3"}</i><span><strong>Freeze + log stock</strong><small>New batch goes behind older stock. Kitchen updates only now.</small></span><b>›</b></button></div></section>}
-  {finished&&firstRunActive&&setupPart===0?<div className="hm-empty-v5 hm-done-v5"><span>✓</span><strong>Foundations done</strong><p>The mother bases are cooled, labelled, frozen and logged in Kitchen. The remaining mids and quick prep can be a separate session.</p><button className="hm-primary-button-v5" onClick={nextSetup}>Next: mids + quick</button></div>:!jobs.length||finished?<div className="hm-empty-v5 hm-done-v5"><span>✓</span><strong>{finished?"Prep session finished":mode==="week"?"This week is covered":"Foundations are stocked"}</strong><p>{finished?"Everything is cooled, labelled, frozen and now counted in Kitchen.":"No batch needed right now."}</p><Link href="/prep">Back to Prep</Link></div>:null}
-  {!session&&<section className="hm-prep-rules-v5"><div><b>1</b><span><strong>Cook</strong><small>Follow the batch recipe and its doneness cue.</small></span></div><div><b>2</b><span><strong>Cool</strong><small>Cool safely before portioning.</small></span></div><div><b>3</b><span><strong>Label</strong><small>Name · amount · date.</small></span></div><div><b>4</b><span><strong>Freeze</strong><small>Put the new batch behind older stock.</small></span></div></section>}
- </div>}
+ const h=useHousehold();
+ const[mode,setMode]=useState<Mode>("week");const[picked,setPicked]=useState<string[]>([]);const[session,setSession]=useState<Job[]|null>(null);const[done,setDone]=useState<Record<string,number>>({});const[wrap,setWrap]=useState<Record<Wrap,boolean>>({cool:false,label:false,freeze:false});const[startedAt,setStartedAt]=useState<number|null>(null);const[committed,setCommitted]=useState(false);
+ const today=(new Date().getDay()+6)%7;
+ const weekJobs=useMemo<Job[]>(()=>h.prepNeeds.map(x=>({id:x.id,batches:Math.max(1,x.batches),shortMl:x.shortMl})),[h.prepNeeds]);
+ const lowMothers=useMemo(()=>motherBases.filter(m=>stockPortions(m.id,h.componentStock)<2).map(m=>m.id),[h.componentStock]);
+ useEffect(()=>{if(mode==="stock"&&!picked.length)setPicked(lowMothers.length?lowMothers:motherBases.slice(0,4).map(m=>m.id))},[mode]); // eslint-disable-line react-hooks/exhaustive-deps
+ const stockJobs=useMemo<Job[]>(()=>picked.map(id=>({id,batches:1,shortMl:0})),[picked]);
+ const planned=(mode==="week"?weekJobs:stockJobs).slice().sort((a,b)=>phase(a.id)-phase(b.id));
+ const jobs=session??planned;
+ const tasks=jobs.flatMap(j=>Array.from({length:j.batches},(_,i)=>({key:`${j.id}:${i}`,id:j.id,n:i+1,of:j.batches})));
+ const cookDone=tasks.filter(t=>(done[t.id]??0)>=t.n).length;const allCooked=tasks.length>0&&cookDone===tasks.length;
+ const totalMin=jobs.reduce((s,j)=>s+minutesFor(j.id)*j.batches,0);const leftMin=tasks.filter(t=>(done[t.id]??0)<t.n).reduce((s,t)=>s+minutesFor(t.id),0);
+ const totalSteps=tasks.length+3;const doneSteps=cookDone+Number(wrap.cool)+Number(wrap.label)+Number(wrap.freeze);const pct=totalSteps?Math.round(doneSteps/totalSteps*100):0;
+ const current=tasks.find(t=>(done[t.id]??0)<t.n);
+ const headline=jobs.map(j=>{const c=getComponent(j.id);return c?`${c.code} ×${(c.batchYield??1)*j.batches}`:null}).filter(Boolean).slice(0,3).join(" · ");
+ const start=()=>{setSession(planned);setDone({});setWrap({cool:false,label:false,freeze:false});setStartedAt(Date.now());setCommitted(false);feedback("change")};
+ const reset=(m:Mode)=>{setMode(m);setSession(null);setDone({});setWrap({cool:false,label:false,freeze:false});setStartedAt(null);setCommitted(false);feedback("tap")};
+ const tick=(t:{id:string;n:number})=>{if(!session)return;setDone(d=>({...d,[t.id]:(d[t.id]??0)>=t.n?t.n-1:t.n}));feedback("success")};
+ const tickWrap=(k:Wrap)=>{if(!allCooked)return;if(k==="label"&&!wrap.cool)return;if(k==="freeze"&&!wrap.label)return;if(k==="freeze"&&!committed){for(const j of session??[])for(let i=0;i<(done[j.id]??0);i++)h.makeBatch(j.id);setCommitted(true)}setWrap(w=>({...w,[k]:!w[k]}));feedback(k==="freeze"?"success":"change")};
+ const finished=allCooked&&wrap.cool&&wrap.label&&wrap.freeze;
+ const usedBy=(id:string)=>h.week.map((rid,i)=>getRecipe(rid).prep.some(p=>p.id===id)?days[i]:null).filter(Boolean).join(", ");
+ const says=(()=>{
+  if(!h.kitchenReady)return {text:<>Count the freezer first and this list becomes exactly what the week is short of — nothing more.</>,actions:<Link className="primary" href="/kitchen">Count the freezer</Link>};
+  if(finished)return {text:<>All in the freezer and counted, dated today. Oldest still goes first.</>,actions:<Link className="primary" href="/prep">Back to Prep</Link>};
+  if(session&&current){const c=getComponent(current.id);const cue=cueFor(current.id);return {text:<><b>{c?.code}</b> is on{cue?` — ${cue.toLowerCase()}.`:"."} {tasks.length-cookDone>1?"Everything else can wait for it.":"Last one."}</>,actions:<Link className="primary" href={hrefFor(current.id)}>Show the cue</Link>}}
+  if(session&&allCooked)return {text:<>Cooked isn’t stored. Cool it in shallow trays, label CODE / ML / DATE, then freeze — I’ll count it once it’s in.</>};
+  if(mode==="stock")return {text:<>A full stock‑up is about <b>{fmtMin(totalMin)}</b>. Pick which bases — I’ll order the pans so nothing waits.</>};
+  if(!jobs.length)return {text:<>The freezer covers this week. Switch to Stock‑up if you want to top up anyway.</>,actions:<button className="primary" onClick={()=>reset("stock")}>Stock up</button>};
+  return {text:<>Short <b>{headline}</b>. About {fmtMin(totalMin)} hands‑on{jobs.some(j=>longCook.has(j.id))?", long pots first.":"."}</>};
+ })();
+ return <div className="hm-screen">
+  <div className="hm-title-row"><RoundBack href="/prep" label="Back to prep"/><h1 className="hm-h1">Prep Day</h1><span className="spacer"/><span className="hm-note">{longDays[today]}</span></div>
+  {!session&&<div className="hm-seg sm" role="tablist"><button role="tab" aria-selected={mode==="week"} className={mode==="week"?"on":""} onClick={()=>reset("week")}>This week</button><button role="tab" aria-selected={mode==="stock"} className={mode==="stock"?"on":""} onClick={()=>reset("stock")}>Stock‑up</button></div>}
+  {(session||mode==="week")&&jobs.length>0&&<div className={`hm-prepday-card ${finished?"done":""}`}>
+   <div className="head"><span className="kick">{mode==="week"?"THIS WEEK":"STOCK-UP"}</span><span className="n">{session?`${doneSteps}/${totalSteps} done`:`${jobs.length} ${jobs.length===1?"base":"bases"}`}</span></div>
+   <h2>{headline||"Nothing short"}</h2>
+   <Progress pct={session?pct:0} thin/>
+   <div className="foot"><span>{startedAt?`Started ${new Date(startedAt).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"})}`:`≈ ${fmtMin(totalMin)} hands‑on`}</span><span>{session?(finished?"Done":`≈ ${fmtMin(leftMin)} left`):"long pots first"}</span></div>
+  </div>}
+  <HomeSays className="tight" actions={says.actions}>{says.text}</HomeSays>
+
+  {mode==="stock"&&!session&&<>
+   <div className="hm-picker" aria-label="Pick bases to make">{motherBases.map(m=>{const on=picked.includes(m.id);const hero=motherHero(m.id);return <button key={m.id} className={on?"on":""} aria-pressed={on} style={{"--tone-grad":toneGradient(m.id)} as CSSProperties} onClick={()=>{setPicked(v=>v.includes(m.id)?v.filter(x=>x!==m.id):[...v,m.id]);feedback("tap")}}>{hero&&<img src={hero} alt=""/>}<div className="shade"/><span className="tick">{on?"✓":"+"}</span><div className="copy"><strong>{m.code}</strong><small>{m.batchYield} {portionWord(m.id,m.batchYield)}</small></div></button>})}</div>
+   {jobs.length>0&&<div className="hm-summary"><div className="head"><strong>{jobs.length} {jobs.length===1?"base":"bases"} · {jobs.reduce((s,j)=>s+(getComponent(j.id)?.batchYield??0),0)} portions</strong><span>≈ {fmtMin(totalMin)}</span></div><div className="bar">{jobs.map(j=><i key={j.id} style={{flex:minutesFor(j.id),"--tone":toneFor(j.id)} as CSSProperties}/>)}</div><p>{jobs.map(j=>getComponent(j.id)?.code).filter(Boolean).join(" → ")}{jobs.some(j=>longCook.has(j.id))?" — long pots start first, pans overlap, quick pastes last.":"."}</p></div>}
+  </>}
+
+  {jobs.length>0&&<><SectionHead title={session?"On the bench":"The order"} action={<span className="muted">{session?`${cookDone}/${tasks.length} cooked`:"long cooks first"}</span>}/>
+   <div className="hm-list">
+    {tasks.map(t=>{const c=getComponent(t.id);if(!c)return null;const isDone=(done[t.id]??0)>=t.n;const isCurrent=!!session&&current?.key===t.key;const uses=mode==="week"?usedBy(t.id):"";return <button key={t.key} className={`hm-task ${isDone?"done":""} ${isCurrent?"current":""}`} disabled={!session} onClick={()=>tick(t)} aria-pressed={isDone}><Check on={isDone} next={isCurrent} lg/><span><strong>Cook {c.code}{t.of>1?` · batch ${t.n} of ${t.of}`:""}</strong><small>{c.batchYield} {portionWord(t.id,c.batchYield)} · {batchOutputMl(t.id)} ml · {equipment(t.id)}{uses?` · for ${uses}`:""}</small></span><span className="meta"><i className="hm-dot" style={{"--tone":toneFor(t.id)} as CSSProperties}/>{fmtMin(minutesFor(t.id))}</span></button>})}
+    {([["cool","Cool in shallow trays","1–2 h max before freezing"],["label","Portion + label","CODE / ML / DATE on every tray"],["freeze","Freeze flat, log stock","new batch goes behind the old"]] as [Wrap,string,string][]).map(([k,title,sub])=>{const on=wrap[k];const enabled=!!session&&allCooked&&(k==="cool"||(k==="label"&&wrap.cool)||(k==="freeze"&&wrap.label));const isCurrent=enabled&&!on&&!(k==="label"&&wrap.label)&&!(k==="freeze"&&wrap.freeze);return <button key={k} className={`hm-task ${on?"done":""} ${isCurrent?"current":""}`} disabled={!enabled||(k==="freeze"&&on)} onClick={()=>tickWrap(k)} aria-pressed={on}><Check on={on} next={isCurrent} lg/><span><strong>{title}</strong><small>{sub}</small></span><span className="meta">{k==="cool"?"1–2 h":k==="label"?"10 min":"overnight"}</span></button>})}
+   </div></>}
+
+  {!session&&jobs.length>0&&<div className="hm-gut" style={{marginTop:18}}><button className="hm-btn primary full" onClick={start}>Start session</button></div>}
+  {!session&&!jobs.length&&mode==="week"&&<div className="hm-empty"><strong>This week is covered.</strong>Nothing needs making for the current plan.<br/><Link href="/prep">Back to Prep ›</Link></div>}
+  {session&&!finished&&<div className="hm-gut" style={{marginTop:18}}><button className="hm-btn ghost full sm" onClick={()=>reset(mode)}>Stop the session</button></div>}
+  {finished&&<div className="hm-gut" style={{marginTop:18}}><Link className="hm-btn primary full" href="/kitchen">See the freezer →</Link></div>}
+  {mode==="week"&&!session&&jobs.length>0&&<p className="hm-note hm-gut" style={{marginTop:14}}>For {h.week.map((id,i)=>jobs.some(j=>getRecipe(id).prep.some(p=>p.id===j.id))?`${days[i]} ${recipeTitle(id,getRecipe(id).title)}`:null).filter(Boolean).slice(0,3).join(" · ")}</p>}
+ </div>;
+}
