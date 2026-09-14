@@ -11,6 +11,19 @@ Legend:
 - **DEVICE** — implementation is complete but the final behaviour depends on phone/browser permissions or hardware and must degrade cleanly.
 - **HOUSEHOLD** — only real Josh/G use can create the missing personal evidence; the software is complete without inventing it.
 
+## Current release evidence
+
+The final completion pass now includes all of the following evidence rather than relying only on static inspection:
+
+- a **136-route live production crawl** at 390 × 844 covering core routes, all 36 recipe pages, all 36 cooking pages, 8 mothers, 26 mids, 7 boosters, guides and all Scan modes: **0 route failures, 0 page errors, 0 console errors, 0 HTTP 4xx/5xx responses, 0 horizontal overflow, 0 broken images and 0 unlabeled visible controls**;
+- **96 responsive production samples** across 360, 375, 390, 412, 430, 768, 1280 and 1440 px on representative core/detail/cooking/prep routes: **0 failures**;
+- a deterministic first-week audit covering unknown → confirmed empty Kitchen → active prep → week gaps → shopping → prep → exact cooking consumption → separate Josh/G ratings → history/recency;
+- live Ask Home tests proving normal navigation, unknown-Kitchen restraint, complete seven-dinner planning and explicit `set_week`, `set_active_prep_set` and `confirm_empty_kitchen` proposals;
+- live Vision inference against a real prep image, returning quality cues while refusing to infer internal food safety;
+- live OpenAI Live WebRTC negotiation with `gpt-live-1`, including successful remote SDP application and opened data channel;
+- browser-mocked sync acceptance for join conflict, concurrent conflict, active-cooking deferral and failed-write recovery, plus live unauthenticated API checks proving household data is not exposed without a valid session;
+- production `/api/system-status` confirming Railway Postgres, household code, Ask Home, Vision and Live are configured.
+
 ## 1. Product truth
 
 | Requirement | Gate | Status |
@@ -96,7 +109,7 @@ Legend:
 | Prep reuse can lower weekly work | Planner/UI | PASS |
 | Weekday time cost influences suggestions | Planner/UI | PASS |
 | One extra prep may be proposed when valuable | Prep expansion value | PASS |
-| Whole-week AI proposal requires confirmation | Ask Home mutation contract | PASS |
+| Whole-week AI proposal requires confirmation | Ask Home mutation contract + live test | PASS |
 
 ## 7. Kitchen and groceries
 
@@ -115,7 +128,7 @@ Legend:
 
 | Requirement | Gate | Status |
 |---|---|---|
-| Cooking can consume exact prep and ingredient stock | `cookRecipeV12` | PASS |
+| Cooking can consume exact prep and ingredient stock | `cookRecipeV12` + household-journey audit | PASS |
 | Failed reconciliation does not silently become a partial deduction | Explicit `stockConsumed` result | PASS |
 | Log-only History path is explicit | `logMealWithoutStock` | PASS |
 | Completion UI tells the user whether stock changed | Cooking receipt | PASS |
@@ -133,11 +146,13 @@ Legend:
 | Grocery/prep arithmetic precomputed | Assistant context | PASS |
 | Ratings/favourites/notes included | Assistant context | PASS |
 | Validated substitutions only | Intelligence audit | PASS |
-| AI does not invent nutrition/yield/stock | System instructions + deterministic context | PASS |
+| AI does not invent nutrition/yield/stock | System instructions + live unknown-Kitchen test | PASS |
 | State changes are proposed, not silently applied | Client confirmation | PASS |
-| Can propose active prep set | Mutation contract | PASS |
-| Can propose full seven-day week | Mutation contract | PASS |
-| Can confirm explicitly empty Kitchen | Mutation contract | PASS |
+| Can propose active prep set | Live `set_active_prep_set` test | PASS |
+| Can propose full seven-day week | Live `set_week` test with seven valid IDs | PASS |
+| Can confirm explicitly empty Kitchen | Live `confirm_empty_kitchen` test | PASS |
+| Full-week structured response does not truncate | Production response-budget regression + live plan test | PASS |
+| AI navigation cannot invent non-product routes | `cleanHref` allow-list | PASS |
 
 ## 10. Vision
 
@@ -152,7 +167,8 @@ Legend:
 | Prep visual cue mode supported | Vision schema/runtime | PASS |
 | Meal photo mode supported | Vision schema/runtime | PASS |
 | Proposed inventory changes require confirmation | Runtime | PASS |
-| Camera cannot certify internal food temperature | Truth contract | PASS |
+| Real prep image returns useful visible cues | Live production Vision inference | PASS |
+| Camera cannot certify internal food temperature | Truth contract + live Vision result | PASS |
 | Browser/OS camera permission works on Josh/G device | Hardware permission | DEVICE |
 
 ## 11. Voice
@@ -161,6 +177,8 @@ Legend:
 |---|---|---|
 | Production Live endpoint configured | `/api/live` GET | PASS |
 | WebRTC Live path implemented | Voice runtime | PASS |
+| Production Live session can negotiate WebRTC | Live SDP answer + opened data channel | PASS |
+| Production model is `gpt-live-1` | Live session response | PASS |
 | Household-dependent questions delegate to backend | Live instructions/client delegation | PASS |
 | Voice state changes use confirmation path | Ask Home proposal handoff | PASS |
 | Browser speech fallback exists | Voice runtime | PASS |
@@ -172,13 +190,17 @@ Legend:
 |---|---|---|
 | Josh + G share one household state | Railway Postgres sync | PASS |
 | Household code authentication configured | Production system status | PASS |
+| Unauthenticated household read is rejected | Live `/api/household` = 401 | PASS |
+| Invalid household code is rejected | Live session POST = 401 | PASS |
 | Session cookie is HTTP-only | Session route | PASS |
 | Session cookie is Secure | Session route | PASS |
 | Session cookie is SameSite=Lax | Session route | PASS |
 | Code/token comparison is timing-safe | Server household library | PASS |
 | Optimistic versioning prevents silent overwrite | Postgres write contract | PASS |
-| Concurrent changes create explicit conflict | Sync runtime | PASS |
-| Remote update is deferred during active cooking | Sync runtime | PASS |
+| Join conflict is explicit | Mocked production-browser sync test | PASS |
+| Concurrent changes create explicit conflict | Mocked production-browser sync test | PASS |
+| Remote update is deferred during active cooking | Mocked production-browser cooking test | PASS |
+| Failed sync write preserves local state and surfaces retry | Mocked production-browser failed-write test | PASS |
 
 ## 13. PWA / offline
 
@@ -197,18 +219,26 @@ Legend:
 
 ## 14. Mobile and visual acceptance
 
-Live production crawl covers the core routes at 390 × 844 and responsive samples at 360, 375, 390, 412, 430, 768, 1280 and 1440 px widths.
+The final live production pass covers **136 routes at 390 × 844** plus **96 responsive samples** over 360, 375, 390, 412, 430, 768, 1280 and 1440 px widths.
 
 | Requirement | Gate | Status |
 |---|---|---|
-| No horizontal overflow on core routes in sampled widths | Browser crawl | PASS |
-| No broken images on sampled core routes | Browser crawl | PASS |
+| No route/render failures in 136-route mobile crawl | Browser crawl | PASS |
+| No page or console errors in 136-route mobile crawl | Browser crawl | PASS |
+| No HTTP 4xx/5xx resource responses in 136-route mobile crawl | Browser crawl | PASS |
+| No horizontal overflow in full mobile crawl | Browser crawl | PASS |
+| No broken images in full mobile crawl | Browser crawl | PASS |
+| Visible interactive controls have accessible names | Browser crawl + Scan regression | PASS |
+| No horizontal overflow on representative routes in all 8 sampled widths | 96 responsive browser samples | PASS |
 | Primary compact buttons target ~44 px | Completion CSS | PASS |
 | Filter chips target ~44 px | Completion CSS | PASS |
 | Stock steppers target 44 × 44 px | Completion CSS | PASS |
 | Scan mode controls target ~44 px | Completion CSS | PASS |
 | Bottom navigation is comfortably tappable | Completion CSS | PASS |
 | Stock-level labels are readable at arm's length | Completion CSS | PASS |
+| Safe-area insets are used for shell, sheets, CTA, nav, scan and overlays | CSS audit | PASS |
+| Reduced-motion handling exists | CSS audit | PASS |
+| Keyboard focus-visible treatment exists | CSS audit | PASS |
 | Household rehydration never flashes an unstyled blank page | Branded loading state | PASS |
 | Internal implementation jargon is kept out of primary user copy | Product-completion audit | PASS |
 
@@ -220,15 +250,17 @@ Live production crawl covers the core routes at 390 × 844 and responsive sample
 2. food-truth audit;
 3. food-system audit;
 4. intelligence audit;
-5. v3/v12 cutover audit;
-6. product-completion audit.
+5. **household-journey audit**;
+6. v3/v12 cutover audit;
+7. product-completion audit.
 
 Release additionally requires:
 
 - `npm run typecheck`;
 - production Next.js build;
-- Railway deployment success;
-- Railway healthcheck success.
+- Home Meals CI success on the accepted head;
+- Railway deployment success on the accepted head;
+- production system-status health.
 
 ## 16. Household-only completion
 
@@ -239,6 +271,7 @@ These are not software defects and must not be fabricated to make a dashboard re
 | Josh/G taste rating for a dinner never cooked | HOUSEHOLD |
 | Real preferred heat/salt/acid balance | HOUSEHOLD |
 | Actual favourite prep repertoire after weeks of use | HOUSEHOLD |
+| Actual physical prep yield / usable-portions observations not yet made | HOUSEHOLD |
 | Device-specific camera permission behaviour | DEVICE |
 | Device-specific microphone permission behaviour | DEVICE |
 
