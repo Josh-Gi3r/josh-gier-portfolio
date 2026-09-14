@@ -59,11 +59,12 @@ must('app/api/ask-home/route.ts',/function cleanHref\(/,'AI navigation routes mu
 must('app/api/ask-home/route.ts',/never invent route names such as \/week/,'AI route instructions must explicitly forbid invented navigation paths');
 must('app/api/ask-home/route.ts',/max_output_tokens:\s*3000/,'full-week structured planning lost the response budget proven in production');
 
-// Scan controls must be understandable to screen readers as well as sighted users.
+// Visible controls must remain understandable to assistive tech.
 must('components/app/Scan.tsx',/aria-label="Choose a photo from the library"/,'photo-library control is unlabeled');
 must('components/app/Scan.tsx',/aria-label="Take a photo"/,'camera shutter control is unlabeled');
 must('components/app/Scan.tsx',/aria-label="Open Kitchen"/,'icon-only Kitchen control is unlabeled');
 must('components/app/Scan.tsx',/aria-label="Take the photo"/,'camera CTA input is unlabeled');
+must('components/app/Kitchen.tsx',/aria-label=\{`Find in the \$\{tab\.toLowerCase\(\)\}`\}/,'Kitchen search input lost its accessible name');
 
 // Mobile ergonomics and hydration.
 const completion=read('app/styles/completion.css');
@@ -85,10 +86,12 @@ for(const rel of ['components/app/Plan.tsx','components/app/PrepDay.tsx','compon
  mustNot(rel,/canonical prep graph/i,'user-facing dependency jargon returned');
 }
 
-// CI must exercise intelligence, journey, endpoint privacy and final product completion as well as food truth.
+// CI must exercise intelligence, journey, endpoint/privacy, sync recovery and final product completion as well as food truth.
 must('package.json',/audit-intelligence-v2\.cjs/,'intelligence audit is not in audit:data');
 must('package.json',/audit-household-journey\.cjs/,'household journey audit is not in audit:data');
+must('package.json',/audit-household-api\.cjs/,'household API hardening audit is not in audit:data');
 must('package.json',/audit-private-ai\.cjs/,'private AI security audit is not in audit:data');
+must('package.json',/audit-sync-recovery\.cjs/,'sync recovery audit is not in audit:data');
 must('package.json',/audit-product-completion\.cjs/,'product-completion audit is not in audit:data');
 
-if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · stale legacy truth removed · full prep imagery · canonical culinary references · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible scan controls · mobile/PWA/privacy guardrails');
+if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · stale legacy truth removed · full prep imagery · canonical culinary references · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible controls · mobile/PWA/privacy guardrails');
