@@ -50,10 +50,11 @@ must('components/app/Cook.tsx',/Cuisine/,'recipe browse must support cuisine rev
 must('components/app/Cook.tsx',/Recent/,'recipe browse must expose recent meal history');
 must('components/app/Cook.tsx',/Never cooked/,'recipe browse must expose never-cooked recipes');
 must('components/app/Cook.tsx',/\/history/,'recipe browse must link to household meal history');
-must('components/app/MealHistory.tsx',/mealHistorySummaryV2/,'history screen must derive deterministic household meal history');
-must('data/meal-history-v2.ts',/recentPenaltyV2/,'history engine must expose recency penalty for planning');
+must('components/app/MealHistory.tsx',/mealHistorySummaryV2|mealHistorySummaryV7/,'history screen must derive deterministic household meal history');
+must('data/meal-history-v2.ts',/recentPenaltyV2/,'legacy history engine must retain recency penalty provenance');
+must('data/meal-history-v7.ts',/allLiveRecipesV7/,'V7 history engine must derive history over the live catalogue');
 must('components/app/Plan.tsx',/activePrepIds/,'weekly planner must consider active prep repertoire');
-must('components/app/Plan.tsx',/recentPenaltyV2/,'weekly planner must penalize recent repeats');
+must('components/app/Plan.tsx',/recentPenaltyV2|recentPenaltyV7/,'weekly planner must penalize recent repeats');
 must('components/app/Plan.tsx',/cuisineRepeat/,'weekly planner must discourage repetitive cuisine mix');
 
 must('components/VoiceRuntime.tsx',/home-meals-household-v12/,'voice runtime must read v12 household state');
@@ -61,7 +62,7 @@ must('components/SmartAskRuntime.tsx',/useHouseholdV12/,'Ask Home runtime must o
 must('components/SmartAskRuntime.tsx',/set_active_prep_set/,'Ask Home client must confirm active prep proposals');
 must('components/SmartAskRuntime.tsx',/confirm_empty_kitchen/,'Ask Home client must confirm empty-Kitchen proposals');
 must('components/SmartAskRuntime.tsx',/set_week/,'Ask Home client must confirm whole-week proposals');
-must('app/api/ask-home/route.ts',/buildAssistantContextV2/,'Ask Home API must build deterministic v12 context');
+must('app/api/ask-home/route.ts',/buildAssistantContextV2|buildAssistantContextV7/,'Ask Home API must build deterministic household context');
 must('app/api/ask-home/route.ts',/set_active_prep_set/,'Ask Home API must support explicit prep-repertoire changes');
 must('app/api/ask-home/route.ts',/confirm_empty_kitchen/,'Ask Home API must support confirmed-empty Kitchen state');
 must('app/api/ask-home/route.ts',/set_week/,'Ask Home API must support complete seven-day proposals');
@@ -82,4 +83,4 @@ must('components/app/Boosters.tsx',/prepHero/,'Boosters must render prep photogr
 for(const rel of ['components/app/Home.tsx','components/app/Cook.tsx','components/app/Recipe.tsx','components/app/Cooking.tsx','components/app/Plan.tsx','components/app/Builder.tsx'])mustNot(rel,/recipe-nutrition|nutritionFor\s*\(/,'active v3 UI still consumes placeholder nutrition');
 const nutrition=read('data/recipe-nutrition.ts');if(/"[a-z0-9-]+"\s*:\s*\{\s*kcal/i.test(nutrition))fail('data/recipe-nutrition.ts still contains hard-coded recipe nutrition');
 
-if(failures.length){console.error(`\nHome Meals v3/v12 cutover audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals v3/v12 cutover audit passed · v3 design preserved · v12 state + V7 four-serving runtime gate locked · repertoire/history/AI flows locked · complete prep imagery · V6 measured-output packet prep · no placeholder nutrition or assumed prep yields');
+if(failures.length){console.error(`\nHome Meals v3/v12 cutover audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals v3/v12 cutover audit passed · v3 design preserved · v12 state + V7 four-serving runtime gate locked · V7 repertoire/history/AI-ready flows locked · complete prep imagery · V6 measured-output packet prep · no placeholder nutrition or assumed prep yields');
