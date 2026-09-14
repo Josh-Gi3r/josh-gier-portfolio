@@ -4,6 +4,7 @@ import { getRecipeVariantV2 } from "./recipe-variants-v2";
 import { canonicalIngredientKeyV2, getCanonicalIngredientV2 } from "./ingredient-catalog-v2";
 
 export type IngredientStockV2=Readonly<Record<string,Quantity>>;
+export type QualitativeIngredientStockV2=Readonly<Record<string,number>>;
 export type PlannedRecipeV2=Readonly<{recipeId:string;variantId?:string}>;
 
 export function ingredientsForRecipeV2(recipeId:string,variantId?:string):readonly RecipeIngredientV2[]{
@@ -25,15 +26,26 @@ export function ingredientDemandForPlanV2(plan:readonly PlannedRecipeV2[]){
 }
 
 function stockValue(stock:IngredientStockV2,ingredientId:string):Quantity{const def=getCanonicalIngredientV2(ingredientId);if(!def)throw new Error(`Unknown canonical ingredient ${ingredientId}`);const value=stock[ingredientId]??quantity(0,def.canonicalUnit);if(value.unit!==def.canonicalUnit)throw new Error(`Ingredient stock unit mismatch for ${ingredientId}: ${value.unit} vs ${def.canonicalUnit}`);return value}
+const qualitativeLevel=(stock:QualitativeIngredientStockV2|undefined,id:string)=>Math.max(0,Math.min(3,Number(stock?.[id]??0)));
 
-export function shoppingNeedsForPlanV2(plan:readonly PlannedRecipeV2[],stock:IngredientStockV2){return ingredientDemandForPlanV2(plan).map(({ingredientId,required})=>{const onHand=stockValue(stock,ingredientId);return{ingredientId,required,onHand,shortfall:shortfallQuantity(required,onHand)}}).filter(x=>x.shortfall.qty>0)}
-
-export function ingredientAvailabilityForRecipeV2(recipeId:string,stock:IngredientStockV2,variantId?:string){
-  const missing=ingredientsForRecipeV2(recipeId,variantId).filter(x=>!x.optional&&x.ingredientId!=="water").map(x=>{const key=canonicalIngredientKeyV2(x.ingredientId,x.unit);const required=quantity(x.qty,x.unit);const onHand=stockValue(stock,key);return{ingredientId:key,required,onHand,shortfall:shortfallQuantity(required,onHand)}}).filter(x=>x.shortfall.qty>0);return{ready:missing.length===0,missing};
+/** Qualitative pantry stock deliberately means only Out / Low / Some / Plenty. It is never converted into fake ml or grams. */
+export function shoppingNeedsForPlanV2(plan:readonly PlannedRecipeV2[],stock:IngredientStockV2,qualitative?:QualitativeIngredientStockV2){
+  return ingredientDemandForPlanV2(plan).map(({ingredientId,required})=>{const onHand=stockValue(stock,ingredientId);return{ingredientId,required,onHand,shortfall:shortfallQuantity(required,onHand),qualitativeLevel:qualitativeLevel(qualitative,ingredientId)}}).filter(x=>x.shortfall.qty>0&&x.qualitativeLevel<2)
 }
 
-export function consumeRecipeIngredientsV2(recipeId:string,stock:IngredientStockV2,variantId?:string):IngredientStockV2{
-  const availability=ingredientAvailabilityForRecipeV2(recipeId,stock,variantId);if(!availability.ready)throw new Error(`Insufficient ingredient stock for ${recipeId}`);const next:Record<string,Quantity>={...stock};
-  for(const ingredient of ingredientsForRecipeV2(recipeId,variantId)){if(ingredient.optional||ingredient.ingredientId==="water")continue;const key=canonicalIngredientKeyV2(ingredient.ingredientId,ingredient.unit);const onHand=stockValue(next,key);next[key]=subtractQuantity(onHand,quantity(ingredient.qty,ingredient.unit))}return next;
+export function ingredientAvailabilityForRecipeV2(recipeId:string,stock:IngredientStockV2,variantId?:string,qualitative?:QualitativeIngredientStockV2){
+  const missing=ingredientsForRecipeV2(recipeId,variantId).filter(x=>!x.optional&&x.ingredientId!=="water").map(x=>{const key=canonicalIngredientKeyV2(x.ingredientId,x.unit);const required=quantity(x.qty,x.unit);const onHand=stockValue(stock,key);const shortfall=shortfallQuantity(required,onHand);return{ingredientId:key,required,onHand,shortfall,qualitativeLevel:qualitativeLevel(qualitative,key)}}).filter(x=>x.shortfall.qty>0&&x.qualitativeLevel<=0);return{ready:missing.length===0,missing};
+}
+
+export function consumeRecipeIngredientsV2(recipeId:string,stock:IngredientStockV2,variantId?:string,qualitative?:QualitativeIngredientStockV2):IngredientStockV2{
+  const availability=ingredientAvailabilityForRecipeV2(recipeId,stock,variantId,qualitative);if(!availability.ready)throw new Error(`Insufficient ingredient stock for ${recipeId}`);const next:Record<string,Quantity>={...stock};
+  for(const ingredient of ingredientsForRecipeV2(recipeId,variantId)){
+    if(ingredient.optional||ingredient.ingredientId==="water")continue;
+    const key=canonicalIngredientKeyV2(ingredient.ingredientId,ingredient.unit);const required=quantity(ingredient.qty,ingredient.unit);const onHand=stockValue(next,key);
+    if(onHand.qty>=required.qty)next[key]=subtractQuantity(onHand,required);
+    else if(qualitativeLevel(qualitative,key)>0)continue;
+    else throw new Error(`Insufficient ingredient stock for ${recipeId}/${key}`);
+  }
+  return next;
 }
 export function emptyIngredientStockV2():IngredientStockV2{return{}}
