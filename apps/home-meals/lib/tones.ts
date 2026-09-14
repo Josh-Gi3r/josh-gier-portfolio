@@ -1,5 +1,5 @@
 // UI colour tones and prep photography helpers.
-import {getComponent,motherBases} from "@/data/home-data";
+import {getComponent} from "@/data/home-data";
 import {motherHeroImages} from "@/data/mother-hero-assets";
 import {prepHeroImages} from "@/data/prep-hero-assets";
 
@@ -20,5 +20,5 @@ export const motherHasPhoto=(id:string)=>!!motherHeroImages[id];
 export function prepHero(id:string):string|undefined{return motherHeroImages[id]??prepHeroImages[id]}
 export const prepHasPhoto=(id:string)=>!!prepHero(id);
 
-// Legacy display word only. Canonical food arithmetic lives in v2 working units.
-export function portionWord(id:string,count=1){const m=(motherBases.find(x=>x.id===id)??getComponent(id)) as {portionLabel?:string;freezeFormat?:string}|undefined;const label=`${m?.portionLabel??""} ${m?.freezeFormat??""}`;const word=/puck/i.test(label)?"puck":/cube/i.test(label)?"cube":"portion";return count===1?word:`${word}s`}
+// Physical freezer shape is household choice, not food truth. Keep the UI noun neutral.
+export function portionWord(_id:string,count=1){return count===1?"portion":"portions"}
