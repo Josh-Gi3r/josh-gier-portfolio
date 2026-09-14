@@ -33,9 +33,21 @@ export const motherProcessImages:Record<string,ProcessAsset[]>={
   {stage:"04 · FREEZE",caption:"Freeze small labelled working portions after the concentrate is cooled and weighed.",url:hf("20260911_143802_70fc7db0-0a51-4815-8448-af85e2a82feb")}
  ],
  blond:[
-  {stage:"01 · MISE EN PLACE",caption:"Onion, leek, garlic, butter, oil, light stock and thyme — no cream yet.",url:hf("20260911_143715_659d35b1-14f8-449d-8fb4-3020472530c5")},
-  {stage:"02 · ALLIUM CUE",caption:"Fully soft and collapsed but still pale. BLOND should not become caramelised onion.",url:hf("20260911_143730_df576b11-60f5-42aa-ad26-e4d78b738506")},
-  {stage:"03 · FINAL TEXTURE",caption:"Silky pale-golden savoury foundation, spoonable and cream-free.",url:hf("20260911_143746_fc54f3ba-42f5-4682-9d5e-d3c787660df6")},
+  {stage:"01 · MISE EN PLACE",caption:"Onion, carrot and celery measured for a pale, sweet soffritto-style base.",url:hf("20260911_143715_659d35b1-14f8-449d-8fb4-3020472530c5")},
+  {stage:"02 · VEGETABLE CUE",caption:"Fully soft and collapsed but still pale. BLOND should not become caramelised onion.",url:hf("20260911_143730_df576b11-60f5-42aa-ad26-e4d78b738506")},
+  {stage:"03 · FINAL TEXTURE",caption:"Silky pale-golden savoury foundation, spoonable and not browned.",url:hf("20260911_143746_fc54f3ba-42f5-4682-9d5e-d3c787660df6")},
   {stage:"04 · FREEZE",caption:"Freeze in labelled working portions after weighing the finished batch.",url:hf("20260911_143802_2a034ba1-0d9b-4fc7-9989-172d91e9b4cf")}
+ ],
+ clear:[
+  {stage:"01 · MISE EN PLACE",caption:"Chicken frames, backs, wings and/or feet with measured cold water; onion is optional.",url:hf("20260914_073645_591c6848-319b-459c-81f9-1e0fa6d46b4a")},
+  {stage:"02 · BARE SIMMER",caption:"Bring it up slowly, skim early, and keep the surface barely moving rather than boiling hard.",url:hf("20260914_073646_47c38322-fe9a-4e4c-8439-197572ce902b")},
+  {stage:"03 · STRAIN",caption:"Strain cleanly and defat; the stock should stay pale-golden and visibly clear.",url:hf("20260914_073647_f8ecd5ba-ed2d-4aef-9a22-0f7c7b4f2181")},
+  {stage:"04 · COOL & FREEZE",caption:"Cool promptly, measure the finished volume, then freeze in practical working portions.",url:hf("20260914_073645_c9e8b3b8-7144-46d2-984a-554d153f9b23")}
+ ],
+ onion:[
+  {stage:"01 · MISE EN PLACE",caption:"Yellow onions sliced pole-to-pole with butter, a little neutral oil and salt.",url:hf("20260914_073707_4cf2d756-eefb-4220-9a88-2fdb8b43d84b")},
+  {stage:"02 · FOND & DEGLAZE",caption:"Let light fond develop, then deglaze it back into the collapsed onions with tiny splashes of water.",url:hf("20260914_073707_6cc03b49-bfce-4678-a3a3-02511d782a3f")},
+  {stage:"03 · MAHOGANY CUE",caption:"Uniformly deep mahogany and jammy, with no black edges and no pale centres.",url:hf("20260914_073707_d4c8200f-cbe5-413d-a151-22e9444d5ac2")},
+  {stage:"04 · COOL & FREEZE",caption:"Cool promptly, weigh the finished onions, then freeze in practical working portions.",url:hf("20260914_073707_5af7f883-5033-466c-a958-3bdec739a226")}
  ]
 };
