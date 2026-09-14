@@ -14,6 +14,7 @@ must('components/app/Prep.tsx',/Start with GOLD · SAMBAL · RED/,'small active-
 must('components/app/Cook.tsx',/By prep/,'prep-based recipe browse is missing');
 must('components/app/Cook.tsx',/Never cooked/,'history-aware recipe browse is missing');
 must('components/app/MealHistory.tsx',/mealHistorySummaryV2/,'meal-history intelligence is not rendered');
+must('components/app/Recipe.tsx',/getCanonicalRecipeV2/,'recipe page must render the current canonical culinary reference');
 
 // Food visuals: every current prep object must have a real hero, every mother a process sequence.
 const motherHeroes=read('data/mother-hero-assets.ts'),process=read('data/mother-process-assets.ts'),prepHeroes=read('data/prep-hero-assets.ts');
@@ -68,4 +69,4 @@ for(const rel of ['components/app/Plan.tsx','components/app/PrepDay.tsx','compon
 must('package.json',/audit-intelligence-v2\.cjs/,'intelligence audit is not in audit:data');
 must('package.json',/audit-product-completion\.cjs/,'product-completion audit is not in audit:data');
 
-if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · full prep imagery · explicit cook reconciliation · AI/vision/voice wiring · mobile/PWA/privacy guardrails');
+if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · full prep imagery · canonical culinary references · explicit cook reconciliation · AI/vision/voice wiring · mobile/PWA/privacy guardrails');
