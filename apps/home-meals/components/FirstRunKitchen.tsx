@@ -1,13 +1,16 @@
 "use client";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
+import {useEffect,useState} from "react";
 import {useHousehold} from "./HouseholdState";
+import {getHouseholdPerson} from "@/lib/device-profile";
 import {feedback} from "@/lib/feedback";
 
 /** First-run truth choice. Unknown is not the same thing as confirmed empty. */
 export function FirstRunKitchen(){
- const path=usePathname(),h=useHousehold();
- if(h.kitchenReady||!(path==="/"||path==="/kitchen"))return null;
+ const path=usePathname(),h=useHousehold(),[syncReady,setSyncReady]=useState(false);
+ useEffect(()=>{let live=true;const check=async()=>{try{const res=await fetch("/api/household/session",{cache:"no-store"}),info=await res.json() as {configured?:boolean;authenticated?:boolean};if(!live)return;setSyncReady(!info.configured|| (!!info.authenticated&&!!getHouseholdPerson()))}catch{if(live)setSyncReady(true)}};void check();const ready=()=>setSyncReady(true);window.addEventListener("home-meals:sync-ready",ready);return()=>{live=false;window.removeEventListener("home-meals:sync-ready",ready)}},[]);
+ if(!syncReady||h.kitchenReady||!(path==="/"||path==="/kitchen"))return null;
  const empty=()=>{h.confirmEmptyKitchen();feedback("success");window.setTimeout(()=>{window.location.href="/prep"},40)};
  const manual=()=>{h.confirmEmptyKitchen();feedback("success");window.setTimeout(()=>{window.location.href="/kitchen"},40)};
  return <div className="hm-sheet-backdrop" role="presentation">
