@@ -1,0 +1,27 @@
+/* Completion pass: accessibility/touch ergonomics without changing the v3 visual language. */
+
+/* Primary interactive controls meet the mobile 44px target. */
+.hm-btn.xs{min-height:44px;height:44px}
+.hm-chip{min-height:44px;height:44px}
+.hm-chip.sm{min-height:44px;height:44px}
+.hm-chip.tint{min-height:44px;height:44px}
+.hm-sec a,.hm-sec button{min-height:44px;padding-block:6px}
+.hm-session .hm-btn{min-height:44px;height:44px}
+.hm-plan-tile .hm-btn{min-height:44px;height:44px}
+.hm-chiplist a,.hm-chiplist button{min-height:44px}
+.hm-stepper button{width:44px;height:44px}
+.hm-authors.sm button{min-height:44px;height:44px}
+.hm-scan-panel .modes button{min-height:44px;height:44px}
+
+/* Bottom navigation is persistent primary navigation, not micro-copy. */
+.hm-bar-tab{font-size:12px;min-height:60px}
+
+/* Stock-level labels must remain legible while cooking/shopping at arm's length. */
+.hm-level-labels{font-size:12px}
+
+/* Maintain comfortable targets for unlabeled action buttons that use the shared pill language. */
+button.hm-pill,a.hm-pill{min-height:44px;padding-block:7px}
+
+@media (pointer:coarse){
+  a,button,label[role="button"]{touch-action:manipulation}
+}
