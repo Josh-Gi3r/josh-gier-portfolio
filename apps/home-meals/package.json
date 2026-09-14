@@ -11,7 +11,8 @@
     "audit:data": "node scripts/audit-home-data.cjs && node scripts/audit-food-truth-v2.cjs && node scripts/audit-food-system-v2.cjs && node scripts/audit-intelligence-v2.cjs && node scripts/audit-household-journey.cjs && node scripts/audit-private-ai.cjs && node scripts/audit-v3-v12-cutover.cjs && node scripts/audit-product-completion.cjs",
     "build": "npm run audit:data && next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "next": "16.3.4",
@@ -20,6 +21,7 @@
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "^22.15.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
