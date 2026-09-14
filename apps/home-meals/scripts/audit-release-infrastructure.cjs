@@ -17,8 +17,9 @@ if(exists(ciPath)){
  must(ci,/actions\/checkout@v7/,'CI checkout action is not current');
  must(ci,/actions\/setup-node@v7/,'CI Node setup action is not current');
  must(ci,/node-version:\s*24/,'CI does not match the production Node 24 runtime');
+ must(ci,/npm install --global npm@10\.9\.8/,'CI npm runtime does not match production');
  must(ci,/npm ci --no-audit --no-fund/,'CI install is not lockfile-deterministic');
  must(ci,/playwright install --with-deps chromium/,'CI does not install the release browser');
  must(ci,/npm run test:e2e/,'CI is not gated on browser acceptance');
 }
-if(failures.length){console.error(`\nHome Meals release-infrastructure audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals release-infrastructure audit passed · pinned Node/npm · deterministic dependency graph · repeatable Chromium acceptance artifacts');
+if(failures.length){console.error(`\nHome Meals release-infrastructure audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals release-infrastructure audit passed · Node 24 + npm 10.9.8 aligned across CI/production · deterministic dependency graph · repeatable Chromium acceptance artifacts');
