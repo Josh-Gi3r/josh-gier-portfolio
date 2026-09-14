@@ -29,7 +29,7 @@ type NormalPrep=Readonly<{componentId:string;qty:number;unit:QuantityUnit}>;
 type FallbackReference=Readonly<{unit:QuantityUnit;kcalPerUnit:number;confidence:EnergyConfidenceV6;source:string;note:string}>;
 const deepFryIds=new Set(["falafel-bowl","chicken-karaage","katsu-curry","salt-pepper-prawns"]);
 const shallowFryIds=new Set(["chicken-parmigiana"]);
-const FALLBACK_SOURCE="V6 explicit generic-food / packaged-food proxy for a recipe identity not covered by the broad resolver; exact household labels supersede where applicable";
+const FALLBACK_SOURCE="V6 explicit generic-food / packaged-food proxy for a recipe identity not covered safely by the broad resolver; exact household labels supersede where applicable";
 const F=(unit:QuantityUnit,kcalPerUnit:number,note:string,confidence:EnergyConfidenceV6="D_ANALOGUE_PROXY"):FallbackReference=>({unit,kcalPerUnit,confidence,source:FALLBACK_SOURCE,note});
 
 function weightFor(k:number):MealWeightV6{return k<=500?"light":k<=700?"balanced":k<=900?"hearty":"rich"}
@@ -38,6 +38,8 @@ function confidenceRank(c:EnergyConfidenceV6|"B"|"C"|"D"){
 }
 function adjustIngredientKcal(recipeId:string,row:NormalIngredient,kcal:number){
  const s=`${row.ingredientId??row.id??""} ${row.name} ${row.note??""}`.toLowerCase();
+ if(/whole chicken|bone-in.*chicken|chicken.*bone-in/.test(s))return kcal*0.7;
+ if(/pork belly\/shoulder|pork belly or shoulder/.test(s))return kcal*0.7;
  if(/oil/.test(s)&&/not all|fry|frying|shallow/.test(s)){
    const factor=deepFryIds.has(recipeId)?0.15:shallowFryIds.has(recipeId)?0.25:0.2;
    return kcal*factor;
@@ -47,8 +49,10 @@ function adjustIngredientKcal(recipeId:string,row:NormalIngredient,kcal:number){
 }
 
 /**
- * Exact fallbacks discovered by the deterministic 136-recipe graph audit. Every value is
- * native to the row's declared unit; no gram↔millilitre conversion is performed here.
+ * Exact identity references discovered by the deterministic 136-recipe graph audit.
+ * They run before the broad name resolver so phrases such as "butter beans" cannot be
+ * mistaken for butter and "red pepper" cannot be mistaken for ground pepper. Every value
+ * is native to the row's declared unit; no gram↔millilitre conversion occurs here.
  */
 function explicitEnergyFallbackV6(row:NormalIngredient):FallbackReference|null{
  const id=(row.ingredientId??row.id??"").toLowerCase(),u=row.unit;
@@ -79,6 +83,9 @@ function explicitEnergyFallbackV6(row:NormalIngredient):FallbackReference|null{
   case "dried-red-chilli":return u==="g"?F("g",2.82,"Dried chilli reference proxy."):u==="count"?F("count",2,"Dried chilli unit proxy."):null;
   case "chicken-fat":return u==="g"?F("g",9.0,"Rendered chicken-fat proxy; retained amount is recipe-specific."):null;
   case "red-chilli":return u==="g"?F("g",0.4,"Fresh red chilli reference.","B_DATABASE"):u==="count"?F("count",4,"Fresh red chilli unit proxy."):null;
+  case "red-pepper":return u==="g"?F("g",0.31,"Fresh sweet red pepper/capsicum reference; prevents collision with ground pepper.","B_DATABASE"):null;
+  case "butter-beans":return u==="g"?F("g",1.14,"Cooked/drained butter-bean reference; prevents collision with dairy butter.","B_DATABASE"):null;
+  case "peanut-butter":return u==="g"?F("g",5.88,"Peanut-butter reference; prevents collision with dairy butter.","B_DATABASE"):null;
   case "okra":return u==="g"?F("g",0.33,"Raw okra reference.","B_DATABASE"):null;
   case "meat-curry-powder":return u==="g"?F("g",3.0,"Dry meat-curry-powder blend proxy; contribution is small."):null;
   case "curry-leaf":return u==="g"?F("g",1.0,"Fresh curry-leaf proxy; nutritionally minor."):null;
@@ -96,9 +103,9 @@ function explicitEnergyFallbackV6(row:NormalIngredient):FallbackReference|null{
 }
 
 function ingredientKcalV6(row:NormalIngredient){
- const base=ingredientReferenceKcalV6(row);if(base.excludedOptional||base.kcal!=null&&base.reference)return base;
- const fallback=explicitEnergyFallbackV6(row);if(!fallback||fallback.unit!==row.unit)return base;
- return{kcal:Math.round(row.qty*fallback.kcalPerUnit*10)/10,reference:fallback,excludedOptional:false};
+ if(row.optional)return ingredientReferenceKcalV6(row);
+ const exact=explicitEnergyFallbackV6(row);if(exact&&exact.unit===row.unit)return{kcal:Math.round(row.qty*exact.kcalPerUnit*10)/10,reference:exact,excludedOptional:false};
+ return ingredientReferenceKcalV6(row);
 }
 
 export function estimateRecipeEnergyV6(args:{recipeId:string;servings:number;ingredients:readonly NormalIngredient[];prep:readonly NormalPrep[]}):RecipeEnergyReferenceV6{
