@@ -60,11 +60,11 @@ export const prepPortionPoliciesV6:readonly PrepPortionPolicyV6[]=[
   P("chipotle",100,"g","meal-packet",250,[3,5],1,"One chicken-bowl packet; bean/enchilada recipes use measured fractions."),
   P("pesto",55,"g","booster-dose",125,[3,5],1,"One four-serving pesto-salmon dose."),
   P("duxelles",100,"g","meal-packet",250,[2,4],1,"One live mushroom-chicken dose; risotto uses 180 g exact."),
-  P("gg",25,"g","booster-dose",60,[4,8],1,"Concentrated ginger-garlic booster for a normal four-serving cook."),
+  P("ginger-garlic",25,"g","booster-dose",60,[4,8],1,"Concentrated ginger-garlic booster for a normal four-serving cook."),
   P("garlic",25,"g","booster-dose",60,[4,8],1,"Four-serving garlic booster; aglio e olio uses 30 g exact."),
   P("chilli",25,"g","booster-dose",60,[4,8],1,"Four-serving chilli booster."),
   P("lemongrass",30,"g","booster-dose",60,[4,8],1,"Four-serving aromatic booster; live rempah dishes use 25 g exact."),
-  P("massaman-finish",12,"g","booster-dose",30,[4,8],1,"Highly concentrated warm-spice finish; 12 g is the reviewed four-serving dose."),
+  P("massaman-finish",12,"g","pantry-dose",30,[4,8],1,"Highly concentrated warm-spice finish; 12 g is the reviewed four-serving dose and stays pantry-first."),
   P("miso-ginger",140,"g","meal-packet",250,[2,4],1,"Despite booster lineage this is a meal-scale four-serving miso-ginger packet."),
   P("bulgogi",175,"g","meal-packet",250,[2,4],1,"One four-serving bulgogi marinade packet."),
 ] as const;
@@ -107,7 +107,7 @@ export function formatPacketCountV6(n:number){
 
 export function prepRequirementPacketTextV6(componentId:string,value:Quantity){
   const c=getCanonicalPrepV2(componentId),p=getPrepPortionPolicyV6(componentId);if(!p||p.packet.unit!==value.unit)return`${c?.code??componentId} · ${value.qty} ${value.unit}`;
-  const count=value.qty/p.packet.qty,pretty=formatPacketCountV6(count),label=p.kind==="stock-block"?"stock block":p.kind==="booster-dose"?"dose":p.kind==="fridge-portion"?"portion":"meal packet";
+  const count=value.qty/p.packet.qty,pretty=formatPacketCountV6(count),label=p.kind==="stock-block"?"stock block":p.kind==="booster-dose"?"dose":p.kind==="pantry-dose"?"pantry dose":p.kind==="fridge-portion"?"portion":"meal packet";
   return`${c?.code??componentId} · ${value.qty} ${value.unit} · ${pretty} ${label}${pretty==="1"?"":"s"}`;
 }
 
