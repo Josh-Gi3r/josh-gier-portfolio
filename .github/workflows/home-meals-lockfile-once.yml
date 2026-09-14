@@ -1,0 +1,36 @@
+name: Home Meals lockfile once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/home-meals-lockfile-once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  generate-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Generate npm lockfile
+        working-directory: apps/home-meals
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Commit deterministic dependency graph
+        run: |
+          if git diff --quiet -- apps/home-meals/package-lock.json && git ls-files --error-unmatch apps/home-meals/package-lock.json >/dev/null 2>&1; then
+            echo "Lockfile already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/home-meals/package-lock.json
+          git commit -m "Home Meals: lock npm dependency graph"
+          git push origin HEAD:main
