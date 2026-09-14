@@ -36,12 +36,15 @@ const keyRe=id=>new RegExp(`(?:^|\\n)\\s*(?:["']${id}["']|${id.replace(/-/g,'\\-
 for(const id of mothers){if(!keyRe(id).test(motherHeroes))fail(`mother hero missing: ${id}`);if(!new RegExp(`(?:^|\\n)\\s*${id}\\s*:\\s*\\[`,'m').test(process))fail(`mother process sequence missing: ${id}`)}
 for(const id of [...mids,...boosters])if(!keyRe(id).test(prepHeroes))fail(`prep hero missing: ${id}`);
 
-// Portion-first prep UX, with exact units remaining underneath.
+// V6 prep truth: production is measured after cooking, then divided into storage packets + remainder.
 for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx','components/app/PrepDay.tsx']){
- must(rel,/working portion/,'prep UI is not working-portion first');
+ must(rel,/recordMeasuredProduction/,'prep UI must record actual measured finished output');
+ must(rel,/packetBreakdownV6/,'prep UI must derive full storage packets plus loose remainder');
+ must(rel,/finished output/i,'prep UI must tell the household to measure actual finished output');
+ mustNot(rel,/recordPortionedProduction\(/,'active prep UI still logs count×legacy portions');
  mustNot(rel,/batchOutputMl|batchYield|portionMl/,'active prep UI regressed to assumed-yield fields');
 }
-must('components/HouseholdStateV12.tsx',/recordPortionedProduction/,'v12 state does not support portion-first production');
+must('components/HouseholdStateV12.tsx',/recordMeasuredProduction/,'v12 state does not support V6 measured-output production');
 
 // Cooking may log history without changing stock, but only explicitly; silent fallback is forbidden.
 must('components/HouseholdState.tsx',/logMealWithoutStock/,'v3 bridge does not expose explicit log-only cooking');
@@ -86,7 +89,7 @@ for(const rel of ['components/app/Plan.tsx','components/app/PrepDay.tsx','compon
  mustNot(rel,/canonical prep graph/i,'user-facing dependency jargon returned');
 }
 
-// CI must exercise intelligence, journey, endpoint/privacy, sync recovery and final product completion as well as food truth.
+// Repo-native release gates must exercise intelligence, journey, privacy, recovery and product completion.
 must('package.json',/audit-intelligence-v2\.cjs/,'intelligence audit is not in audit:data');
 must('package.json',/audit-household-journey\.cjs/,'household journey audit is not in audit:data');
 must('package.json',/audit-household-api\.cjs/,'household API hardening audit is not in audit:data');
@@ -94,4 +97,4 @@ must('package.json',/audit-private-ai\.cjs/,'private AI security audit is not in
 must('package.json',/audit-sync-recovery\.cjs/,'sync recovery audit is not in audit:data');
 must('package.json',/audit-product-completion\.cjs/,'product-completion audit is not in audit:data');
 
-if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · stale legacy truth removed · full prep imagery · canonical culinary references · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible controls · mobile/PWA/privacy guardrails');
+if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · stale legacy truth removed · full prep imagery · canonical culinary references · V6 measured-output packet prep · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible controls · mobile/PWA/privacy guardrails');
