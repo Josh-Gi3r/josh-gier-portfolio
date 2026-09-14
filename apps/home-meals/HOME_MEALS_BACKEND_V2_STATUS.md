@@ -1,6 +1,6 @@
 # Home Meals backend v2 / household v12 status
 
-Status: **INTEGRATED IN PRODUCTION**
+Status: **INTEGRATED IN PRODUCTION — SOFTWARE ACCEPTANCE GREEN**
 Updated: 2026-09-14
 
 ## Scope
@@ -93,6 +93,7 @@ This tracker covers the non-visual Home Meals food/data/intelligence layer and i
 - deterministic Ask Home context precomputes stock/demand/shortfalls instead of asking an LLM to do hidden arithmetic.
 - full seven-day planning and active-repertoire proposals are confirmation-gated.
 - Ask/Live/Vision truth contracts prohibit invented stock, yields, nutrition, expiry, safety and preference history.
+- complex/ambiguous model reasoning is used only where it adds value; deterministic household arithmetic remains code-owned.
 
 ### Vision
 - live Fridge, Freezer, Pantry, Receipt, Prep and Meal modes.
@@ -113,15 +114,23 @@ This tracker covers the non-visual Home Meals food/data/intelligence layer and i
 - old v11 sync/runtime files are retired from active product code and regression-guarded from reintroduction.
 - current Kitchen, Prep, Prep Day, Plan, Cook, Home, Scan, Ask Home and Voice all consume v12/current truth.
 
-### Sync / privacy
+### Sync / privacy / API hardening
 - private household session.
 - HTTP-only, Secure, SameSite=Lax session cookie.
 - timing-safe household code/token comparison.
+- household-code attempts rate-limited to 10 per 15 minutes per proxy-derived client key, with HTTP 429 + `Retry-After`; a successful connection clears its bucket.
+- incoming and stored household payloads are runtime-validated as v12 envelopes.
+- household payload is capped at 1.5 MB before persistence.
+- database failure detail remains server-side; browser receives generic failure states.
 - optimistic versioning prevents silent overwrite.
+- first-write race refreshes the actual winning remote payload/version before conflict choice.
 - concurrent/join conflicts are explicit.
-- remote updates can be deferred during active cooking.
+- remote updates during active cooking are deferred without prematurely advancing sync metadata.
+- after cooking the client re-fetches/reconciles server truth rather than blindly applying stale pending state.
+- repeated conflicts refresh the current remote/version before another choice.
 - failed writes preserve local work and surface retry/recovery.
 - household and mutation-capable AI endpoints are not exposed without the private session when sync is configured.
+- browser security headers include nosniff, deny framing, no-referrer, scoped camera/microphone permissions, same-origin opener policy and HSTS; the framework identification header is disabled.
 
 ### QA / CI
 - catalogue audit.
@@ -129,14 +138,24 @@ This tracker covers the non-visual Home Meals food/data/intelligence layer and i
 - full food-system v2 audit.
 - intelligence v2 audit.
 - first-week household-journey audit.
+- household-API hardening audit.
 - private-AI endpoint audit.
+- sync-recovery audit.
+- Kitchen accessibility audit.
 - release-infrastructure audit.
 - v3/v12 cutover audit.
 - product-completion audit.
-- Node 24 + pinned npm + committed lockfile.
+- Node 24 + npm 10.9.8 + committed lockfile.
+- deterministic `npm ci` in CI.
 - Chromium Playwright release acceptance.
-- full derived 136-route catalogue crawl.
-- responsive checks at all canonical width checkpoints on representative routes.
+- **152 repeatable browser tests** on the implementation acceptance line.
+- full derived **136-route** catalogue crawl at 390 px.
+- **132 responsive samples**: 12 routes × all canonical widths `360, 375, 390, 393, 412, 430, 768, 820, 1024, 1280, 1440`.
+- stateful first-run browser test.
+- five two-device browser-mocked sync/recovery cases.
+- visible-control accessible-name checks across the full route crawl.
+
+Implementation acceptance commit `11a416636250200c60f27866154aaa02dfb37185` passed all audits, production build and **152 / 152 Playwright tests**, and deployed successfully on Railway. Final documentation commits are release-acceptable only if they preserve those same gates.
 
 ## Intentionally unknown until Josh + G provide evidence
 
@@ -160,9 +179,10 @@ Current software acceptance is defined by:
 - `HOME_MEALS_MASTER_IMPLEMENTATION_PLAN.md`;
 - `HOME_MEALS_MASTER_IMPLEMENTATION_ADDENDUM_V12.md`;
 - culinary verification + food-truth source ledgers;
-- `QA-ACCEPTANCE-MATRIX.md` plus its 2026-09-14 addendum;
+- `QA-ACCEPTANCE-MATRIX.md`;
+- `QA-ACCEPTANCE-ADDENDUM_2026-09-14.md`;
 - `HOME_MEALS_FINAL_COMPLETION_TRACKER.md`.
 
 ## Product gate
 
-Do not expand the cookbook merely to make the catalogue larger. The next product-learning loop is real household use: cook, rate, note, observe actual stored portions/yields where useful, and let those observations improve future plans.
+Do not expand the cookbook merely to make the catalogue larger. Software-controlled completion is now a release-engineering/acceptance problem, not a catalogue-growth problem. After the final release head is green, the next product-learning loop is real household use: cook, rate, note, observe actual stored portions/yields where useful, and let those observations improve future plans.
