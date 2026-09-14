@@ -1,4 +1,5 @@
 import {NextRequest,NextResponse} from "next/server";
+import {SESSION_COOKIE,syncConfigured,verifySessionToken} from "@/lib/server-household";
 
 export const dynamic="force-dynamic";
 function noStore(body:unknown,status=200){return NextResponse.json(body,{status,headers:{"Cache-Control":"no-store"}})}
@@ -44,6 +45,7 @@ For visual questions, tell the user to show Home with the camera if no camera re
 export async function GET(){return noStore({configured:!!process.env.OPENAI_API_KEY?.trim(),model:process.env.OPENAI_LIVE_MODEL?.trim()||"gpt-live-1"})}
 
 export async function POST(req:NextRequest){
+ if(syncConfigured()&&!verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value))return noStore({error:"unauthorized"},401);
  const key=process.env.OPENAI_API_KEY?.trim();if(!key)return noStore({error:"live_not_configured"},503);
  const body=await req.json().catch(()=>null) as {sdp?:unknown}|null;const sdp=typeof body?.sdp==="string"?body.sdp:"";if(!sdp||sdp.length>100_000)return noStore({error:"invalid_sdp"},400);
  const requestBody={transport:{type:"webrtc",sdp},session:{model:process.env.OPENAI_LIVE_MODEL?.trim()||"gpt-live-1",instructions:liveInstructions,audio:{output:{voice:process.env.OPENAI_LIVE_VOICE?.trim()||"marin"}},delegation:{type:"client"},store:false}};
