@@ -1,20 +1,20 @@
+import {recipeEnergyReferenceV6} from "./recipe-energy-v6";
+
 export type MealWeightV3="light"|"balanced"|"hearty"|"rich";
 export type RecipeKcalReferenceV3=Readonly<{
   kcalPerPerson:number;
-  uncertaintyPct:15;
+  uncertaintyPct:number;
   mealWeight:MealWeightV3;
   status:"planning_reference";
+  methodology?:string;
+  confidence?:"B"|"C"|"D";
 }>;
 
 /**
- * Rounded energy references for meal planning, derived from the current canonical
- * two-person formulations using standard food-composition values. These are deliberately
- * marked as references rather than calibrated household nutrition.
- *
- * Why the distinction matters: prep-component kcal density depends on the actual measured
- * finished output of Josh/G's batch. CLEAR, DARK, DASHI and K-STOCK also strain/discard
- * solids and require a finished-food proxy. Once those observations/bindings exist, the
- * v2 nutrition engine remains the authority for calibrated nutrition.
+ * Legacy rounded references are retained as provenance/fallback. `kcalReferenceForV3`
+ * now prefers the V6 methodology engine, which recalculates the four-serving live recipe
+ * from ingredient composition plus prep-energy proxies. This keeps old audit/history
+ * readable without making the old two-serving-era numbers authoritative.
  */
 const R=(kcalPerPerson:number,mealWeight:MealWeightV3):RecipeKcalReferenceV3=>({kcalPerPerson,uncertaintyPct:15,mealWeight,status:"planning_reference"});
 
@@ -57,7 +57,10 @@ export const recipeKcalReferenceV3:Readonly<Record<string,RecipeKcalReferenceV3>
   "chipotle-bean-skillet":R(625,"balanced")
 };
 
-export function kcalReferenceForV3(recipeId:string){return recipeKcalReferenceV3[recipeId]}
+export function kcalReferenceForV3(recipeId:string):RecipeKcalReferenceV3|undefined{
+ const v6=recipeEnergyReferenceV6(recipeId);if(v6)return{kcalPerPerson:v6.kcalPerPerson,uncertaintyPct:v6.uncertaintyPct,mealWeight:v6.mealWeight,status:"planning_reference",methodology:v6.methodology,confidence:v6.confidence};
+ return recipeKcalReferenceV3[recipeId];
+}
 
 const extractionSensitive=new Set(["clear","dark","dashi","k-anchovy"]);
 export function prepKcalStatusV3(componentId:string):"finished_food_proxy_required"|"measured_output_required"{

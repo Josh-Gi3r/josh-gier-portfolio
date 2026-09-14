@@ -3,11 +3,12 @@ import Link from "next/link";
 import {useEffect,useRef} from "react";
 import {getComponent,type IngredientDef} from "@/data/home-data";
 import {getCanonicalPrepV2} from "@/data/food-truth-v2";
-import {stockPortions} from "@/data/stock-math";
+import {getPrepPortionPolicyV6,packetBreakdownV6} from "@/data/prep-portioning-v6";
+import {quantity} from "@/data/food-quantity";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
-import {prepHero,portionWord,toneGradient} from "@/lib/tones";
-import {Sheet} from "./Primitives";
+import {prepHero,toneGradient} from "@/lib/tones";
+import {formatQty,Sheet} from "./Primitives";
 
 export const levels=["Out","Low","Some","Plenty"];
 const smallHerbs=new Set(["coriander","parsley","thai-basil"]);
@@ -32,14 +33,16 @@ export function StockEditor({item,onDone}:{item:IngredientDef;onDone:()=>void}){
 }
 
 export function ComponentEditor({id,onDone}:{id:string;onDone:()=>void}){
- const h=useHousehold();const c=getComponent(id)!;const truth=getCanonicalPrepV2(id);if(!truth)return null;const qty=h.componentStock[id]??0;const n=stockPortions(id,h.componentStock);const hero=prepHero(id);
- const set=(portions:number)=>{h.setComponent(id,Math.max(0,portions)*truth.workingUnit.qty);feedback("change")};
- const dec=useHold(()=>set(stockPortions(id,h.componentStock)-1));const inc=useHold(()=>set(stockPortions(id,h.componentStock)+1));
+ const h=useHousehold();const c=getComponent(id)!;const truth=getCanonicalPrepV2(id),policy=getPrepPortionPolicyV6(id);if(!truth||!policy)return null;const qty=h.componentStock[id]??0,split=packetBreakdownV6(id,quantity(qty,policy.packet.unit)),hero=prepHero(id);
+ const setPackets=(packets:number)=>{const full=Math.max(0,packets),remainder=full===0?0:split.remainder.qty;h.setComponent(id,full*policy.packet.qty+remainder);feedback("change")};
+ const dec=useHold(()=>setPackets(split.fullPackets-1));const inc=useHold(()=>setPackets(split.fullPackets+1));
  const batches=h.prepBatches.filter(b=>b.componentId===id&&b.remaining.qty>0).sort((a,b)=>new Date(a.producedAt).getTime()-new Date(b.producedAt).getTime());
+ const kind=policy.kind==="stock-block"?"stock block":policy.kind==="booster-dose"?"dose":policy.kind==="fridge-portion"?"portion":"meal packet";
  return <>
-  <div className="item"><div className="ic" style={{background:toneGradient(id),color:"#fff",fontSize:13,overflow:"hidden"}}>{hero?<img src={hero} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:c.code}</div><div><h3>{c.code}</h3><small>{c.name} · {truth.workingUnit.qty} {truth.workingUnit.unit} per working {portionWord(id)}{batches[0]?` · oldest ${new Date(batches[0].producedAt).toLocaleDateString(undefined,{day:"numeric",month:"short"})}`:""}</small></div></div>
-  <div className="big"><button className="minus" aria-label="One less" {...dec}>−</button><div className="val"><b>{n}</b><small>{portionWord(id,n)} · {qty} {truth.workingUnit.unit} · hold to count fast</small></div><button className="plus" aria-label="One more" {...inc}>+</button></div>
-  <div className="acts"><Link className="hm-btn ghost" style={{height:52,fontSize:14}} href={c.kind==="mother"?`/prep/${id}`:c.kind==="mid"?`/prep/mids/${id}`:`/prep/boosters/${id}`} onClick={onDone}>Open {c.code}</Link><button onClick={()=>set(0)}>Used it all</button></div>
+  <div className="item"><div className="ic" style={{background:toneGradient(id),color:"#fff",fontSize:13,overflow:"hidden"}}>{hero?<img src={hero} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:c.code}</div><div><h3>{c.code}</h3><small>{c.name} · {formatQty(policy.packet.qty,policy.packet.unit)} per {kind}{batches[0]?` · oldest ${new Date(batches[0].producedAt).toLocaleDateString(undefined,{day:"numeric",month:"short"})}`:""}</small></div></div>
+  <div className="big"><button className="minus" aria-label="One less full packet" {...dec}>−</button><div className="val"><b>{split.fullPackets}</b><small>full {split.fullPackets===1?kind:`${kind}s`} · exact stock {formatQty(qty,policy.packet.unit)}{split.remainder.qty?` · ${formatQty(split.remainder.qty,split.remainder.unit)} remainder`:""}</small></div><button className="plus" aria-label="One more full packet" {...inc}>+</button></div>
+  <p className="hm-note" style={{marginTop:10}}>Count labelled packets here. Any measured remainder is preserved when you add/remove full packets. Gram packets stay gram-based; container ml never changes their weight.</p>
+  <div className="acts"><Link className="hm-btn ghost" style={{height:52,fontSize:14}} href={c.kind==="mother"?`/prep/${id}`:c.kind==="mid"?`/prep/mids/${id}`:`/prep/boosters/${id}`} onClick={onDone}>Open {c.code}</Link><button onClick={()=>setPackets(0)}>Used it all</button></div>
   <button className="hm-btn primary full" style={{marginTop:18,height:56}} onClick={onDone}>Done</button>
  </>;
 }

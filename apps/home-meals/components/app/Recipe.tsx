@@ -5,7 +5,7 @@ import {useHousehold} from "../HouseholdState";
 import {getRecipe} from "@/data/home-data";
 import {getRuntimeDinnerFormulationV4} from "@/data/runtime-dinner-v4";
 import {getCanonicalRecipeV2} from "@/data/recipe-truth-v2";
-import {getCanonicalPrepV2} from "@/data/food-truth-v2";
+import {prepRequirementPacketTextV6} from "@/data/prep-portioning-v6";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
 import {kcalReferenceForV3} from "@/data/recipe-kcal-reference-v3";
 import {feedback} from "@/lib/feedback";
@@ -43,12 +43,12 @@ export function Recipe({id}:{id:string}){
   <div className="hm-sheetpage" style={{paddingBottom:140}}>
    <span className="hm-kicker">{r.cuisine} · {inWeek>=0?longDays[inWeek]:"not in the week"}</span><h1 className="hm-recipe-title">{title}</h1><p className="hm-lead" style={{marginTop:8}}>{subtitle}</p>
    <div className="hm-stats four"><Stat v={r.minutes} k="reference min"/><Stat v={kcal?`~${kcal.kcalPerPerson}`:"—"} k="kcal / person" tint="var(--tint-peach)"/><Stat v={kcal?kcal.mealWeight:"—"} k="meal weight"/><Stat v={f.targetServings} k="cook servings" tint="var(--tint-sky)"/></div>
-   <div className="hm-fine">{kcal?`Reference energy estimate · ±${kcal.uncertaintyPct}% until measured prep yield + product-label truth resolves`:"Energy not yet estimated"} · default cook makes 4 servings for 2 diners + leftovers · {r.method} · {r.difficulty}</div>
+   <div className="hm-fine">{kcal?`V6 composition estimate · ±${kcal.uncertaintyPct}%${kcal.confidence?` · confidence ${kcal.confidence}`:""} · product labels + measured prep output can refine it`:"Energy not yet estimated"} · default cook makes 4 servings for 2 diners + leftovers · {r.method} · {r.difficulty}</div>
    <HomeSays actions={says.actions}>{says.text}</HomeSays>
 
    <SectionHead title="What goes in" action={<span className={ready.state==="missing"?"peach":"muted"} style={{fontSize:13,fontWeight:700,color:ready.state==="ready"?"var(--green)":ready.state==="missing"?"var(--peach-text)":"var(--muted)"}}>{ready.label}</span>}/>
    <div className="hm-ing">
-    {f.prep.map(p=>{const c=getCanonicalPrepV2(p.componentId);const has=(h.componentStock[p.componentId]??0)>=p.quantity.qty;return <span key={p.componentId} className={!h.kitchenReady?"unknown":has?"":"missing"}><i style={{background:toneFor(p.componentId)}}/>{c?.code??p.componentId} · {formatQty(p.quantity.qty,p.quantity.unit)}{h.kitchenReady&&!has?" · short":""}</span>})}
+    {f.prep.map(p=>{const has=(h.componentStock[p.componentId]??0)>=p.quantity.qty;return <span key={p.componentId} className={!h.kitchenReady?"unknown":has?"":"missing"}><i style={{background:toneFor(p.componentId)}}/>{prepRequirementPacketTextV6(p.componentId,p.quantity)}{h.kitchenReady&&!has?" · short":""}</span>})}
     {f.ingredients.map((x,i)=><span key={`${x.ingredientId}-${i}`} className={x.optional?"optional":""}><i/>{x.name} · {formatQty(x.qty,x.unit)}{x.optional?" · optional":""}</span>)}
    </div>
 

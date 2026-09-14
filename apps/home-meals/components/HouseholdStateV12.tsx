@@ -4,8 +4,7 @@ import {defaultWeek,recipes} from "@/data/home-data";
 import {quantity,type Quantity} from "@/data/food-quantity";
 import {prepNeedsForRecipesV2,createMeasuredPrepBatchV2} from "@/data/food-engine-v2";
 import {shoppingNeedsForPlanV2} from "@/data/ingredient-engine-v2";
-import {getPrepFormulationV2} from "@/data/prep-formulations-v2";
-import {getCanonicalPrepV2} from "@/data/food-truth-v2";
+import {getHouseholdPrepFormulationV6,getPrepPortionPolicyV6} from "@/data/prep-portioning-v6";
 import type {RecipeCookObservationV2} from "@/data/calibration-v2";
 import {
  addMeasuredBatchV12,componentStockV12,confirmEmptyKitchenV12,consumeComponentV12,cookRecipeV12,migrateHouseholdV11ToV12,recordCookObservationV12,
@@ -32,7 +31,8 @@ export type HouseholdStateV12Context={
  setQualitativeIngredientLevel:(ingredientId:string,level:number)=>void;
  recordMeasuredBatch:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
  recordMeasuredProduction:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
- recordPortionedProduction:(componentId:string,workingPortions:number,recipeVersion:string)=>void;
+ /** Legacy convenience for counting already-standardised stored packets. New production UI records measured output directly. */
+ recordPortionedProduction:(componentId:string,storagePackets:number,recipeVersion:string)=>void;
  cookMeal:(recipeId:string,variantId?:string)=>boolean;
  logMealWithoutStock:(recipeId:string,variantId?:string)=>void;
  recordCookObservation:(observation:RecipeCookObservationV2)=>void;
@@ -73,8 +73,8 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  const setQualitativeIngredientLevel=(ingredientId:string,level:number)=>setState(prev=>setQualitativeIngredientLevelV12(prev,ingredientId,level));
 
  const recordMeasuredBatch=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>addMeasuredBatchV12(prev,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion})));
- const recordMeasuredProduction=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>{const formulation=getPrepFormulationV2(componentId);if(!formulation)throw new Error(`Missing canonical prep formulation for ${componentId}`);let next=prev;for(const parent of formulation.componentInputs)next=consumeComponentV12(next,parent.componentId,quantity(parent.qty,parent.unit));return addMeasuredBatchV12(next,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion}))});
- const recordPortionedProduction=(componentId:string,workingPortions:number,recipeVersion:string)=>{const component=getCanonicalPrepV2(componentId);if(!component||!Number.isFinite(workingPortions)||workingPortions<=0)throw new Error(`Invalid working portions for ${componentId}`);const portions=Math.max(1,Math.round(workingPortions));recordMeasuredProduction(componentId,quantity(portions*component.workingUnit.qty,component.workingUnit.unit),recipeVersion)};
+ const recordMeasuredProduction=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>{const formulation=getHouseholdPrepFormulationV6(componentId);if(!formulation)throw new Error(`Missing household prep formulation for ${componentId}`);if(formulation.outputUnit!==measuredOutput.unit)throw new Error(`Measured output unit for ${componentId} must be ${formulation.outputUnit}`);if(!Number.isFinite(measuredOutput.qty)||measuredOutput.qty<=0)throw new Error(`Measured output for ${componentId} must be positive`);let next=prev;for(const parent of formulation.componentInputs)next=consumeComponentV12(next,parent.componentId,quantity(parent.qty,parent.unit));return addMeasuredBatchV12(next,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion}))});
+ const recordPortionedProduction=(componentId:string,storagePackets:number,recipeVersion:string)=>{const policy=getPrepPortionPolicyV6(componentId);if(!policy||!Number.isFinite(storagePackets)||storagePackets<=0)throw new Error(`Invalid storage packets for ${componentId}`);const packets=Math.max(1,Math.round(storagePackets));recordMeasuredProduction(componentId,quantity(packets*policy.packet.qty,policy.packet.unit),recipeVersion)};
  const cookMeal=(recipeId:string,variantId?:string):boolean=>{if(!validRecipeIds.has(recipeId))return false;try{const next=cookRecipeV12(state,recipeId,variantId);setState(next);return true}catch{return false}};
  const logMealWithoutStock=(recipeId:string,variantId?:string)=>{if(validRecipeIds.has(recipeId))setState(prev=>historyOnly(prev,recipeId,variantId))};
  const recordCookObservation=(observation:RecipeCookObservationV2)=>setState(prev=>recordCookObservationV12(prev,observation));
