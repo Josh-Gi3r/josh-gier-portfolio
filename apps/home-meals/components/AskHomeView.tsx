@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
 import {useState,type FormEvent,type ReactNode} from "react";
-import {getRecipe} from "@/data/home-data";
+import {getLiveRecipeV7} from "@/data/recipe-catalog-v7";
 import {recipeTitle} from "@/data/recipe-display";
-import {nutritionFor} from "@/data/recipe-nutrition";
+import {kcalReferenceForV3} from "@/data/recipe-kcal-reference-v3";
 import {Icon} from "./Icons";
 import {Orb,Waves} from "./app/Orb";
 
@@ -34,7 +34,7 @@ export function AskHomeView({messages,q,setQ,onSend,onClose,cameraHref,quick,loa
        {m.extra}
        {m.href&&m.action&&<Link className="hm-ask-action" href={m.href} onClick={onClose}>{m.action} →</Link>}
       </div></div>
-      {picks.length>0&&<div className="hm-ask-picks" style={{marginTop:12}}>{picks.map(id=>{const r=getRecipe(id);if(!r)return null;const title=recipeTitle(r.id,r.title);const n=nutritionFor(r.id);return <div key={id} className="hm-tile">{r.image&&<img src={r.image} alt={title} loading="lazy"/>}<div className="shade deep"/><div className="copy"><strong>{title}</strong><small>{r.minutes} min{n?` · ${n.kcal} kcal`:""}</small><div className="acts"><Link className="yes" href={`/cook/${id}`} onClick={onClose}>Yes</Link><button className="nah" onClick={()=>setDismissed(v=>({...v,[`${i}:${id}`]:true}))}>Nah</button></div></div></div>})}</div>}
+      {picks.length>0&&<div className="hm-ask-picks" style={{marginTop:12}}>{picks.map(id=>{const r=getLiveRecipeV7(id);if(!r)return null;const title=recipeTitle(r.id,r.title),n=kcalReferenceForV3(r.id);return <div key={id} className="hm-tile">{r.image&&<img src={r.image} alt={title} loading="lazy"/>}<div className="shade deep"/><div className="copy"><strong>{title}</strong><small>{r.minutes} min{n?` · ~${n.kcalPerPerson} kcal/person`:""}</small><div className="acts"><Link className="yes" href={`/cook/${id}`} onClick={onClose}>Yes</Link><button className="nah" onClick={()=>setDismissed(v=>({...v,[`${i}:${id}`]:true}))}>Nah</button></div></div></div>})}</div>}
      </div>;
     })}
     {loading&&<div className="hm-ask-msg home"><Orb size={36}/><div className="hm-bubble hm-ask-typing"><i/><i/><i/></div></div>}
