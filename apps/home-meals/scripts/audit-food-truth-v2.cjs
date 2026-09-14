@@ -27,10 +27,9 @@ try{
 
   const currentRecipeIds=new Set(current.recipes.map(x=>x.id)),v2RecipeIds=Object.keys(recipes);
   if(v2RecipeIds.length!==36)fail(`v2 recipe prep contract must cover 36 dinners, found ${v2RecipeIds.length}`);
-  for(const id of currentRecipeIds)if(!recipes[id])fail(`current recipe missing v2 prep contract: ${id}`);
+  for(const id of currentRecipeIds)if(!(id in recipes))fail(`current recipe missing v2 prep contract: ${id}`);
   for(const id of v2RecipeIds)if(!currentRecipeIds.has(id))fail(`v2 prep contract references non-current recipe: ${id}`);
   for(const [recipeId,requirements] of Object.entries(recipes)){
-    if(!requirements.length)fail(`v2 recipe has no prep requirements: ${recipeId}`);
     const seen=new Set();
     for(const req of requirements){
       const component=components.find(x=>x.id===req.componentId);
@@ -49,10 +48,22 @@ try{
   exact('curry-laksa',['laksa:120:g','clear:450:ml']);
   exact('rempah-chicken-rendang',['rendang:120:g','lemongrass:15:g']);
   exact('massaman-beef',['thai-red:30:g','massaman-finish:7:g']);
-  exact('beef-broccoli',['wok-brown:125:ml']);
+  exact('beef-broccoli',['wok-brown:150:ml']);
+  exact('brown-chicken-mushroom',['wok-brown:150:ml']);
+  exact('wok-tofu-greenbeans',['wok-brown:150:ml','chilli:15:g']);
   exact('moo-goo-gai-pan',['wok-white:150:ml']);
   exact('pad-kra-pao',['garlic:15:g','chilli:15:g','krapow:30:ml']);
   exact('gold-chicken-curry',['gold:120:g']);
+  exact('miso-salmon',['miso-ginger:80:g']);
+  exact('miso-aubergine-tofu',[]);
+  exact('bulgogi-beef',['bulgogi:100:g']);
+
+  const makhani=components.find(x=>x.id==='makhani'),korma=components.find(x=>x.id==='korma'),miso=components.find(x=>x.id==='miso-ginger'),bul=components.find(x=>x.id==='bulgogi'),wokBrown=components.find(x=>x.id==='wok-brown');
+  if(makhani?.madeFrom.length)fail('MAKHANI must not inherit GOLD as a physical parent');
+  if(korma?.madeFrom.length)fail('KORMA must not inherit deep ONION as a physical parent');
+  if(miso?.workingUnit.qty!==40||miso?.workingUnit.unit!=='g')fail('MISO-G verified working unit drifted');
+  if(bul?.workingUnit.qty!==50||bul?.workingUnit.unit!=='g')fail('BUL verified working unit drifted');
+  if(wokBrown?.workingUnit.qty!==150||wokBrown?.workingUnit.unit!=='ml')fail('WOK-B verified two-person working dose drifted');
 
   const defaultDemand=engine.prepDemandForRecipesV2(current.defaultWeek);
   const zeroStock={};
@@ -62,6 +73,7 @@ try{
   if(engine.prepNeedsForRecipesV2(current.defaultWeek,exactStock).length)fail('v2 exact default-week stock still reports prep shortfalls');
   const firstRecipe=current.defaultWeek[0],firstReq=recipes[firstRecipe][0];
   if(firstReq){const batch=engine.createMeasuredPrepBatchV2({batchId:'audit-batch',componentId:firstReq.componentId,measuredOutput:firstReq.quantity,producedAt:'2026-09-14T00:00:00.000Z',recipeVersion:'audit-v1'});const stock=engine.componentStockFromBatchesV2([batch]);if(!engine.recipePrepAvailabilityV2(firstRecipe,stock).ready)fail(`v2 measured stock does not mark ${firstRecipe} ready`)}
+  if(!engine.recipePrepAvailabilityV2('miso-aubergine-tofu',{}).ready)fail('direct-ingredient dinner with no prep dependency must be prep-ready');
   let mismatchRejected=false;try{engine.createMeasuredPrepBatchV2({batchId:'bad-unit',componentId:'gold',measuredOutput:{qty:120,unit:'ml'},producedAt:'2026-09-14T00:00:00.000Z',recipeVersion:'audit-v1'})}catch{mismatchRejected=true}if(!mismatchRejected)fail('v2 measured batch accepted incompatible units');
 
   if(failures.length){console.error(`\nHome Meals food-truth v2 audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}
