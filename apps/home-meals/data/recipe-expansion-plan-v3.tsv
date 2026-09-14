@@ -1,0 +1,101 @@
+id	title	cuisine	occasion	mealWeightIntent	format	prepStrategy	candidateComponents	pantryLevers
+mapo-tofu	Mapo tofu	Chinese · Sichuan	dinner	hearty	wok	mid	douban	light-soy,dark-soy,chinkiang-vinegar,sesame-oil
+kung-pao-chicken	Kung pao chicken	Chinese · Sichuan	dinner	balanced	wok	pantry-sauce		light-soy,dark-soy,chinkiang-vinegar,shaoxing-wine,sesame-oil
+black-pepper-beef	Black pepper beef	Chinese · Cantonese-style	dinner	hearty	wok	pantry-sauce		light-soy,dark-soy,oyster-sauce,shaoxing-wine,sesame-oil
+tomato-egg-stir-fry	Tomato & egg stir-fry	Chinese	dinner	light	wok	no-base		light-soy,sesame-oil
+char-siu-pork	Char siu pork	Chinese · Cantonese	dinner	rich	roast	mid	char-siu	light-soy,hoisin,shaoxing-wine,sesame-oil
+char-siu-chicken	Char siu chicken	Chinese · Cantonese-style	dinner	hearty	roast	mid	char-siu	light-soy,hoisin,shaoxing-wine,sesame-oil
+steamed-fish-ginger-scallion	Steamed fish with ginger & scallion	Chinese · Cantonese	dinner	light	steam	pantry-sauce		light-soy,sesame-oil
+ginger-scallion-chicken	Ginger-scallion chicken	Chinese · Cantonese-style	dinner	balanced	pan	mid	ginger-scallion	light-soy,sesame-oil
+sweet-sour-chicken	Sweet & sour chicken	Chinese-style	dinner	hearty	wok	pantry-sauce		light-soy,chinkiang-vinegar
+garlic-aubergine	Garlic aubergine	Chinese · Sichuan-style	dinner	balanced	wok	pantry-sauce		light-soy,dark-soy,chinkiang-vinegar
+dan-dan-noodles	Dan dan noodles	Chinese · Sichuan	dinner	rich	noodles	mid	douban	light-soy,chinkiang-vinegar,sesame-oil,chilli-oil
+beef-chow-fun	Beef chow fun	Chinese · Cantonese	dinner	hearty	wok-noodles	pantry-sauce		light-soy,dark-soy,oyster-sauce,shaoxing-wine
+chicken-chow-mein	Chicken chow mein	Chinese-style	dinner	hearty	wok-noodles	pantry-sauce		light-soy,dark-soy,oyster-sauce,shaoxing-wine,sesame-oil
+egg-fried-rice	Egg fried rice	Chinese	dinner	balanced	fried-rice	pantry-sauce		light-soy,sesame-oil
+salt-pepper-prawns	Salt & pepper prawns	Chinese · Cantonese-style	dinner	balanced	wok	no-base		shaoxing-wine
+butter-chicken	Butter chicken	Indian · North Indian	dinner	rich	curry	mid	makhani	
+paneer-makhani	Paneer makhani	Indian · North Indian	dinner	rich	curry	mid	makhani	
+dal-tadka	Dal tadka	Indian	dinner	balanced	one-pot	mother	gold	
+rajma-masala	Rajma masala	Indian · North Indian	dinner	hearty	one-pot	mother	gold	
+chicken-korma	Chicken korma	Indian	dinner	rich	curry	mid	korma	
+chicken-tikka-masala	Chicken tikka masala	Indian / British-Indian	dinner	rich	curry	hybrid	gold,makhani	
+keema-matar	Keema matar	Indian	dinner	hearty	pan	mother	gold	
+palak-paneer	Palak paneer	Indian	dinner	balanced	curry	mid	saag	
+aloo-gobi	Aloo gobi	Indian	dinner	balanced	pan	mother	gold	
+masala-omelette	Masala omelette	Indian	breakfast	light	eggs	no-base		
+pad-thai-prawns	Pad Thai with prawns	Thai	dinner	hearty	wok-noodles	pantry-sauce		fish-sauce,tamarind,palm-sugar
+tom-yum-goong	Tom yum goong	Thai	dinner	light	soup	pantry-sauce		fish-sauce
+tom-kha-gai	Tom kha gai	Thai	dinner	balanced	soup	booster	lemongrass	fish-sauce,coconut-milk
+thai-omelette-khai-jiao	Thai omelette · khai jiao	Thai	breakfast	balanced	eggs	pantry-sauce		fish-sauce
+larb-chicken	Chicken larb	Thai / Lao	dinner	light	salad	pantry-sauce		fish-sauce
+prik-king-tofu-green-beans	Prik king tofu & green beans	Thai	dinner	balanced	wok	mid	thai-red	fish-sauce
+thai-cashew-chicken	Thai cashew chicken	Thai	dinner	hearty	wok	pantry-sauce		light-soy,oyster-sauce,fish-sauce
+massaman-chicken	Massaman chicken	Thai	dinner	hearty	curry	hybrid	thai-red,massaman-finish	fish-sauce,tamarind,coconut-milk
+nasi-goreng-kampung	Nasi goreng kampung	Malaysian	dinner	hearty	fried-rice	pantry-sauce		kecap-manis,fish-sauce,belacan
+mee-goreng-mamak	Mee goreng mamak	Malaysian	dinner	rich	wok-noodles	pantry-sauce		kecap-manis,light-soy,dark-soy
+hainanese-chicken-rice	Hainanese chicken rice	Singapore / Hainanese	dinner	hearty	poach	mother	clear	light-soy,dark-soy,sesame-oil
+ayam-masak-merah	Ayam masak merah	Malaysian	dinner	rich	curry	hybrid	red,sambal	
+beef-rendang	Beef rendang	Malaysian / Indonesian	dinner	rich	braise	mid	rendang	
+ikan-asam-pedas	Ikan asam pedas	Malaysian	dinner	balanced	one-pot	mid	asam-pedas	tamarind
+kari-ayam-malaysia	Kari ayam Malaysia	Malaysian	dinner	rich	curry	mid	malaysian-kari	coconut-milk
+nasi-lemak-quick	Nasi lemak · home weeknight version	Malaysian	dinner	rich	rice-bowl	mother	sambal	coconut-milk
+chicken-satay	Chicken satay	Malaysia / Southeast Asian	dinner	hearty	grill	no-base		kecap-manis,fish-sauce
+sambal-sotong	Sambal sotong	Malaysian	dinner	balanced	wok	mother	sambal	
+vietnamese-lemongrass-chicken	Vietnamese lemongrass chicken	Vietnamese	dinner	balanced	pan	booster	lemongrass	fish-sauce
+bo-luc-lac	Bò lúc lắc · shaking beef	Vietnamese	dinner	hearty	wok	pantry-sauce		fish-sauce,light-soy,oyster-sauce
+thit-kho	Thịt kho · caramel pork & eggs	Vietnamese	dinner	rich	braise	pantry-sauce		fish-sauce,coconut-water
+vietnamese-caramel-fish	Vietnamese caramel fish	Vietnamese	dinner	balanced	braise	pantry-sauce		fish-sauce
+bun-cha-bowl	Bún chả-style pork bowl	Vietnamese	dinner	balanced	grill-bowl	mid	nuoc-cham	fish-sauce
+banh-mi-chicken	Chicken bánh mì	Vietnamese	lunch	balanced	sandwich	mid	nuoc-cham	fish-sauce
+oyakodon	Oyakodon	Japanese	dinner	balanced	rice-bowl	mid	dashi	japanese-soy,mirin,sake
+gyudon	Gyudon	Japanese	dinner	hearty	rice-bowl	mid	dashi	japanese-soy,mirin,sake
+japanese-chicken-curry	Japanese chicken curry	Japanese	dinner	hearty	curry	mid	jp-curry	japanese-soy
+katsu-curry	Chicken katsu curry	Japanese	dinner	rich	curry	mid	jp-curry	japanese-soy
+chicken-karaage	Chicken karaage	Japanese	dinner	rich	fry	pantry-sauce		japanese-soy,sake
+salmon-shioyaki	Salt-grilled salmon · shioyaki	Japanese	dinner	light	grill	no-base		
+omurice	Omurice	Japanese	dinner	hearty	rice-eggs	no-base		
+yakisoba	Yakisoba	Japanese	dinner	hearty	wok-noodles	pantry-sauce		worcestershire,oyster-sauce
+kimchi-fried-rice	Kimchi fried rice	Korean	dinner	hearty	fried-rice	pantry-sauce		gochujang,sesame-oil
+bibimbap	Bibimbap	Korean	dinner	balanced	rice-bowl	pantry-sauce		gochujang,sesame-oil
+kimchi-jjigae	Kimchi jjigae	Korean	dinner	balanced	stew	mid	k-anchovy	gochujang,korean-soy
+doenjang-jjigae	Doenjang jjigae	Korean	dinner	light	stew	mid	k-anchovy	doenjang
+dakgalbi	Dakgalbi	Korean	dinner	hearty	pan	pantry-sauce		gochujang,korean-soy,sesame-oil
+japchae	Japchae	Korean	dinner	hearty	noodles	pantry-sauce		korean-soy,sesame-oil
+spicy-pork-bulgogi	Spicy pork bulgogi	Korean	dinner	hearty	grill	pantry-sauce		gochujang,korean-soy,sesame-oil
+gyeran-mari	Gyeran-mari · Korean rolled omelette	Korean	breakfast	light	eggs	no-base		sesame-oil
+chicken-shawarma-bowl	Chicken shawarma bowl	Middle Eastern	dinner	balanced	bowl	no-base		
+kofta-tomato	Kofta in tomato sauce	Middle Eastern	dinner	hearty	braise	mother	red	
+falafel-bowl	Falafel bowl	Middle Eastern	dinner	balanced	bowl	no-base		
+hummus-eggs	Hummus & eggs plate	Middle Eastern	breakfast	balanced	plate	no-base		
+zaatar-chicken-tray	Za'atar chicken traybake	Middle Eastern	dinner	balanced	sheet-pan	no-base		
+lemon-herb-fish-couscous	Lemon-herb fish & couscous	Mediterranean	dinner	light	pan	no-base		
+greek-chicken-tray	Greek chicken traybake	Greek-style	dinner	balanced	sheet-pan	no-base		
+halloumi-vegetable-wrap	Halloumi & vegetable wrap	Mediterranean	lunch	hearty	wrap	no-base		
+spaghetti-carbonara	Spaghetti carbonara	Italian	dinner	rich	pasta	no-base		
+amatriciana	Pasta all'amatriciana	Italian	dinner	hearty	pasta	mother	red	
+puttanesca	Pasta puttanesca	Italian	dinner	balanced	pasta	mother	red	
+aglio-olio-prawns	Aglio e olio prawns	Italian-style	dinner	hearty	pasta	booster	garlic	
+chicken-parmigiana	Chicken parmigiana	Italian-American	dinner	rich	oven	mother	red	
+meatballs-red-sauce	Meatballs in red sauce	Italian-American	dinner	hearty	braise	mother	red	
+mushroom-risotto	Mushroom risotto	Italian	dinner	rich	risotto	hybrid	duxelles,clear	
+potato-greens-frittata	Potato & greens frittata	European-style	breakfast	balanced	eggs	no-base		
+chicken-fajitas	Chicken fajitas	Mexican-style	dinner	balanced	pan	no-base		
+beef-tacos	Beef tacos	Mexican-style	dinner	hearty	tacos	no-base		
+chicken-bean-quesadilla	Chicken & bean quesadilla	Mexican-style	lunch	rich	quesadilla	no-base		
+huevos-rancheros	Huevos rancheros	Mexican	breakfast	hearty	eggs	mother	red	
+black-bean-tacos	Black bean tacos	Mexican-style	dinner	balanced	tacos	no-base		
+chicken-enchiladas	Chicken enchiladas	Mexican-style	dinner	rich	oven	hybrid	red,chipotle	
+turkish-eggs-cilbir	Turkish eggs · çılbır	Turkish	breakfast	balanced	eggs	no-base		
+ham-cheese-french-omelette	Ham & cheese French omelette	French-style	breakfast	hearty	eggs	no-base		
+mushroom-spinach-omelette	Mushroom & spinach omelette	Everyday	breakfast	light	eggs	no-base		
+smoked-salmon-scrambled-eggs	Smoked salmon scrambled eggs & toast	Everyday	breakfast	balanced	eggs-toast	no-base		
+egg-avocado-toast	Egg & avocado toast	Everyday	breakfast	balanced	toast	no-base		
+ham-cheese-toastie	Ham & cheese toastie	Everyday	lunch	hearty	sandwich	no-base		
+tuna-melt	Tuna melt	Everyday	lunch	hearty	sandwich	no-base		
+chicken-caesar-wrap	Chicken Caesar wrap	Everyday	lunch	balanced	wrap	no-base		
+blt-egg-sandwich	BLT & egg sandwich	Everyday	lunch	hearty	sandwich	no-base		
+grilled-cheese-tomato-soup	Grilled cheese & tomato soup	Everyday	lunch	rich	sandwich-soup	mother	red	
+breakfast-burrito	Breakfast burrito	Everyday / Mexican-inspired	breakfast	hearty	wrap	no-base		
+prawn-avocado-salad	Prawn & avocado salad	Everyday	lunch	light	salad	no-base		
+roast-chicken-salad	Roast chicken salad	Everyday	lunch	light	salad	no-base		
