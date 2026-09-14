@@ -4,6 +4,7 @@ import {useEffect,useMemo,useState,type CSSProperties} from "react";
 import {useHousehold} from "../HouseholdState";
 import {getRecipe} from "@/data/home-data";
 import {getDinnerFormulationV2} from "@/data/recipe-formulations-v2";
+import {getCanonicalRecipeV2} from "@/data/recipe-truth-v2";
 import {getCanonicalPrepV2} from "@/data/food-truth-v2";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
 import {feedback} from "@/lib/feedback";
@@ -21,7 +22,7 @@ type Author="josh"|"g";
 const who=(a:Author|"home")=>a==="josh"?"Josh":a==="g"?"G":"Home";
 
 export function Recipe({id}:{id:string}){
- const h=useHousehold();const r=getRecipe(id);const f=getDinnerFormulationV2(id);if(!f)throw new Error(`Missing canonical dinner formulation: ${id}`);const ready=useReadiness()(r);
+ const h=useHousehold();const r=getRecipe(id);const f=getDinnerFormulationV2(id),truth=getCanonicalRecipeV2(id);if(!f||!truth)throw new Error(`Missing canonical dinner formulation: ${id}`);const ready=useReadiness()(r);
  const[weekOpen,setWeekOpen]=useState(false);const[noteOpen,setNoteOpen]=useState(false);const[note,setNote]=useState("");const[author,setAuthor]=useState<Author>("josh");const[toast,setToast]=useState("");
  useEffect(()=>{const person=getHouseholdPerson();if(person)setAuthor(person)},[]);
  const title=recipeTitle(r.id,r.title),subtitle=recipeSubtitle(r.id,r.subtitle);
@@ -55,7 +56,7 @@ export function Recipe({id}:{id:string}){
 
    {(cooked.length>0||lastNote||versions.length>0||photo)&&<><SectionHead title="Our history" action={<button onClick={()=>setNoteOpen(true)}>Add a note</button>}/><div className="hm-stats"><Stat v={`${cooked.length}×`} k="cooked"/><Stat v={`v${currentVersion}`} k="our version" tint="var(--tint-peach)"/><Stat v={rating.josh||rating.g?`${(((rating.josh??0)+(rating.g??0))/((rating.josh?1:0)+(rating.g?1:0)||1)).toFixed(1)}★`:"—"} k={rating.josh||rating.g?`J ${rating.josh??"—"} · G ${rating.g??"—"}`:"not rated"} tint="var(--tint-sky)"/></div>{events.length>0&&<div className="hm-history"><i className="line"/><div className="items">{events.map((e,i)=><article key={`${e.at}-${i}`} className="hm-card" style={{"--dot":e.dot} as CSSProperties}><i className="dot"/><div className="head"><strong>{e.title}</strong><small>{new Date(e.at).toLocaleDateString(undefined,{day:"numeric",month:"short"})}</small></div><p>{e.text}</p></article>)}</div></div>}<Link className="hm-card hm-version hm-lift" href={`/scan?mode=Meal&meal=${id}&back=${encodeURIComponent(`/cook/${id}`)}`}><div><span className="kick">{photo?"OUR PHOTO":"DINNER PHOTO"}</span><strong>{photo?"Replace our dinner photo":"Save a photo of our dinner"}</strong><small>Kept with this recipe on this phone.</small></div><span style={{fontSize:22,color:"var(--muted)"}}>›</span></Link></>}
    {cooked.length===0&&!lastNote&&<div className="hm-empty" style={{marginInline:0,marginTop:28}}><strong>Not cooked by us yet.</strong>Cook it once and rate it — then it becomes ours.</div>}
-   <div className="hm-card hm-ref"><p>{r.balance}</p><a href={r.source.url} target="_blank" rel="noreferrer">Reference ↗</a></div>
+   <div className="hm-card hm-ref"><p>{r.balance}</p><a href={truth.source.url} target="_blank" rel="noreferrer">{truth.source.label} ↗</a></div>
   </div>
 
   <div className="hm-cta split"><button className="hm-btn ghost icon" onClick={()=>{setPickedDay(null);setWeekOpen(true);feedback("tap")}} aria-label="Add to week">＋</button><Link className="hm-btn primary" href={`/cook/${id}/cook`} onClick={()=>feedback("tap")}>Start cooking →</Link></div>
