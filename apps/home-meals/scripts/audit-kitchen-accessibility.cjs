@@ -1,0 +1,13 @@
+const fs=require('fs'),path=require('path');
+const file=fs.readFileSync(path.resolve(__dirname,'../components/app/Kitchen.tsx'),'utf8'),failures=[];
+const must=(re,msg)=>{if(!re.test(file))failures.push(msg)};
+must(/aria-label=\{`Find in the \$\{tab\.toLowerCase\(\)\}`\}/,'Kitchen search field needs an accessible name');
+must(/role="tablist" aria-label="Kitchen sections"/,'Kitchen tab group needs an accessible name');
+must(/aria-label="Clear Kitchen search"/,'Kitchen search clear button needs a meaningful name');
+must(/aria-label=\{`Edit \$\{m\.name\}`\}/,'mother image-only edit control needs a meaningful name');
+must(/aria-label=\{`Remove one \$\{m\.name\} working portion`\}/,'mother decrement control needs a meaningful name');
+must(/aria-label=\{`Add one \$\{m\.name\} working portion`\}/,'mother increment control needs a meaningful name');
+must(/aria-label=\{`Edit \$\{c\.name\}`\}/,'mid/booster image-only edit control needs a meaningful name');
+must(/aria-label=\{`Remove one \$\{c\.name\} working portion`\}/,'mid/booster decrement control needs a meaningful name');
+must(/aria-label=\{`Add one \$\{c\.name\} working portion`\}/,'mid/booster increment control needs a meaningful name');
+if(failures.length){console.error(`\nHome Meals Kitchen accessibility audit FAILED (${failures.length})`);for(const f of failures)console.error(` - ${f}`);process.exitCode=1}else console.log('\nHome Meals Kitchen accessibility audit passed · search · tabs · image controls · portion steppers labelled');
