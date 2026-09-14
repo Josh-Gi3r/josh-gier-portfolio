@@ -1,6 +1,6 @@
 "use client";
 import {createContext,useContext,useEffect,useMemo,useState} from "react";
-import {getComponent,getIngredient,ingredients,recipes} from "@/data/home-data";
+import {getIngredient,ingredients,recipes} from "@/data/home-data";
 import {quantity,type QuantityUnit} from "@/data/food-quantity";
 import {getCanonicalPrepV2} from "@/data/food-truth-v2";
 import {canonicalIngredientKeyV2,getCanonicalIngredientV2} from "@/data/ingredient-catalog-v2";
@@ -44,7 +44,7 @@ function Bridge({children}:{children:React.ReactNode}){
  const shoppingNeeds=useMemo<ShoppingNeedCompat[]>(()=>v.shoppingNeeds.map(n=>({id:uiIdForCanonical(n.ingredientId),canonicalId:n.ingredientId,qty:n.shortfall.qty,unit:n.shortfall.unit,requiredQty:n.required.qty,onHandQty:n.onHand.qty})),[v.shoppingNeeds]);
  const prepBatches=useMemo<PrepBatchUi[]>(()=>v.state.componentBatches.map(b=>({...b,outputMl:b.initial.qty,remainingMl:b.remaining.qty,at:b.producedAt,unit:b.initial.unit})),[v.state.componentBatches]);
 
- const setComponent=(id:string,requested:number)=>{const c=getCanonicalPrepV2(id);if(!c)return;const current=componentStock[id]??0,legacyStep=getComponent(id)?.portionMl??c.workingUnit.qty,delta=requested-current;const normalized=Math.abs(Math.abs(delta)-legacyStep)<1e-9&&legacyStep!==c.workingUnit.qty?current+Math.sign(delta)*c.workingUnit.qty:requested;v.reconcileComponentTotal(id,quantity(Math.max(0,normalized),c.workingUnit.unit))};
+ const setComponent=(id:string,requested:number)=>{const c=getCanonicalPrepV2(id);if(!c)return;v.reconcileComponentTotal(id,quantity(Math.max(0,requested),c.workingUnit.unit))};
  const setIngredient=(id:string,qty:number)=>{const item=getIngredient(id);if(item?.tracking==="state"){v.setQualitativeIngredientLevel(id,qty);return}const key=canonicalIdForUi(id,item?.unit),def=getCanonicalIngredientV2(key);if(!def){setStorageIssue(true);return}v.setIngredientObserved(key,quantity(Math.max(0,qty),def.canonicalUnit))};
  const toggleGrocery=(id:string)=>v.toggleGrocery(canonicalIdForUi(id,getIngredient(id)?.unit));
  const toggleUseSoon=(id:string)=>v.toggleUseSoon(canonicalIdForUi(id,getIngredient(id)?.unit));
