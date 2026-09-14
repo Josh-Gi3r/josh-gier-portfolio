@@ -1,10 +1,13 @@
-# Home Meals v2 frontend integration handoff
+# Home Meals v2/v12 integration status
 
-This file is for the UI/UX implementation track. It intentionally describes **data contracts and migration states**, not visual design.
+Status: **CUTOVER COMPLETE**
+Updated: 2026-09-14
 
-## Do not use legacy quantity assumptions in new UI
+This file records the current frontend/runtime integration state. It preserves the migration rules from the earlier handoff but no longer describes the old v11 provider as production reality.
 
-New screens must not read `portionMl`, `batchYield`, `outputMl`, `remainingMl`, `neededMl`, `shortMl` or `parentMotherIds` as food truth.
+## Current rule: no legacy quantity assumptions in active UI
+
+Current screens must not read `portionMl`, `batchYield`, `outputMl`, `remainingMl`, `neededMl`, `shortMl` or `parentMotherIds` as food truth.
 
 Use the v2 export surface:
 
@@ -12,113 +15,101 @@ Use the v2 export surface:
 import { ... } from "@/data/food-v2-index";
 ```
 
-Canonical prep stock is `Quantity`:
+Canonical prep stock is unit-aware:
 
 ```ts
 { qty: 180, unit: "g" }
 { qty: 450, unit: "ml" }
+{ qty: 4, unit: "count" }
 ```
 
 Never convert g to ml for display or arithmetic.
 
 ## Provider cutover
 
-Current production UI still mounts `HouseholdStateProvider` because existing screens are written against the v11 numeric/ml contract.
+The approved v3 UI now runs on the **v12 household runtime**.
 
-A parallel `HouseholdStateV12Provider` already exists. Cut over only after the consuming screens have been migrated.
+The old v11 household sync runtime has been retired. Current Kitchen, Prep, Prep Day, Plan/groceries, Recipe/Cook/Cooking, Home readiness, Ask Home/Scan confirmations and household sync all use the current unit-safe contracts.
 
-Recommended cutover order:
-
-1. Kitchen
-2. Prep
-3. Prep Day
-4. Plan / groceries
-5. Recipe / Cook / Cooking
-6. Home readiness surfaces
-7. Ask Home / Scan confirmations
-8. Household sync
-9. Replace provider in `app/layout.tsx`
-
-This order avoids a partially migrated app writing grams into an old ml-only store.
+Legacy data may still be read by migration/archive code so old household history can be preserved safely. It must not become a second current state source.
 
 ## Migration state
 
-When v11 data exists:
+When historical v11 data is encountered:
 
-- ratings, notes, recipe versions, history and favourites are preserved;
-- legacy component stock is archived, not silently converted;
-- legacy prep batches are archived, not silently converted;
-- legacy ingredient quantities are archived, not silently reinterpreted;
-- canonical v12 stock starts at zero until Josh/G recount or measure it;
-- show the migration warnings as a simple Kitchen reconciliation task.
+- ratings, notes, recipe versions, history and favourites are preserved where safely mappable;
+- ambiguous legacy component stock is archived, not silently converted;
+- ambiguous legacy prep batches are archived, not silently converted;
+- ambiguous legacy ingredient quantities are archived, not silently reinterpreted;
+- canonical v12 quantity stock is rebuilt only from explicit current observations/confirmation;
+- migration warnings are presented as a Kitchen reconciliation task rather than pretending archived values are current stock.
 
 Never label archived quantities as current stock.
 
 ## Prep component presentation
 
-Use `prepComponentViewV2()` or equivalent DTOs.
+Use `prepComponentViewV2()` or equivalent current DTOs.
 
-The view should display the canonical quantity/unit exactly. Examples:
+The exact underlying quantity/unit remains canonical, e.g.:
 
 - `GOLD · 180 g`
 - `CLEAR · 450 ml`
 - `JP-CURRY · 75 g`
 
-Do not display an invented `14 portions` after prep. A batch becomes stock only after its real cooled output is weighed/measured.
+But the normal household production UX is **working-portion first**, not a laboratory weigh-in.
 
-### Prep Day completion
-
-Required flow:
+### Prep production flow
 
 1. cook to the structured cue;
-2. cool safely;
-3. weigh/measure the finished preparation;
-4. user enters observed output;
-5. confirm;
-6. `createMeasuredPrepBatchV2()` / v12 state logs that output.
+2. cool/store safely;
+3. divide into useful standardized working portions;
+4. tell Home how many working portions were actually stored;
+5. v12 records confirmed stock using the component's canonical working quantity/unit;
+6. optional real measurements may be stored later as household calibration evidence.
 
-For child prep such as LAKSA, the production transaction consumes its explicit `madeFrom` parent input at child-production time. Dinner does not charge the parent again.
+Do **not** invent the total physical yield of a recipe. Do not require Josh/G to weigh the entire pot simply to use the app.
+
+For child prep such as LAKSA or WOK-B/WOK-W, the production relationship uses explicit `madeFrom` semantics. Parent quantity is charged when the child prep is produced; dinner does not charge the parent again.
+
+`usedWith` is not a physical dependency and must never be treated as one.
 
 ## Recipes
 
 `canonicalDinnerFormulationsV2` is the quantitative two-person recipe layer.
 
-It contains exact formulation quantities, prep dependencies, equipment and structured cooking steps. Fields such as `actualFinishedWeightG`, `actualServings` and `actualCookMinutes` deliberately remain null until observed in the household.
+It contains exact formulation quantities, prep dependencies, equipment and structured cooking steps. Household-only observations such as actual cook time, preferred seasoning, or actual physical yield remain unknown until observed.
 
 Use `recipeVariantsV2` for explicit choices such as:
 
 - no rice / half rice;
-- chicken vs beef/pork branches;
+- protein branches;
 - lettuce-wrap bulgogi;
 - alcohol-free cacciatore/ragù;
 - potatoes vs pasta;
 - tortillas vs rice.
 
-Do not render legacy strings such as `chicken or beef` as one nutrition-bearing choice.
+Do not render ambiguous legacy strings as one nutrition-bearing choice.
 
-## Kitchen / groceries
+## Kitchen / groceries / cooking
 
-Use `ingredient-engine-v2.ts` for:
+Use `ingredient-engine-v2.ts` and current food-engine helpers for:
 
 - exact ingredient demand;
 - recipe availability;
 - shopping shortfall;
-- exact consumption after cooking.
+- prep shortfall;
+- exact consumption after cooking;
+- FIFO component use.
 
 Water is excluded from shopping. Canonical ingredient forms with different units remain separate stock identities; the app never invents mass-volume conversions.
+
+Cooking consumes the same canonical quantities used by planning. A failed reconciliation must not silently become partial stock consumption. History-only logging is an explicit separate action.
 
 ## Nutrition
 
 Do not expose provisional research calorie numbers as final household truth.
 
-The deterministic nutrition engine requires:
-
-1. ingredient nutrient binding (FDC or manufacturer label);
-2. actual measured component output for cooked prep;
-3. component nutrient density;
-4. recipe direct ingredients + prep usage + chosen variant.
-
-If a dependency is missing, show nutrition as unavailable/pending rather than asking AI to estimate it.
+The deterministic nutrition layer requires sufficient ingredient/product evidence, a defined serving basis and suitable cooked/prep yield/density evidence. If a dependency is missing, show nutrition as unavailable/not calibrated rather than asking AI to estimate it.
 
 Strained stocks such as CLEAR/DARK/DASHI/K-STOCK require an analyzed finished-food proxy rather than naïvely summing nutrients from discarded bones/aromatics.
 
@@ -126,46 +117,63 @@ Strained stocks such as CLEAR/DARK/DASHI/K-STOCK require an analyzed finished-fo
 
 Safety targets come from `food-safety-v2.ts`.
 
-Vision may assess:
+Live Vision may assess:
 
 - browning;
 - reduction;
 - oil separation;
 - surface caramelisation;
-- obvious scorching.
+- texture;
+- obvious scorching;
+- conservative visible inventory/receipt cues.
 
-Vision must not certify internal meat/fish safety. Where applicable the cooking UI should pair a visual cue with a thermometer target.
+Vision must not certify internal meat/fish safety. Inventory proposals require confirmation. Where applicable the cooking UI pairs visual cues with structured thermometer/safety targets.
 
 ## Ask Home
 
-Ask Home may explain and rank deterministic results. It must not invent:
+Ask Home receives deterministic v12 household context and may explain/rank valid results. It must not invent:
 
 - Kitchen/freezer quantities;
-- yields;
+- physical yields;
 - calories/macros;
 - allergens;
 - expiry;
 - safety temperatures;
-- substitutions not in the approved graph;
+- unvalidated substitutions;
 - Josh/G preference history.
 
-Mutations remain confirmation-gated. `ask-actions-v2.ts` applies only confirmed v12 proposals.
+Straightforward household arithmetic is precomputed. The model is used where ambiguity, planning or explanation actually benefits from reasoning. Mutations remain confirmation-gated and validated before application.
+
+## Realtime voice
+
+Realtime voice uses the same truth contract. It handles low-latency conversation and delegates household-dependent planning/arithmetic/state work to the backend rather than guessing.
 
 ## Couple memory
 
-Use separate Josh/G evidence. One comment is not a permanent preference. `household-memory-v2.ts` currently requires repeated evidence before a preference becomes eligible for automatic adaptation.
+Josh/G evidence remains separate. One comment is not automatically a permanent preference. Research confidence and household approval remain separate axes.
 
-Research confidence and household approval are separate axes.
+## Shared persistence
 
-## Final cutover gate
+Railway Postgres is the active shared Josh + G backend.
 
-Do not replace the active provider until:
+Current behaviour includes:
 
-- every visible component quantity is unit-aware;
-- Prep Day accepts measured output;
-- Plan and Kitchen use v2 demand/stock;
-- cooking uses exact v2 consumption;
-- Scan cannot write gram values into legacy ml stock;
-- Ask mutations use v12 canonical units;
-- household sync is pointed at `home-meals-household-v12`;
-- `npm run typecheck`, `npm run audit:data`, and `npm run build` pass.
+- private household session;
+- optimistic versioning;
+- explicit join/concurrent conflict states;
+- active-cooking remote-update deferral;
+- failed-write recovery without silent local-state loss.
+
+## Current release gate
+
+The v2/v12 integration is accepted only when the same commit passes:
+
+- `npm ci` from the committed lockfile;
+- `npm run typecheck`;
+- `npm run audit:data` including household journey, private AI, release infrastructure, v3/v12 cutover and product completion;
+- `npm run build`;
+- Chromium Playwright acceptance across the full catalogue and canonical responsive checkpoints;
+- Railway production deploy + healthcheck;
+- production configuration/status checks.
+
+See `HOME_MEALS_MASTER_IMPLEMENTATION_ADDENDUM_V12.md` and `QA-ACCEPTANCE-ADDENDUM_2026-09-14.md` for the current supersessions of stale master-plan/QA wording.
