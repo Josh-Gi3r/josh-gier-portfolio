@@ -1,652 +1,548 @@
 # Home Meals — Product Blueprint
 
+Status: current implementation contract
+Updated: 2026-09-14
+
 ## 0. Product truth
-Home Meals is Josh + G's private mobile-first home cooking app. It is not a public recipe website, not a SaaS dashboard, not a food blog, and not a culinary encyclopedia.
 
-The product exists to make eating at home easier, more fun, more organized, and better over time.
+Home Meals is Josh + G's private, mobile-first household cooking system. It is not a public recipe website, SaaS dashboard, food blog, calorie tracker or AI chat wrapper.
 
-It connects six things that must never become separate products:
-1. recipes we actually want to eat;
-2. reusable prep infrastructure;
-3. what is actually in the kitchen;
-4. what we plan to eat;
-5. what we need to buy;
-6. what we learned after cooking it.
+Its job is to make eating at home easier, more enjoyable and more organised over time by connecting:
 
-The app should feel like a warm shared home app for a couple. The deep food architecture stays underneath the interface.
+- the dinners Josh + G actually want;
+- reusable prep that genuinely saves work;
+- the food and prep actually recorded in Kitchen;
+- weekly planning and groceries;
+- what was cooked recently;
+- ratings, notes and household learning;
+- text, voice and camera interaction with the same underlying household truth.
 
-## 1. Product promise
-Home Meals should be able to answer, at any moment:
-- What are we eating tonight?
-- What are we eating this week?
-- What do we already have?
-- What needs using soon?
-- What should we buy?
-- What should we prep?
-- Which bases are low?
-- What can this base become?
-- What did we think of this recipe last time?
-- Which version did G prefer?
-- What should we change next time?
+The product should answer one question within roughly 10–30 seconds:
 
-The app is successful when Josh or G can open it for 10–30 seconds and know the next useful action.
+> What is the next useful thing for us to do?
 
-## 2. Audience
-Exactly two primary users:
-- Josh
-- G
+Governing product principle:
 
-No public-user abstraction in V1. No onboarding funnel. No generic personas. No B2B or creator features.
+> **Home Meals should expose love, food and the next useful action. The machinery stays underneath.**
 
-## 3. Product personality
-Warm, domestic, tactile, visual, slightly playful, never childish.
+Visual principle:
 
-Feels like:
-- a beautiful shared kitchen notebook;
-- a very smart fridge door;
-- a couple's home app;
-- a personal sous-chef that remembers things.
+> **Keep the brain, rebuild the body.**
 
-Does not feel like:
-- Notion;
-- a recipe blog;
-- a BI dashboard;
-- an enterprise operating system;
-- a culinary textbook;
-- a giant landing page.
+Phone is canonical. 390 px remains a key acceptance width.
 
-### Copy rules
-Use short domestic language.
-Prefer:
-- Tonight
-- This week
-- Use soon
-- We have enough
-- Make this Sunday
-- Low on GOLD
-- G loved this
-- Better with more chilli
+---
 
-Avoid visible internal jargon like:
-- infrastructure
-- operating system
-- architecture
-- dependency graph
-- canonical model
+## 1. Core household loop
 
-Those may exist in code and documentation, not in the everyday UI.
+The complete loop is:
 
-## 4. Mobile-first interaction contract
-Primary viewport: 390 px wide phone.
-Secondary: tablet.
-Desktop is an expanded version of the mobile app, never the design source.
+1. discover or invent dinners;
+2. approve dinners into the household repertoire;
+3. choose the active prep repertoire;
+4. build the week;
+5. compare weekly demand with recorded Kitchen truth;
+6. generate groceries and prep gaps;
+7. shop or scan purchases;
+8. update Kitchen;
+9. make only the prep the week actually needs;
+10. cook;
+11. reconcile stock only when recorded Kitchen truth is sufficient;
+12. record the meal in History;
+13. rate, note, photograph or version the dinner;
+14. use that history to make the next plan less repetitive and more personal.
 
-### Mobile rules
-- Bottom navigation always available: Home · Cook · Prep · Kitchen · Plan.
-- Ask Home is the central persistent action above the nav.
-- Camera action sits beside Ask Home.
-- Primary actions must be thumb reachable.
-- No giant page titles that consume the first screen.
-- No editorial hero section unless it contains an immediate household action.
-- No content block should require more than 2–3 short paragraphs before an action.
-- Horizontal rails are allowed only when they are obviously swipeable.
-- Every major screen should expose useful state before explanatory content.
-- Learning content appears contextually inside the task where possible.
+The loop must work even if the household maintains only a small subset of the total prep library.
 
-## 5. The linked food system
+---
 
-### 5.1 Eight mother bases
-These are permanent high-leverage prep foundations:
-1. RED — neutral tomato
-2. BLOND — Italian soffritto
-3. GOLD — North Indian bhuna masala
-4. SAMBAL — sambal tumis
-5. REMPAH — Malay/Nyonya aromatic paste
-6. CLEAR — light chicken stock
-7. DARK — reduced brown stock / jus
-8. ONION — deeply caramelised onion
+## 2. First-run truth
 
-A mother base earns permanent status because it:
-- saves substantial repetitive labour;
-- freezes well;
-- unlocks many genuinely different dinners;
-- remains broad enough to support several directions.
+Unknown is not the same as empty.
 
-### 5.2 Twenty-six mid-bases
-The mid layer multiplies the mothers or stands alone where forcing a mother underneath would make no culinary sense.
+On first use, after the private Josh + G household connection is established, Home offers three truthful starts:
 
-#### Indian
-1. MAKHANI — GOLD
-2. SAAG — GOLD
-3. KORMA — GOLD + ONION
+- **Kitchen is empty** — explicitly confirm zero stock across tracked food and prep;
+- **Start from zero and add what we have** — begin from confirmed zero, then add only what is actually present;
+- **Show Home** — use the camera as a reference, with confirmation before state changes.
 
-#### Malaysian / Nyonya / Singaporean
-4. RENDANG — REMPAH
-5. LAKSA — REMPAH
-6. KARI — standalone
-7. ASAM-PEDAS — standalone
+The user must never be forced to mark dozens of individual items Out just to establish an empty kitchen.
 
-#### Thai
-8. THAI-G — standalone
-9. THAI-R — standalone
-10. NAM-PRIK-PAO — CLEAR
-11. KRAPOW — standalone
+`kitchenReady=false` means Kitchen has not been established yet. A confirmed empty kitchen is `kitchenReady=true` with zero stock.
 
-#### Vietnamese
-12. NUOC-CHAM — fridge mid / standalone
+---
 
-#### Chinese
-13. WOK-B — CLEAR
-14. WOK-W — CLEAR
-15. CHAR-SIU — standalone
-16. DOUBAN — CLEAR
-17. GINGER-SCALLION — CLEAR / DARK
+## 3. Food architecture
 
-#### Japanese
-18. DASHI — standalone
-19. TERI — standalone
-20. JP-CURRY — ONION + CLEAR
+### 3.1 Canonical catalogue
 
-#### Korean
-21. K-ANCHOVY — standalone
-22. GOCHU — standalone
+Current food system:
 
-#### Middle Eastern / North African
-23. HARISSA — RED
+- **8 core mothers**;
+- **26 mids & sauces**;
+- **7 boosters**;
+- **36 saved dinners**.
 
-#### Mexican
-24. CHIPOTLE — RED
+The 41 prep components are a **capability library, not a setup checklist**.
 
-#### Italian / European
-25. PESTO — standalone
-26. DUX — BLOND + DARK
+### 3.2 Active prep repertoire
 
-### 5.3 Mid qualification rule
-A mid earns a permanent slot only if it:
-- unlocks at least three distinct dinners;
-- is meaningfully different from existing mids;
-- benefits from being made ahead, frozen, or fridge-held.
+The household has an explicit active prep set.
 
-Quick fresh sauces that lose quality in the freezer remain fresh finishers, not mids.
+Starter choices include:
 
-### 5.4 Food graph
-The graph is many-to-many.
+- **Start small:** GOLD + SAMBAL + RED;
+- **Balanced:** GOLD + SAMBAL + RED + REMPAH + CLEAR;
+- **All core bases:** all eight mothers, while mids and boosters remain demand-led;
+- **Custom:** any household-selected subset.
 
-Recipe -> 0..n mothers + 0..n mids + fresh ingredients + finishers + method.
+Home should prefer dinners supported by the active set and explain the smallest useful addition when more variety is requested.
+
+Example:
+
+> Adding CLEAR unlocks several more dinners.
+
+Not:
+
+> You still need to complete the remaining prep system.
+
+### 3.3 Relationship truth
+
+Prep relationships use three distinct concepts:
+
+- `madeFrom` — parent prep is physically consumed when making the child;
+- `usedWith` — components pair in a dinner but neither is automatically consumed while producing the other;
+- standalone — component has no prep parent.
+
+The UI must never collapse these into one generic parent/child relationship.
+
+### 3.4 Working portions
+
+The household-facing prep UX is **working-portion first**.
 
 Examples:
-- Chicken korma -> GOLD + ONION + KORMA.
-- Curry laksa -> REMPAH + LAKSA + CLEAR.
-- Japanese curry -> ONION + CLEAR + JP-CURRY.
-- Mushroom risotto -> BLOND + DARK + DUX + CLEAR.
-- Shakshuka -> RED + HARISSA.
-- Tom yum -> CLEAR + NAM-PRIK-PAO + fresh lemongrass/galangal/lime.
 
-Standalone mids are valid. The app must never invent a mother relationship merely to make the diagram look tidy.
+- GOLD: one working portion is 60 g;
+- CLEAR: one working portion is 120 ml;
+- MASS: one working portion is 7 g.
 
-## 6. Canonical household state
-There is one state graph. No screen gets its own fake copy of groceries, prep, or inventory.
+Exact g/ml/count remains underneath for deterministic arithmetic. The user does not need to weigh the entire finished pot just to use Home Meals.
 
-### 6.1 Recipe
-- id
-- title
-- cuisine
-- image
-- serving size
-- mothers[]
-- mids[]
-- boosters/finishers[]
-- normalized ingredients[] {ingredientId, quantity, unit}
-- cooking method
-- estimated time
-- difficulty
-- version
-- source references
-- instructions
-- visual cues
-- optional tutorial video
-- Josh rating
-- G rating
-- household notes
-- cook history
-- status: placeholder / researched / household-approved / favourite / retired
+When prep is made, Home asks how many usable working portions were stored and records the equivalent canonical quantity.
 
-### 6.2 Mother / mid prep component
-- id / code
-- name
-- parent mother ids
-- batch yield
-- portion format
-- storage format
-- freezer/fridge life
-- current stock
-- prep recipe
-- critical visual cue
-- meals unlocked[]
-- last-prepped date
-- next suggested prep quantity
+No assumed batch yield or fixed portions-per-batch may be stored as physical household truth.
 
-### 6.3 Ingredient
-- id
-- name
-- category
-- default unit
-- location: fridge/freezer/pantry
-- quantity when useful
-- simple state when exact quantity adds no value: Plenty / Some / Low / Out
-- use-soon date / priority
-- price history later
+---
 
-### 6.4 Weekly plan
-Seven recipe IDs, one per dinner slot.
+## 4. Truth contract
 
-### 6.5 Monthly pool
-A curated set of recipes for the month:
-- favourites
-- not-had-recently
-- new tests
-- emergency meals
-- weekend meals
+Home may store or state something as fact only when it comes from one of these states:
 
-### 6.6 Prep batch
-- date
-- component id
-- quantity produced
-- portion size
-- notes
+- `SOURCE_VERIFIED`;
+- `FORMULATION_LOCKED`;
+- `DERIVED`;
+- `HOUSEHOLD_MEASURED`;
+- `HOUSEHOLD_APPROVED`.
 
-### 6.7 Cook event
-- recipe id
-- date
-- version
-- consumed prep components
-- consumed ingredients
-- notes
-- actual time
-- rating prompt state
+Otherwise it is `UNKNOWN`.
 
-## 7. Product loop
-This loop is the product and every screen must support it:
+Operational rule:
 
-Discover / invent recipe
-→ approve into Our Recipes
-→ monthly pool
-→ weekly plan
-→ compare against kitchen stock
-→ generate groceries
-→ shop / scan receipt
-→ update kitchen
-→ calculate prep gaps
-→ prep bases / mids / freezer modules
-→ update freezer stock
-→ cook
-→ consume stock
-→ Josh + G rate
-→ notes / version improvement
-→ next plan becomes smarter
+> **If Home cannot know it from a reliable external source, deterministic calculation or actual Josh/G observation, Home does not store it as fact.**
 
-## 8. Screen system
+Research defines how to make it. Mathematics defines what follows from known data. The kitchen defines physical reality. Josh + G define whether it is good.
 
-### 8.1 HOME — "What are we doing?"
-Purpose: 10-second household answer screen.
+Forbidden as invented truth:
 
-Above the fold:
-1. friendly greeting / household identity;
-2. Tonight card with meal image, time, and "we have everything" / "missing 2 things";
-3. Ask Home quick prompt;
-4. use-soon warning if relevant.
+- assumed finished batch yield;
+- assumed household serving size;
+- exact household nutrition from unmeasured or unlabelled inputs;
+- exact expiry dates not supported by a relevant source or product label;
+- household taste preferences not observed;
+- visual confirmation of safe internal meat/fish temperature.
 
-Below:
-5. swipeable This Week rail;
-6. Prep next card: only if something is actually low;
-7. Kitchen pulse: fridge / freezer / pantry summary;
-8. one friendly household insight such as "G rated this 5★ last time".
+---
 
-No mother-base library on Home.
-No architecture explanations on Home.
+## 5. Recipe system
 
-### 8.2 COOK — "Our recipes"
-Purpose: living personal cookbook.
+The 36 dinners are a dynamic household repertoire, not a static cookbook.
 
-Default sections:
-- Favourites
-- Quick tonight
-- Recently cooked
-- New to try
-- By cuisine
-- From what we have
+Recipe discovery supports:
 
-Each recipe card shows:
-- image
-- title
-- time
-- Josh + G rating when available
-- tiny mother/mid chips only when useful
-- favourite/new/repeat state
+- For us;
+- Cuisine;
+- By prep;
+- Recent;
+- Not lately;
+- Never cooked;
+- Favourites;
+- Quick;
+- Ready now;
+- All.
 
-Recipe detail:
-- hero image
-- Why we like it / last note
-- ingredients
-- linked prep components
-- method
-- visual cues
-- source/tutorial
-- version history
-- Start cooking
+A recipe page should expose, in human order:
 
-Cooking mode:
-- one step at a time
-- large type
-- screen-awake-friendly
-- timers
-- Ask Home available
-- camera prep check available
-- finish meal -> consume stock -> rating prompt
+1. what the dinner is;
+2. readiness from recorded Kitchen truth;
+3. prep used;
+4. ingredients;
+5. method;
+6. visual and safety cues;
+7. Josh/G ratings, notes and versions;
+8. relevant household history.
 
-### 8.3 PREP — "Make future dinners easier"
-Purpose: the foundation of the home system.
+Canonical food arithmetic and safety remain underneath the presentation layer.
 
-Priority order:
-1. This week's prep requirement.
-2. If covered, show a celebratory "You're covered" state.
-3. Low-stock foundations.
-4. Base library.
-5. Mid-base map / multiplier explorer.
-6. Recent prep batches.
-7. Prep guides.
+---
 
-Prep must never begin with eight giant informational cards.
+## 6. Meal memory
 
-#### Core-base library presentation
-Compact visual shelf of eight mother bases with:
-- code
-- image / illustrated cube
-- portions on hand
-- status: Good / Low / Make soon
-- dinners unlocked
+Every cooked dinner may create a history event with timestamp and optional variant.
 
-Tap -> full prep recipe.
+Derived household intelligence includes:
 
-#### Mid explorer
-Interactive many-to-many map.
-Tap a mother -> mids animate outward.
-Tap a mid -> compatible mothers + example dinners appear.
-Tap a dinner -> recipe.
+- cook count;
+- last cooked date;
+- days since last cooked;
+- cooked in the last 7/14/30 days;
+- never cooked;
+- recent cuisine mix;
+- forgotten favourites;
+- Josh rating;
+- G rating;
+- household notes and recipe versions.
 
-The point is to make the multiplication visible and fun.
+This intelligence feeds both recipe discovery and planning.
 
-#### Prep-day mode
-- choose "Prep this week" or "Stock-up session"
-- calculates only required batches
-- orders tasks by equipment and cook time
-- interactive checklist
-- running timeline
-- cooling / portioning / labelling steps
-- batch completion writes freezer inventory
+Home should be able to answer naturally:
 
-### 8.4 KITCHEN — "What do we have?"
-Purpose: simple household truth, not warehouse management.
+- “What haven’t we eaten in a month?”
+- “We already had Thai twice this week.”
+- “What do we both rate highly that we haven’t had lately?”
+- “Show me something new.”
 
-Top:
-- Fridge
-- Freezer
-- Pantry
-- Scan kitchen
+---
 
-Fridge:
-- use soon first
-- proteins
-- dairy
-- vegetables
-- simple quantity states
+## 7. Weekly planner
 
-Freezer:
-- mother stock visual
-- mid stock visual
-- proteins
-- rice/carbs
-- batch dates
+The planner uses deterministic household signals before language-model reasoning.
 
-Pantry:
-- only track decision-relevant items
+Important signals:
 
-Visual language:
-- bars/rings only where they communicate "low / fine / plenty"
-- no spreadsheet table as primary UI
+- active prep fit;
+- recorded ingredient/prep readiness;
+- use-soon food;
+- recent-meal penalty;
+- cuisine repetition;
+- favourites;
+- Josh/G ratings;
+- prep reuse across the week;
+- weekday cooking-time cost;
+- explicit household constraints.
 
-### 8.5 PLAN — "This week"
-Purpose: choose meals, then automatically create the week around them.
+The planner may suggest a dinner outside the active prep set only when the value is clear and the extra prep is explicit.
 
-Top:
-- 7-day visual strip
-- tap or drag to swap
-- each meal image visible
+“Build it for us” should favour a varied, practical week rather than seven individually high-scoring but repetitive meals.
 
-Then:
-- Use soon
-- Top up
-- Shopping list
-- Prep generated from the week
-- This month's pool
-- household rating pulse
+---
 
-When any meal changes:
-- groceries recalc immediately;
-- prep recalc immediately;
-- use-soon recommendations refresh.
+## 8. Kitchen
 
-### 8.6 ASK HOME
-Purpose: one conversational entrance into the same household state.
+Kitchen has three user-facing areas:
 
-Persistent center button.
+- Fridge;
+- Freezer;
+- Pantry.
 
-Modes:
-- text
-- voice later
-- camera
+Kitchen truth may be exact or qualitative.
 
-Quick actions:
-- What can we cook tonight?
-- What should we use soon?
-- What should we buy?
-- What should we prep?
-- Show meals from what we have.
+Exact tracked quantities use canonical `g`, `ml` or `count` where genuinely known.
+
+Qualitative pantry truth remains:
+
+- Out;
+- Low;
+- Some;
+- Plenty.
+
+A qualitative level may never be silently converted into grams or millilitres.
+
+Freezer prep is shown as practical working portions, with older recorded batches first.
+
+---
+
+## 9. Groceries
+
+Groceries are derived from the current plan and recorded Kitchen truth.
+
+Conceptually:
+
+> weekly ingredient demand − recorded stock = grocery shortfall
+
+Exact shortfalls are used only where Home genuinely knows exact quantities. Qualitative pantry items remain qualitative restock decisions.
+
+Shopping completion may add confirmed purchased amounts back into Kitchen.
+
+---
+
+## 10. Cooking and stock reconciliation
+
+Cooking is a guided, large-target, mobile flow with:
+
+- one clear step at a time;
+- optional timers;
+- visual cues;
+- thermometer targets where safety requires them;
+- screen wake lock where available;
+- swipe/voice-friendly navigation.
+
+At completion there are two honest outcomes:
+
+### Stock reconciled
+
+If recorded Kitchen truth fully supports the recipe, Home consumes the exact recorded prep/ingredient quantities and records the meal.
+
+### History only
+
+If recorded Kitchen truth does not fully support the recipe, Home records the meal in History **without silently or partially inventing stock deductions**.
+
+The UI must make that distinction explicit.
+
+---
+
+## 11. Ratings, notes, versions and photos
+
+Josh and G rate independently.
+
+Recipe notes preserve author and timestamp.
+
+A useful note may be promoted into the next household recipe version.
+
+Meal photos are household memory, not evidence of food safety.
+
+---
+
+## 12. Ask Home
+
+Ask Home is the conversational interface to the same household state, not a separate chatbot.
+
+The language model receives deterministic context containing:
+
+- Kitchen state;
+- current week;
+- active prep repertoire;
+- prep/grocery shortfalls;
+- recipe readiness;
+- meal history and cuisine recency;
+- ratings/favourites/notes;
+- FIFO prep batches;
+- validated substitutions;
+- truth rules.
+
+The model explains and navigates truth; it does not redo hidden food arithmetic.
+
+Supported confirmed mutations include:
+
+- change one planned day;
+- replace the whole seven-day plan;
+- update an exact ingredient;
+- update prep stock;
+- mark/unmark use soon;
+- add a note;
+- favourite/unfavourite;
+- change active prep repertoire;
+- confirm an empty kitchen.
+
+AI state changes are proposals until the user confirms them.
+
+---
+
+## 13. Camera
 
 Camera modes:
-- fridge
-- freezer
-- receipt
-- ingredient
-- prep check
-- meal scan
 
-The UI should not expose mode selection unless useful; AI can infer later.
+- Fridge;
+- Freezer;
+- Pantry;
+- Receipt;
+- Prep;
+- Meal.
 
-## 9. Visual design system
+The camera can help identify food, propose inventory changes and describe visible cooking cues.
 
-### 9.1 Overall aesthetic
-Warm cream background, deep kitchen green, food photography, serif display type + clean sans body, rounded cards, tactile shadows, handwritten accent used sparingly.
+It may not:
 
-### 9.2 Couple personality
-Use Josh / G initials or avatars in:
-- ratings
-- notes
-- "G loved this" moments
-- shared weekly planning
+- silently mutate Kitchen;
+- invent an exact quantity when the photo cannot support one;
+- prove safe internal temperature from appearance.
 
-Do not plaster avatars everywhere.
+Vision configuration is checked without submitting an empty inference request.
 
-### 9.3 Card hierarchy
-Only four card types:
-1. Action card — something to do now.
-2. Meal card — recipe / plan item.
-3. Stock card — something we have / need.
-4. Guide card — contextual learning.
+---
 
-Avoid endless card variants.
+## 14. Voice
 
-## 10. Coded infographic system
-These are product components, not decoration.
+Voice uses OpenAI Live over WebRTC when supported, with fallback speech recognition where available.
 
-### 10.1 Base multiplier map
-Interactive graph:
-Mother -> mids -> example dinners.
-Nodes animate open/closed.
-Supports multi-parent mids with connecting lines.
+Anything that depends on current Kitchen, Plan, prep, groceries, ratings or meal history delegates to the deterministic household backend before answering.
 
-### 10.2 Dinner-unlock counter
-When selecting a mother or mid, animate:
-"RED + HARISSA unlocks 8 dinner directions"
-"GOLD + ONION + KORMA unlocks 4"
+Voice state changes follow the same confirmation requirement as text Ask Home.
 
-### 10.3 Freezer stock wheel
-Eight mother segments around a freezer icon.
-Segment size/status reflects portions on hand.
-Low stock pulses gently.
+---
 
-### 10.4 Prep pipeline
-Animated horizontal/vertical sequence:
-Chop -> cook -> cue -> cool -> portion -> label -> freeze.
-Each mother can highlight its own current step.
+## 15. Josh + G household sync
 
-### 10.5 Cube / puck scale
-True proportional silhouettes for 30 / 60 / 90 / 150 / 200 / 250 ml.
-Used inside recipes and prep detail.
+Both devices share one household state through Railway Postgres.
 
-### 10.6 Weekly dependency view
-Seven planned meals at top.
-Lines flow down to shared mothers/mids.
-This makes reuse visible: e.g. three meals all pull GOLD.
+The private household code authenticates a device. Josh/G identity is stored separately as the local author for ratings, notes and recipe changes.
 
-### 10.7 Grocery delta graphic
-Planned demand -> minus kitchen stock -> buy.
-Used as a tiny animated explainer in Plan, not a wall of text.
+Sync rules:
 
-### 10.8 Recipe evolution timeline
-v1 -> Josh/G notes -> v2 -> latest rating.
-Used only when a recipe has history.
+- optimistic versioning prevents silent overwrite;
+- conflicts require a choice;
+- remote updates are deferred during an active cooking session;
+- authenticated session cookie is HTTP-only, Secure and SameSite=Lax;
+- code comparison uses HMAC and timing-safe comparison.
 
-## 11. Motion system
-Motion must make state changes understandable.
+Current household code is an operational secret and does not belong in this repository/spec.
 
-Use:
-- spring card expansion;
-- count-up/down on inventory;
-- ingredient check-off micro-animations;
-- week swap transition;
-- graph node expansion;
-- prep timeline progress;
-- successful batch "stock added" animation;
-- cooking step slide transition;
-- rating star response;
-- gentle Ask Home dock pulse when it has a useful suggestion.
+---
 
-Avoid:
-- continuous decorative animation;
-- parallax landing-page effects;
-- autoplay video backgrounds;
-- motion that slows kitchen use.
+## 16. PWA and offline behaviour
 
-## 12. Generated visual asset plan
-Use generated photography / infographic art only where it adds meaning.
+Home Meals is installable as a PWA.
 
-Needed classes:
-- mother-base hero / process imagery;
-- selected mid-base imagery as they are approved;
-- recipe photography only after recipe graph is approved;
-- freezer organization reference;
-- prep-day workstation;
-- grocery haul / ingredient family images;
-- use-soon ingredient crops.
+Primary routes are cached for offline navigation, including:
 
-Do not generate an image for every placeholder recipe.
+- Home;
+- Cook;
+- Builder;
+- History;
+- Prep;
+- Prep Day;
+- Mids;
+- Boosters;
+- Kitchen;
+- Plan;
+- More;
+- Scan shell.
 
-## 13. Content states
-### Placeholder
-Graph relationship is valid, but detailed recipe/content is unfinished.
-UI must label it clearly.
+Food imagery uses a bounded image cache.
 
-### Researched
-Recipe/mid has exact quantities, method, source, JB/SG sourcing, storage, and visual cues.
+A service-worker update must not interrupt an active cooking route.
 
-### Household approved
-Josh + G have cooked it at least once and kept it.
+---
 
-### Favourite
-Explicitly marked.
+## 17. Visual system
 
-### Retired
-Kept in history but not proposed by default.
+The product is warm, domestic, tactile, visual and slightly playful.
 
-## 14. V1 scope
-Must work now:
-- mobile shell
-- Home
-- Cook
-- Prep
-- Kitchen
-- Plan
-- Ask Home text surface
-- 8 mothers
-- 26 mids in the graph
-- weekly plan
-- derived groceries
-- derived prep
-- stock updates
-- cooking consumption
-- separate ratings
-- history
-- placeholders clearly labelled
-- coded infographics listed above at least in first functional form
+It must never feel like:
 
-Reserved / simulated:
-- real camera recognition
-- receipt OCR
-- realtime voice
-- server persistence
+- a generic SaaS dashboard;
+- an enterprise inventory tool;
+- a recipe SEO site;
+- a spreadsheet;
+- a chat app with food attached.
 
-## 15. Acceptance tests
+Current prep visual coverage is complete:
 
-### Product feel
-- On 390 px, first screen never reads like a marketing website.
-- Home gives a useful household answer in under 5 seconds.
-- Prep answers "what should we prep" before teaching the base system.
-- Plan shows seven meals visually before any explanatory copy.
-- No screen exposes internal product jargon as headline copy.
+- 8/8 mother hero images;
+- process sequences for all eight mothers;
+- 26/26 mid hero images;
+- 7/7 booster hero images;
+- dinner imagery for the saved recipe catalogue.
 
-### Linkage
-1. Change one planned meal.
-2. Grocery quantities change.
-3. Prep requirements change.
-4. Complete a prep batch.
-5. Freezer stock rises.
-6. Prep gap falls.
-7. Cook a meal.
-8. Linked mother/mid/ingredients decrement.
-9. Josh + G rate separately.
-10. Recipe history shows the cook + rating.
-11. Reload and local state persists.
+Colour tiles remain a design language, not an accidental substitute for missing food photography.
 
-### Architecture integrity
-- No duplicate independent grocery data.
-- No duplicate independent prep demand data.
-- No recipe references a prep component that does not exist in the graph.
-- No mid claims a mother parent that the research does not support.
-- Placeholder content cannot masquerade as researched.
+---
 
-## 16. Build order
-1. Canonical data + 8/26 graph.
-2. Mobile shell + Ask Home dock.
-3. Home.
-4. Plan.
-5. Prep.
-6. Kitchen.
-7. Cook + cooking mode.
-8. Coded infographic library.
-9. Motion pass.
-10. Visual asset integration.
-11. Full household-cycle QA on mobile.
-12. Desktop adaptation.
+## 18. Accessibility and mobile ergonomics
 
-This document is the source of truth. New product decisions are additive unless explicitly superseded.
+Primary mobile interactions target at least roughly 44 × 44 px.
+
+Completion guardrails cover:
+
+- primary/compact buttons;
+- filter chips;
+- section actions;
+- stock steppers;
+- scan-mode controls;
+- bottom navigation;
+- stock-level labels;
+- visible hydration/loading state.
+
+Reduced motion and platform accessibility behaviour should be respected by the shared design system.
+
+---
+
+## 19. Nutrition
+
+Nutrition is deliberately conservative.
+
+Hard-coded recipe kcal/protein estimates are not household truth and must not be displayed as fact.
+
+Nutrition may become exact only when the deterministic nutrition engine has sufficient known ingredient/SKU and preparation inputs.
+
+Until then, the product may say nutrition is not calibrated rather than inventing a number.
+
+---
+
+## 20. Food safety
+
+Structured safety targets live in the food-safety layer.
+
+Examples:
+
+- poultry, including ground chicken: 74°C;
+- ground beef/pork: 71°C;
+- fish: 63°C;
+- whole beef: 63°C plus rest;
+- reheated leftovers: 74°C.
+
+Visual cues help with quality and technique. A camera image never proves a safe internal temperature.
+
+---
+
+## 21. Source architecture
+
+The current implementation authority is the v2/v12 food and household system, including:
+
+- `food-truth-v2.ts`;
+- `prep-formulations-v2.ts`;
+- `recipe-formulations-v2.ts`;
+- `ingredient-catalog-v2.ts`;
+- `food-engine-v2.ts`;
+- `ingredient-engine-v2.ts`;
+- `household-v12.ts`;
+- `prep-repertoire-v2.ts`;
+- `meal-history-v2.ts`;
+- `planner-v2.ts`;
+- `assistant-context-v2.ts`.
+
+Legacy display/catalogue compatibility must not override these files for quantities, relationships, safety, nutrition or inventory arithmetic.
+
+---
+
+## 22. Definition of done
+
+Home Meals is product-complete when all of the following are true:
+
+1. first-run can establish unknown, empty or existing Kitchen truth cleanly;
+2. active prep can be small, balanced, full or custom;
+3. weekly planning adapts to active prep and recent meals;
+4. all 36 dinners are browseable and cookable through the current formulation layer;
+5. all 41 prep objects are discoverable and visually represented;
+6. groceries and prep gaps derive from the current week and Kitchen truth;
+7. cooking never silently invents stock deductions;
+8. History, ratings, notes and versions feed future recommendations;
+9. Ask Home, camera and voice use the same v12 household state;
+10. Josh + G sync is conflict-safe;
+11. core routes work at phone and desktop widths without horizontal overflow;
+12. primary mobile controls meet the product touch-target guardrails;
+13. PWA/offline shell covers the completed route set;
+14. food, intelligence, cutover and product-completion audits pass;
+15. TypeScript and production build pass;
+16. Railway production deploy and healthcheck succeed.
+
+Device-specific microphone/camera permission behaviour still requires the operating system/browser to grant those permissions; the product must degrade cleanly when they are unavailable.
