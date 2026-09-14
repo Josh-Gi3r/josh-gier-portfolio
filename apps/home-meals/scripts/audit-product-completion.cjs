@@ -16,6 +16,9 @@ must('components/app/Cook.tsx',/Never cooked/,'history-aware recipe browse is mi
 must('components/app/MealHistory.tsx',/mealHistorySummaryV2/,'meal-history intelligence is not rendered');
 must('components/app/Recipe.tsx',/getCanonicalRecipeV2/,'recipe page must render the current canonical culinary reference');
 
+// Retired truth/runtime files stay retired so stale quantities and v11 sync cannot creep back into the product.
+for(const rel of ['components/HouseholdSync.tsx','data/foundation.ts','data/foundation-ops.ts','data/meal-plan.ts'])if(exists(rel))fail(`${rel}: retired legacy file was reintroduced`);
+
 // Food visuals: every current prep object must have a real hero, every mother a process sequence.
 const motherHeroes=read('data/mother-hero-assets.ts'),process=read('data/mother-process-assets.ts'),prepHeroes=read('data/prep-hero-assets.ts');
 const mothers=['red','blond','gold','sambal','rempah','clear','dark','onion'];
@@ -46,6 +49,13 @@ must('components/SmartAskRuntime.tsx',/set_week/,'Ask Home cannot confirm full-w
 must('components/VoiceRuntime.tsx',/home-meals-household-v12/,'voice is not using v12 household state');
 must('app/api/ask-home/route.ts',/function cleanHref\(/,'AI navigation routes must be validated against real Home Meals routes');
 must('app/api/ask-home/route.ts',/never invent route names such as \/week/,'AI route instructions must explicitly forbid invented navigation paths');
+must('app/api/ask-home/route.ts',/max_output_tokens:\s*3000/,'full-week structured planning lost the response budget proven in production');
+
+// Scan controls must be understandable to screen readers as well as sighted users.
+must('components/app/Scan.tsx',/aria-label="Choose a photo from the library"/,'photo-library control is unlabeled');
+must('components/app/Scan.tsx',/aria-label="Take a photo"/,'camera shutter control is unlabeled');
+must('components/app/Scan.tsx',/aria-label="Open Kitchen"/,'icon-only Kitchen control is unlabeled');
+must('components/app/Scan.tsx',/aria-label="Take the photo"/,'camera CTA input is unlabeled');
 
 // Mobile ergonomics and hydration.
 const completion=read('app/styles/completion.css');
@@ -71,4 +81,4 @@ for(const rel of ['components/app/Plan.tsx','components/app/PrepDay.tsx','compon
 must('package.json',/audit-intelligence-v2\.cjs/,'intelligence audit is not in audit:data');
 must('package.json',/audit-product-completion\.cjs/,'product-completion audit is not in audit:data');
 
-if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · full prep imagery · canonical culinary references · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · mobile/PWA/privacy guardrails');
+if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · stale legacy truth removed · full prep imagery · canonical culinary references · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible scan controls · mobile/PWA/privacy guardrails');
