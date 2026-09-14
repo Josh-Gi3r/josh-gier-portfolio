@@ -24,6 +24,7 @@ export const pantryFoundationsV3:readonly PantryFoundationV3[]=[
   {id:"tamarind",name:"Tamarind concentrate / pulp",lane:"South / Southeast Asian",role:"fruit acidity",currentOrPlanned:"current"},
   {id:"palm-sugar",name:"Palm sugar",lane:"Southeast Asian",role:"round sweetness",currentOrPlanned:"current"},
   {id:"kecap-manis",name:"Kecap manis",lane:"Indonesian / Malaysian",role:"sweet soy glaze",currentOrPlanned:"planned"},
+  {id:"cooking-caramel",name:"Malaysian cooking caramel / kicap pekat",lane:"Malaysian",role:"deep colour + slight molasses bitterness without kecap-manis sweetness",currentOrPlanned:"planned"},
   {id:"belacan",name:"Belacan / shrimp paste",lane:"Malaysian",role:"fermented savoury depth",currentOrPlanned:"current"},
   {id:"coconut-milk",name:"Coconut milk",lane:"South / Southeast Asian",role:"richness + curry body",currentOrPlanned:"current"},
   {id:"coconut-water",name:"Coconut water",lane:"Vietnamese",role:"braise liquid + gentle sweetness",currentOrPlanned:"planned"},
