@@ -14,7 +14,7 @@ export type RecipeVersion={number:number;summary:string;author:"josh"|"g"|"home"
 export type MealPhoto={mealId:string;dataUrl:string;at:string};
 export type PrepBatchUi=PrepBatchV2&{outputMl:number;remainingMl:number;at:string;unit:QuantityUnit};
 export type PrepNeedCompat={id:string;unit:QuantityUnit;neededQty:number;onHandQty:number;shortQty:number;needed:number;onHand:number;short:number;runs:number;neededMl:number;onHandMl:number;shortMl:number;batches:number};
-export type ShoppingNeedCompat={id:string;canonicalId:string;qty:number;unit:QuantityUnit;requiredQty:number;onHandQty:number};
+export type ShoppingNeedCompat={id:string;canonicalId:string;qty:number;unit:QuantityUnit|"have";requiredQty:number;onHandQty:number};
 
 const PHOTOS_KEY="home-meals-meal-photos-v1";
 const validRecipeIds=new Set(recipes.map(x=>x.id));
