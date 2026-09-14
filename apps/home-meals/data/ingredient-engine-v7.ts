@@ -1,0 +1,62 @@
+import {addQuantity,quantity,shortfallQuantity,subtractQuantity,type Quantity} from "./food-quantity";
+import {canonicalIngredientKeyV7,getCanonicalIngredientV7} from "./ingredient-catalog-v7";
+import {getPhase2LiveRuntimeV7} from "./phase2-runtime-v7";
+import {
+  ingredientsForRecipeV2,
+  type IngredientStockV2,
+  type QualitativeIngredientStockV2,
+} from "./ingredient-engine-v2";
+import {DEFAULT_COOK_SERVINGS_V4,type SupportedCookServingsV4} from "./household-serving-policy-v4";
+import type {RecipeIngredientV2} from "./recipe-formulations-v2";
+
+export type IngredientStockV7=IngredientStockV2;
+export type QualitativeIngredientStockV7=QualitativeIngredientStockV2;
+export type PlannedRecipeV7=Readonly<{recipeId:string;variantId?:string;servings?:SupportedCookServingsV4}>;
+
+/** V7 sits above the proven V2 engine. V2 never imports V7. */
+export function ingredientsForRecipeV7(recipeId:string,variantId?:string,servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4):readonly RecipeIngredientV2[]{
+  const promoted=getPhase2LiveRuntimeV7(recipeId,servings);
+  if(promoted){if(variantId)throw new Error(`Variants are not defined for promoted recipe ${recipeId}`);return promoted.ingredients}
+  return ingredientsForRecipeV2(recipeId,variantId,servings);
+}
+
+export function canonicalIngredientIdForRuntimeV7(ingredient:RecipeIngredientV2){
+  const exact=getCanonicalIngredientV7(ingredient.ingredientId);
+  if(exact&&exact.canonicalUnit===ingredient.unit)return exact.id;
+  return canonicalIngredientKeyV7(ingredient.ingredientId,ingredient.unit);
+}
+
+export function ingredientDemandForPlanV7(plan:readonly PlannedRecipeV7[]){
+  const demand=new Map<string,Quantity>();
+  for(const item of plan)for(const ingredient of ingredientsForRecipeV7(item.recipeId,item.variantId,item.servings??DEFAULT_COOK_SERVINGS_V4)){
+    if(ingredient.optional||ingredient.ingredientId==="water")continue;
+    const key=canonicalIngredientIdForRuntimeV7(ingredient),def=getCanonicalIngredientV7(key);if(!def)throw new Error(`Unknown canonical ingredient ${key}`);
+    const value=quantity(ingredient.qty,ingredient.unit),current=demand.get(key)??quantity(0,def.canonicalUnit);demand.set(key,addQuantity(current,value));
+  }
+  return[...demand].map(([ingredientId,required])=>({ingredientId,required}));
+}
+
+function stockValue(stock:IngredientStockV7,ingredientId:string):Quantity{const def=getCanonicalIngredientV7(ingredientId);if(!def)throw new Error(`Unknown canonical ingredient ${ingredientId}`);const value=stock[ingredientId]??quantity(0,def.canonicalUnit);if(value.unit!==def.canonicalUnit)throw new Error(`Ingredient stock unit mismatch for ${ingredientId}: ${value.unit} vs ${def.canonicalUnit}`);return value}
+const qualitativeLevel=(stock:QualitativeIngredientStockV7|undefined,id:string)=>Math.max(0,Math.min(3,Number(stock?.[id]??0)));
+
+export function shoppingNeedsForPlanV7(plan:readonly PlannedRecipeV7[],stock:IngredientStockV7,qualitative?:QualitativeIngredientStockV7){
+  return ingredientDemandForPlanV7(plan).map(({ingredientId,required})=>{const onHand=stockValue(stock,ingredientId);return{ingredientId,required,onHand,shortfall:shortfallQuantity(required,onHand),qualitativeLevel:qualitativeLevel(qualitative,ingredientId)}}).filter(x=>x.shortfall.qty>0&&x.qualitativeLevel<2)
+}
+
+export function ingredientAvailabilityForRecipeV7(recipeId:string,stock:IngredientStockV7,variantId?:string,qualitative?:QualitativeIngredientStockV7,servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4){
+  const missing=ingredientsForRecipeV7(recipeId,variantId,servings).filter(x=>!x.optional&&x.ingredientId!=="water").map(x=>{const key=canonicalIngredientIdForRuntimeV7(x),required=quantity(x.qty,x.unit),onHand=stockValue(stock,key),shortfall=shortfallQuantity(required,onHand);return{ingredientId:key,required,onHand,shortfall,qualitativeLevel:qualitativeLevel(qualitative,key)}}).filter(x=>x.shortfall.qty>0&&x.qualitativeLevel<=0);return{ready:missing.length===0,missing};
+}
+
+export function consumeRecipeIngredientsV7(recipeId:string,stock:IngredientStockV7,variantId?:string,qualitative?:QualitativeIngredientStockV7,servings:SupportedCookServingsV4=DEFAULT_COOK_SERVINGS_V4):IngredientStockV7{
+  const availability=ingredientAvailabilityForRecipeV7(recipeId,stock,variantId,qualitative,servings);if(!availability.ready)throw new Error(`Insufficient ingredient stock for ${recipeId}`);const next:Record<string,Quantity>={...stock};
+  for(const ingredient of ingredientsForRecipeV7(recipeId,variantId,servings)){
+    if(ingredient.optional||ingredient.ingredientId==="water")continue;
+    const key=canonicalIngredientIdForRuntimeV7(ingredient),required=quantity(ingredient.qty,ingredient.unit),onHand=stockValue(next,key);
+    if(onHand.qty>=required.qty)next[key]=subtractQuantity(onHand,required);
+    else if(qualitativeLevel(qualitative,key)>0)continue;
+    else throw new Error(`Insufficient ingredient stock for ${recipeId}/${key}`);
+  }
+  return next;
+}
+
+export function emptyIngredientStockV7():IngredientStockV7{return{}}
