@@ -20,7 +20,7 @@ export type RecipeCardViewV2 = Readonly<{
   id:string;
   title:string;
   cuisine:string;
-  servings:2;
+  servings:4;
   prepReady:boolean;
   missingPrep:readonly {componentId:string;shortfall:Quantity;label:string}[];
   reportedMinutes:number;
