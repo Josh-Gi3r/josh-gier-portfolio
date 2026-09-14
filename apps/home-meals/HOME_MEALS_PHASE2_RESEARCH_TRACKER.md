@@ -1,8 +1,9 @@
 # Home Meals — Phase 2 Research Tracker
 
-Status: **IN PROGRESS**
+Status: **IN PROGRESS — 10/100 FORMULATION LOCKED**
 Started: 2026-09-14
 Baseline: `42ebfcfe5852135a94bf29b1e956e07382299627`
+Latest accepted research head before this tracker-only update: `0fcbcbc61901cd5d3a49145020044f763e95b91f`
 
 This is the execution ledger for the 100-recipe expansion defined in `HOME_MEALS_CULINARY_REAUDIT_AND_100_RECIPE_PLAN.md` and `data/recipe-expansion-plan-v3.tsv`.
 
@@ -30,12 +31,19 @@ A candidate may move from `PLANNED` to `FORMULATION_LOCKED` only after:
 
 Default research batch: **up to 10 recipes**, while preserving cuisine/technique coherence. Never cross into the next cuisine wave merely to fill a quota.
 
+## Overall progress
+
+- Planned expansion: **100**
+- Formulation locked: **10 / 100**
+- Live from Phase 2: **0 / 100**
+- Household calibrated: **0 / 100**
+
 ## Wave tracker
 
 | Wave | Scope | Planned | Locked | Live | Status |
 |---|---|---:|---:|---:|---|
-| 1A | Chinese pantry + techniques + Chinese recipes 1–10 | 10 | 0 | 0 | IN PROGRESS |
-| 1B | Chinese recipes 11–15 | 5 | 0 | 0 | PENDING |
+| 1A | Chinese pantry + techniques + Chinese recipes 1–10 | 10 | 10 | 0 | FORMULATION LOCKED · CI + RAILWAY GREEN |
+| 1B | Chinese recipes 11–15 | 5 | 0 | 0 | NEXT |
 | 2 | Indian | 10 | 0 | 0 | PENDING |
 | 3A | Thai | 8 | 0 | 0 | PENDING |
 | 3B | Malaysia / Singapore / Indonesia | 10 | 0 | 0 | PENDING |
@@ -48,7 +56,7 @@ Default research batch: **up to 10 recipes**, while preserving cuisine/technique
 | 6A | Everyday breakfast/lunch 1–10 | 10 | 0 | 0 | PENDING |
 | 6B | Everyday breakfast/lunch 11–13 | 3 | 0 | 0 | PENDING |
 
-## Wave 1A candidate list
+## Wave 1A accepted recipes
 
 1. Mapo tofu
 2. Kung pao chicken
@@ -61,23 +69,34 @@ Default research batch: **up to 10 recipes**, while preserving cuisine/technique
 9. Sweet & sour chicken
 10. Garlic aubergine
 
-## Wave 1A shared research requirements
+The formulation-locked records live in `data/phase2-chinese-recipes-v4.ts`. They are research truth, not yet live catalogue records.
 
-Before locking individual recipes, establish a consistent Chinese pantry/technique model for:
+## Wave 1A shared Chinese pantry / technique foundation
+
+`data/chinese-pantry-research-v4.ts` establishes one shared research model for:
 
 - Chinese light soy vs dark soy;
 - oyster sauce;
 - Shaoxing wine;
 - toasted sesame oil;
-- Chinkiang black vinegar vs white/red rice vinegar;
+- Chinkiang black vinegar vs white/rice vinegar;
 - hoisin;
 - Pixian/la doubanjiang;
-- chilli oil/crisp where used;
-- meat slicing and velveting;
-- staged high-heat wok cooking and overcrowding control;
-- roast/glaze handling for char siu;
-- steaming and hot-oil finishing;
-- SFA household meat/poultry safety and existing Home Meals fish safety policy.
+- chilli oil/crisp;
+- staged high-heat wok cooking;
+- meat slicing/recipe-specific velveting;
+- char-siu roast/glaze hygiene;
+- fish steaming and hot-oil finishing;
+- Home Meals safety endpoints.
+
+Material planning corrections from the shared research are represented in the locked recipe objects rather than silently preserving the original brainstorm:
+
+- Mapo tofu no longer carries generic light-soy/dark-soy/Chinkiang assumptions; its identity is centred on DOUBAN/Pixian doubanjiang, Sichuan pepper and chilli.
+- Kung pao uses rice vinegar in the locked formulation rather than automatically using Chinkiang.
+- Tomato & egg remains genuinely no-base and does not get generic soy sauce added merely because it is Chinese.
+- Ginger-scallion chicken is locked as a gentle Cantonese-style poached chicken that makes meaningful use of the existing GS-OIL mid.
+- Sweet & sour chicken and garlic aubergine use the appropriate rice/red-rice-vinegar lane rather than generic Chinkiang substitution.
+- CHAR-SIU remains a reusable mid for pork and chicken, with raw-contact marinade/glaze safety explicitly controlled.
 
 ## Truth boundaries
 
@@ -88,11 +107,31 @@ Before locking individual recipes, establish a consistent Chinese pantry/techniq
 - Brand-sensitive sodium/allergen/nutrition values remain label-dependent.
 - A pantry bottle is not promoted into a freezer component merely for architectural symmetry.
 - A Home adaptation must be named as a Home adaptation.
+- `FORMULATION_LOCKED` does not make a recipe selectable in Cook/Plan; live promotion requires its own catalogue/grocery/stock/safety/image integration and release acceptance.
+
+## Next research batch — Wave 1B
+
+1. Dan dan noodles
+2. Beef chow fun
+3. Chicken chow mein
+4. Egg fried rice
+5. Salt & pepper prawns
+
+Wave 1B should reuse the Chinese pantry/technique foundation, extending it only where the next five introduce genuinely new shared truth.
 
 ## Worklog
 
 ### 2026-09-14 — Phase 2 start
 
-- Refreshed `main`; baseline remains `42ebfcfe5852135a94bf29b1e956e07382299627`.
+- Refreshed `main`; baseline was `42ebfcfe5852135a94bf29b1e956e07382299627`.
 - Began Wave 1A with the shared Chinese pantry/technique foundation before individual recipe locking.
 - Initial source family: The Woks of Life Chinese pantry/ingredient glossaries and technique/recipe references; Made With Lau for Cantonese restaurant/home technique; SFA/USDA safety references where applicable.
+
+### 2026-09-14 — Wave 1A formulation lock
+
+- Added `data/chinese-pantry-research-v4.ts` with 10 researched shared pantry records plus Chinese technique rules.
+- Added `data/phase2-chinese-recipes-v4.ts` with exact two-person formulations, prep/pantry relationships, cooking endpoints, safety targets, allergens, substitutions, reference kcal/person, provenance and image briefs for the first 10 Chinese recipes.
+- Added permanent `scripts/audit-phase2-chinese-v4.cjs` regression coverage and included it in `npm run audit:data`.
+- Kept the 10 recipes out of the live catalogue; research truth is deliberately separated from live promotion.
+- Accepted research head `0fcbcbc61901cd5d3a49145020044f763e95b91f`: Home Meals CI passed typecheck, all data/food/Phase-2 audits, production build and full Chromium browser acceptance; Railway deployment status was SUCCESS.
+- Wave 1A is therefore accepted as **10/10 FORMULATION LOCKED, 0/10 LIVE**.
