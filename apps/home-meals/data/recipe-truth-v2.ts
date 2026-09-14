@@ -1,5 +1,6 @@
 import { recipes } from "./home-data";
-import { recipePrepV2, type RecipePrepRequirementV2 } from "./food-truth-v2";
+import { type RecipePrepRequirementV2 } from "./food-truth-v2";
+import { prepForRecipeAtCookScaleV4 } from "./food-engine-v2";
 import { safetyProfileV2, type RecipeSafetyProfileV2 } from "./food-safety-v2";
 import { getIngredientTruthV2 } from "./ingredient-truth-v2";
 
@@ -37,7 +38,7 @@ export type CanonicalRecipeV2 = Readonly<{
   id:string;
   title:string;
   cuisine:string;
-  servings:2;
+  servings:4;
   identityClass:RecipeIdentityClass;
   truthStatus:readonly RecipeTruthStatus[];
   reportedTotalMinutes:number;
@@ -75,31 +76,31 @@ const identityOverrides:Readonly<Record<string,RecipeIdentityClass>> = {
   "chipotle-bean-skillet":"cuisine_inspired",
 };
 
-// Explicit starch truth mirrors the current dinner formulations so the legacy display layer can never make starch demand ambiguous.
+// Explicit starch truth is now the default four-serving cook batch. Josh + G typically eat two portions and keep leftovers.
 const explicitStarches:Readonly<Record<string,StarchDefinitionV2>> = {
-  "gold-chicken-curry":{id:"basmati-rice",qty:120,unit:"g",basis:"dry"},
-  "gold-punjabi-egg-curry":{id:"basmati-rice",qty:100,unit:"g",basis:"dry"},
-  "sambal-udang":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "sambal-telur":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "curry-laksa":{id:"rice-noodles",qty:240,unit:"g",basis:"fresh"},
-  "rempah-coconut-fish":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "thai-green-chicken":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "thai-red-chicken":{id:"jasmine-rice",qty:100,unit:"g",basis:"dry"},
-  "pad-kra-pao":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "pad-see-ew":{id:"rice-noodles",qty:450,unit:"g",basis:"fresh"},
-  "beef-broccoli":{id:"rice",qty:120,unit:"g",basis:"dry"},
-  "brown-chicken-mushroom":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "wok-tofu-greenbeans":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "teriyaki-salmon":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "teriyaki-chicken":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "miso-salmon":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
-  "miso-aubergine-tofu":{id:"jasmine-rice",qty:100,unit:"g",basis:"dry"},
-  "gochujang-tofu":{id:"jasmine-rice",qty:100,unit:"g",basis:"dry"},
-  "beef-ragu":{id:"pasta",qty:180,unit:"g",basis:"dry"},
-  "chicken-cacciatore":{id:"potatoes",qty:300,unit:"g",basis:"raw"},
-  "mustard-mushroom-chicken":{id:"potatoes",qty:300,unit:"g",basis:"raw"},
-  "harissa-chickpeas":{id:"couscous",qty:120,unit:"g",basis:"dry",optional:true},
-  "chipotle-chicken-bowl":{id:"jasmine-rice",qty:120,unit:"g",basis:"dry"},
+  "gold-chicken-curry":{id:"basmati-rice",qty:240,unit:"g",basis:"dry"},
+  "gold-punjabi-egg-curry":{id:"basmati-rice",qty:200,unit:"g",basis:"dry"},
+  "sambal-udang":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "sambal-telur":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "curry-laksa":{id:"rice-noodles",qty:480,unit:"g",basis:"fresh"},
+  "rempah-coconut-fish":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "thai-green-chicken":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "thai-red-chicken":{id:"jasmine-rice",qty:200,unit:"g",basis:"dry"},
+  "pad-kra-pao":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "pad-see-ew":{id:"rice-noodles",qty:900,unit:"g",basis:"fresh"},
+  "beef-broccoli":{id:"rice",qty:240,unit:"g",basis:"dry"},
+  "brown-chicken-mushroom":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "wok-tofu-greenbeans":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "teriyaki-salmon":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "teriyaki-chicken":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "miso-salmon":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
+  "miso-aubergine-tofu":{id:"jasmine-rice",qty:200,unit:"g",basis:"dry"},
+  "gochujang-tofu":{id:"jasmine-rice",qty:200,unit:"g",basis:"dry"},
+  "beef-ragu":{id:"pasta",qty:360,unit:"g",basis:"dry"},
+  "chicken-cacciatore":{id:"potatoes",qty:600,unit:"g",basis:"raw"},
+  "mustard-mushroom-chicken":{id:"potatoes",qty:600,unit:"g",basis:"raw"},
+  "harissa-chickpeas":{id:"couscous",qty:240,unit:"g",basis:"dry",optional:true},
+  "chipotle-chicken-bowl":{id:"jasmine-rice",qty:240,unit:"g",basis:"dry"},
 };
 
 const sourceOverrides:Readonly<Record<string,{source:{label:string;url:string};status:"specific"|"adaptation_reference";supporting?:readonly RecipeEvidenceV2[]}>>={
@@ -135,10 +136,10 @@ function statuses(recipe:LegacyRecipe):RecipeTruthStatus[] {
 export const canonicalRecipesV2:readonly CanonicalRecipeV2[] = recipes.map(recipe=>{
   const source=canonicalSource(recipe);
   return {
-    id:recipe.id,title:recipe.title,cuisine:recipe.cuisine,servings:2,
+    id:recipe.id,title:recipe.title,cuisine:recipe.cuisine,servings:4,
     identityClass:identityOverrides[recipe.id]??(source.status==="generic_or_wrong"?"needs_source_upgrade":"legacy_researched"),
     truthStatus:statuses(recipe),reportedTotalMinutes:recipe.minutes,prepMinutes:null,activeMinutes:null,passiveMinutes:null,marinationMinutes:null,
-    prep:recipePrepV2(recipe.id),ingredientIds:recipe.ingredients.filter(x=>!x.optional).map(x=>x.id),rawIngredients:recipe.rawIngredients,
+    prep:prepForRecipeAtCookScaleV4(recipe.id),ingredientIds:recipe.ingredients.filter(x=>!x.optional).map(x=>x.id),rawIngredients:recipe.rawIngredients,
     explicitStarch:explicitStarches[recipe.id]??null,source:source.source,evidenceSources:source.evidence,sourceStatus:source.status,
     safety:safetyProfileV2(recipe.id),finishedWeightG:null,actualServings:null,
   };
