@@ -9,7 +9,7 @@ must(pkg,/"packageManager"\s*:\s*"npm@10\.9\.8"/,'npm runtime is not pinned');
 must(pkg,/"node"\s*:\s*">=24 <25"/,'Node 24 production runtime is not pinned');
 must(pkg,/"@playwright\/test"\s*:\s*"1\.63\.0"/,'browser acceptance dependency is not pinned');
 must(pkg,/"test:e2e"\s*:\s*"playwright test"/,'browser acceptance script is missing');
-for(const rel of ['playwright.config.ts','tests/e2e/product-smoke.spec.ts'])if(!exists(path.join(root,rel)))fail(`${rel} is missing`);
+for(const rel of ['playwright.config.ts','tests/e2e/product-smoke.spec.ts','tests/e2e/sync-recovery.spec.ts'])if(!exists(path.join(root,rel)))fail(`${rel} is missing`);
 // A full GitHub checkout includes .github and validates the CI contract. Railway builds from apps/home-meals only,
 // so the same application audit must remain valid when repository-level workflow files are intentionally absent.
 if(exists(ciPath)){
@@ -22,4 +22,4 @@ if(exists(ciPath)){
  must(ci,/playwright install --with-deps chromium/,'CI does not install the release browser');
  must(ci,/npm run test:e2e/,'CI is not gated on browser acceptance');
 }
-if(failures.length){console.error(`\nHome Meals release-infrastructure audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals release-infrastructure audit passed · Node 24 + npm 10.9.8 aligned across CI/production · deterministic dependency graph · repeatable Chromium acceptance artifacts');
+if(failures.length){console.error(`\nHome Meals release-infrastructure audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals release-infrastructure audit passed · Node 24 + npm 10.9.8 aligned across CI/production · deterministic dependency graph · full-route/responsive/two-device Chromium acceptance artifacts');
