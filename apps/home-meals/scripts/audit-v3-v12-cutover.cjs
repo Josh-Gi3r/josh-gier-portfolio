@@ -18,8 +18,10 @@ mustNot('components/HouseholdState.tsx',/portionMl/,'runtime bridge still uses l
 must('data/household-v12.ts',/activePrepIds:string\[\]/,'v12 state must persist active prep repertoire');
 must('data/household-v12.ts',/confirmEmptyKitchenV12/,'v12 state must distinguish confirmed empty from unknown Kitchen');
 
-must('components/app/Recipe.tsx',/getRuntimeDinnerFormulationV4/,'recipe page is not rendering four-serving runtime formulation');
-must('components/app/Cooking.tsx',/getRuntimeDinnerFormulationV4/,'cooking mode is not rendering four-serving runtime formulation');
+must('components/app/Recipe.tsx',/getRuntimeDinnerFormulationV7/,'recipe page is not rendering the unified four-serving V7 runtime formulation');
+must('components/app/Cooking.tsx',/getRuntimeDinnerFormulationV7/,'cooking mode is not rendering the unified four-serving V7 runtime formulation');
+must('data/runtime-dinner-v7.ts',/getRuntimeDinnerFormulationV4/,'V7 runtime must preserve the proven V4 fallback for the original catalogue');
+must('data/runtime-dinner-v7.ts',/getPhase2LiveRuntimeV7/,'V7 runtime must gate promoted Phase 2 recipes');
 must('data/runtime-dinner-v4.ts',/getDinnerFormulationV2/,'runtime formulation must retain v2 culinary reference provenance');
 must('data/runtime-dinner-v4.ts',/targetServings:servings/,'runtime formulation must expose selected household cook servings');
 must('components/app/PrepDay.tsx',/recordMeasuredProduction/,'Prep Day must record actual measured finished output');
@@ -37,7 +39,7 @@ must('components/app/Prep.tsx',/Your prep/,'Prep home must foreground household 
 must('components/app/Prep.tsx',/Core bases/,'Prep home must expose core bases in unified library');
 must('components/app/Prep.tsx',/Mids & sauces/,'Prep home must expose mids and sauces');
 must('components/app/Prep.tsx',/Boosters/,'Prep home must expose boosters');
-must('components/app/Prep.tsx',/prepExpansionCandidatesV2/,'Prep home must explain what one more prep item unlocks');
+must('components/app/Prep.tsx',/prepExpansionCandidatesV2|prepExpansionCandidatesV7/,'Prep home must explain what one more prep item unlocks');
 must('components/app/Mids.tsx',/prepRelationshipLabelV2/,'mids explorer must use canonical madeFrom/usedWith semantics');
 mustNot('components/app/Mids.tsx',/parentMotherIds/,'mids explorer regressed to old parentMotherIds taxonomy');
 must('data/prep-repertoire-v2.ts',/madeFrom/,'repertoire engine must distinguish physical parent relationships');
@@ -80,4 +82,4 @@ must('components/app/Boosters.tsx',/prepHero/,'Boosters must render prep photogr
 for(const rel of ['components/app/Home.tsx','components/app/Cook.tsx','components/app/Recipe.tsx','components/app/Cooking.tsx','components/app/Plan.tsx','components/app/Builder.tsx'])mustNot(rel,/recipe-nutrition|nutritionFor\s*\(/,'active v3 UI still consumes placeholder nutrition');
 const nutrition=read('data/recipe-nutrition.ts');if(/"[a-z0-9-]+"\s*:\s*\{\s*kcal/i.test(nutrition))fail('data/recipe-nutrition.ts still contains hard-coded recipe nutrition');
 
-if(failures.length){console.error(`\nHome Meals v3/v12 cutover audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals v3/v12 cutover audit passed · v3 design preserved · v12 state + four-serving runtime locked · repertoire/history/AI flows locked · complete prep imagery · V6 measured-output packet prep · no placeholder nutrition or assumed prep yields');
+if(failures.length){console.error(`\nHome Meals v3/v12 cutover audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals v3/v12 cutover audit passed · v3 design preserved · v12 state + V7 four-serving runtime gate locked · repertoire/history/AI flows locked · complete prep imagery · V6 measured-output packet prep · no placeholder nutrition or assumed prep yields');
