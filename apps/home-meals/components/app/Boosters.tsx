@@ -2,13 +2,14 @@
 import Link from "next/link";
 import {useState,type CSSProperties} from "react";
 import {foundationImages} from "@/data/foundation-assets";
-import {canonicalPrepComponentsV2,getCanonicalPrepV2,recipePrepV2} from "@/data/food-truth-v2";
+import {canonicalPrepComponentsV2,getCanonicalPrepV2} from "@/data/food-truth-v2";
+import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {quantity} from "@/data/food-quantity";
 import {containerGuidanceV6,getHouseholdPrepFormulationV6,getPrepPortionPolicyV6,packetBreakdownV6} from "@/data/prep-portioning-v6";
 import {getPrepStorageV2} from "@/data/prep-storage-v2";
-import {prepRelationshipLabelV2} from "@/data/prep-repertoire-v2";
-import {stockPortions} from "@/data/stock-math";
-import {recipes} from "@/data/home-data";
+import {prepRelationshipLabelV7} from "@/data/prep-repertoire-v7";
+import {stockPortionsV7} from "@/data/stock-math-v7";
+import {allLiveRecipesV7 as recipes} from "@/data/recipe-catalog-v7";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
 import {prepHero,toneFor,toneGradient} from "@/lib/tones";
@@ -16,19 +17,19 @@ import {HomeSays} from "./HomeSays";
 import {formatQty,MealTile,RoundBack,SectionHead,Sheet,Stat,Toast} from "./Primitives";
 
 const boosters=canonicalPrepComponentsV2.filter(x=>x.tier==="booster");
-const dinnersFor=(id:string)=>recipes.filter(r=>recipePrepV2(r.id).some(x=>x.componentId===id));
-const portionsOf=(id:string,stock:Record<string,number>)=>stockPortions(id,stock);
+const dinnersFor=(id:string)=>recipes.filter(r=>prepForRecipeAtCookScaleV7(r.id).some(x=>x.componentId===id));
+const portionsOf=(id:string,stock:Record<string,number>)=>stockPortionsV7(id,stock);
 const statusOf=(n:number)=>n<=0?{label:"Out",cls:"peach"}:n<=1?{label:"Low",cls:"peach"}:n<=3?{label:"Some",cls:"neutral"}:{label:"Good",cls:""};
 const formWords:Record<string,string>={aromatic:"An aromatic prep",marinade:"A marinade",spice:"A dry spice finish",condiment:"A condiment",sauce:"A sauce",paste:"A paste"};
 function describe(id:string){const c=getCanonicalPrepV2(id),s=getPrepStorageV2(id),p=getPrepPortionPolicyV6(id);if(!c||!p)return{summary:"A small finishing prep.",storage:"",note:undefined as string|undefined};const pantry=!!s?.pantryAllowed,keep=pantry?"Kept airtight in the pantry.":s?.fridgeDays?`Fridge ${s.fridgeDays} ${s.fridgeDays===1?"day":"days"}${s.freezerAllowed?", freeze for longer.":"."}`:s?.freezerAllowed?"Freeze for longer keeping.":"";return{summary:`${formWords[c.form]??"A finishing prep"} stored as practical ${formatQty(p.packet.qty,p.packet.unit)} ${p.kind.replace("-"," ")} units. ${keep}`,storage:pantry?"pantry · airtight":s?.fridgeDays?`fridge ${s.fridgeDays}d${s.freezerAllowed?" · freeze":""}`:s?.freezerAllowed?"freeze":"",note:c.note??s?.note}}
 
 export function Boosters(){
- const h=useHousehold(),usage=boosters.map(b=>({b,n:dinnersFor(b.id).length})).sort((a,b)=>b.n-a.n),mostUsed=usage.filter(x=>x.n>0).slice(0,3).map(x=>x.b.code),needed=boosters.filter(b=>h.week.some(rid=>recipePrepV2(rid).some(x=>x.componentId===b.id)));
+ const h=useHousehold(),usage=boosters.map(b=>({b,n:dinnersFor(b.id).length})).sort((a,b)=>b.n-a.n),mostUsed=usage.filter(x=>x.n>0).slice(0,3).map(x=>x.b.code),needed=boosters.filter(b=>h.week.some(rid=>prepForRecipeAtCookScaleV7(rid).some(x=>x.componentId===b.id)));
  return <div className="hm-screen">
   <div className="hm-title-row"><RoundBack href="/prep" label="Back to prep"/><h1 className="hm-h1">Boosters</h1></div><p className="hm-lead hm-gut" style={{marginTop:10,fontSize:14}}>Concentrated aromatics, marinades and finishes. A small dose can still be a full four-serving cook when the flavour is genuinely concentrated.</p>
   <div className="hm-kitchen-hero" style={{height:150}}><img src={foundationImages.cubes} alt=""/><div className="shade"/><div className="copy"><span className="hm-kicker" style={{color:"rgba(255,255,255,.85)"}}>{boosters.length} boosters</span><h3 style={{marginTop:4}}>{mostUsed.length?`Most useful: ${mostUsed.join(", ")}`:"Small prep, big finish"}</h3></div></div>
   <HomeSays className="tight">{needed.length?<><b>{needed.map(b=>b.code).join(", ")}</b> {needed.length===1?"is":"are"} used by this week. That does not mean the other boosters need to be maintained.</>:<>Nothing this week needs a booster. Leave the rest dormant until a dinner calls for one.</>}</HomeSays>
-  <div className="hm-boosters">{boosters.map(b=>{const n=portionsOf(b.id,h.componentStock),st=statusOf(n),active=h.activePrepIds.includes(b.id),hero=prepHero(b.id),p=getPrepPortionPolicyV6(b.id);return <Link key={b.id} href={`/prep/boosters/${b.id}`} className="hm-card lg hm-lift" style={{"--tone-grad":toneGradient(b.id),overflow:"hidden",padding:0} as CSSProperties} onClick={()=>feedback("tap")}>{hero&&<img src={hero} alt="" style={{width:"100%",aspectRatio:"4 / 3",objectFit:"cover",display:"block"}}/>}<div style={{padding:14}}><div className="top"><span className="sq">{b.code}</span>{h.kitchenReady&&<span className={`hm-pill ${st.cls}`}>{st.label}</span>}</div><strong>{b.name}</strong><small>{p?formatQty(p.packet.qty,p.packet.unit):"—"} storage dose · {h.kitchenReady?`${n} full left`:"not counted"}</small><small>{active?"active repertoire":prepRelationshipLabelV2(b.id)}</small></div></Link>})}</div>
+  <div className="hm-boosters">{boosters.map(b=>{const n=portionsOf(b.id,h.componentStock),st=statusOf(n),active=h.activePrepIds.includes(b.id),hero=prepHero(b.id),p=getPrepPortionPolicyV6(b.id);return <Link key={b.id} href={`/prep/boosters/${b.id}`} className="hm-card lg hm-lift" style={{"--tone-grad":toneGradient(b.id),overflow:"hidden",padding:0} as CSSProperties} onClick={()=>feedback("tap")}>{hero&&<img src={hero} alt="" style={{width:"100%",aspectRatio:"4 / 3",objectFit:"cover",display:"block"}}/>}<div style={{padding:14}}><div className="top"><span className="sq">{b.code}</span>{h.kitchenReady&&<span className={`hm-pill ${st.cls}`}>{st.label}</span>}</div><strong>{b.name}</strong><small>{p?formatQty(p.packet.qty,p.packet.unit):"—"} storage dose · {h.kitchenReady?`${n} full left`:"not counted"}</small><small>{active?"active repertoire":prepRelationshipLabelV7(b.id)}</small></div></Link>})}</div>
  </div>;
 }
 
@@ -40,7 +41,7 @@ export function BoosterDetail({slug}:{slug:string}){
  return <div className="hm-screen flush" style={{"--tone":tone,"--tone-grad":grad} as CSSProperties}>
   {hero?<div className="hm-hero md"><img src={hero} alt={b.name} loading="eager" fetchPriority="high"/><div className="shade"/><div className="top"><RoundBack href="/prep/boosters" onPhoto label="Back to boosters"/></div><div className="code" style={{position:"absolute",left:22,bottom:22,color:"white"}}><span className="kick">BOOSTER · {formatQty(policy.packet.qty,policy.packet.unit)} STORAGE DOSE</span><b style={{display:"block",fontSize:28}}>{b.code}</b></div></div>:<div className="hm-hero-grad sm" style={{"--tone-light":`${tone}99`,"--tone-deep":tone} as CSSProperties}><div className="glow"/><div className="top"><RoundBack href="/prep/boosters" onPhoto label="Back to boosters"/></div><div className="code"><span className="kick">BOOSTER · {formatQty(policy.packet.qty,policy.packet.unit)} STORAGE DOSE</span><b>{b.code}</b></div></div>}
   <div className="hm-sheetpage" style={{paddingBottom:140}}><h1 className="hm-h1" style={{fontSize:28,lineHeight:1.1}}>{b.name}</h1><p className="hm-lead" style={{marginTop:8}}>{about.summary}</p><div className="hm-stats"><Stat v={h.kitchenReady?n:"—"} k="full doses left"/><Stat v={formatQty(policy.packet.qty,policy.packet.unit)} k="per storage dose" tint="var(--tint-peach)"/><Stat v={dinners.length} k={dinners.length===1?"dinner":"dinners"} tint="var(--tint-sky)"/></div>
-   <div className="hm-card" style={{marginTop:16,padding:14,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}><span><strong>{active?"In your active repertoire":"Dormant library item"}</strong><small style={{display:"block"}}>{prepRelationshipLabelV2(slug)}</small></span><button className={`hm-pill ${active?"":"neutral"}`} onClick={()=>{h.toggleActivePrep(slug,!active);feedback("change")}}>{active?"Pause":"Add"}</button></div>
+   <div className="hm-card" style={{marginTop:16,padding:14,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}><span><strong>{active?"In your active repertoire":"Dormant library item"}</strong><small style={{display:"block"}}>{prepRelationshipLabelV7(slug)}</small></span><button className={`hm-pill ${active?"":"neutral"}`} onClick={()=>{h.toggleActivePrep(slug,!active);feedback("change")}}>{active?"Pause":"Add"}</button></div>
    <SectionHead title="What goes in" action={about.storage&&<span className="muted">{about.storage}</span>}/><div className="hm-chiplist">{inputs.map(x=><span key={x}>{x}</span>)}</div><div className="hm-steps" style={{marginTop:20}}>{f.method.map((s,i)=><div key={s.instruction} className="hm-card hm-step" style={{"--phase":grad} as CSSProperties}><b>{i+1}</b><div><p>{s.instruction}</p>{s.cue&&<small>{s.cue}</small>}</div><span/></div>)}</div>{cues.length>0&&<div className="hm-cues" style={{marginTop:12}}>{cues.map(c=><div key={c} className="hm-card"><b>✓</b>{c}</div>)}</div>}
    <SectionHead title="Goes into" action={<span style={{color:tone,fontWeight:700,fontSize:13}}>{dinners.length?`${dinners.length} dinners`:"library"}</span>}/>{dinners.length?<div className="hm-rail">{dinners.map(r=><MealTile key={r.id} recipe={r}/>)}</div>:<div className="hm-empty"><strong>No saved dinner uses this yet.</strong>Keep it dormant until one does.</div>}{(about.note||f.evidence.length>0)&&<div className="hm-card hm-refs"><p><b>Portioning · </b>{containerGuidanceV6(slug)}</p>{about.note&&<p>{about.note}</p>}{f.evidence.map(e=><a key={e.url} href={e.url} target="_blank" rel="noreferrer">{e.label} ↗</a>)}</div>}
   </div>
