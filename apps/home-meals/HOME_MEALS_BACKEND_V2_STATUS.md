@@ -1,8 +1,11 @@
-# Home Meals backend v2 status
+# Home Meals backend v2 / household v12 status
+
+Status: **INTEGRATED IN PRODUCTION**
+Updated: 2026-09-14
 
 ## Scope
 
-This tracker covers the non-visual Home Meals food/data/intelligence layer. UI/UX is deliberately owned by the separate design track.
+This tracker covers the non-visual Home Meals food/data/intelligence layer and its integration into the approved v3 UI. The old separation between a waiting backend track and an unfinished UI cutover no longer describes production.
 
 ## Implemented
 
@@ -11,7 +14,7 @@ This tracker covers the non-visual Home Meals food/data/intelligence layer. UI/U
 - 36 current dinners represented in the v2 recipe layer.
 - `g | ml | count` quantity model.
 - no implicit mass/volume conversion.
-- `madeFrom`, `usedWith`, and `unlocks` relationships separated.
+- `madeFrom` and `usedWith` relationships separated.
 - parent-child double consumption corrected for LAKSA/REMPAH, RENDANG/REMPAH, WOK-B/CLEAR, WOK-W/CLEAR and similar cases.
 - MASS separated from THAI-R as a dry spice booster.
 - KRAPOW kept as seasoning sauce; garlic/chilli/basil remain independently controllable.
@@ -20,7 +23,9 @@ This tracker covers the non-visual Home Meals food/data/intelligence layer. UI/U
 - measured ingredient inputs and methods for all 41 components.
 - source/evidence entry per component.
 - no expected physical batch output is stored as household fact.
-- every finished batch must be weighed/measured before it becomes Kitchen stock.
+- normal household production is working-portion first: Josh/G store useful standardized portions and confirm how many were actually stored.
+- canonical g/ml/count quantities remain underneath for arithmetic.
+- whole-pot weighing is optional household calibration evidence, not a normal UX requirement.
 - child prep production consumes its explicit `madeFrom` parent when the child is produced.
 
 ### 36 dinner formulations
@@ -30,21 +35,21 @@ This tracker covers the non-visual Home Meals food/data/intelligence layer. UI/U
 - explicit starch amounts where part of the canonical version.
 - structured equipment and cooking steps.
 - structured visual cues and safety boundaries.
-- finished dinner weight, actual servings and actual cook time remain unknown until observed.
+- household-only observations remain unknown until actually observed.
 
 ### Variants and substitutions
 - explicit no-rice / half-rice variants where relevant.
-- explicit protein/starch branches instead of ambiguous `chicken or beef`, `rice or lettuce`, `potatoes or pasta` records.
+- explicit protein/starch branches instead of ambiguous combined records.
 - small approved substitution graph with A/B/C grades.
 - substitutions are never silently auto-applied.
 
 ### Kitchen / Prep engine
 - unit-safe prep demand, shortages, readiness and consumption.
-- FIFO measured-batch consumption.
-- actual batch IDs and measured output.
+- FIFO measured/confirmed batch consumption.
 - dependency-aware Prep Day planning.
-- First Run disposition across all 41 components.
-- no synthetic portions-per-batch.
+- active prep repertoire rather than treating 41 components as a checklist.
+- start-small repertoire supports `GOLD + SAMBAL + RED`.
+- no synthetic portions-per-batch and no ml-only compatibility math in current runtime.
 
 ### Ingredient / grocery engine
 - normalized ingredient ledger spanning prep and dinners.
@@ -59,90 +64,105 @@ This tracker covers the non-visual Home Meals food/data/intelligence layer. UI/U
 - thermometer targets separated from camera-visible quality cues.
 - recursive allergen derivation through component dependencies.
 - conservative prep storage policies.
-- dinner leftover/freezer-quality policies without invented freezer durations.
+- dinner leftover/freezer-quality policies without invented durations.
 
 ### Nutrition
-- FDC/manufacturer binding architecture.
-- household product-label bindings.
-- bottom-up ingredient → component → dinner calculation engine.
-- component nutrient density requires actual measured finished output.
+- deterministic nutrition architecture remains available for evidence-backed calculation.
+- provisional research calories/macros are not surfaced as household truth.
+- component nutrient density is not invented from an unmeasured cooked yield.
 - strained stocks refuse naive raw-ingredient nutrition summation and require an analyzed finished-food proxy.
-- nutrition remains unavailable rather than guessed when dependencies are missing.
+- nutrition remains unavailable/not calibrated rather than guessed when dependencies are missing.
 
 ### Procurement / waste readiness
 - household package observation model.
-- package-price-derived ingredient cost calculations.
+- package-price-derived ingredient cost calculations where actual package evidence exists.
 - plan package remainder calculation.
 - use-soon package sorting when an actual use-by/best-before date exists.
 - no synthetic prices or expiry dates.
 
 ### Household truth
-- safe v11 → v12 migration model.
-- old ml-only prep stock and ambiguous ingredient stock are archived, not silently converted.
-- Josh/G ratings, notes, versions, favourites and history are preserved.
+- safe historical v11 → v12 migration path.
+- ambiguous old ml-only prep/ingredient stock is archived rather than silently converted.
+- Josh/G ratings, notes, versions, favourites and history are preserved where safely mappable.
 - separate household preference evidence.
-- repeated evidence required before automatic preference adaptation is eligible.
-- actual component batch calibration derives only from measured household batches.
-- actual dinner cook observations can record time, final weight, plate weights, leftovers, ratings and heat feedback.
+- real use is required before taste/yield assumptions become household truth.
 
 ### Planner / Ask Home
 - constraints-first planner.
-- optional exact ingredient readiness, prep readiness, equipment compatibility and allergen exclusions.
-- use-soon, preference, recency and prep-reuse ranking signals.
-- deterministic Ask Home context builder precomputes stock/demand/shortfalls instead of asking an LLM to do hidden arithmetic.
-- confirmation-gated v12 state actions.
-- Live/Ask/Vision truth contracts prohibit invented stock, yields, nutrition, expiry, safety and preference history.
+- active-prep fit, ingredient readiness, prep readiness, use-soon, preference, recency, cuisine variety, weekday time and prep reuse influence ranking.
+- deterministic Ask Home context precomputes stock/demand/shortfalls instead of asking an LLM to do hidden arithmetic.
+- full seven-day planning and active-repertoire proposals are confirmation-gated.
+- Ask/Live/Vision truth contracts prohibit invented stock, yields, nutrition, expiry, safety and preference history.
 
-### Parallel runtime migration
-- `HouseholdStateV12Provider` exists.
-- `HouseholdSyncV12` exists.
-- current v11 frontend is intentionally not switched yet because the UI/UX track is still being rebuilt.
-- legacy Vision write path is guarded so gram-based v2 observations cannot corrupt the old ml-only store.
+### Vision
+- live Fridge, Freezer, Pantry, Receipt, Prep and Meal modes.
+- canonical-unit validation before proposals reach household state.
+- inventory changes require confirmation.
+- visual cooking guidance may describe browning, texture, reduction, oil separation and obvious scorching.
+- visual appearance never certifies internal food temperature or microbial safety.
+
+### Voice
+- production realtime voice path implemented and negotiated successfully in acceptance testing.
+- low-latency conversation delegates current-household arithmetic/planning/state work to the deterministic backend.
+- mutation requests return through the same confirmation path as Ask Home.
+- browser speech fallback remains available.
+
+### v12 runtime cutover
+- `HouseholdStateV12Provider` / current v12 household bridge is the active household runtime.
+- shared Josh/G state is backed by Railway Postgres.
+- old v11 sync/runtime files are retired from active product code and regression-guarded from reintroduction.
+- current Kitchen, Prep, Prep Day, Plan, Cook, Home, Scan, Ask Home and Voice all consume v12/current truth.
+
+### Sync / privacy
+- private household session.
+- HTTP-only, Secure, SameSite=Lax session cookie.
+- timing-safe household code/token comparison.
+- optimistic versioning prevents silent overwrite.
+- concurrent/join conflicts are explicit.
+- remote updates can be deferred during active cooking.
+- failed writes preserve local work and surface retry/recovery.
+- household and mutation-capable AI endpoints are not exposed without the private session when sync is configured.
 
 ### QA / CI
-- legacy data audit retained.
+- catalogue audit.
 - food-truth v2 audit.
 - full food-system v2 audit.
 - intelligence v2 audit.
-- Home Meals GitHub Actions workflow runs typecheck, all data audits and production build.
-- active runtime is audited against importing the historical `foundation` data as current truth.
+- first-week household-journey audit.
+- private-AI endpoint audit.
+- release-infrastructure audit.
+- v3/v12 cutover audit.
+- product-completion audit.
+- Node 24 + pinned npm + committed lockfile.
+- Chromium Playwright release acceptance.
+- full derived 136-route catalogue crawl.
+- responsive checks at all canonical width checkpoints on representative routes.
 
 ## Intentionally unknown until Josh + G provide evidence
 
 These are not engineering gaps and must not be filled by web research or AI estimates:
 
-- actual finished yield of an adapted household prep batch;
-- actual household dinner finished weight;
+- actual physical finished yield/usable portions of a household prep beyond what Josh/G record;
 - actual Josh/G plate size and leftover preference;
-- actual household cook time;
-- final household heat/salt preference;
-- brand-specific nutrition until the actual package label is bound;
-- exact nutrient density of a cooked component until its finished output is measured;
-- real package prices and expiry/use-by dates until observed.
+- final household heat/salt/acid preference;
+- long-term favourite active prep repertoire;
+- brand-specific nutrition until the actual product evidence is bound where needed;
+- exact nutrient density of a cooked component where the necessary finished-food evidence is unavailable;
+- real package prices and expiry/use-by dates until observed;
+- device-specific camera/microphone permission behaviour on Josh/G's actual phones.
 
-## Remaining integration owned with UI track
+## Integration status
 
-The backend is ready for visual cutover. The remaining work is integration, not another food-model redesign:
+The earlier ten-step UI cutover checklist is complete. It is retained historically in git history, not as remaining work.
 
-1. migrate Kitchen screen to v12 quantities;
-2. migrate Prep / Prep Day and add measured-output confirmation;
-3. migrate Plan/groceries to v2 demand engines;
-4. migrate Recipe/Cooking to structured formulations/steps;
-5. migrate Home readiness/recommendations;
-6. migrate Scan confirmation to canonical ingredient/component units;
-7. migrate Ask Home client payload/actions;
-8. switch household sync to v12;
-9. replace the provider in `app/layout.tsx`;
-10. run final end-to-end regression against the completed visual design.
+Current software acceptance is defined by:
 
-Do not switch the active provider before those consumers are unit-aware.
+- `HOME_MEALS_MASTER_IMPLEMENTATION_PLAN.md`;
+- `HOME_MEALS_MASTER_IMPLEMENTATION_ADDENDUM_V12.md`;
+- culinary verification + food-truth source ledgers;
+- `QA-ACCEPTANCE-MATRIX.md` plus its 2026-09-14 addendum;
+- `HOME_MEALS_FINAL_COMPLETION_TRACKER.md`.
 
 ## Product gate
 
-Do not expand the cookbook before the first household calibration cycle.
-
-Recommended first real calibration order:
-
-`GOLD → SAMBAL → REMPAH → RED → CLEAR → WOK-B → THAI-G → DUX → G/CH`
-
-Then cook the first-week dinners and record real household observations.
+Do not expand the cookbook merely to make the catalogue larger. The next product-learning loop is real household use: cook, rate, note, observe actual stored portions/yields where useful, and let those observations improve future plans.
