@@ -20,6 +20,8 @@
 .hm-ref p{min-width:0;flex:1 1 180px}
 .hm-ref a,.hm-refs a{min-height:44px;max-width:100%;display:inline-flex;align-items:center;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
 .hm-chiplist span,.hm-chiplist a{height:auto;min-height:44px;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+.hm-ing span{height:auto;min-height:40px;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:break-word;padding-block:8px}
+.hm-ing span.plain{height:auto;min-height:40px}
 
 /* Bottom navigation is persistent primary navigation, not micro-copy. */
 .hm-bar-tab{font-size:12px;min-height:60px}
