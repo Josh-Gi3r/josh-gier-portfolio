@@ -7,14 +7,20 @@ const must=(rel,re,msg)=>{const text=read(rel);if(!re.test(text))fail(`${rel}: $
 const mustNot=(rel,re,msg)=>{const text=read(rel);if(re.test(text))fail(`${rel}: ${msg}`)};
 
 // Complete household loop and routes.
-for(const rel of ['app/page.tsx','app/cook/page.tsx','app/prep/page.tsx','app/kitchen/page.tsx','app/plan/page.tsx','app/history/page.tsx','app/learn/page.tsx','app/scan/page.tsx','app/prep/day/page.tsx','app/prep/mids/page.tsx','app/prep/boosters/page.tsx'])if(!exists(rel))fail(`${rel}: required user route missing`);
+for(const rel of ['app/page.tsx','app/cook/page.tsx','app/prep/page.tsx','app/kitchen/page.tsx','app/plan/page.tsx','app/history/page.tsx','app/learn/page.tsx','app/scan/page.tsx','app/prep/day/page.tsx','app/prep/mids/page.tsx','app/prep/boosters/page.tsx','app/cook/[slug]/page.tsx','app/cook/[slug]/cook/page.tsx'])if(!exists(rel))fail(`${rel}: required user route missing`);
+must('app/cook/[slug]/page.tsx',/getLiveRecipeV7/,'recipe detail route is not gated by the live V7 catalogue');
+must('app/cook/[slug]/cook/page.tsx',/getLiveRecipeV7/,'cooking route is not gated by the live V7 catalogue');
 must('components/FirstRunKitchen.tsx',/Kitchen is empty/,'confirmed-empty first run is missing');
 must('components/FirstRunKitchen.tsx',/Start from zero and add what we have/,'manual first-run path is missing');
 must('components/app/Prep.tsx',/Start with GOLD · SAMBAL · RED/,'small active-prep starter is missing');
 must('components/app/Cook.tsx',/By prep/,'prep-based recipe browse is missing');
 must('components/app/Cook.tsx',/Never cooked/,'history-aware recipe browse is missing');
-must('components/app/MealHistory.tsx',/mealHistorySummaryV2/,'meal-history intelligence is not rendered');
-must('components/app/Recipe.tsx',/getCanonicalRecipeV2/,'recipe page must render the current canonical culinary reference');
+must('components/app/MealHistory.tsx',/mealHistorySummaryV7/,'V7 live meal-history intelligence is not rendered');
+must('components/app/Recipe.tsx',/getCanonicalRecipeV2|getPhase2LiveCandidateV7/,'recipe page must retain culinary evidence provenance');
+
+// V7 live promotion must be visible across every user-facing decision surface, not only the recipe browser.
+for(const [rel,token] of [['components/app/Cook.tsx','allLiveRecipesV7'],['components/app/Home.tsx','allLiveRecipesV7'],['components/app/Plan.tsx','allLiveRecipesV7'],['components/app/Builder.tsx','allLiveRecipesV7'],['components/app/Kitchen.tsx','ingredientUiCatalogV7'],['components/app/Scan.tsx','ingredientUiCatalogV7'],['components/app/Shell.tsx','allLiveRecipesV7'],['components/AskHomeView.tsx','getLiveRecipeV7'],['app/api/ask-home/route.ts','buildAssistantContextV7'],['components/app/PrepDay.tsx','prepJobsForWeekV7']])must(rel,new RegExp(token),`V7 live surface missing ${token}`);
+mustNot('components/AskHomeView.tsx',/recipe-nutrition|nutritionFor\s*\(/,'Ask Home cards regressed to placeholder nutrition');
 
 // Retired truth/runtime files stay retired so stale quantities and v11 sync cannot creep back into the product.
 for(const rel of ['components/HouseholdSync.tsx','data/foundation.ts','data/foundation-ops.ts','data/meal-plan.ts'])if(exists(rel))fail(`${rel}: retired legacy file was reintroduced`);
@@ -95,6 +101,7 @@ must('package.json',/audit-household-journey\.cjs/,'household journey audit is n
 must('package.json',/audit-household-api\.cjs/,'household API hardening audit is not in audit:data');
 must('package.json',/audit-private-ai\.cjs/,'private AI security audit is not in audit:data');
 must('package.json',/audit-sync-recovery\.cjs/,'sync recovery audit is not in audit:data');
+must('package.json',/audit-live-promotion-v7\.cjs/,'V7 live-promotion audit is not in audit:data');
 must('package.json',/audit-product-completion\.cjs/,'product-completion audit is not in audit:data');
 
-if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · stale legacy truth removed · full prep imagery · canonical culinary references · V6 measured-output packet prep · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible controls · mobile/PWA/privacy guardrails');
+if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · V7 live promotion surfaces · stale legacy truth removed · full prep imagery · V6 measured-output packet prep · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible controls · mobile/PWA/privacy guardrails');
