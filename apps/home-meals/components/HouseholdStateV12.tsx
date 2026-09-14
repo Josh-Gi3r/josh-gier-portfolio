@@ -1,14 +1,17 @@
 "use client";
 import {createContext,useContext,useEffect,useMemo,useState} from "react";
-import {defaultWeek,recipes} from "@/data/home-data";
+import {defaultWeek} from "@/data/home-data";
+import {allLiveRecipesV7 as recipes} from "@/data/recipe-catalog-v7";
 import {quantity,type Quantity} from "@/data/food-quantity";
-import {prepNeedsForRecipesV2,createMeasuredPrepBatchV2} from "@/data/food-engine-v2";
-import {shoppingNeedsForPlanV2} from "@/data/ingredient-engine-v2";
+import {createMeasuredPrepBatchV2} from "@/data/food-engine-v2";
+import {prepNeedsForRecipesV7} from "@/data/food-engine-v7";
+import {shoppingNeedsForPlanV7} from "@/data/ingredient-engine-v7";
+import {cookRecipeStateV7,setIngredientStockV7} from "@/data/household-runtime-v7";
 import {getHouseholdPrepFormulationV6,getPrepPortionPolicyV6} from "@/data/prep-portioning-v6";
 import type {RecipeCookObservationV2} from "@/data/calibration-v2";
 import {
- addMeasuredBatchV12,componentStockV12,confirmEmptyKitchenV12,consumeComponentV12,cookRecipeV12,migrateHouseholdV11ToV12,recordCookObservationV12,
- setActivePrepSetV12,setIngredientStockV12,setManualComponentStockV12,setQualitativeIngredientLevelV12,toggleActivePrepV12,type HouseholdStateV12,type RatingV12,type RecipeNoteV12,type RecipeVersionV12
+ addMeasuredBatchV12,componentStockV12,confirmEmptyKitchenV12,consumeComponentV12,migrateHouseholdV11ToV12,recordCookObservationV12,
+ setActivePrepSetV12,setManualComponentStockV12,setQualitativeIngredientLevelV12,toggleActivePrepV12,type HouseholdStateV12,type RatingV12,type RecipeNoteV12,type RecipeVersionV12
 } from "@/data/household-v12";
 
 const KEY="home-meals-household-v12",LEGACY_KEY="home-meals-household-v11";
@@ -19,8 +22,8 @@ const defaults={week:defaultWeek,monthlyPool:defaultMonthPool};
 export type HouseholdStateV12Context={
  state:HouseholdStateV12;
  componentStock:ReturnType<typeof componentStockV12>;
- prepNeeds:ReturnType<typeof prepNeedsForRecipesV2>;
- shoppingNeeds:ReturnType<typeof shoppingNeedsForPlanV2>;
+ prepNeeds:ReturnType<typeof prepNeedsForRecipesV7>;
+ shoppingNeeds:ReturnType<typeof shoppingNeedsForPlanV7>;
  setDay:(index:number,recipeId:string)=>void;
  toggleMonthlyPool:(recipeId:string)=>void;
  setActivePrepSet:(componentIds:readonly string[])=>void;
@@ -60,8 +63,8 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  useEffect(()=>{if(hydrated)localStorage.setItem(KEY,JSON.stringify(state))},[hydrated,state]);
 
  const componentStock=useMemo(()=>componentStockV12(state),[state.componentBatches,state.manualComponentStock]);
- const prepNeeds=useMemo(()=>prepNeedsForRecipesV2(state.week,componentStock),[state.week,componentStock]);
- const shoppingNeeds=useMemo(()=>shoppingNeedsForPlanV2(state.week.map(recipeId=>({recipeId})),state.ingredientStock,state.qualitativeIngredientStock),[state.week,state.ingredientStock,state.qualitativeIngredientStock]);
+ const prepNeeds=useMemo(()=>prepNeedsForRecipesV7(state.week,componentStock),[state.week,componentStock]);
+ const shoppingNeeds=useMemo(()=>shoppingNeedsForPlanV7(state.week.map(recipeId=>({recipeId})),state.ingredientStock,state.qualitativeIngredientStock),[state.week,state.ingredientStock,state.qualitativeIngredientStock]);
 
  const setDay=(index:number,recipeId:string)=>{if(index<0||index>6||!validRecipeIds.has(recipeId))return;setState(prev=>({...prev,week:prev.week.map((x,i)=>i===index?recipeId:x),groceryChecked:{}}))};
  const toggleMonthlyPool=(recipeId:string)=>{if(!validRecipeIds.has(recipeId))return;setState(prev=>({...prev,monthlyPool:prev.monthlyPool.includes(recipeId)?prev.monthlyPool.filter(id=>id!==recipeId):[...prev.monthlyPool,recipeId]}))};
@@ -69,13 +72,13 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  const toggleActivePrep=(componentId:string,active?:boolean)=>setState(prev=>toggleActivePrepV12(prev,componentId,active));
  const setComponentObserved=(componentId:string,value:Quantity)=>setState(prev=>setManualComponentStockV12(prev,componentId,value));
  const reconcileComponentTotal=(componentId:string,value:Quantity)=>setState(prev=>{const current=componentStockV12(prev)[componentId];if(!current)throw new Error(`Unknown component ${componentId}`);if(current.unit!==value.unit)throw new Error(`Observed unit mismatch for ${componentId}`);if(value.qty<0)throw new Error(`Observed stock cannot be negative for ${componentId}`);if(value.qty<current.qty)return consumeComponentV12(prev,componentId,quantity(current.qty-value.qty,current.unit));const manual=prev.manualComponentStock[componentId]??quantity(0,current.unit);return setManualComponentStockV12(prev,componentId,quantity(manual.qty+(value.qty-current.qty),current.unit))});
- const setIngredientObserved=(ingredientId:string,value:Quantity)=>setState(prev=>{let next=setIngredientStockV12(prev,ingredientId,value);if(value.qty<=0&&next.useSoon[ingredientId]){const useSoon={...next.useSoon,[ingredientId]:false},useSoonAt={...next.useSoonAt};delete useSoonAt[ingredientId];next={...next,useSoon,useSoonAt}}return next});
+ const setIngredientObserved=(ingredientId:string,value:Quantity)=>setState(prev=>{let next=setIngredientStockV7(prev,ingredientId,value);if(value.qty<=0&&next.useSoon[ingredientId]){const useSoon={...next.useSoon,[ingredientId]:false},useSoonAt={...next.useSoonAt};delete useSoonAt[ingredientId];next={...next,useSoon,useSoonAt}}return next});
  const setQualitativeIngredientLevel=(ingredientId:string,level:number)=>setState(prev=>setQualitativeIngredientLevelV12(prev,ingredientId,level));
 
  const recordMeasuredBatch=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>addMeasuredBatchV12(prev,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion})));
  const recordMeasuredProduction=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>{const formulation=getHouseholdPrepFormulationV6(componentId);if(!formulation)throw new Error(`Missing household prep formulation for ${componentId}`);if(formulation.outputUnit!==measuredOutput.unit)throw new Error(`Measured output unit for ${componentId} must be ${formulation.outputUnit}`);if(!Number.isFinite(measuredOutput.qty)||measuredOutput.qty<=0)throw new Error(`Measured output for ${componentId} must be positive`);let next=prev;for(const parent of formulation.componentInputs)next=consumeComponentV12(next,parent.componentId,quantity(parent.qty,parent.unit));return addMeasuredBatchV12(next,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion}))});
  const recordPortionedProduction=(componentId:string,storagePackets:number,recipeVersion:string)=>{const policy=getPrepPortionPolicyV6(componentId);if(!policy||!Number.isFinite(storagePackets)||storagePackets<=0)throw new Error(`Invalid storage packets for ${componentId}`);const packets=Math.max(1,Math.round(storagePackets));recordMeasuredProduction(componentId,quantity(packets*policy.packet.qty,policy.packet.unit),recipeVersion)};
- const cookMeal=(recipeId:string,variantId?:string):boolean=>{if(!validRecipeIds.has(recipeId))return false;try{const next=cookRecipeV12(state,recipeId,variantId);setState(next);return true}catch{return false}};
+ const cookMeal=(recipeId:string,variantId?:string):boolean=>{if(!validRecipeIds.has(recipeId))return false;try{const next=cookRecipeStateV7(state,recipeId,variantId);setState(next);return true}catch{return false}};
  const logMealWithoutStock=(recipeId:string,variantId?:string)=>{if(validRecipeIds.has(recipeId))setState(prev=>historyOnly(prev,recipeId,variantId))};
  const recordCookObservation=(observation:RecipeCookObservationV2)=>setState(prev=>recordCookObservationV12(prev,observation));
 
