@@ -6,7 +6,7 @@ import {allLiveRecipesV7 as recipes} from "@/data/recipe-catalog-v7";
 import {canonicalPrepComponentsV2} from "@/data/food-truth-v2";
 import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {recipeSupportedByActivePrepV7} from "@/data/prep-repertoire-v7";
-import {mealHistorySummaryV2,recentPenaltyV2} from "@/data/meal-history-v2";
+import {mealHistorySummaryV7,recentPenaltyV7} from "@/data/meal-history-v7";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
 import {kcalReferenceForV3,type MealWeightV3} from "@/data/recipe-kcal-reference-v3";
 import {feedback} from "@/lib/feedback";
@@ -21,12 +21,12 @@ const weights:readonly {id:MealWeightV3;label:string}[]=[{id:"light",label:"Ligh
 export function Cook(){
  const h=useHousehold(),ready=useReadiness();
  const[q,setQ]=useState(""),[mode,setMode]=useState<Mode>("For us"),[sub,setSub]=useState(""),[showAll,setShowAll]=useState(false);
- const history=useMemo(()=>mealHistorySummaryV2({history:h.history,favourites:h.favourites,ratings:h.ratings}),[h.history,h.favourites,h.ratings]);
+ const history=useMemo(()=>mealHistorySummaryV7({history:h.history,favourites:h.favourites,ratings:h.ratings}),[h.history,h.favourites,h.ratings]);
  const cuisines=useMemo(()=>Array.from(new Set(recipes.map(x=>x.cuisine))).sort(),[]);
  const usedPrep=useMemo(()=>canonicalPrepComponentsV2.filter(c=>recipes.some(r=>prepForRecipeAtCookScaleV7(r.id).some(x=>x.componentId===c.id))).sort((a,b)=>Number(h.activePrepIds.includes(b.id))-Number(h.activePrepIds.includes(a.id))||a.tier.localeCompare(b.tier)||a.code.localeCompare(b.code)),[h.activePrepIds]);
  const score=(r:typeof recipes[number])=>{
   const rd=ready(r),rating=Math.max(h.ratings[r.id]?.josh??0,h.ratings[r.id]?.g??0),fav=!!h.favourites[r.id],activeFit=h.activePrepIds.length?recipeSupportedByActivePrepV7(r.id,h.activePrepIds):false;
-  return recentPenaltyV2(r.id,h.history)+Number(rd.state!=="ready")*8-Number(activeFit)*10-Number(fav)*8-rating*2+r.minutes*.08;
+  return recentPenaltyV7(r.id,h.history)+Number(rd.state!=="ready")*8-Number(activeFit)*10-Number(fav)*8-rating*2+r.minutes*.08;
  };
  const list=useMemo(()=>recipes.filter(r=>{
   const energy=kcalReferenceForV3(r.id);
