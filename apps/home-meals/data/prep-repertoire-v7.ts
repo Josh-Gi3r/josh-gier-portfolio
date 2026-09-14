@@ -3,7 +3,8 @@ import {allLiveRecipesV7} from "./recipe-catalog-v7";
 import {prepForRecipeAtCookScaleV7} from "./food-engine-v7";
 import {activePrepSetV2,prepRelationshipLabelV2,prepStarterSetsV2} from "./prep-repertoire-v2";
 
-export{prepStarterSetsV2,prepRelationshipLabelV2};
+export const prepStarterSetsV7=prepStarterSetsV2;
+export const prepRelationshipLabelV7=prepRelationshipLabelV2;
 export function prepIdsForRecipeV7(recipeId:string){return prepForRecipeAtCookScaleV7(recipeId).map(x=>x.componentId)}
 export function missingActivePrepForRecipeV7(recipeId:string,activeIds:readonly string[]){const active=activePrepSetV2(activeIds);return prepIdsForRecipeV7(recipeId).filter(id=>!active.has(id))}
 export function recipeSupportedByActivePrepV7(recipeId:string,activeIds:readonly string[]){return missingActivePrepForRecipeV7(recipeId,activeIds).length===0}
