@@ -40,7 +40,7 @@ must('components/app/Prep.tsx',/Core bases/,'Prep home must expose core bases in
 must('components/app/Prep.tsx',/Mids & sauces/,'Prep home must expose mids and sauces');
 must('components/app/Prep.tsx',/Boosters/,'Prep home must expose boosters');
 must('components/app/Prep.tsx',/prepExpansionCandidatesV2|prepExpansionCandidatesV7/,'Prep home must explain what one more prep item unlocks');
-must('components/app/Mids.tsx',/prepRelationshipLabelV2/,'mids explorer must use canonical madeFrom/usedWith semantics');
+must('components/app/Mids.tsx',/prepRelationshipLabelV2|prepRelationshipLabelV7/,'mids explorer must use canonical madeFrom/usedWith semantics');
 mustNot('components/app/Mids.tsx',/parentMotherIds/,'mids explorer regressed to old parentMotherIds taxonomy');
 must('data/prep-repertoire-v2.ts',/madeFrom/,'repertoire engine must distinguish physical parent relationships');
 must('data/prep-repertoire-v2.ts',/usedWith/,'repertoire engine must distinguish pair-with relationships');
