@@ -33,7 +33,7 @@ export type HouseholdStateV12Context={
  recordMeasuredBatch:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
  recordMeasuredProduction:(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>void;
  recordPortionedProduction:(componentId:string,workingPortions:number,recipeVersion:string)=>void;
- cookMeal:(recipeId:string,variantId?:string)=>void;
+ cookMeal:(recipeId:string,variantId?:string)=>boolean;
  logMealWithoutStock:(recipeId:string,variantId?:string)=>void;
  recordCookObservation:(observation:RecipeCookObservationV2)=>void;
  rateMeal:(recipeId:string,who:"josh"|"g",value:number)=>void;
@@ -75,7 +75,7 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  const recordMeasuredBatch=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>addMeasuredBatchV12(prev,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion})));
  const recordMeasuredProduction=(componentId:string,measuredOutput:Quantity,recipeVersion:string)=>setState(prev=>{const formulation=getPrepFormulationV2(componentId);if(!formulation)throw new Error(`Missing canonical prep formulation for ${componentId}`);let next=prev;for(const parent of formulation.componentInputs)next=consumeComponentV12(next,parent.componentId,quantity(parent.qty,parent.unit));return addMeasuredBatchV12(next,createMeasuredPrepBatchV2({batchId:uid(componentId),componentId,measuredOutput,producedAt:new Date().toISOString(),recipeVersion}))});
  const recordPortionedProduction=(componentId:string,workingPortions:number,recipeVersion:string)=>{const component=getCanonicalPrepV2(componentId);if(!component||!Number.isFinite(workingPortions)||workingPortions<=0)throw new Error(`Invalid working portions for ${componentId}`);const portions=Math.max(1,Math.round(workingPortions));recordMeasuredProduction(componentId,quantity(portions*component.workingUnit.qty,component.workingUnit.unit),recipeVersion)};
- const cookMeal=(recipeId:string,variantId?:string)=>{if(!validRecipeIds.has(recipeId))return;setState(prev=>{try{return cookRecipeV12(prev,recipeId,variantId)}catch{return historyOnly(prev,recipeId,variantId)}})};
+ const cookMeal=(recipeId:string,variantId?:string):boolean=>{if(!validRecipeIds.has(recipeId))return false;try{const next=cookRecipeV12(state,recipeId,variantId);setState(next);return true}catch{return false}};
  const logMealWithoutStock=(recipeId:string,variantId?:string)=>{if(validRecipeIds.has(recipeId))setState(prev=>historyOnly(prev,recipeId,variantId))};
  const recordCookObservation=(observation:RecipeCookObservationV2)=>setState(prev=>recordCookObservationV12(prev,observation));
 
