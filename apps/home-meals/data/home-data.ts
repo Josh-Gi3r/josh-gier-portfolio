@@ -7,11 +7,9 @@ export type IngredientUnit="g"|"ml"|"count"|"portion"|"have";
 export type IngredientTracking="quantity"|"state";
 export type IngredientDef={id:string;name:string;category:IngredientCategory;unit:IngredientUnit;tracking:IngredientTracking};
 export type IngredientRequirement={id:string;qty:number;unit:IngredientUnit;raw:string;display:string;optional?:boolean};
-export type PrepRequirement={id:string;portions:number;portionMl:number;totalMl:number};
-export type Booster={id:string;code:string;name:string;portionMl:number;batchYield:number;tone:string;examples:string[]};
+export type Booster={id:string;code:string;name:string;tone:string;examples:string[]};
 export type CanonicalRecipe={
  id:string;title:string;subtitle:string;cuisine:string;minutes:number;method:string;difficulty:ResearchedMeal["difficulty"];
- prep:PrepRequirement[];motherIds:string[];midIds:string[];boosterIds:string[];
  ingredients:IngredientRequirement[];rawIngredients:string[];steps:string[];why:string;balance:string;source:ResearchedMeal["source"];tags:string[];image?:string;status:"researched";
 };
 
@@ -19,43 +17,14 @@ export { motherBases, midBases, midsByCuisine };
 export type { MotherBase, MidBase };
 
 export const boosters:Booster[]=[
- {id:"ginger-garlic",code:"GG",name:"Ginger-garlic",portionMl:15,batchYield:16,tone:"#c69058",examples:["Everyday curry","Chana masala","Stir-fries"]},
- {id:"garlic",code:"G",name:"Garlic",portionMl:15,batchYield:16,tone:"#d9c89e",examples:["Pad see ew","Quick sautés","Pan sauces"]},
- {id:"chilli",code:"CH",name:"Chilli",portionMl:15,batchYield:16,tone:"#b54835",examples:["Pad kra pao","Wok tofu","Quick heat"]},
- {id:"lemongrass",code:"LE",name:"Lemongrass aromatic",portionMl:15,batchYield:12,tone:"#9aa657",examples:["Coconut fish","Rendang","Brothy curries"]},
- {id:"massaman-finish",code:"MASS",name:"Massaman spice finish",portionMl:30,batchYield:6,tone:"#9a6a3f",examples:["Massaman beef","Massaman chicken"]},
- {id:"miso-ginger",code:"MISO-G",name:"Miso-ginger",portionMl:30,batchYield:8,tone:"#a87b55",examples:["Miso salmon","Miso aubergine","Miso tofu"]},
- {id:"bulgogi",code:"BUL",name:"Bulgogi marinade",portionMl:60,batchYield:6,tone:"#7b4e3a",examples:["Bulgogi beef","Bulgogi chicken","Mushroom bulgogi"]}
+ {id:"ginger-garlic",code:"GG",name:"Ginger-garlic",tone:"#c69058",examples:["Everyday curry","Chana masala","Stir-fries"]},
+ {id:"garlic",code:"G",name:"Garlic",tone:"#d9c89e",examples:["Pad see ew","Quick sautés","Pan sauces"]},
+ {id:"chilli",code:"CH",name:"Chilli",tone:"#b54835",examples:["Pad kra pao","Wok tofu","Quick heat"]},
+ {id:"lemongrass",code:"LE",name:"Lemongrass aromatic",tone:"#9aa657",examples:["Coconut fish","Rendang","Brothy curries"]},
+ {id:"massaman-finish",code:"MASS",name:"Massaman spice finish",tone:"#9a6a3f",examples:["Massaman beef","Massaman chicken"]},
+ {id:"miso-ginger",code:"MISO-G",name:"Miso-ginger",tone:"#a87b55",examples:["Miso salmon","Miso aubergine","Miso tofu"]},
+ {id:"bulgogi",code:"BUL",name:"Bulgogi marinade",tone:"#7b4e3a",examples:["Bulgogi beef","Bulgogi chicken","Mushroom bulgogi"]}
 ];
-
-const motherIds=new Set(motherBases.map(x=>x.id));
-const midIds=new Set(midBases.map(x=>x.id));
-const boosterIds=new Set(boosters.map(x=>x.id));
-
-const codeToId:Record<string,string>={
- GOLD:"gold",GG:"ginger-garlic",SAAG:"saag",SAMBAL:"sambal",LAKSA:"laksa",REMPAH:"rempah",LE:"lemongrass",
- "THAI-G":"thai-green","THAI-R":"thai-red",MASS:"massaman-finish",CH:"chilli",G:"garlic","WOK-B":"wok-brown","WOK-W":"wok-white",
- "TARE-T":"teriyaki","MISO-G":"miso-ginger",BUL:"bulgogi",GOCHU:"gochujang",RED:"red",DARK:"dark",BLOND:"blond",DUX:"duxelles",
- PESTO:"pesto",HAR:"harissa",CHIP:"chipotle"
-};
-
-const prepOverrides:Record<string,{code:string;count:number;sizeMl:number}[]>={
- "curry-laksa":[{code:"REMPAH",count:1,sizeMl:60},{code:"LAKSA",count:2,sizeMl:60},{code:"CLEAR",count:1,sizeMl:450}],
- "rempah-chicken-rendang":[{code:"REMPAH",count:2,sizeMl:60},{code:"RENDANG",count:1,sizeMl:60},{code:"LE",count:1,sizeMl:15}],
- "massaman-beef":[{code:"THAI-R",count:1,sizeMl:30},{code:"MASS",count:2,sizeMl:30}],
- "pad-kra-pao":[{code:"KRAPOW",count:1,sizeMl:30}],
- "beef-broccoli":[{code:"CLEAR",count:1,sizeMl:120},{code:"WOK-B",count:1,sizeMl:60}],
- "brown-chicken-mushroom":[{code:"CLEAR",count:1,sizeMl:120},{code:"WOK-B",count:1,sizeMl:60}],
- "moo-goo-gai-pan":[{code:"CLEAR",count:1,sizeMl:120},{code:"WOK-W",count:1,sizeMl:60}],
- "white-sauce-prawns":[{code:"CLEAR",count:1,sizeMl:120},{code:"WOK-W",count:1,sizeMl:60}],
- "wok-tofu-greenbeans":[{code:"CLEAR",count:1,sizeMl:120},{code:"WOK-B",count:1,sizeMl:60},{code:"CH",count:1,sizeMl:15}],
- "beef-ragu":[{code:"RED",count:2,sizeMl:90},{code:"BLOND",count:1,sizeMl:60},{code:"DARK",count:1,sizeMl:30}],
- "chipotle-chicken-bowl":[{code:"RED",count:1,sizeMl:90},{code:"CHIP",count:2,sizeMl:30}],
-};
-
-const supplementalCodeToId:Record<string,string>={CLEAR:"clear",RENDANG:"rendang",KRAPOW:"krapow"};
-const resolvePart=(code:string)=>codeToId[code]??supplementalCodeToId[code];
-const componentById=(id:string)=>motherBases.find(x=>x.id===id)??midBases.find(x=>x.id===id)??boosters.find(x=>x.id===id);
 
 const FRACTIONS:Record<string,number>={"½":.5,"¼":.25,"¾":.75,"⅓":1/3,"⅔":2/3,"1½":1.5,"1¼":1.25,"1¾":1.75};
 const stateNames=new Set(["salt","black pepper","salt and black pepper","garam masala","paprika","amchur","roasted cumin","roasted cumin powder","cumin","cumin seeds","palm sugar","sugar","oregano","rosemary","white pepper","baking soda","plain flour","cornstarch","cornstarch slurry","sesame seeds"]);
@@ -169,12 +138,10 @@ function ingredientFromRaw(raw:string):IngredientRequirement|null{
 export const prepComponents=[...motherBases.map(x=>({...x,kind:"mother" as const})),...midBases.map(x=>({...x,kind:"mid" as const})),...boosters.map(x=>({...x,kind:"booster" as const}))];
 export const getComponent=(id:string)=>prepComponents.find(x=>x.id===id);
 
-function normalizedPrep(r:ResearchedMeal):PrepRequirement[]{const src=prepOverrides[r.slug]??r.parts;return src.map(p=>{const id=resolvePart(p.code);if(!id)throw new Error(`Unmapped prep code ${p.code} in ${r.slug}`);return{id,portions:p.count,portionMl:p.sizeMl,totalMl:p.count*p.sizeMl}})}
-export const recipes:CanonicalRecipe[]=researchedMeals.map(r=>{const prep=normalizedPrep(r);return{
- id:r.slug,title:r.title,subtitle:r.subtitle,cuisine:r.cuisine,minutes:r.time,method:r.method,difficulty:r.difficulty,prep,
- motherIds:prep.filter(x=>motherIds.has(x.id)).map(x=>x.id),midIds:prep.filter(x=>midIds.has(x.id)).map(x=>x.id),boosterIds:prep.filter(x=>boosterIds.has(x.id)).map(x=>x.id),
+export const recipes:CanonicalRecipe[]=researchedMeals.map(r=>({
+ id:r.slug,title:r.title,subtitle:r.subtitle,cuisine:r.cuisine,minutes:r.time,method:r.method,difficulty:r.difficulty,
  ingredients:r.ingredients.map(ingredientFromRaw).filter(Boolean) as IngredientRequirement[],rawIngredients:r.ingredients,steps:r.steps,why:r.why,balance:r.balance,source:r.source,tags:r.tags,image:r.imageUrl??mealImages[r.slug],status:"researched"
-}});
+}));
 
 const defs=new Map<string,IngredientDef>();
 for(const r of recipes)for(const req of r.ingredients){if(defs.has(req.id))continue;const s=stem(req.raw);if(req.id==="cornstarch"||stateNames.has(s.toLowerCase())){const key=req.id==="cornstarch"?"cornstarch":s.toLowerCase();defs.set(req.id,{id:req.id,name:stateLabels[key]??s,category:"Pantry",unit:"have",tracking:"state"});continue}let hit:IngredientDef|undefined;for(const [re,id,name,category,unit,tracking] of aliases){if(id===req.id||re.test(s)){hit={id,name,category,unit,tracking};break}}defs.set(req.id,hit??{id:req.id,name:s,category:"Pantry",unit:req.unit,tracking:req.unit==="have"?"state":"quantity"})}
@@ -186,15 +153,4 @@ export const getMother=(id:string)=>motherBases.find(x=>x.id===id);
 export const getMid=(id:string)=>midBases.find(x=>x.id===id);
 export const defaultWeek=[...firstWeekSlugs];
 
-export const initialComponentStock:Record<string,number>=Object.fromEntries(prepComponents.map(x=>[x.id,0]));
-export const initialIngredientStock:Record<string,number>=Object.fromEntries(ingredients.map(x=>[x.id,0]));
-
-export function prepDemandForWeek(week:string[]){const out:Record<string,{portions:number,totalMl:number}>={};for(const recipeId of week){const r=getRecipe(recipeId);if(!r)continue;for(const p of r.prep){const v=out[p.id]??{portions:0,totalMl:0};v.portions+=p.portions;v.totalMl+=p.totalMl;out[p.id]=v}}return out}
-export function prepNeedsForWeek(week:string[],stock:Record<string,number>){return Object.entries(prepDemandForWeek(week)).map(([id,v])=>({id,needed:v.portions,totalMl:v.totalMl,onHand:stock[id]??0,short:Math.max(0,v.portions-(stock[id]??0))})).filter(x=>x.short>0)}
-export function ingredientDemandForWeek(week:string[]){const out:Record<string,{qty:number;unit:IngredientUnit}>={};for(const recipeId of week){const r=getRecipe(recipeId);if(!r)continue;for(const req of r.ingredients){if(req.optional)continue;const def=getIngredient(req.id);if(def?.tracking==="state"){out[req.id]={qty:1,unit:"have"};continue}const v=out[req.id];if(!v)out[req.id]={qty:req.qty,unit:req.unit};else if(v.unit===req.unit)v.qty+=req.qty}}return out}
-export function shoppingNeedsForWeek(week:string[],stock:Record<string,number>){return Object.entries(ingredientDemandForWeek(week)).map(([id,v])=>{const def=getIngredient(id),onHand=stock[id]??0;const qty=def?.tracking==="state"?(onHand>0?0:1):Math.max(0,v.qty-onHand);return{id,qty,unit:v.unit,required:v.qty,onHand}}).filter(x=>x.qty>0)}
-export function componentConsumption(recipeId:string){const r=getRecipe(recipeId);return r?r.prep.map(x=>({id:x.id,qty:x.portions})):[]}
-export function ingredientConsumption(recipeId:string){return getRecipe(recipeId)?.ingredients.filter(x=>!x.optional)??[]}
-export const coverageByMother=motherBases.map(mother=>({mother,mids:midBases.filter(mid=>mid.parentMotherIds.includes(mother.id)),meals:recipes.filter(r=>r.motherIds.includes(mother.id))}));
 export const totalDinnerDirections=150;
-export const componentLabel=(id:string)=>componentById(id);
