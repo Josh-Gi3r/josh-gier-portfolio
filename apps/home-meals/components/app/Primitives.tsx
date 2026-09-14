@@ -2,10 +2,11 @@
 import Link from "next/link";
 import type {CSSProperties,ReactNode} from "react";
 import {feedback} from "@/lib/feedback";
-import {getComponent,getRecipe,type CanonicalRecipe} from "@/data/home-data";
-import {recipePrepV2} from "@/data/food-truth-v2";
+import {getComponent,type CanonicalRecipe} from "@/data/home-data";
+import {getLiveRecipeV7} from "@/data/recipe-catalog-v7";
+import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {recipeTitle} from "@/data/recipe-display";
-import {recipeAvailability} from "@/data/stock-math";
+import {recipeAvailabilityV7} from "@/data/stock-math-v7";
 import {useSheet} from "@/lib/useSheet";
 import {toneFor} from "@/lib/tones";
 import {useHousehold} from "../HouseholdState";
@@ -20,10 +21,10 @@ export function Progress({pct,thin=false}:{pct:number;thin?:boolean}){return <di
 export function Stat({v,k,tint}:{v:ReactNode;k:ReactNode;tint?:string}){return <div className="hm-stat" style={tint?{"--tint":tint} as CSSProperties:undefined}><b>{v}</b><span>{k}</span></div>}
 export function RoundBack({href,onPhoto=false,label="Back"}:{href:string;onPhoto?:boolean;label?:string}){return <Link href={href} className={`hm-round ${onPhoto?"onphoto":""}`} aria-label={label} onClick={()=>feedback("tap")}>‹</Link>}
 export function Toast({text}:{text:string}){return <div className="hm-toast" role="status">{text}</div>}
-export function PrepDots({recipe}:{recipe:CanonicalRecipe}){return <>{recipePrepV2(recipe.id).map(p=><i key={p.componentId} className="hm-dot" style={{"--tone":toneFor(p.componentId)} as CSSProperties} title={getComponent(p.componentId)?.code}/>)}</>}
+export function PrepDots({recipe}:{recipe:CanonicalRecipe}){return <>{prepForRecipeAtCookScaleV7(recipe.id).map(p=><i key={p.componentId} className="hm-dot" style={{"--tone":toneFor(p.componentId)} as CSSProperties} title={getComponent(p.componentId)?.code}/>)}</>}
 export function mealMeta(recipe:CanonicalRecipe){return `${recipe.minutes} min · ${recipe.cuisine}`}
 export type Readiness={state:"ready"|"missing"|"unknown";label:string;missing:number;pillClass:string};
-export function useReadiness(){const h=useHousehold();return(recipe:CanonicalRecipe|string):Readiness=>{const r=typeof recipe==="string"?getRecipe(recipe):recipe;if(!h.kitchenReady)return{state:"unknown",label:"Kitchen not checked",missing:0,pillClass:"neutral"};const a=recipeAvailability(r.id,h.componentStock,h.ingredientStock),missing=a.missingPrep.length+a.missingIngredients.length;return a.ready?{state:"ready",label:"We have it all",missing:0,pillClass:""}:{state:"missing",label:`Missing ${missing}`,missing,pillClass:"peach"}}}
+export function useReadiness(){const h=useHousehold();return(recipe:CanonicalRecipe|string):Readiness=>{const r=typeof recipe==="string"?getLiveRecipeV7(recipe):recipe;if(!r)return{state:"missing",label:"Recipe unavailable",missing:1,pillClass:"peach"};if(!h.kitchenReady)return{state:"unknown",label:"Kitchen not checked",missing:0,pillClass:"neutral"};const a=recipeAvailabilityV7(r.id,h.componentStock,h.ingredientStock),missing=a.missingPrep.length+a.missingIngredients.length;return a.ready?{state:"ready",label:"We have it all",missing:0,pillClass:""}:{state:"missing",label:`Missing ${missing}`,missing,pillClass:"peach"}}}
 export function ReadyPill({recipe}:{recipe:CanonicalRecipe}){const ready=useReadiness()(recipe);return <span className={`hm-pill ${ready.pillClass}`}><i/>{ready.label}</span>}
 export function formatQty(qty:number,unit:string){if(unit==="have")return"check pantry";if(unit==="portion")return`${trim(qty)} ${qty===1?"portion":"portions"}`;if(unit==="count")return trim(qty);if(unit==="g"&&qty>=1000)return`${trim(qty/1000)} kg`;if(unit==="ml"&&qty>=1000)return`${trim(qty/1000)} L`;return`${trim(qty)} ${unit}`}
 function trim(n:number){return Number.isInteger(n)?String(n):String(Math.round(n*10)/10)}
