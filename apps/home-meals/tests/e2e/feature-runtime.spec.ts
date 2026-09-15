@@ -82,10 +82,10 @@ test("camera controls expose library and environment-camera capture paths for al
   }
 });
 
-test("voice fallback transcribes into the same Ask Home brain when microphone access fails",async({page})=>{
+test("voice fallback transcribes into the same Ask Home brain when realtime WebRTC is unavailable",async({page})=>{
   await seedHousehold(page);await mockAskHome(page,"Voice reached the same household brain.");
   await page.addInitScript(()=>{
-    if(navigator.mediaDevices)Object.defineProperty(navigator.mediaDevices,"getUserMedia",{configurable:true,value:async()=>{throw new Error("permission denied")}});
+    Object.defineProperty(window,"RTCPeerConnection",{configurable:true,value:undefined});
     class MockRecognition{
       lang="";interimResults=false;maxAlternatives=1;onstart?:()=>void;onresult?:(e:any)=>void;onerror?:()=>void;onend?:()=>void;
       start(){this.onstart?.();setTimeout(()=>this.onresult?.({results:[[{transcript:"What can we make now?"}]]}),20);setTimeout(()=>this.onend?.(),40)}
