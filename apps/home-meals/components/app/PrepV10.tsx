@@ -8,6 +8,7 @@ import {foundationImages} from "@/data/foundation-assets";
 import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {activePrepSummaryV7,coreMotherIdsV7,prepStarterSetsV7,prepRelationshipLabelV7} from "@/data/prep-repertoire-v7";
 import {formatPacketCountV6,getPrepPortionPolicyV6} from "@/data/prep-portioning-v6";
+import {prepCategoryImagesV11} from "@/data/prep-category-assets-v11";
 import {feedback} from "@/lib/feedback";
 import {prepHero} from "@/lib/tones";
 import {formatQty,SectionHead} from "./Primitives";
@@ -46,11 +47,11 @@ export function PrepV10(){
  const setStarter=(ids:readonly string[])=>{h.setActivePrepSet(ids);feedback("success")};
  const setTab=(next:PrepMode)=>{setMode(next);setShowInventory(false);feedback("tap")};
  const categories=[
-  {href:"/prep/bases",image:safePrepImage(prepHero("red")),kicker:"FOUNDATIONS",title:"Core bases",count:core.length,desc:"The seven foundations we deliberately build meals from."},
-  {href:"/prep/mids",image:safePrepImage(prepHero("rendang")),kicker:"BUILDERS",title:"Mid bases & pastes",count:mids.length,desc:"Curry pastes, stocks, roux and cooked flavour builders."},
-  {href:"/prep/sauces",image:safePrepImage(prepHero("wok-brown")),kicker:"SAUCES",title:"Sauces & condiments",count:sauces.length,desc:"Stir-fry sauces, marinades, tare and finishing condiments."},
-  {href:"/prep/boosters",image:safePrepImage(prepHero("ginger-garlic")),kicker:"BOOSTERS",title:"Boosters",count:boosters.length,desc:"Small aromatic and spice preps that change a whole dinner."},
-  {href:"/prep/common",image:safePrepImage(prepHero("onion")),kicker:"SHORTCUTS",title:"Common prep",count:common.length,desc:"Handy things we reach for often, collected in one place."},
+  {href:"/prep/bases",image:prepCategoryImagesV11.coreBases,kicker:"FOUNDATIONS",title:"Core bases",count:core.length,desc:"The seven foundations we deliberately build meals from."},
+  {href:"/prep/mids",image:prepCategoryImagesV11.midBases,kicker:"BUILDERS",title:"Mid bases & pastes",count:mids.length,desc:"Curry pastes, stocks, roux and cooked flavour builders."},
+  {href:"/prep/sauces",image:prepCategoryImagesV11.sauces,kicker:"SAUCES",title:"Sauces & condiments",count:sauces.length,desc:"Stir-fry sauces, marinades, tare and finishing condiments."},
+  {href:"/prep/boosters",image:prepCategoryImagesV11.boosters,kicker:"BOOSTERS",title:"Boosters",count:boosters.length,desc:"Small aromatic and spice preps that change a whole dinner."},
+  {href:"/prep/common",image:prepCategoryImagesV11.common,kicker:"SHORTCUTS",title:"Common prep",count:common.length,desc:"Handy things we reach for often, collected in one place."},
  ] as const;
  const starterImages=[safePrepImage(prepHero("gold")),safePrepImage(prepHero("sambal")),safePrepImage(prepHero("red"))] as const;
  return <div className="hm-screen hm-prep-v10">
