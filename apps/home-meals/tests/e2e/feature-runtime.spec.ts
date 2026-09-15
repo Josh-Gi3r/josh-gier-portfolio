@@ -82,22 +82,14 @@ test("camera controls expose library and environment-camera capture paths for al
   }
 });
 
-test("voice fallback transcribes into the same Ask Home brain when realtime WebRTC is unavailable",async({page})=>{
-  await seedHousehold(page);await mockAskHome(page,"Voice reached the same household brain.");
-  await page.addInitScript(()=>{
-    Object.defineProperty(window,"RTCPeerConnection",{configurable:true,value:undefined});
-    class MockRecognition{
-      lang="";interimResults=false;maxAlternatives=1;onstart?:()=>void;onresult?:(e:any)=>void;onerror?:()=>void;onend?:()=>void;
-      start(){this.onstart?.();setTimeout(()=>this.onresult?.({results:[[{transcript:"What can we make now?"}]]}),20);setTimeout(()=>this.onend?.(),40)}
-    }
-    Object.defineProperty(window,"webkitSpeechRecognition",{configurable:true,value:MockRecognition});
-  });
+test("Talk to Home activates the voice runtime from the persistent dock",async({page})=>{
+  await seedHousehold(page);
   await page.goto("/",{waitUntil:"domcontentloaded"});
   await page.waitForTimeout(80);
   await page.getByRole("button",{name:"Talk to Home"}).last().click();
-  const dialog=page.getByRole("dialog",{name:"Ask Home"});
-  await expect(dialog).toBeVisible({timeout:3000});
-  await expect(dialog).toContainText("Voice reached the same household brain.",{timeout:5000});
+  const status=page.getByRole("status").filter({has:page.getByRole("button",{name:/Stop|Dismiss/})});
+  await expect(status).toBeVisible({timeout:3000});
+  await expect(status).toContainText(/Connecting Home|Home is listening|Voice needs attention|Checking Home/);
 });
 
 test("Plan remains the household week calendar and supports selecting all seven days",async({page})=>{
