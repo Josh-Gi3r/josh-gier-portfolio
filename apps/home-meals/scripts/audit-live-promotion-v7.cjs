@@ -28,7 +28,7 @@ try{
  const v7IngredientSource=read('data/ingredient-engine-v7.ts'),v7FoodSource=read('data/food-engine-v7.ts'),v7RuntimeSource=read('data/runtime-dinner-v7.ts'),householdSource=read('components/HouseholdStateV12.tsx');
  if(!/getPhase2LiveRuntimeV7/.test(v7IngredientSource)||!/ingredientsForRecipeV2/.test(v7IngredientSource))fail('V7 ingredient wrapper must gate Phase 2 and fall back to V2');
  if(!/getPhase2LiveRuntimeV7/.test(v7FoodSource)||!/prepForRecipeAtCookScaleV4/.test(v7FoodSource))fail('V7 prep wrapper must gate Phase 2 and fall back to V4');
- if(!/getPhase2LiveRuntimeV7/.test(v7RuntimeSource)||!/getRuntimeDinnerFormulationV4/.test(v7RuntimeSource))fail('V7 dinner wrapper must gate Phase 2 and fall back to V4');
+ if(!/getPhase2LiveRuntimeV7/.test(v7RuntimeSource)||!/getOriginalRuntimeDinnerV8/.test(v7RuntimeSource))fail('V7 dinner wrapper must gate Phase 2 and preserve the V8-corrected V4 foundation');
  for(const token of ['allLiveRecipesV7','prepNeedsForRecipesV7','shoppingNeedsForPlanV7','cookRecipeStateV7','setIngredientStockV7'])if(!householdSource.includes(token))fail(`Household provider is not promotion-ready: missing ${token}`);
  const original=runtimeDinner.getRuntimeDinnerFormulationV7('gold-chicken-curry',4);if(!original||original.targetServings!==4)fail('V7 runtime wrapper lost existing live recipe fallback');
  const originalIngredients=ingredientEngine.ingredientsForRecipeV7('gold-chicken-curry',undefined,4);if(!originalIngredients.length)fail('V7 ingredient wrapper lost existing live recipe ingredients');

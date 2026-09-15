@@ -14,7 +14,7 @@ Where the master plan refers to `portionMl`, normalized ml-only component stock,
 - component stock is derived from measured/confirmed batches plus explicit manual stock, not from a guessed recipe yield;
 - internet/source research may validate formulation and technique but does not prove the household's physical cooked yield;
 - physical yield remains unknown until Josh/G actually observe it;
-- the normal Prep UX is **working-portion first**: make the recipe, divide/store useful working portions, tell Home how many standardized portions were stored; exact canonical quantity remains underneath for arithmetic;
+- the normal Prep UX is **measured-output first**: make the household formulation, cool safely, weigh/measure actual finished output in its canonical unit, then let Home derive full V6 storage packets plus any exact remainder;
 - cooking, planning, groceries and prep all consume the same canonical quantities.
 
 This supersedes stale quantity/yield wording in master-plan sections 8.1, 8.2, 17 and 20. The governing runtime is v12 plus food-truth/food-engine v2.
@@ -43,13 +43,13 @@ Qualitative pantry state remains `Out / Low / Some / Plenty`; it must never be c
 
 ## 4. Active prep repertoire
 
-The 41 prep objects are a capability library, not a checklist. Josh/G maintain an active subset.
+The 41 prep objects are a capability library, not a checklist. The product presents **7 maintained core bases + 1 optional caramelised-onion foundation**, 26 mids and 7 boosters. Josh/G maintain an active subset independently from physical stock.
 
 Supported starter choices include:
 
 - small starter: `GOLD + SAMBAL + RED`;
 - balanced five-base set;
-- all eight mothers;
+- all seven core bases; ONION remains an optional foundation;
 - custom repertoire.
 
 Planning and Ask Home should prefer the active repertoire and may explain the smallest useful extra prep that unlocks meaningful variety.
@@ -151,9 +151,9 @@ Software completion requires all of the following to agree on the accepted commi
 18. production status/configuration checks;
 19. QA acceptance matrix and final completion tracker updated to the same evidence.
 
-The current repeatable browser gate is **152 Playwright tests**: a data-derived **136-route** catalogue crawl at 390 px, stateful first-run navigation, **132 responsive samples** across all canonical widths (`360, 375, 390, 393, 412, 430, 768, 820, 1024, 1280, 1440`) and five two-device sync/recovery cases. Visible-control accessible-name checks run during the full catalogue crawl.
+The current V8 repeatable browser gate is **153 Playwright tests**: a data-derived **336-route** full-live-catalogue crawl at 390 px, stateful first-run + week-lifecycle navigation, **132 responsive samples** across all canonical widths (`360, 375, 390, 393, 412, 430, 768, 820, 1024, 1280, 1440`) and five two-device sync/recovery cases. Visible-control accessible-name checks run during the full catalogue crawl.
 
-Implementation acceptance commit `11a416636250200c60f27866154aaa02dfb37185` passed all audits, production build and **152 / 152 Playwright tests**, and deployed successfully on Railway. Final documentation heads must preserve the same release gates before closure.
+The prior v12 baseline commit `11a416636250200c60f27866154aaa02dfb37185` is historical evidence only. V8 acceptance supersedes its 36-recipe/136-route assumptions and requires the current `main` head to pass the V8 integrated audit, production build, **153 / 153 Playwright tests** and Railway exact-SHA deployment.
 
 Only two categories may remain outside software acceptance:
 

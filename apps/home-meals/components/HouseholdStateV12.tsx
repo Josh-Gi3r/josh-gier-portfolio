@@ -11,7 +11,7 @@ import {getHouseholdPrepFormulationV6,getPrepPortionPolicyV6} from "@/data/prep-
 import type {RecipeCookObservationV2} from "@/data/calibration-v2";
 import {
  addMeasuredBatchV12,componentStockV12,confirmEmptyKitchenV12,consumeComponentV12,migrateHouseholdV11ToV12,recordCookObservationV12,
- setActivePrepSetV12,setManualComponentStockV12,setQualitativeIngredientLevelV12,toggleActivePrepV12,type HouseholdStateV12,type RatingV12,type RecipeNoteV12,type RecipeVersionV12
+ confirmSuggestedWeekV12,clearSuggestedWeekV12,proposeWeekV12,setActivePrepSetV12,setConfirmedWeekV12,setManualComponentStockV12,setPlanPreferencesV12,setQualitativeIngredientLevelV12,toggleActivePrepV12,type HouseholdStateV12,type PlanModeV12,type RatingV12,type RecipeNoteV12,type RecipeVersionV12
 } from "@/data/household-v12";
 
 const KEY="home-meals-household-v12",LEGACY_KEY="home-meals-household-v11";
@@ -25,6 +25,11 @@ export type HouseholdStateV12Context={
  prepNeeds:ReturnType<typeof prepNeedsForRecipesV7>;
  shoppingNeeds:ReturnType<typeof shoppingNeedsForPlanV7>;
  setDay:(index:number,recipeId:string)=>void;
+ proposeWeek:(recipeIds:readonly string[])=>void;
+ confirmSuggestedWeek:()=>void;
+ clearSuggestedWeek:()=>void;
+ setConfirmedWeek:(recipeIds:readonly string[])=>void;
+ setPlanPreferences:(mode:PlanModeV12,allowExtraPrep?:boolean)=>void;
  toggleMonthlyPool:(recipeId:string)=>void;
  setActivePrepSet:(componentIds:readonly string[])=>void;
  toggleActivePrep:(componentId:string,active?:boolean)=>void;
@@ -53,7 +58,7 @@ export type HouseholdStateV12Context={
 
 const Ctx=createContext<HouseholdStateV12Context|null>(null);
 function freshState(){return migrateHouseholdV11ToV12({},defaults)}
-function restoreV12(raw:string):HouseholdStateV12|null{try{const parsed=JSON.parse(raw);if(parsed?.version!==12||!Array.isArray(parsed.week)||!parsed.manualComponentStock||!parsed.ingredientStock)return null;return{...parsed,activePrepIds:Array.isArray(parsed.activePrepIds)?parsed.activePrepIds:[],qualitativeIngredientStock:parsed.qualitativeIngredientStock&&typeof parsed.qualitativeIngredientStock==="object"?parsed.qualitativeIngredientStock:{},cookObservations:Array.isArray(parsed.cookObservations)?parsed.cookObservations:[]} as HouseholdStateV12}catch{return null}}
+function restoreV12(raw:string):HouseholdStateV12|null{try{const parsed=JSON.parse(raw);if(parsed?.version!==12||!Array.isArray(parsed.week)||!parsed.manualComponentStock||!parsed.ingredientStock)return null;return{...parsed,weekStatus:parsed.weekStatus==="suggested"||parsed.weekStatus==="confirmed"?parsed.weekStatus:"unplanned",suggestedWeek:Array.isArray(parsed.suggestedWeek)&&parsed.suggestedWeek.length===7?parsed.suggestedWeek:null,planMode:["stock","repertoire","both","free"].includes(parsed.planMode)?parsed.planMode:"both",allowExtraPrep:typeof parsed.allowExtraPrep==="boolean"?parsed.allowExtraPrep:true,activePrepIds:Array.isArray(parsed.activePrepIds)?parsed.activePrepIds:[],qualitativeIngredientStock:parsed.qualitativeIngredientStock&&typeof parsed.qualitativeIngredientStock==="object"?parsed.qualitativeIngredientStock:{},cookObservations:Array.isArray(parsed.cookObservations)?parsed.cookObservations:[]} as HouseholdStateV12}catch{return null}}
 function uid(prefix:string){return`${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`}
 function historyOnly(prev:HouseholdStateV12,recipeId:string,variantId?:string){return{...prev,history:[{mealId:recipeId,variantId,at:new Date().toISOString()},...prev.history].slice(0,100)}}
 
@@ -63,10 +68,16 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  useEffect(()=>{if(hydrated)localStorage.setItem(KEY,JSON.stringify(state))},[hydrated,state]);
 
  const componentStock=useMemo(()=>componentStockV12(state),[state.componentBatches,state.manualComponentStock]);
- const prepNeeds=useMemo(()=>prepNeedsForRecipesV7(state.week,componentStock),[state.week,componentStock]);
- const shoppingNeeds=useMemo(()=>shoppingNeedsForPlanV7(state.week.map(recipeId=>({recipeId})),state.ingredientStock,state.qualitativeIngredientStock),[state.week,state.ingredientStock,state.qualitativeIngredientStock]);
+ const planningWeek=state.weekStatus==="suggested"&&state.suggestedWeek?.length===7?state.suggestedWeek:state.week;
+ const prepNeeds=useMemo(()=>prepNeedsForRecipesV7(planningWeek,componentStock),[planningWeek,componentStock]);
+ const shoppingNeeds=useMemo(()=>shoppingNeedsForPlanV7(planningWeek.map(recipeId=>({recipeId})),state.ingredientStock,state.qualitativeIngredientStock),[planningWeek,state.ingredientStock,state.qualitativeIngredientStock]);
 
- const setDay=(index:number,recipeId:string)=>{if(index<0||index>6||!validRecipeIds.has(recipeId))return;setState(prev=>({...prev,week:prev.week.map((x,i)=>i===index?recipeId:x),groceryChecked:{}}))};
+ const setDay=(index:number,recipeId:string)=>{if(index<0||index>6||!validRecipeIds.has(recipeId))return;setState(prev=>{const base=prev.weekStatus==="suggested"&&prev.suggestedWeek?.length===7?prev.suggestedWeek:prev.week,next=base.map((x,i)=>i===index?recipeId:x);return prev.weekStatus==="confirmed"?setConfirmedWeekV12(prev,next):proposeWeekV12(prev,next)})};
+ const proposeWeek=(recipeIds:readonly string[])=>{if(recipeIds.length!==7||recipeIds.some(id=>!validRecipeIds.has(id)))return;setState(prev=>proposeWeekV12(prev,recipeIds))};
+ const confirmSuggestedWeek=()=>setState(prev=>confirmSuggestedWeekV12(prev));
+ const clearSuggestedWeek=()=>setState(prev=>clearSuggestedWeekV12(prev));
+ const setConfirmedWeek=(recipeIds:readonly string[])=>{if(recipeIds.length!==7||recipeIds.some(id=>!validRecipeIds.has(id)))return;setState(prev=>setConfirmedWeekV12(prev,recipeIds))};
+ const setPlanPreferences=(mode:PlanModeV12,allowExtraPrep?:boolean)=>setState(prev=>setPlanPreferencesV12(prev,mode,allowExtraPrep??prev.allowExtraPrep));
  const toggleMonthlyPool=(recipeId:string)=>{if(!validRecipeIds.has(recipeId))return;setState(prev=>({...prev,monthlyPool:prev.monthlyPool.includes(recipeId)?prev.monthlyPool.filter(id=>id!==recipeId):[...prev.monthlyPool,recipeId]}))};
  const setActivePrepSet=(componentIds:readonly string[])=>setState(prev=>setActivePrepSetV12(prev,componentIds));
  const toggleActivePrep=(componentId:string,active?:boolean)=>setState(prev=>toggleActivePrepV12(prev,componentId,active));
@@ -93,7 +104,7 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  const clearMigrationWarnings=()=>setState(prev=>({...prev,migrationWarnings:[]}));
  const resetV12=()=>setState(freshState());
 
- const value:HouseholdStateV12Context={state,componentStock,prepNeeds,shoppingNeeds,setDay,toggleMonthlyPool,setActivePrepSet,toggleActivePrep,setComponentObserved,reconcileComponentTotal,setIngredientObserved,setQualitativeIngredientLevel,recordMeasuredBatch,recordMeasuredProduction,recordPortionedProduction,cookMeal,logMealWithoutStock,recordCookObservation,rateMeal,noteMeal,promoteRecipeVersion,toggleUseSoon,toggleFavourite,toggleGrocery,confirmKitchen,confirmEmptyKitchen,clearMigrationWarnings,resetV12};
+ const value:HouseholdStateV12Context={state,componentStock,prepNeeds,shoppingNeeds,setDay,proposeWeek,confirmSuggestedWeek,clearSuggestedWeek,setConfirmedWeek,setPlanPreferences,toggleMonthlyPool,setActivePrepSet,toggleActivePrep,setComponentObserved,reconcileComponentTotal,setIngredientObserved,setQualitativeIngredientLevel,recordMeasuredBatch,recordMeasuredProduction,recordPortionedProduction,cookMeal,logMealWithoutStock,recordCookObservation,rateMeal,noteMeal,promoteRecipeVersion,toggleUseSoon,toggleFavourite,toggleGrocery,confirmKitchen,confirmEmptyKitchen,clearMigrationWarnings,resetV12};
  if(!hydrated)return<div aria-label="Loading Home Meals"/>;
  return<Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

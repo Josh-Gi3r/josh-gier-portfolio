@@ -20,7 +20,7 @@ must('data/household-v12.ts',/confirmEmptyKitchenV12/,'v12 state must distinguis
 
 must('components/app/Recipe.tsx',/getRuntimeDinnerFormulationV7/,'recipe page is not rendering the unified four-serving V7 runtime formulation');
 must('components/app/Cooking.tsx',/getRuntimeDinnerFormulationV7/,'cooking mode is not rendering the unified four-serving V7 runtime formulation');
-must('data/runtime-dinner-v7.ts',/getRuntimeDinnerFormulationV4/,'V7 runtime must preserve the proven V4 fallback for the original catalogue');
+must('data/runtime-dinner-v7.ts',/getOriginalRuntimeDinnerV8/,'V7 runtime must preserve the V8-corrected V4 foundation for the original catalogue');
 must('data/runtime-dinner-v7.ts',/getPhase2LiveRuntimeV7/,'V7 runtime must gate promoted Phase 2 recipes');
 must('data/runtime-dinner-v4.ts',/getDinnerFormulationV2/,'runtime formulation must retain v2 culinary reference provenance');
 must('data/runtime-dinner-v4.ts',/targetServings:servings/,'runtime formulation must expose selected household cook servings');
@@ -35,7 +35,9 @@ for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','componen
 }
 for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx','components/app/PrepDay.tsx'])must(rel,/finished output/i,'prep UX must ask for the actual finished output before packetising stock');
 
-must('components/app/Prep.tsx',/Your prep/,'Prep home must foreground household repertoire rather than only mothers');
+must('components/app/Prep.tsx',/Our prep/,'Prep home must foreground household repertoire rather than only mothers');
+must('components/app/Prep.tsx',/Have now/,'Prep home must separate physical prep stock from maintenance repertoire');
+must('components/app/Prep.tsx',/Caramelised onion foundation/,'Prep home must demote ONION from core-base status');
 must('components/app/Prep.tsx',/Core bases/,'Prep home must expose core bases in unified library');
 must('components/app/Prep.tsx',/Mids & sauces/,'Prep home must expose mids and sauces');
 must('components/app/Prep.tsx',/Boosters/,'Prep home must expose boosters');
@@ -54,6 +56,8 @@ must('components/app/MealHistory.tsx',/mealHistorySummaryV2|mealHistorySummaryV7
 must('data/meal-history-v2.ts',/recentPenaltyV2/,'legacy history engine must retain recency penalty provenance');
 must('data/meal-history-v7.ts',/allLiveRecipesV7/,'V7 history engine must derive history over the live catalogue');
 must('components/app/Plan.tsx',/activePrepIds/,'weekly planner must consider active prep repertoire');
+must('components/app/Plan.tsx',/planMode/,'weekly planner must expose stock/repertoire/both/free planning basis');
+must('components/app/Plan.tsx',/confirmSuggestedWeek/,'weekly planner must require explicit suggestion approval');
 must('components/app/Plan.tsx',/recentPenaltyV2|recentPenaltyV7/,'weekly planner must penalize recent repeats');
 must('components/app/Plan.tsx',/cuisineRepeat/,'weekly planner must discourage repetitive cuisine mix');
 

@@ -16,7 +16,7 @@ const G=(kcalPer100g:number,note:string,confidence:EnergyConfidenceV6="B_DATABAS
 const M=(kcalPer100ml:number,note:string,confidence:EnergyConfidenceV6="D_ANALOGUE_PROXY"):EnergyReferenceV6=>({unit:"ml",kcalPerUnit:kcalPer100ml/100,confidence,source:confidence==="B_DATABASE"?USDA:LABEL,note});
 const C=(kcalPerCount:number,note:string,confidence:EnergyConfidenceV6="D_ANALOGUE_PROXY"):EnergyReferenceV6=>({unit:"count",kcalPerUnit:kcalPerCount,confidence,source:confidence==="B_DATABASE"?USDA:LABEL,note});
 
-function textOf(row:EnergyIngredientLikeV6){return`${row.ingredientId??row.id??""} ${row.name}`.toLowerCase().replace(/[·,/()]/g," ")}
+function textOf(row:EnergyIngredientLikeV6){return`${row.ingredientId??row.id??""} ${row.name} ${row.basis??""} ${row.note??""}`.toLowerCase().replace(/[·,/()]/g," ")}
 const has=(s:string,...words:string[])=>words.some(w=>s.includes(w));
 
 /**

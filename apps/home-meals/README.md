@@ -8,16 +8,11 @@ Home Meals connects the dinners they actually want to eat with reusable prep, Ki
 
 Current live food universe:
 
-- **8 mothers**
-- **26 mids**
+- **7 core bases**
+- **1 optional caramelised-onion foundation (ONION)**
+- **26 mids & sauces**
 - **7 boosters**
-- **36 current live dinners**
-
-Additional researched repertoire:
-
-- **100 / 100 Phase 2 recipes formulation-locked**
-- **100 / 100 V6 prep/nutrition operational overlays complete**
-- **0 / 100 promoted live by design**
+- **136 live recipes**: the original 36 plus all 100 Phase 2 recipes
 
 The app is not a generic recipe site. It is a shared kitchen notebook + smart fridge door + personal sous-chef with memory.
 
@@ -50,11 +45,12 @@ Reading order:
 
 1. `HOME_MEALS_MASTER_IMPLEMENTATION_PLAN.md`
 2. `HOME_MEALS_PRODUCT_SPEC.md`
-3. `HOME_MEALS_MASTER_IMPLEMENTATION_ADDENDUM_V12.md`
-4. `HOME_MEALS_MASTER_IMPLEMENTATION_ADDENDUM_V6.md` — supersedes stale quantity/portion/nutrition wording only
-5. `HOME_MEALS_PORTION_NUTRITION_REBASE_V6.md`
-6. `HOME_MEALS_PHASE2_RESEARCH_COMPLETION_V5.md`
-7. `HOME_MEALS_CULINARY_VERIFICATION.md`
+3. `HOME_MEALS_INTEGRATED_REDTEAM_V8.md` — current integrated food/product acceptance
+4. `HOME_MEALS_MASTER_IMPLEMENTATION_ADDENDUM_V12.md`
+5. `HOME_MEALS_MASTER_IMPLEMENTATION_ADDENDUM_V6.md` — supersedes stale quantity/portion/nutrition wording only
+6. `HOME_MEALS_PORTION_NUTRITION_REBASE_V6.md`
+7. `HOME_MEALS_PHASE2_RESEARCH_COMPLETION_V5.md`
+8. `HOME_MEALS_CULINARY_VERIFICATION.md`
 
 Implementation authority includes:
 
@@ -100,7 +96,10 @@ Fresh Kitchen state is **unknown**, not silently empty. Josh/G can confirm an em
 
 The planner uses the same household truth as Kitchen and Cooking:
 
-- active prep repertoire;
+- physical prep stock (“Have now”);
+- active prep maintenance repertoire (“Our prep”);
+- planning basis: stock / repertoire / both / free;
+- explicit week lifecycle: preview → suggested → confirmed;
 - exact known stock;
 - qualitative pantry state;
 - use-soon food;
@@ -145,15 +144,13 @@ npm run test:e2e
 
 Home Meals intentionally uses **no GitHub Actions**. The absence of the Home Meals workflow is regression-gated.
 
-`audit:data` includes the catalogue, food-truth, food-system, intelligence, household journey/API/privacy/sync, culinary/Phase 2, V6 portion/nutrition, release infrastructure, v3/v12 cutover and product-completion gates.
+`audit:data` includes the catalogue, food-truth, food-system, intelligence, household journey/API/privacy/sync, culinary/Phase 2, V6 portion/nutrition, V7 live promotion, the V8 177-object integrated red-team, release infrastructure, v3/v12 cutover and product-completion gates.
 
 Browser/Playwright acceptance remains the route/responsive regression surface when route/product coverage changes. Production is Railway `home-meals-web` from `main`, root `apps/home-meals`, at `meals.josh-gier.com`.
 
 ## Completion boundary
 
-The V6 portion/nutrition implementation is complete only when repo-native audits, TypeScript, production build and Railway deployment agree on the same accepted `main` SHA.
-
-The additional 100 researched recipes are a separate **Controlled Live Promotion** phase. Research completeness does not make them live.
+The V8 integrated release is complete only when repo-native audits, TypeScript, the production build, browser acceptance and Railway deployment agree on the same accepted `main` SHA. All 100 Phase 2 recipes have passed the controlled promotion gate and are live.
 
 Remaining non-software facts may be marked only as:
 

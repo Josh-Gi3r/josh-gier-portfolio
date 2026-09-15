@@ -1,4 +1,4 @@
-import {phase2ResearchRecipesV5} from "./phase2-research-registry-v5";
+import {phase2OperationalResearchRecipesV8} from "./v8-recipe-overrides";
 import {recipeEnergyReferenceV6} from "./recipe-energy-v6";
 import {prepRequirementPacketTextV6} from "./prep-portioning-v6";
 import {quantity} from "./food-quantity";
@@ -8,7 +8,7 @@ import {quantity} from "./food-quantity";
  * Research provenance stays immutable; this layer adds V6 packet language and the
  * methodology-derived nutrition estimate that Live Promotion will consume.
  */
-export const phase2OperationalRecipesV6=phase2ResearchRecipesV5.map(recipe=>({
+export const phase2OperationalRecipesV6=phase2OperationalResearchRecipesV8.map(recipe=>({
   recipeId:recipe.id,
   targetServings:recipe.targetServings,
   prep:recipe.prep.map(p=>({componentId:p.componentId,quantity:quantity(p.qty,p.unit),display:prepRequirementPacketTextV6(p.componentId,quantity(p.qty,p.unit))})),

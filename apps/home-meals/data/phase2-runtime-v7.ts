@@ -1,5 +1,5 @@
 import {quantity,type QuantityUnit} from "./food-quantity";
-import {phase2ResearchRecipesV5,getPhase2ResearchRecipeV5} from "./phase2-research-registry-v5";
+import {phase2OperationalResearchRecipesV8,getPhase2OperationalResearchRecipeV8} from "./v8-recipe-overrides";
 import {canonicalIngredientKeyV7} from "./ingredient-catalog-v7";
 import {isPhase2LiveV7} from "./phase2-promotion-registry-v7";
 import type {RecipeIngredientV2,RecipeStepV2} from "./recipe-formulations-v2";
@@ -10,44 +10,12 @@ const waterIds=new Set(["water","water-slurry","poaching-liquid","coconut-water"
 const strongSeasoningIds=new Set(["salt-fine","sugar","palm-sugar","fish-sauce","light-soy","dark-soy","oyster-sauce","hoisin","shaoxing-wine","mirin","sake","rice-vinegar","chinkiang-vinegar","tamarind","dijon","wholegrain-mustard","gochujang","doenjang","white-miso","chilli-oil","hot-sauce","worcestershire","garam-masala","cumin-seed","cumin-ground","roasted-cumin","coriander-ground","turmeric-ground","kashmiri-chilli","paprika","chilli-flake","five-spice","white-pepper","black-pepper","sichuan-pepper","amchur","kasuri-methi"]);
 const aromaticIds=new Set(["garlic-fresh","ginger-fresh","green-chilli","dried-red-chilli","scallion","lemongrass","galangal","curry-leaf"]);
 const finishingIds=new Set(["coriander","thai-basil","holy-basil","makrut-lime","parsley","mint"]);
-
 function roundQty(qty:number,unit:QuantityUnit){if(unit==="count")return Math.max(1,Math.round(qty));if(qty>=100)return Math.round(qty/5)*5;if(qty>=20)return Math.round(qty);return Math.round(qty*2)/2}
 function ratioForIngredient(id:string){return(cookingFatIds.has(id)||waterIds.has(id)||strongSeasoningIds.has(id)||aromaticIds.has(id)||finishingIds.has(id))?0.83:0.75}
-function scaleIngredient(row:(typeof phase2ResearchRecipesV5)[number]["ingredients"][number],servings:SupportedCookServingsV4):RecipeIngredientV2{
- const ratio=servings===4?1:ratioForIngredient(row.id);
- return{ingredientId:canonicalIngredientKeyV7(row.id,row.unit),name:row.name,qty:roundQty(row.qty*ratio,row.unit),unit:row.unit,basis:row.basis,optional:row.optional,note:row.note};
-}
-function scalePrep(row:(typeof phase2ResearchRecipesV5)[number]["prep"][number],servings:SupportedCookServingsV4){const ratio=servings===4?1:.75;return{componentId:row.componentId,quantity:quantity(roundQty(row.qty*ratio,row.unit),row.unit)}}
-function stepFor(row:(typeof phase2ResearchRecipesV5)[number]["steps"][number]):RecipeStepV2{return{instruction:row.instruction,visualCue:row.cue,warningCue:row.warning,safetyTargetC:row.safetyTargetC,cameraAssessable:!!row.cue}}
-
-export type Phase2RuntimeDinnerV7=Readonly<{
- recipeId:string;
- targetServings:SupportedCookServingsV4;
- prep:readonly {componentId:string;quantity:ReturnType<typeof quantity>}[];
- ingredients:readonly RecipeIngredientV2[];
- equipment:readonly string[];
- steps:readonly RecipeStepV2[];
- actualFinishedWeightG:null;
- actualServings:null;
- actualCookMinutes:null;
- source:"phase2-v7";
-}>;
-
-export function getPhase2CandidateRuntimeV7(recipeId:string,servings:SupportedCookServingsV4=4):Phase2RuntimeDinnerV7|undefined{
- const r=getPhase2ResearchRecipeV5(recipeId);if(!r||r.targetServings!==4)return undefined;
- return{recipeId:r.id,targetServings:servings,prep:r.prep.map(x=>scalePrep(x,servings)),ingredients:r.ingredients.map(x=>scaleIngredient(x,servings)),equipment:r.equipment,steps:r.steps.map(stepFor),actualFinishedWeightG:null,actualServings:null,actualCookMinutes:null,source:"phase2-v7"};
-}
+function scaleIngredient(row:(typeof phase2OperationalResearchRecipesV8)[number]["ingredients"][number],servings:SupportedCookServingsV4):RecipeIngredientV2{const ratio=servings===4?1:ratioForIngredient(row.id);return{ingredientId:canonicalIngredientKeyV7(row.id,row.unit),name:row.name,qty:roundQty(row.qty*ratio,row.unit),unit:row.unit,basis:row.basis,optional:row.optional,note:row.note}}
+function scalePrep(row:(typeof phase2OperationalResearchRecipesV8)[number]["prep"][number],servings:SupportedCookServingsV4){const ratio=servings===4?1:.75;return{componentId:row.componentId,quantity:quantity(roundQty(row.qty*ratio,row.unit),row.unit)}}
+function stepFor(row:(typeof phase2OperationalResearchRecipesV8)[number]["steps"][number]):RecipeStepV2{return{instruction:row.instruction,visualCue:row.cue,warningCue:row.warning,safetyTargetC:row.safetyTargetC,cameraAssessable:!!row.cue}}
+export type Phase2RuntimeDinnerV7=Readonly<{recipeId:string;targetServings:SupportedCookServingsV4;prep:readonly {componentId:string;quantity:ReturnType<typeof quantity>}[];ingredients:readonly RecipeIngredientV2[];equipment:readonly string[];steps:readonly RecipeStepV2[];actualFinishedWeightG:null;actualServings:null;actualCookMinutes:null;source:"phase2-v7"}>;
+export function getPhase2CandidateRuntimeV7(recipeId:string,servings:SupportedCookServingsV4=4):Phase2RuntimeDinnerV7|undefined{const r=getPhase2OperationalResearchRecipeV8(recipeId);if(!r||r.targetServings!==4)return undefined;return{recipeId:r.id,targetServings:servings,prep:r.prep.map(x=>scalePrep(x,servings)),ingredients:r.ingredients.map(x=>scaleIngredient(x,servings)),equipment:r.equipment,steps:r.steps.map(stepFor),actualFinishedWeightG:null,actualServings:null,actualCookMinutes:null,source:"phase2-v7"}}
 export function getPhase2LiveRuntimeV7(recipeId:string,servings:SupportedCookServingsV4=4){if(!isPhase2LiveV7(recipeId))return undefined;return getPhase2CandidateRuntimeV7(recipeId,servings)}
-
-export function validatePhase2RuntimeV7(){
- const errors:string[]=[];
- for(const recipe of phase2ResearchRecipesV5){
-   const four=getPhase2CandidateRuntimeV7(recipe.id,4),three=getPhase2CandidateRuntimeV7(recipe.id,3);if(!four||!three){errors.push(`${recipe.id}: runtime adapter missing`);continue}
-   if(four.targetServings!==4||three.targetServings!==3)errors.push(`${recipe.id}: target servings mismatch`);
-   if(four.ingredients.length!==recipe.ingredients.length||three.ingredients.length!==recipe.ingredients.length)errors.push(`${recipe.id}: ingredient count mismatch`);
-   if(four.prep.length!==recipe.prep.length||three.prep.length!==recipe.prep.length)errors.push(`${recipe.id}: prep count mismatch`);
-   for(let i=0;i<recipe.ingredients.length;i++){const src=recipe.ingredients[i],f=four.ingredients[i],t=three.ingredients[i],canonical=canonicalIngredientKeyV7(src.id,src.unit);if(f.ingredientId!==canonical||f.qty!==src.qty||f.unit!==src.unit)errors.push(`${recipe.id}: four-serving ingredient drift ${src.id}`);if(t.unit!==src.unit||!(t.qty>0)||t.qty>f.qty)errors.push(`${recipe.id}: invalid three-serving ingredient ${src.id}`)}
-   for(let i=0;i<recipe.prep.length;i++){const src=recipe.prep[i],f=four.prep[i],t=three.prep[i];if(f.componentId!==src.componentId||f.quantity.qty!==src.qty||f.quantity.unit!==src.unit)errors.push(`${recipe.id}: four-serving prep drift ${src.componentId}`);if(t.quantity.unit!==src.unit||!(t.quantity.qty>0)||t.quantity.qty>f.quantity.qty)errors.push(`${recipe.id}: invalid three-serving prep ${src.componentId}`)}
- }
- return{valid:errors.length===0,errors,count:phase2ResearchRecipesV5.length};
-}
+export function validatePhase2RuntimeV7(){const errors:string[]=[];for(const recipe of phase2OperationalResearchRecipesV8){const four=getPhase2CandidateRuntimeV7(recipe.id,4),three=getPhase2CandidateRuntimeV7(recipe.id,3);if(!four||!three){errors.push(`${recipe.id}: runtime adapter missing`);continue}if(four.targetServings!==4||three.targetServings!==3)errors.push(`${recipe.id}: target servings mismatch`);if(four.ingredients.length!==recipe.ingredients.length||three.ingredients.length!==recipe.ingredients.length)errors.push(`${recipe.id}: ingredient count mismatch`);if(four.prep.length!==recipe.prep.length||three.prep.length!==recipe.prep.length)errors.push(`${recipe.id}: prep count mismatch`);for(let i=0;i<recipe.ingredients.length;i++){const src=recipe.ingredients[i],f=four.ingredients[i],t=three.ingredients[i],canonical=canonicalIngredientKeyV7(src.id,src.unit);if(f.ingredientId!==canonical||f.qty!==src.qty||f.unit!==src.unit)errors.push(`${recipe.id}: four-serving ingredient drift ${src.id}`);if(t.unit!==src.unit||!(t.qty>0)||t.qty>f.qty)errors.push(`${recipe.id}: invalid three-serving ingredient ${src.id}`)}for(let i=0;i<recipe.prep.length;i++){const src=recipe.prep[i],f=four.prep[i],t=three.prep[i];if(f.componentId!==src.componentId||f.quantity.qty!==src.qty||f.quantity.unit!==src.unit)errors.push(`${recipe.id}: four-serving prep drift ${src.componentId}`);if(t.quantity.unit!==src.unit||!(t.quantity.qty>0)||t.quantity.qty>f.quantity.qty)errors.push(`${recipe.id}: invalid three-serving prep ${src.componentId}`)}}return{valid:errors.length===0,errors,count:phase2OperationalResearchRecipesV8.length}}

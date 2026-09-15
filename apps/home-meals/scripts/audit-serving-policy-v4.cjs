@@ -27,7 +27,7 @@ try{
  const recipeUi=read('components/app/Recipe.tsx'),cookUi=read('components/app/Cooking.tsx'),household=read('data/household-v12.ts'),runtimeV7=read('data/runtime-dinner-v7.ts');
  // V7 is now the user-facing gate. It must delegate original live recipes to the proven V4 runtime rather than replacing serving truth.
  if(!/getRuntimeDinnerFormulationV7/.test(recipeUi)||!/getRuntimeDinnerFormulationV7/.test(cookUi))fail('recipe/cooking UI is not bound to the unified four-serving V7 runtime gate');
- if(!/getRuntimeDinnerFormulationV4/.test(runtimeV7)||!/getPhase2LiveRuntimeV7/.test(runtimeV7))fail('V7 runtime gate must preserve V4 fallback and promotion-gated Phase 2 runtime');
+ if(!/getOriginalRuntimeDinnerV8/.test(runtimeV7)||!/getPhase2LiveRuntimeV7/.test(runtimeV7))fail('V7 runtime gate must preserve the V8-corrected V4 foundation and promotion-gated Phase 2 runtime');
  if(!/prepForRecipeAtCookScaleV4/.test(household))fail('v12 cook completion does not preserve four-serving prep truth for the original 36');
  if(/for\(const requirement of recipePrepV2\(recipeId\)\)/.test(household))fail('cook completion still consumes raw two-serving prep reference');
  const workflow=path.join(repo,'.github','workflows','home-meals-ci.yml');if(exists(workflow))fail('Home Meals GitHub Actions workflow must remain removed');

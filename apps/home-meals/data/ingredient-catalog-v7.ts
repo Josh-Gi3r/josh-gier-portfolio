@@ -1,18 +1,22 @@
 import {canonicalIngredientCatalogV2,canonicalIngredientKeyV2,getCanonicalIngredientV2,type CanonicalIngredientCatalogV2,type MajorAllergenV2,type NutritionBindingClassV2,type SourcingClassV2} from "./ingredient-catalog-v2";
-import {phase2ResearchRecipesV5} from "./phase2-research-registry-v5";
+import {phase2OperationalResearchRecipesV8} from "./v8-recipe-overrides";
 import {pantryFoundationsV3} from "./pantry-foundations-v3";
 import type {QuantityUnit} from "./food-quantity";
 
 export type CanonicalIngredientCatalogV7=CanonicalIngredientCatalogV2&Readonly<{source:"v2"|"phase2-v7"}>;
 
+const phaseIngredientAliasesV7:Readonly<Record<string,string>>={
+ "black-peppercorn":"peppercorn-black","couscous-dry":"couscous","flour":"flour-plain","plain-flour":"flour-plain","flour-tortilla-large":"large-flour-tortilla","light-soy":"soy-sauce","makrut-lime-leaf":"makrut-lime","meat-curry-powder":"malaysian-meat-curry-powder","plain-yoghurt":"yoghurt","salmon-fillet":"salmon"
+};
+const phaseAliasV7=(id:string)=>phaseIngredientAliasesV7[id]??id;
 const phaseUnitsByRawId=new Map<string,Set<QuantityUnit>>();
-for(const recipe of phase2ResearchRecipesV5)for(const x of recipe.ingredients){const set=phaseUnitsByRawId.get(x.id)??new Set<QuantityUnit>();set.add(x.unit);phaseUnitsByRawId.set(x.id,set)}
+for(const recipe of phase2OperationalResearchRecipesV8)for(const x of recipe.ingredients){const raw=phaseAliasV7(x.id),set=phaseUnitsByRawId.get(raw)??new Set<QuantityUnit>();set.add(x.unit);phaseUnitsByRawId.set(raw,set)}
 
 /** Preserve distinct measured forms instead of inventing g↔ml/count conversions. */
 export function canonicalIngredientKeyV7(id:string,unit:QuantityUnit){
-  const v2Key=canonicalIngredientKeyV2(id,unit),existing=getCanonicalIngredientV2(v2Key);
+  const raw=phaseAliasV7(id),v2Key=canonicalIngredientKeyV2(raw,unit),existing=getCanonicalIngredientV2(v2Key);
   if(existing?.canonicalUnit===unit)return v2Key;
-  const units=phaseUnitsByRawId.get(id);
+  const units=phaseUnitsByRawId.get(raw);
   if(existing&&existing.canonicalUnit!==unit)return`${v2Key}-${unit}`;
   if(units&&units.size>1)return`${v2Key}-${unit}`;
   return v2Key;
@@ -60,7 +64,7 @@ function sourcingFor(id:string):readonly SourcingClassV2[]{
 function specialistFor(id:string){return chineseSpecialty.has(id)||indianSpecialty.has(id)||seaSpecialty.has(id)||japaneseSpecialty.has(id)||koreanSpecialty.has(id)}
 
 const rows=new Map<string,CanonicalIngredientCatalogV7>(canonicalIngredientCatalogV2.map(x=>[x.id,{...x,source:"v2" as const}]));
-for(const recipe of phase2ResearchRecipesV5)for(const x of recipe.ingredients){
+for(const recipe of phase2OperationalResearchRecipesV8)for(const x of recipe.ingredients){
  const id=canonicalIngredientKeyV7(x.id,x.unit),existing=rows.get(id);
  if(existing){if(existing.canonicalUnit!==x.unit)continue;continue}
  rows.set(id,{id,name:x.name,canonicalUnit:x.unit,allergens:allergensFor(id),nutritionBindingClass:bindingFor(id),sourcing:sourcingFor(id),specialistRisk:specialistFor(id),source:"phase2-v7"});
@@ -73,6 +77,6 @@ export function getCanonicalIngredientV7(id:string,unit?:QuantityUnit){return ca
 export function validateCanonicalIngredientCatalogV7(){
  const errors:string[]=[];
  const seen=new Set<string>();for(const x of canonicalIngredientCatalogV7){if(seen.has(x.id))errors.push(`Duplicate canonical ingredient ${x.id}`);seen.add(x.id);if(!x.id||!x.name)errors.push("Ingredient missing id/name")}
- for(const recipe of phase2ResearchRecipesV5)for(const x of recipe.ingredients){const key=canonicalIngredientKeyV7(x.id,x.unit),def=canonicalIngredientByIdV7.get(key);if(!def)errors.push(`${recipe.id}: unresolved ingredient ${x.id}/${x.unit} -> ${key}`);else if(def.canonicalUnit!==x.unit)errors.push(`${recipe.id}: unit collision ${key} ${x.unit} vs ${def.canonicalUnit}`)}
+ for(const recipe of phase2OperationalResearchRecipesV8)for(const x of recipe.ingredients){const key=canonicalIngredientKeyV7(x.id,x.unit),def=canonicalIngredientByIdV7.get(key);if(!def)errors.push(`${recipe.id}: unresolved ingredient ${x.id}/${x.unit} -> ${key}`);else if(def.canonicalUnit!==x.unit)errors.push(`${recipe.id}: unit collision ${key} ${x.unit} vs ${def.canonicalUnit}`)}
  return{valid:errors.length===0,errors,count:canonicalIngredientCatalogV7.length,v2Count:canonicalIngredientCatalogV2.length,phase2Added:canonicalIngredientCatalogV7.length-canonicalIngredientCatalogV2.length};
 }

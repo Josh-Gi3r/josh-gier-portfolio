@@ -51,6 +51,10 @@ for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','componen
  mustNot(rel,/batchOutputMl|batchYield|portionMl/,'active prep UI regressed to assumed-yield fields');
 }
 must('components/HouseholdStateV12.tsx',/recordMeasuredProduction/,'v12 state does not support V6 measured-output production');
+must('components/HouseholdStateV12.tsx',/confirmSuggestedWeek/,'v12 state does not expose explicit week approval');
+must('components/app/Home.tsx',/IDEA FOR TONIGHT/,'Home preview still masquerades as a confirmed Tonight');
+must('components/app/Prep.tsx',/hm-prep-library-card/,'Prep library is not image-led/interactive');
+must('components/app/Prep.tsx',/Caramelised onion foundation/,'ONION is still presented as a core base');
 
 // Cooking may log history without changing stock, but only explicitly; silent fallback is forbidden.
 must('components/HouseholdState.tsx',/logMealWithoutStock/,'v3 bridge does not expose explicit log-only cooking');
@@ -102,6 +106,7 @@ must('package.json',/audit-household-api\.cjs/,'household API hardening audit is
 must('package.json',/audit-private-ai\.cjs/,'private AI security audit is not in audit:data');
 must('package.json',/audit-sync-recovery\.cjs/,'sync recovery audit is not in audit:data');
 must('package.json',/audit-live-promotion-v7\.cjs/,'V7 live-promotion audit is not in audit:data');
+must('package.json',/audit-integrated-redteam-v8\.cjs/,'V8 integrated red-team audit is not in audit:data');
 must('package.json',/audit-product-completion\.cjs/,'product-completion audit is not in audit:data');
 
 if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · V7 live promotion surfaces · stale legacy truth removed · full prep imagery · V6 measured-output packet prep · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible controls · mobile/PWA/privacy guardrails');

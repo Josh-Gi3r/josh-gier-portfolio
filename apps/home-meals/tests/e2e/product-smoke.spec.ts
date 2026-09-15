@@ -1,5 +1,6 @@
 import {expect,test,type Page} from "@playwright/test";
-import {boosters,midBases,motherBases,recipes} from "../../data/home-data";
+import {boosters,midBases,motherBases} from "../../data/home-data";
+import {allLiveRecipesV7 as recipes} from "../../data/recipe-catalog-v7";
 
 const coreRoutes=[
   "/","/cook","/cook/builder","/history","/prep","/prep/day","/prep/groceries","/prep/mids","/prep/boosters","/kitchen","/plan","/scan","/learn"
@@ -88,6 +89,36 @@ test("first-run truth gates navigation, then primary navigation remains usable",
     await link.click();
     await expect(page).toHaveURL(new RegExp(`${path==="/"?"/$":`${path.replaceAll("/","\\/")}$`}`));
   }
+});
+
+
+test("preview week, physical prep and maintenance repertoire remain distinct until explicit approval",async({page})=>{
+  const seed={version:12,week:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],weekStatus:"unplanned",suggestedWeek:null,planMode:"both",allowExtraPrep:true,monthlyPool:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],activePrepIds:[],componentBatches:[],manualComponentStock:{},ingredientStock:{},qualitativeIngredientStock:{},groceryChecked:{},ratings:{},recipeNotes:{},recipeVersions:{},history:[],cookObservations:[],useSoon:{},useSoonAt:{},favourites:{},kitchenReady:true,migrationWarnings:[]};
+  await page.addInitScript(state=>{const marker="home-meals-v8-lifecycle-seeded";if(localStorage.getItem(marker))return;localStorage.setItem("home-meals-household-v12",JSON.stringify(state));localStorage.setItem("home-meals-welcome-seen-v1","1");localStorage.setItem(marker,"1")},seed);
+  await page.goto("/",{waitUntil:"domcontentloaded"});
+  await expect(page.getByText("IDEA FOR TONIGHT",{exact:true})).toBeVisible();
+  await expect(page.getByText("A week Home could build",{exact:true})).toBeVisible();
+  await page.goto("/prep",{waitUntil:"domcontentloaded"});
+  await expect(page.getByRole("heading",{name:"Have now"})).toBeVisible();
+  await expect(page.getByText("7",{exact:true}).first()).toBeVisible();
+  await expect(page.getByText("Core bases",{exact:true}).first()).toBeVisible();
+  await expect(page.getByText("Caramelised onion foundation",{exact:true})).toBeVisible();
+  await page.getByRole("button",{name:"Edit stock"}).click();
+  await page.getByRole("button",{name:"Add one GOLD packet"}).click();
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")!).activePrepIds)).toEqual([]);
+  await page.getByRole("button",{name:/Start small/}).click();
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")!).activePrepIds)).toEqual(["gold","sambal","red"]);
+  await page.goto("/plan",{waitUntil:"domcontentloaded"});
+  await expect(page.getByRole("heading",{name:"Preview week"})).toBeVisible();
+  await page.getByRole("button",{name:"Our prep",exact:true}).click();
+  await page.getByRole("button",{name:/Build it for us/i}).click();
+  await expect(page.getByRole("button",{name:"Use this week"})).toBeVisible();
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")!).weekStatus)).toBe("suggested");
+  await page.getByRole("button",{name:"Use this week"}).click();
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")!).weekStatus)).toBe("confirmed");
+  await page.goto("/",{waitUntil:"domcontentloaded"});
+  await expect(page.getByText("TONIGHT",{exact:true})).toBeVisible();
+  await expect(page.getByText("This week",{exact:true})).toBeVisible();
 });
 
 const responsiveRoutes=["/","/cook","/cook/gold-chicken-curry","/cook/gold-chicken-curry/cook","/prep","/prep/gold","/prep/mids","/prep/mids/thai-green","/prep/day","/kitchen","/plan","/scan"];

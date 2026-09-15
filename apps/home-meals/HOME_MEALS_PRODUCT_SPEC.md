@@ -78,10 +78,11 @@ The user must never be forced to mark dozens of individual items Out just to est
 
 Current food system:
 
-- **8 core mothers**;
+- **7 core bases**;
+- **1 optional caramelised-onion foundation (ONION)**;
 - **26 mids & sauces**;
 - **7 boosters**;
-- **36 saved dinners**.
+- **136 live recipes** (36 foundation recipes + 100 promoted Phase 2 recipes).
 
 The 41 prep components are a **capability library, not a setup checklist**.
 
@@ -93,7 +94,7 @@ Starter choices include:
 
 - **Start small:** GOLD + SAMBAL + RED;
 - **Balanced:** GOLD + SAMBAL + RED + REMPAH + CLEAR;
-- **All core bases:** all eight mothers, while mids and boosters remain demand-led;
+- **All core bases:** all seven maintained core bases; ONION stays optional, while mids and boosters remain demand-led;
 - **Custom:** any household-selected subset.
 
 Home should prefer dinners supported by the active set and explain the smallest useful addition when more variety is requested.
@@ -116,21 +117,34 @@ Prep relationships use three distinct concepts:
 
 The UI must never collapse these into one generic parent/child relationship.
 
-### 3.4 Working portions
+### 3.4 Measured output, packets and remainder
 
-The household-facing prep UX is **working-portion first**.
+Prep production has three different quantities and the product must never collapse them:
 
-Examples:
+1. the **production formulation** — what goes into the pot;
+2. the **actual measured finished output** — what Josh/G physically ended up with;
+3. **storage packets + exact remainder** — how that measured output is divided for practical use.
 
-- GOLD: one working portion is 60 g;
-- CLEAR: one working portion is 120 ml;
-- MASS: one working portion is 7 g.
+Examples of standard storage packets include GOLD 240 g and CLEAR 400 ml, but recipe demand remains exact and may use a fraction or multiple packets.
 
-Exact g/ml/count remains underneath for deterministic arithmetic. The user does not need to weigh the entire finished pot just to use Home Meals.
+Home never derives finished yield from raw ingredients or container capacity. After cooking, Josh/G weigh or measure the actual finished output in its canonical unit; Home then derives full storage packets plus any exact remainder and records that quantity in Kitchen.
 
-When prep is made, Home asks how many usable working portions were stored and records the equivalent canonical quantity.
+### 3.5 Week truth and planning basis
 
-No assumed batch yield or fixed portions-per-batch may be stored as physical household truth.
+A populated Home screen is allowed before planning is complete, but its meals are a **preview**, not household decisions. Week state is explicit:
+
+`unplanned → suggested → confirmed`
+
+Only a confirmed week becomes **Tonight / This week** and may operationalise Shop mode or Prep Day.
+
+Planning basis is independently selectable:
+
+- **Have now** — physical prep stock;
+- **Our prep** — the repertoire Josh/G choose to maintain;
+- **Both**;
+- **Freely** — direct meals and any valid live recipe.
+
+When allowed, Home may suggest at most one extra prep identity beyond the selected basis; it must explain the payoff before approval.
 
 ---
 
@@ -165,7 +179,7 @@ Forbidden as invented truth:
 
 ## 5. Recipe system
 
-The 36 dinners are a dynamic household repertoire, not a static cookbook.
+The 136 live recipes are a dynamic household repertoire, not a static cookbook.
 
 Recipe discovery supports:
 
@@ -267,7 +281,7 @@ Qualitative pantry truth remains:
 
 A qualitative level may never be silently converted into grams or millilitres.
 
-Freezer prep is shown as practical working portions, with older recorded batches first.
+Freezer prep is shown as exact recorded g/ml stock with practical V6 packet counts and remainders; older recorded batches stay first.
 
 ---
 
@@ -447,8 +461,8 @@ It must never feel like:
 
 Current prep visual coverage is complete:
 
-- 8/8 mother hero images;
-- process sequences for all eight mothers;
+- 7/7 core-base hero images + the optional ONION foundation hero;
+- process sequences for all seven core bases plus optional ONION;
 - 26/26 mid hero images;
 - 7/7 booster hero images;
 - dinner imagery for the saved recipe catalogue.
@@ -531,7 +545,7 @@ Home Meals is product-complete when all of the following are true:
 1. first-run can establish unknown, empty or existing Kitchen truth cleanly;
 2. active prep can be small, balanced, full or custom;
 3. weekly planning adapts to active prep and recent meals;
-4. all 36 dinners are browseable and cookable through the current formulation layer;
+4. all 136 live recipes are browseable and cookable through the current V7 promotion-gated formulation layer;
 5. all 41 prep objects are discoverable and visually represented;
 6. groceries and prep gaps derive from the current week and Kitchen truth;
 7. cooking never silently invents stock deductions;
