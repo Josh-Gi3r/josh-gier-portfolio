@@ -4,7 +4,8 @@ import {usePathname} from "next/navigation";
 import {useMemo} from "react";
 import {Icon} from "../Icons";
 import {useHousehold} from "../HouseholdState";
-import {getComponent,getIngredient,getRecipe} from "@/data/home-data";
+import {getComponent,getIngredient} from "@/data/home-data";
+import {ingredientsForRecipeV7} from "@/data/ingredient-engine-v7";
 import {feedback} from "@/lib/feedback";
 import {Orb,Waves} from "./Orb";
 
@@ -29,11 +30,12 @@ export function HomeBar(){
  const hint=useMemo(()=>{
   if(!(path==="/"||path==="/plan")||!h.kitchenReady)return null;
   const soon=Object.keys(h.useSoon).filter(id=>h.useSoon[id]&&(h.ingredientStock[id]??0)>0).sort((a,b)=>new Date(h.useSoonAt[a]??0).getTime()-new Date(h.useSoonAt[b]??0).getTime());
-  const uncovered=soon.find(id=>!h.week.some(rid=>getRecipe(rid).ingredients.some(x=>x.id===id)));
+  const displayWeek=h.weekStatus==="suggested"&&h.suggestedWeek?.length===7?h.suggestedWeek:h.week;
+  const uncovered=soon.find(id=>!displayWeek.some(rid=>ingredientsForRecipeV7(rid).some(x=>x.ingredientId===id)));
   if(uncovered){const name=getIngredient(uncovered)?.name;const today=(new Date().getDay()+6)%7;const day=days[Math.min(6,today+1)];return {text:`${name} needs using — ${day}?`,href:"/plan"}}
-  const short=h.prepNeeds[0];if(short){const c=getComponent(short.id);if(c)return {text:`${c.code} is short for this week`,href:"/prep"}}
+  const short=h.weekStatus==="confirmed"?h.prepNeeds[0]:null;if(short){const c=getComponent(short.id);if(c)return {text:`${c.code} is short for this week`,href:"/prep"}}
   return null;
- },[path,h.kitchenReady,h.useSoon,h.useSoonAt,h.ingredientStock,h.week,h.prepNeeds]);
+ },[path,h.kitchenReady,h.useSoon,h.useSoonAt,h.ingredientStock,h.week,h.suggestedWeek,h.weekStatus,h.prepNeeds]);
  if(cookingRoute||path==="/scan")return null;
  const openAsk=()=>{feedback("tap");window.dispatchEvent(new Event("home-meals:ask"))};
  const startVoice=()=>{feedback("tap");window.dispatchEvent(new Event("home-meals:voice"))};
@@ -41,7 +43,7 @@ export function HomeBar(){
   {hint&&<Link href={hint.href} className="hm-bar-hint" onClick={()=>feedback("tap")}>✦ {hint.text}</Link>}
   <div className="hm-bar-pill" aria-label="Home inputs">
    <Link href={cameraHref} className="hm-bar-side" aria-label="Show Home with camera" onClick={()=>feedback("tap")}><Icon name="camera" size={22}/></Link>
-   <button className="hm-bar-orb" onClick={openAsk} aria-label="Ask Home"><Orb size={64}/></button>
+   <button className="hm-bar-orb" onClick={openAsk} aria-label="Ask Home"><Orb size={54}/></button>
    <button className="hm-bar-side" onClick={startVoice} aria-label="Talk to Home"><Waves/></button>
   </div>
   <nav className="hm-bar-nav" aria-label="Main navigation">

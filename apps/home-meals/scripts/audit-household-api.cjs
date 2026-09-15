@@ -6,6 +6,10 @@ const mustNot=(text,re,msg)=>{if(re.test(text))failures.push(msg)};
 const household=read('app/api/household/route.ts'),session=read('app/api/household/session/route.ts'),server=read('lib/server-household.ts'),rate=read('lib/server-rate-limit.ts'),config=read('next.config.ts');
 
 must(household,/validV12Payload/,'household writes are not runtime-validated as v12 state');
+must(household,/weekStatus/,'household API does not validate week lifecycle');
+must(household,/suggestedWeek/,'household API does not validate suggested-week payload');
+must(household,/planMode/,'household API does not validate planner basis');
+must(household,/allowExtraPrep/,'household API does not validate extra-prep preference');
 must(household,/encoded\.length>1_500_000/,'household payload size cap is missing');
 must(household,/result==="conflict"[\s\S]*?409/,'optimistic-version conflict is not surfaced as HTTP 409');
 must(household,/error:"unauthorized"[\s\S]*?401/,'unauthenticated household access is not explicitly rejected');

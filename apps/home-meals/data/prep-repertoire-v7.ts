@@ -1,9 +1,11 @@
 import {canonicalPrepComponentsV2} from "./food-truth-v2";
 import {allLiveRecipesV7} from "./recipe-catalog-v7";
 import {prepForRecipeAtCookScaleV7} from "./food-engine-v7";
-import {activePrepSetV2,prepRelationshipLabelV2,prepStarterSetsV2} from "./prep-repertoire-v2";
+import {activePrepSetV2,coreMotherIdsV2,optionalPrepIdsV2,prepRelationshipLabelV2,prepStarterSetsV2} from "./prep-repertoire-v2";
 
 export const prepStarterSetsV7=prepStarterSetsV2;
+export const coreMotherIdsV7=coreMotherIdsV2;
+export const optionalPrepIdsV7=optionalPrepIdsV2;
 export const prepRelationshipLabelV7=prepRelationshipLabelV2;
 export function prepIdsForRecipeV7(recipeId:string){return prepForRecipeAtCookScaleV7(recipeId).map(x=>x.componentId)}
 export function missingActivePrepForRecipeV7(recipeId:string,activeIds:readonly string[]){const active=activePrepSetV2(activeIds);return prepIdsForRecipeV7(recipeId).filter(id=>!active.has(id))}

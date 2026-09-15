@@ -1,10 +1,13 @@
 import { canonicalPrepComponentsV2,recipePrepV2 } from "./food-truth-v2";
 import { recipes } from "./home-data";
 
+export const optionalPrepIdsV2=new Set(["onion"] as const);
+export const coreMotherIdsV2=canonicalPrepComponentsV2.filter(x=>x.tier==="mother"&&!optionalPrepIdsV2.has(x.id as "onion")).map(x=>x.id);
+
 export const prepStarterSetsV2={
   small:{id:"small",label:"Start small",description:"Three flexible mothers with broad cuisine coverage.",componentIds:["gold","sambal","red"] as const},
   balanced:{id:"balanced",label:"Balanced",description:"Five mothers spanning Indian, Malaysian, Western and stock-led dinners.",componentIds:["gold","sambal","red","rempah","clear"] as const},
-  fullMothers:{id:"full-mothers",label:"All core bases",description:"All eight mothers active; mids and boosters still stay demand-led.",componentIds:canonicalPrepComponentsV2.filter(x=>x.tier==="mother").map(x=>x.id)},
+  fullMothers:{id:"full-mothers",label:"All core bases",description:"All seven core bases active; mids, boosters and optional foundations stay demand-led.",componentIds:coreMotherIdsV2},
 } as const;
 
 export function prepIdsForRecipeV2(recipeId:string){return recipePrepV2(recipeId).map(x=>x.componentId)}
@@ -32,5 +35,6 @@ export function prepRelationshipLabelV2(componentId:string){
   const made=c.madeFrom.map(id=>canonicalPrepComponentsV2.find(x=>x.id===id)?.code??id),withIds=c.usedWith.map(id=>canonicalPrepComponentsV2.find(x=>x.id===id)?.code??id);
   if(made.length)return `Made from ${made.join(" + ")}`;
   if(withIds.length)return `Pairs with ${withIds.join(" + ")}`;
+  if(optionalPrepIdsV2.has(componentId as "onion"))return "Optional foundation";
   return c.tier==="mother"?"Core base":"Standalone";
 }

@@ -9,6 +9,10 @@ function record(value:unknown):value is Record<string,unknown>{return!!value&&ty
 function validV12Payload(value:unknown){
  if(!record(value)||value.version!==12)return false;
  if(!Array.isArray(value.week)||value.week.length!==7||value.week.some(x=>typeof x!=="string"))return false;
+ if(value.weekStatus!=null&&!(["unplanned","suggested","confirmed"] as const).includes(value.weekStatus as any))return false;
+ if(value.suggestedWeek!=null&&(!Array.isArray(value.suggestedWeek)||value.suggestedWeek.length!==7||value.suggestedWeek.some((x:unknown)=>typeof x!=="string")))return false;
+ if(value.planMode!=null&&!(["stock","repertoire","both","free"] as const).includes(value.planMode as any))return false;
+ if(value.allowExtraPrep!=null&&typeof value.allowExtraPrep!=="boolean")return false;
  if(!Array.isArray(value.monthlyPool)||value.monthlyPool.some(x=>typeof x!=="string"))return false;
  if(value.activePrepIds!=null&&(!Array.isArray(value.activePrepIds)||value.activePrepIds.length>41||value.activePrepIds.some((x:unknown)=>typeof x!=="string")))return false;
  if(!Array.isArray(value.componentBatches)||!Array.isArray(value.history))return false;
