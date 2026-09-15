@@ -14,8 +14,15 @@ must('app/globals.css',/prep-v9\.css/,'V9 Prep stylesheet is not loaded');
 // Prep hierarchy: action first, maintenance second, inventory third, library last.
 const prep=read('components/app/PrepV9.tsx');
 for(const token of ['Prep next','Our prep','Have now','Browse prep library','Plan around our prep'])if(!prep.includes(token))fail(`PrepV9 missing hierarchy marker: ${token}`);
-const order=['Prep next','Our prep','Have now','Browse prep library'].map(token=>prep.indexOf(token));
-if(order.every(x=>x>=0)&&!(order[0]<order[1]&&order[1]<order[2]&&order[2]<order[3]))fail('PrepV9 hierarchy regressed: library/inventory is ahead of the primary task flow');
+const hierarchyMarkers=[
+  'SectionHead title={h.weekStatus==="confirmed"?"Prep next":"Preview prep"}',
+  'SectionHead title="Our prep"',
+  'SectionHead title="Have now"',
+  'SectionHead title="Browse prep library"',
+];
+const order=hierarchyMarkers.map(marker=>prep.indexOf(marker));
+if(order.some(x=>x<0))fail('PrepV9 hierarchy section markers could not be resolved');
+else if(!(order[0]<order[1]&&order[1]<order[2]&&order[2]<order[3]))fail('PrepV9 hierarchy regressed: library/inventory is ahead of the primary task flow');
 
 // Existing product truth and mutation paths remain in use.
 for(const token of ['allLiveRecipesV7','canonicalPrepComponentsV2','prepForRecipeAtCookScaleV7','getPrepPortionPolicyV6','setPlanPreferences("repertoire"','setComponent(','toggleActivePrep'])if(!prep.includes(token))fail(`PrepV9 is missing V8/V6 truth path: ${token}`);
