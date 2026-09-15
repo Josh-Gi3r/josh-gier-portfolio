@@ -5,7 +5,7 @@ const must=(ok,msg)=>{if(!ok)errors.push(msg)};
 const errors=[];
 const prep=read("components/app/PrepV10.tsx"),families=read("components/app/PrepFamiliesV10.tsx"),css=read("app/styles/prep-v10.css"),page=read("app/prep/page.tsx"),pkg=read("package.json");
 must(page.includes("PrepV10"),"/prep is not routed to PrepV10");
-for(const label of ["Browse","Ours","This week"])must(prep.includes(`\"${label.toLowerCase()}\"`)||prep.includes(`?\"${label}\"`),`PrepV10 is missing ${label}`);
+for(const label of ["Browse","Ours","This week"])must(prep.includes(`"${label}"`),`PrepV10 is missing ${label}`);
 for(const href of ["/prep/bases","/prep/mids","/prep/sauces","/prep/boosters","/prep/common"])must(prep.includes(href),`PrepV10 missing category ${href}`);
 must(!prep.includes("Caramelised onion foundation"),"ONION has been promoted back into a standalone landing category");
 must(prep.includes("Common prep"),"Common prep category missing");
