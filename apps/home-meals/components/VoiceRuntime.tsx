@@ -7,7 +7,11 @@ type Status="idle"|"connecting"|"listening"|"thinking"|"error";
 type Mutation={type:string;[key:string]:unknown};
 type Reply={text:string;mealIds?:string[];tags?:string[];href?:string|null;action?:string|null;mutation?:Mutation|null};
 function householdState(){try{const raw=localStorage.getItem(STATE_KEY);if(!raw)return {version:12};const value=JSON.parse(raw);return value&&typeof value==="object"?value:{version:12}}catch{return {version:12}}}
-function fillAsk(text:string){window.dispatchEvent(new Event("home-meals:ask"));window.setTimeout(()=>{const input=document.querySelector<HTMLInputElement>("[data-ask-composer] input");if(!input)return;const setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value")?.set;setter?.call(input,text);input.dispatchEvent(new Event("input",{bubbles:true}));window.setTimeout(()=>input.form?.requestSubmit(),30)},120)}
+function fillAsk(text:string){
+ let attempts=0;
+ const fill=()=>{const input=document.querySelector<HTMLInputElement>("[data-ask-composer] input");if(!input){if(attempts++<14){window.dispatchEvent(new Event("home-meals:ask"));window.setTimeout(fill,120)}return}const setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value")?.set;setter?.call(input,text);input.dispatchEvent(new Event("input",{bubbles:true}));window.setTimeout(()=>input.form?.requestSubmit(),30)};
+ window.dispatchEvent(new Event("home-meals:ask"));window.setTimeout(fill,100);
+}
 function sleep(ms:number){return new Promise(resolve=>window.setTimeout(resolve,ms))}
 
 export function VoiceRuntime(){
