@@ -18,8 +18,9 @@ must(!families.includes("/images/prep-v9/"),"Live Prep family pages still refere
 must(prep.includes('prepCategoryImagesV11'),"Prep landing is not using the commissioned category-image manifest");
 must(families.includes('prepCategoryImagesV11'),"Prep family pages are not using the commissioned category-image manifest");
 for(const key of ["coreBases","midBases","sauces","boosters","common"]){must(prep.includes(`prepCategoryImagesV11.${key}`),`Prep landing is missing commissioned ${key} photography`);must(families.includes(`prepCategoryImagesV11.${key}`),`Prep family hero is missing commissioned ${key} photography`);must(assets.includes(`${key}:`),`Prep category manifest is missing ${key}`)}
-const urls=[...assets.matchAll(/https:\/\/d2ol7oe51mr4n9\.cloudfront\.net\/user_[^/"`]+\/[a-f0-9-]+\.png/g)].map(m=>m[0]);
-must(new Set(urls).size>=6,"Prep V11 category manifest does not contain distinct commissioned category/item assets");
+const ids=[...assets.matchAll(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/g)].map(m=>m[0]);
+must(new Set(ids).size>=6,"Prep V11 category manifest does not contain distinct commissioned category/item assets");
+must(assets.includes('https://d2ol7oe51mr4n9.cloudfront.net/'),"Prep V11 category manifest is not using the confirmed generated image host");
 must(!assets.includes('/images/prep-v9/'),"Prep V11 category manifest points back to V9 placeholders");
 must(prep.includes("foundationImages.prepDay")&&prep.includes("onError={repairPrepImage}"),"Prep landing has no real-photo fallback for failed image loads");
 must(families.includes("foundationImages.prepDay")&&families.includes("onError={repairPrepImage}"),"Prep family pages have no real-photo fallback for failed image loads");
