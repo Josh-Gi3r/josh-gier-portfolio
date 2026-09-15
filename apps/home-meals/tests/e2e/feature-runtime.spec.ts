@@ -1,6 +1,6 @@
 import {expect,test,type Page} from "@playwright/test";
 
-const seed={version:12,week:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],weekStatus:"confirmed",suggestedWeek:null,planMode:"both",allowExtraPrep:true,monthlyPool:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],activePrepIds:["gold","sambal","red"],componentBatches:[],manualComponentStock:{gold:{qty:440,unit:"g"},sambal:{qty:240,unit:"g"},red:{qty:440,unit:"g"}},ingredientStock:{mushrooms:{qty:250,unit:"g"}},qualitativeIngredientStock:{},groceryChecked:{},ratings:{},recipeNotes:{},recipeVersions:{},history:[],cookObservations:[],useSoon:{},useSoonAt:{},favourites:{},kitchenReady:true,migrationWarnings:[]};
+const seed={version:12,week:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],weekStatus:"confirmed",suggestedWeek:null,planMode:"both",allowExtraPrep:true,monthlyPool:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],activePrepIds:["gold","sambal","red"],componentBatches:[],manualComponentStock:{gold:{qty:440,unit:"g"},sambal:{qty:240,unit:"g"},red:{qty:440,unit:"g"}},ingredientStock:{mushroom:{qty:250,unit:"g"}},qualitativeIngredientStock:{},groceryChecked:{},ratings:{},recipeNotes:{},recipeVersions:{},history:[],cookObservations:[],useSoon:{},useSoonAt:{},favourites:{},kitchenReady:true,migrationWarnings:[]};
 
 async function seedHousehold(page:Page){
   await page.addInitScript(state=>{
@@ -57,17 +57,17 @@ test("Home Vision reads an uploaded image proposal and only updates Kitchen afte
     return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({summary:"Mushrooms detected",items:[{id:"mushrooms",name:"Mushrooms",quantity:325,unit:"g",confidence:.94,useSoon:true}],assessment:null,cookingCue:null,needsConfirmation:true,warnings:[],source:"vision"})});
   });
   await page.goto("/scan?mode=Fridge",{waitUntil:"domcontentloaded"});
-  const before=await page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")||"{}").ingredientStock?.mushrooms?.qty??null);
+  const before=await page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")||"{}").ingredientStock?.mushroom?.qty??null);
   expect(before).toBe(250);
   const png=Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQMcAAAAASUVORK5CYII=","base64");
   await page.locator('input[aria-label="Choose a photo from the library"]').setInputFiles({name:"fridge.png",mimeType:"image/png",buffer:png});
   await expect(page.getByText("HOME VISION")).toBeVisible();
   await expect(page.getByText("Mushrooms detected")).toBeVisible();
-  const stillBefore=await page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")||"{}").ingredientStock?.mushrooms?.qty??null);
+  const stillBefore=await page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")||"{}").ingredientStock?.mushroom?.qty??null);
   expect(stillBefore).toBe(250);
   await page.getByRole("button",{name:"Confirm"}).click();
-  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")||"{}").ingredientStock?.mushrooms?.qty??null)).toBe(325);
-  await expect.poll(()=>page.evaluate(()=>!!JSON.parse(localStorage.getItem("home-meals-household-v12")||"{}").useSoon?.mushrooms)).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")||"{}").ingredientStock?.mushroom?.qty??null)).toBe(325);
+  await expect.poll(()=>page.evaluate(()=>!!JSON.parse(localStorage.getItem("home-meals-household-v12")||"{}").useSoon?.mushroom)).toBe(true);
 });
 
 test("camera controls expose library and environment-camera capture paths for all scan modes",async({page})=>{
