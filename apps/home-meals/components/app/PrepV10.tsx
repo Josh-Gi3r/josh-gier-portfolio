@@ -4,20 +4,24 @@ import Link from "next/link";
 import {useMemo,useState,type ReactNode} from "react";
 import {useHousehold} from "../HouseholdState";
 import {canonicalPrepComponentsV2,type CanonicalPrepComponentV2} from "@/data/food-truth-v2";
+import {foundationImages} from "@/data/foundation-assets";
 import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {activePrepSummaryV7,coreMotherIdsV7,prepStarterSetsV7,prepRelationshipLabelV7} from "@/data/prep-repertoire-v7";
 import {formatPacketCountV6,getPrepPortionPolicyV6} from "@/data/prep-portioning-v6";
 import {feedback} from "@/lib/feedback";
-import {prepHero,toneGradient} from "@/lib/tones";
+import {prepHero} from "@/lib/tones";
 import {formatQty,SectionHead} from "./Primitives";
 
 type PrepMode="browse"|"ours"|"week";
 const commonIds=["onion","ginger-garlic","garlic","chilli","lemongrass","pesto","duxelles"] as const;
 const midBaseForms=new Set(["paste","cooked-base","roux","stock"]);
 const sauceForms=new Set(["sauce","marinade","condiment"]);
+const prepFallback=foundationImages.prepDay;
 
 function hrefFor(c:CanonicalPrepComponentV2){return c.tier==="mother"?`/prep/${c.id}`:c.tier==="mid"?`/prep/mids/${c.id}`:`/prep/boosters/${c.id}`}
-function PrepPhoto({c}:{c:CanonicalPrepComponentV2}){const image=prepHero(c.id);return image?<img src={image} alt={c.name} loading="lazy"/>:<span className="hm-prep-v10-fallback" style={{background:toneGradient(c.id)}}/>}
+function safePrepImage(src:string|null|undefined){return src??prepFallback}
+function repairPrepImage(e:React.SyntheticEvent<HTMLImageElement>){if(e.currentTarget.src!==prepFallback)e.currentTarget.src=prepFallback}
+function PrepPhoto({c}:{c:CanonicalPrepComponentV2}){return <img src={safePrepImage(prepHero(c.id))} alt={c.name} loading="lazy" onError={repairPrepImage}/>}
 
 export function PrepV10(){
  const h=useHousehold();
@@ -42,12 +46,13 @@ export function PrepV10(){
  const setStarter=(ids:readonly string[])=>{h.setActivePrepSet(ids);feedback("success")};
  const setTab=(next:PrepMode)=>{setMode(next);setShowInventory(false);feedback("tap")};
  const categories=[
-  {href:"/prep/bases",image:"/images/prep-v9/core-bases.webp",kicker:"FOUNDATIONS",title:"Core bases",count:core.length,desc:"The seven foundations we deliberately build meals from."},
-  {href:"/prep/mids",image:prepHero("rendang")??"/images/prep-v9/prep-library.webp",kicker:"BUILDERS",title:"Mid bases & pastes",count:mids.length,desc:"Curry pastes, stocks, roux and cooked flavour builders."},
-  {href:"/prep/sauces",image:prepHero("wok-brown")??"/images/prep-v9/prep-library.webp",kicker:"SAUCES",title:"Sauces & condiments",count:sauces.length,desc:"Stir-fry sauces, marinades, tare and finishing condiments."},
-  {href:"/prep/boosters",image:prepHero("ginger-garlic")??"/images/prep-v9/prep-library.webp",kicker:"BOOSTERS",title:"Boosters",count:boosters.length,desc:"Small aromatic and spice preps that change a whole dinner."},
-  {href:"/prep/common",image:"/images/prep-v9/prep-library.webp",kicker:"SHORTCUTS",title:"Common prep",count:common.length,desc:"Handy things we reach for often, collected in one place."},
+  {href:"/prep/bases",image:safePrepImage(prepHero("red")),kicker:"FOUNDATIONS",title:"Core bases",count:core.length,desc:"The seven foundations we deliberately build meals from."},
+  {href:"/prep/mids",image:safePrepImage(prepHero("rendang")),kicker:"BUILDERS",title:"Mid bases & pastes",count:mids.length,desc:"Curry pastes, stocks, roux and cooked flavour builders."},
+  {href:"/prep/sauces",image:safePrepImage(prepHero("wok-brown")),kicker:"SAUCES",title:"Sauces & condiments",count:sauces.length,desc:"Stir-fry sauces, marinades, tare and finishing condiments."},
+  {href:"/prep/boosters",image:safePrepImage(prepHero("ginger-garlic")),kicker:"BOOSTERS",title:"Boosters",count:boosters.length,desc:"Small aromatic and spice preps that change a whole dinner."},
+  {href:"/prep/common",image:safePrepImage(prepHero("onion")),kicker:"SHORTCUTS",title:"Common prep",count:common.length,desc:"Handy things we reach for often, collected in one place."},
  ] as const;
+ const starterImages=[safePrepImage(prepHero("gold")),safePrepImage(prepHero("sambal")),safePrepImage(prepHero("red"))] as const;
  return <div className="hm-screen hm-prep-v10">
   <div className="hm-prep-v10-head hm-gut"><div><span className="hm-eyebrow">Josh &amp; G kitchen</span><h1 className="hm-h1">Prep</h1></div><Link className="hm-btn xs primary" href="/prep/day">Prep Day</Link></div>
   <div className="hm-prep-v10-tabs hm-gut" role="tablist" aria-label="Prep views">
@@ -56,12 +61,12 @@ export function PrepV10(){
 
   {mode==="browse"&&<section className="hm-prep-v10-view" aria-label="Browse prep">
    <div className="hm-prep-v10-intro hm-gut"><strong>Choose a prep family.</strong><span>Big categories first. Individual food only after you choose where you want to go.</span></div>
-   <div className="hm-prep-v10-category-stack">{categories.map(c=><Link key={c.href} href={c.href} className="hm-prep-v10-category" onClick={()=>feedback("tap")}><img src={c.image} alt=""/><div className="shade"/><div className="copy"><span>{c.kicker}</span><div className="title"><b>{c.count}</b><h2>{c.title}</h2></div><p>{c.desc}</p><strong>Open →</strong></div></Link>)}</div>
+   <div className="hm-prep-v10-category-stack">{categories.map(c=><Link key={c.href} href={c.href} className="hm-prep-v10-category" onClick={()=>feedback("tap")}><img src={c.image} alt="" onError={repairPrepImage}/><div className="shade"/><div className="copy"><span>{c.kicker}</span><div className="title"><b>{c.count}</b><h2>{c.title}</h2></div><p>{c.desc}</p><strong>Open →</strong></div></Link>)}</div>
   </section>}
 
   {mode==="ours"&&<section className="hm-prep-v10-view" aria-label="Our prep and stock">
    <div className="hm-prep-v10-summary hm-gut"><button onClick={()=>setShowInventory(false)}><b>{active.length}</b><span>Our prep</span><small>{summary.unlockedCount} dinners fit</small></button><button onClick={()=>setShowInventory(true)}><b>{stocked.length}</b><span>Have now</span><small>physical stock</small></button></div>
-   {!active.length?<><SectionHead title="Choose our prep" action={<span className="muted">change it anytime</span>}/><div className="hm-prep-v10-starters">{[prepStarterSetsV7.small,prepStarterSetsV7.balanced,prepStarterSetsV7.fullMothers].map((s,i)=><button key={s.id} className={i===0?"featured":""} onClick={()=>setStarter(s.componentIds)}><img src={i===0?"/images/prep-v9/core-bases.webp":"/images/prep-v9/prep-library.webp"} alt=""/><div className="shade"/><div><span>{s.componentIds.length} items</span><strong>{i===0?"Start small":s.label}</strong><small>{s.description}</small><b>{activePrepSummaryV7(s.componentIds).unlockedCount} dinners fit →</b></div></button>)}</div></>:<><SectionHead title="Our prep" action={<Link href="/plan" onClick={()=>h.setPlanPreferences("repertoire",h.allowExtraPrep)}>Plan around this ›</Link>}/><div className="hm-prep-v10-grid">{activeComponents.map(c=><PrepStateCard key={c.id} c={c} stock={h.componentStock[c.id]??0} packetText={packetText(c.id)} secondary={weekIds.has(c.id)?needsById.has(c.id)?`This week · short ${formatQty(needsById.get(c.id)!.shortQty,needsById.get(c.id)!.unit)}`:"This week · covered":prepRelationshipLabelV7(c.id)??"Library item"} action={<button aria-label={`Pause ${c.name}`} onClick={()=>toggle(c.id,false)}>Pause</button>}/>)}</div></>}
+   {!active.length?<><SectionHead title="Choose our prep" action={<span className="muted">change it anytime</span>}/><div className="hm-prep-v10-starters">{[prepStarterSetsV7.small,prepStarterSetsV7.balanced,prepStarterSetsV7.fullMothers].map((s,i)=><button key={s.id} className={i===0?"featured":""} onClick={()=>setStarter(s.componentIds)}><img src={starterImages[i]??prepFallback} alt="" onError={repairPrepImage}/><div className="shade"/><div><span>{s.componentIds.length} items</span><strong>{i===0?"Start small":s.label}</strong><small>{s.description}</small><b>{activePrepSummaryV7(s.componentIds).unlockedCount} dinners fit →</b></div></button>)}</div></>:<><SectionHead title="Our prep" action={<Link href="/plan" onClick={()=>h.setPlanPreferences("repertoire",h.allowExtraPrep)}>Plan around this ›</Link>}/><div className="hm-prep-v10-grid">{activeComponents.map(c=><PrepStateCard key={c.id} c={c} stock={h.componentStock[c.id]??0} packetText={packetText(c.id)} secondary={weekIds.has(c.id)?needsById.has(c.id)?`This week · short ${formatQty(needsById.get(c.id)!.shortQty,needsById.get(c.id)!.unit)}`:"This week · covered":prepRelationshipLabelV7(c.id)??"Library item"} action={<button aria-label={`Pause ${c.name}`} onClick={()=>toggle(c.id,false)}>Pause</button>}/>)}</div></>}
    <SectionHead title="Have now" action={<button onClick={()=>setShowInventory(v=>!v)}>{showInventory?"Done":"Edit stock"}</button>}/>
    {!showInventory?(stocked.length?<div className="hm-prep-v10-grid">{stocked.map(c=><PrepStateCard key={c.id} c={c} stock={h.componentStock[c.id]??0} packetText={packetText(c.id)} secondary="Recorded physical stock"/>)}</div>:<div className="hm-empty"><strong>No prep stock recorded yet.</strong>Edit stock when there is something physically in the fridge, freezer or pantry.</div>):<div className="hm-prep-v10-stock-edit">{canonicalPrepComponentsV2.map(c=>{const p=getPrepPortionPolicyV6(c.id),qty=h.componentStock[c.id]??0;return <article key={c.id}><Link href={hrefFor(c)} className="photo"><PrepPhoto c={c}/></Link><div className="copy"><strong>{c.code}</strong><small>{c.name}</small><span>{qty>0?packetText(c.id):`none · ${p?formatQty(p.packet.qty,p.packet.unit):"—"}`}</span></div><div className="hm-stock-step"><button aria-label={`Remove one ${c.code} packet`} disabled={qty<=0} onClick={()=>adjustPacket(c.id,-1)}>−</button><b>{p?formatPacketCountV6(qty/p.packet.qty):qty}</b><button aria-label={`Add one ${c.code} packet`} onClick={()=>adjustPacket(c.id,1)}>＋</button></div></article>})}</div>}
   </section>}
