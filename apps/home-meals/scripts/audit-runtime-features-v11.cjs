@@ -21,16 +21,16 @@ must(has(bar,'aria-label="Ask Home"','aria-label="Talk to Home"','aria-label="Sh
 must(has(ask,'/api/ask-home','home-meals:ask','applyMutation','set_day','set_week','set_active_prep_set','confirm_empty_kitchen'),"Typed Ask Home is missing its API/action-confirmation contract");
 must(has(vision,'/api/vision','needsConfirmation','setIngredient','setComponent'),"Vision runtime is missing proposal/confirmation or Kitchen mutation wiring");
 for(const mode of ["Fridge","Freezer","Pantry","Receipt","Prep","Meal"])must(scan.includes(`"${mode}"`),`Scan mode missing: ${mode}`);
-must(has(scan,'capture="environment"','accept="image/*"'),"Camera/library image inputs are not both exposed");
+must(has(scan,'capture="environment"','accept="image/*"','saveMealPhoto'),"Camera/library image inputs or meal-photo persistence are missing");
 must(has(voice,'navigator.mediaDevices?.getUserMedia','/api/live','/api/ask-home','SpeechRecognition','webkitSpeechRecognition','fillAsk(text)','home-meals:voice-proposal'),"Voice runtime lost realtime, fallback, household delegation or proposal safeguards");
-must(has(cooking,'sessionStorage','wakeLock','cookMeal(id)','logMealWithoutStock(id)','rateMeal','noteMeal','saveMealPhoto','recordCookObservation'),"Cooking runtime is missing persistence, wake lock, reconciliation, ratings, notes, photos or observation logging");
+must(has(cooking,'sessionStorage','wakeLock','cookMeal(id)','logMealWithoutStock(id)','rateMeal','noteMeal','recordCookObservation','Start timer','Done — log it'),"Cooking runtime is missing resume/timer/wake-lock/reconciliation/ratings/notes or observation logging");
 for(const day of ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"])must(plan.includes(`"${day}"`),`Plan lost ${day}`);
 must(has(plan,'aria-label="This week\'s dinners"','setDay','shoppingNeeds','prepNeeds'),"Plan lost week/calendar, shopping or prep integration");
 must(has(sync,'setInterval','conflict','cooking','version'),"Household sync lost polling/conflict/cooking-deferral semantics");
-must(has(pwa,'serviceWorker','controllerchange','/cook/'),"PWA runtime lost service-worker or active-cooking update protection");
+must(has(pwa,'serviceWorker','controllerchange','cookingRoute','SKIP_WAITING','Nothing interrupts cooking'),"PWA runtime lost service-worker or active-cooking update protection");
 must(has(status,'askHome','vision','realtimeVoice','householdSync','database'),"System-status endpoint no longer reports critical runtime capabilities");
 must(has(storage,'homeFridgeDays:3','reheatTargetC:74','freezeSuitability','lunchSuitability'),"Leftover/reheat policy is missing");
 must(has(dock,'.hm-main:not(.cooking) .hm-cta','--hm-fixed-action-bottom'),"Fixed-action dock clearance guard is missing");
 
 if(errors.length){console.error(`\nHome Meals runtime feature audit FAILED (${errors.length})`);for(const e of errors)console.error(` - ${e}`);process.exit(1)}
-console.log("\nHome Meals runtime feature audit passed · persistent Ask/camera/voice · typed AI actions require confirmation · 6 Vision scan modes · cooking resume/timers/wake-lock/reconciliation/ratings/notes/photos · 7-day Plan + shopping/prep · sync/recovery · PWA update safety · leftover/reheat policy · dock clearance");
+console.log("\nHome Meals runtime feature audit passed · persistent Ask/camera/voice · typed AI actions require confirmation · 6 Vision scan modes + meal photos · cooking resume/timers/wake-lock/reconciliation/ratings/notes · 7-day Plan + shopping/prep · sync/recovery · PWA update safety · leftover/reheat policy · dock clearance");
