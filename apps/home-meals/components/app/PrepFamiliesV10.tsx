@@ -8,6 +8,7 @@ import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {coreMotherIdsV7,prepRelationshipLabelV7} from "@/data/prep-repertoire-v7";
 import {getPrepPortionPolicyV6} from "@/data/prep-portioning-v6";
 import {allLiveRecipesV7 as recipes} from "@/data/recipe-catalog-v7";
+import {prepCategoryImagesV11} from "@/data/prep-category-assets-v11";
 import {useHousehold} from "../HouseholdState";
 import {feedback} from "@/lib/feedback";
 import {prepHero} from "@/lib/tones";
@@ -25,11 +26,11 @@ function Photo({c}:{c:CanonicalPrepComponentV2}){return <img src={safePrepImage(
 
 type Family="bases"|"mids"|"sauces"|"boosters"|"common";
 const meta:Record<Family,{eyebrow:string;title:string;desc:string;image:string}>={
- bases:{eyebrow:"FOUNDATIONS",title:"Core bases",desc:"Seven foundations. Pick the one you want, then make it or see what it unlocks.",image:safePrepImage(prepHero("red"))},
- mids:{eyebrow:"BUILDERS",title:"Mid bases & pastes",desc:"Pastes, stocks, roux and cooked flavour builders. Two big cards per row, no list hunting.",image:safePrepImage(prepHero("rendang"))},
- sauces:{eyebrow:"SAUCES",title:"Sauces & condiments",desc:"Stir-fry sauces, marinades, tare and condiments, organised as tappable food cards.",image:safePrepImage(prepHero("wok-brown"))},
- boosters:{eyebrow:"BOOSTERS",title:"Boosters",desc:"Small concentrated preps with outsized flavour impact.",image:safePrepImage(prepHero("ginger-garlic"))},
- common:{eyebrow:"SHORTCUTS",title:"Common prep",desc:"Everyday shortcuts from across the system. This is a convenience view, not a new food tier.",image:safePrepImage(prepHero("onion"))},
+ bases:{eyebrow:"FOUNDATIONS",title:"Core bases",desc:"Seven foundations. Pick the one you want, then make it or see what it unlocks.",image:prepCategoryImagesV11.coreBases},
+ mids:{eyebrow:"BUILDERS",title:"Mid bases & pastes",desc:"Pastes, stocks, roux and cooked flavour builders. Two big cards per row, no list hunting.",image:prepCategoryImagesV11.midBases},
+ sauces:{eyebrow:"SAUCES",title:"Sauces & condiments",desc:"Stir-fry sauces, marinades, tare and condiments, organised as tappable food cards.",image:prepCategoryImagesV11.sauces},
+ boosters:{eyebrow:"BOOSTERS",title:"Boosters",desc:"Small concentrated preps with outsized flavour impact.",image:prepCategoryImagesV11.boosters},
+ common:{eyebrow:"SHORTCUTS",title:"Common prep",desc:"Everyday shortcuts from across the system. This is a convenience view, not a new food tier.",image:prepCategoryImagesV11.common},
 };
 
 function familyItems(family:Family){
