@@ -1,2 +1,2 @@
-import {PrepV9} from "@/components/app/PrepV9";
-export default function PrepPage(){return <PrepV9/>}
+import {PrepV10} from "@/components/app/PrepV10";
+export default function PrepPage(){return <PrepV10/>}

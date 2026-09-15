@@ -3,7 +3,7 @@ import {boosters,midBases,motherBases} from "../../data/home-data";
 import {allLiveRecipesV7 as recipes} from "../../data/recipe-catalog-v7";
 
 const coreRoutes=[
-  "/","/cook","/cook/builder","/history","/prep","/prep/day","/prep/groceries","/prep/mids","/prep/boosters","/kitchen","/plan","/scan","/learn"
+  "/","/cook","/cook/builder","/history","/prep","/prep/bases","/prep/sauces","/prep/common","/prep/day","/prep/groceries","/prep/mids","/prep/boosters","/kitchen","/plan","/scan","/learn"
 ];
 const learnRoutes=["/learn/portions","/learn/freezer","/learn/prep-day","/learn/system"];
 const scanRoutes=["/scan?mode=Fridge","/scan?mode=Freezer","/scan?mode=Pantry","/scan?mode=Receipt","/scan?mode=Prep","/scan?mode=Meal"];
@@ -91,18 +91,19 @@ test("first-run truth gates navigation, then primary navigation remains usable",
   }
 });
 
-
 test("preview week, physical prep and maintenance repertoire remain distinct until explicit approval",async({page})=>{
   const seed={version:12,week:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],weekStatus:"unplanned",suggestedWeek:null,planMode:"both",allowExtraPrep:true,monthlyPool:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],activePrepIds:[],componentBatches:[],manualComponentStock:{},ingredientStock:{},qualitativeIngredientStock:{},groceryChecked:{},ratings:{},recipeNotes:{},recipeVersions:{},history:[],cookObservations:[],useSoon:{},useSoonAt:{},favourites:{},kitchenReady:true,migrationWarnings:[]};
-  await page.addInitScript(state=>{const marker="home-meals-v8-lifecycle-seeded";if(localStorage.getItem(marker))return;localStorage.setItem("home-meals-household-v12",JSON.stringify(state));localStorage.setItem("home-meals-welcome-seen-v1","1");localStorage.setItem(marker,"1")},seed);
+  await page.addInitScript(state=>{const marker="home-meals-v10-lifecycle-seeded";if(localStorage.getItem(marker))return;localStorage.setItem("home-meals-household-v12",JSON.stringify(state));localStorage.setItem("home-meals-welcome-seen-v1","1");localStorage.setItem(marker,"1")},seed);
   await page.goto("/",{waitUntil:"domcontentloaded"});
   await expect(page.getByText("IDEA FOR TONIGHT",{exact:true})).toBeVisible();
   await expect(page.getByText("A week Home could build",{exact:true})).toBeVisible();
   await page.goto("/prep",{waitUntil:"domcontentloaded"});
+  await expect(page.getByRole("tab",{name:"Browse"})).toHaveAttribute("aria-selected","true");
+  await expect(page.getByRole("link",{name:/Core bases/})).toBeVisible();
+  await expect(page.getByRole("link",{name:/Common prep/})).toBeVisible();
+  await expect(page.getByText("Caramelised onion foundation",{exact:true})).toHaveCount(0);
+  await page.getByRole("tab",{name:"Ours"}).click();
   await expect(page.getByRole("heading",{name:"Have now"})).toBeVisible();
-  await expect(page.getByText("7",{exact:true}).first()).toBeVisible();
-  await expect(page.getByText("Core bases",{exact:true}).first()).toBeVisible();
-  await expect(page.getByText("Caramelised onion foundation",{exact:true})).toBeVisible();
   await page.getByRole("button",{name:"Edit stock"}).click();
   await page.getByRole("button",{name:"Add one GOLD packet"}).click();
   await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")!).activePrepIds)).toEqual([]);
@@ -135,6 +136,18 @@ test.describe("responsive release matrix",()=>{
         const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
         expect(overflow,`${route} overflows by ${overflow}px at ${width}px`).toBeLessThanOrEqual(1);
       });
+    }
+  }
+});
+
+test("Prep V10 category cards stay usable at phone widths",async({page})=>{
+  for(const width of [360,390,430]){
+    await page.setViewportSize({width,height:844});
+    for(const route of ["/prep","/prep/bases","/prep/mids","/prep/sauces","/prep/boosters","/prep/common"]){
+      const response=await page.goto(route,{waitUntil:"domcontentloaded"});
+      expect(response?.status()??500).toBeLessThan(400);
+      const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+      expect(overflow,`${route} overflows by ${overflow}px at ${width}px`).toBeLessThanOrEqual(1);
     }
   }
 });
