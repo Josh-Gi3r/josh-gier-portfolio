@@ -1,18 +1,18 @@
 /* Keep fixed page actions physically clear of the persistent Home camera/orb/voice dock. */
 :root{
   --hm-ai-dock-top:calc(150px + env(safe-area-inset-bottom));
-  --hm-fixed-action-bottom:calc(154px + env(safe-area-inset-bottom));
+  --hm-fixed-action-bottom:calc(166px + env(safe-area-inset-bottom));
 }
 
 /* The dock occupies the space immediately above the bottom nav. Fixed page CTAs must sit above it, never behind it. */
 .hm-main:not(.cooking) .hm-cta{bottom:var(--hm-fixed-action-bottom)}
-.hm-main:not(.cooking){padding-bottom:calc(242px + env(safe-area-inset-bottom))}
+.hm-main:not(.cooking){padding-bottom:calc(254px + env(safe-area-inset-bottom))}
 
 /* If a route has both a fixed CTA and a Home hint, keep the hint above the CTA as well. */
-body:has(.hm-main:not(.cooking) .hm-cta) .hm-bar-hint{bottom:calc(258px + env(safe-area-inset-bottom))}
+body:has(.hm-main:not(.cooking) .hm-cta) .hm-bar-hint{bottom:calc(270px + env(safe-area-inset-bottom))}
 
-/* Very small-height phones still keep a visible gap between the CTA and dock. */
+/* Short phones need at least the same clearance; do not compress actions back into the AI dock. */
 @media (max-height:700px){
-  .hm-main:not(.cooking) .hm-cta{bottom:calc(148px + env(safe-area-inset-bottom))}
-  body:has(.hm-main:not(.cooking) .hm-cta) .hm-bar-hint{bottom:calc(252px + env(safe-area-inset-bottom))}
+  .hm-main:not(.cooking) .hm-cta{bottom:calc(162px + env(safe-area-inset-bottom))}
+  body:has(.hm-main:not(.cooking) .hm-cta) .hm-bar-hint{bottom:calc(266px + env(safe-area-inset-bottom))}
 }
