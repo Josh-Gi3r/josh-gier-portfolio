@@ -8,7 +8,8 @@ must('app/layout.tsx',/HouseholdSyncV12/,'v3 shell must use HouseholdSyncV12');
 mustNot('app/layout.tsx',/from\s+["']@\/components\/HouseholdSync["']/,'old v11 HouseholdSync is still imported');
 must('app/layout.tsx',/FirstRunKitchen/,'explicit first-run Kitchen truth choice must be mounted');
 must('components/FirstRunKitchen.tsx',/confirmEmptyKitchen/,'first run must support confirmed-empty Kitchen state');
-must('components/FirstRunKitchen.tsx',/Start from zero and add what we have/,'manual first run must not confuse unknown with empty');
+must('components/FirstRunKitchen.tsx',/Add what we have/,'manual first run must offer a real-Kitchen entry path');
+must('components/FirstRunKitchen.tsx',/Start empty, then add only the food and prep that are actually here\./,'manual first run must explicitly establish empty before adding observed Kitchen stock');
 
 must('components/HouseholdState.tsx',/HouseholdStateV12Provider/,'v3 compatibility surface must be backed by v12 state');
 must('components/HouseholdState.tsx',/activePrepIds/,'v3 compatibility surface must expose active prep repertoire');
