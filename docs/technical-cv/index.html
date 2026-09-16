@@ -332,243 +332,158 @@
 }
 </style><noscript><style>@media screen {.cv-header{position:static}.cv-header-actions{display:none}.cv-navigation{display:flex;flex-wrap:wrap}.cv-header-inner{flex-wrap:wrap}.cv-brand-text{display:block}}</style></noscript><meta content="Josh Gier: founder, AI systems builder, product and growth. Technical projects, systems architecture and operating experience." name="description"/><style>
 /* intro letter popup */
-.letter-overlay{
-  --bg:#f4f6f8;
-  --bg-2:#ffffff;
-  --glass:rgba(255,255,255,.74);
-  --glass-2:rgba(255,255,255,.54);
-  --glass-3:rgba(16,17,20,.06);
-  --text:#101114;
-  --sub:#343b44;
-  --muted:#7c8794;
-  --accent:#d94b32;
-  --accent-soft:#ef8d7a;
+@property --jgi-angle{syntax:'<angle>';inherits:false;initial-value:0deg}
+.jgi{
+  --jgi-accent:#d94b32;--jgi-accent-2:#ff806b;--jgi-ink:#f3f5f8;--jgi-body:#b4bdc8;--jgi-dim:#7a8593;--jgi-line:rgba(255,255,255,.08);
+  --jgi-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(1100px 520px at 50% 115%,rgba(217,75,50,.20),transparent 62%),rgba(8,10,14,.55);
+  -webkit-backdrop-filter:blur(14px) saturate(1.15);backdrop-filter:blur(14px) saturate(1.15);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;color:var(--jgi-ink);
+  animation:jgi-fade .5s ease both;
 }
-
-
-/* overlay */
-.letter-overlay{
-  position:fixed;
-  inset:0;
-  display:grid;
-  place-items:center;
-  padding:24px;
-  background:rgba(237,240,244,.46);
-  backdrop-filter:blur(26px) saturate(1.05);
-  -webkit-backdrop-filter:blur(26px) saturate(1.05);
-  z-index:1000;
+.jgi[hidden]{display:none}
+.jgi *,.jgi *::before,.jgi *::after{box-sizing:border-box}
+.jgi-card{
+  position:relative;display:flex;flex-direction:column;isolation:isolate;overflow:hidden;
+  width:min(680px,100%);height:min(760px,calc(100dvh - 48px));border-radius:28px;
+  background:linear-gradient(180deg,#141821 0%,#0b0e13 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 0 1px rgba(255,255,255,.06),0 50px 140px -30px rgba(0,0,0,.75);
+  animation:jgi-rise .8s cubic-bezier(.16,1,.3,1) both;
 }
-
-/* letter window */
-.letter-window{
-  position:relative;
-  width:min(980px, calc(100vw - 48px));
-  max-height:min(88vh, 980px);
-  overflow:auto;
-  border-radius:32px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02) 16%, rgba(255,255,255,.00) 32%),
-    var(--glass);
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:
-    0 32px 110px rgba(0,0,0,.42),
-    inset 0 1px 0 rgba(255,255,255,.12),
-    inset 0 -1px 0 rgba(255,255,255,.04);
-  scrollbar-width:thin;
-  scrollbar-color:rgba(255,255,255,.20) transparent;
+.jgi-card::before{
+  content:"";position:absolute;inset:0;z-index:4;border-radius:inherit;padding:1px;pointer-events:none;
+  background:conic-gradient(from var(--jgi-angle),transparent 0 62%,rgba(255,128,107,.85) 76%,rgba(255,255,255,.55) 80%,transparent 92%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  animation:jgi-spin 7s linear infinite;
 }
-
-/* soft internal sheen */
-.letter-window::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(255,255,255,.88), transparent 28%),
-    radial-gradient(circle at 100% 0%, rgba(217,75,50,.08), transparent 28%);
-  mix-blend-mode:normal;
+.jgi-card::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.055) 1px,transparent 1px);background-size:22px 22px;
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent 45%);mask-image:linear-gradient(180deg,#000,transparent 45%);
 }
-
-/* minimal chrome */
-.letter-bar{
-  position:sticky;
-  top:0;
-  z-index:2;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  height:64px;
-  padding:0 18px 0 22px;
-  background:linear-gradient(180deg, rgba(255,255,255,.84), rgba(255,255,255,.62));
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  border-bottom:1px solid rgba(20,28,38,.08);
+.jgi-glow{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(460px circle at var(--mx,85%) var(--my,-10%),rgba(217,75,50,.16),transparent 62%);
 }
-.letter-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  min-width:0;
-  color:#7f8995;
-  font-size:13px;
-  font-weight:600;
-  letter-spacing:.01em;
+.jgi-head{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 18px 16px 26px}
+.jgi-eyebrow{display:flex;align-items:center;gap:10px;min-width:0;font:600 11px/1 var(--jgi-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--jgi-dim);white-space:nowrap}
+.jgi-live{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:var(--jgi-accent-2);animation:jgi-pulse 2.4s ease-out infinite}
+.jgi-meta{display:flex;align-items:center;gap:12px;font:500 11px/1 var(--jgi-mono);color:var(--jgi-dim);white-space:nowrap}
+.jgi-x{
+  appearance:none;display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 10px 0 11px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--jgi-line);background:rgba(255,255,255,.04);color:#dde2e9;font:500 11px/1 var(--jgi-mono);
+  transition:background .2s ease,border-color .2s ease;
 }
-.letter-pill .dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:linear-gradient(180deg, var(--accent-soft), var(--accent));
-  box-shadow:0 0 14px rgba(217,75,50,.48);
-  flex:0 0 auto;
+.jgi-x:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18)}
+.jgi-x kbd{font:inherit;color:var(--jgi-dim)}
+.jgi-x svg{width:11px;height:11px;display:block}
+.jgi-progress{position:relative;z-index:2;height:1px;margin:0 26px;background:var(--jgi-line)}
+.jgi-progress i{position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(var(--jgi-p,0));background:linear-gradient(90deg,var(--jgi-accent),var(--jgi-accent-2));box-shadow:0 0 12px rgba(255,128,107,.6)}
+.jgi-scroll{
+  position:relative;z-index:1;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;outline:none;
+  padding:38px 52px 44px;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 44px,#000 calc(100% - 56px),transparent);
+  mask-image:linear-gradient(180deg,transparent 0,#000 44px,#000 calc(100% - 56px),transparent);
 }
-.letter-close{
-  width:38px;
-  height:38px;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:999px;
-  background:rgba(16,17,20,.04);
-  color:#68727d;
-  display:grid;
-  place-items:center;
-  font-size:22px;
-  line-height:1;
-  cursor:pointer;
-  transition:background .16s ease, transform .16s ease, border-color .16s ease;
+.jgi-scroll::-webkit-scrollbar{display:none}
+.jgi-scroll p{
+  margin:0 0 18px;font-size:16px;line-height:1.75;letter-spacing:-.003em;color:var(--jgi-body);text-wrap:pretty;
+  animation:jgi-in .9s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--jgi-i,0) * 60ms + 220ms);
 }
-.letter-close:hover{
-  background:rgba(255,255,255,.10);
-  border-color:rgba(255,255,255,.16);
-  transform:scale(1.03);
+.jgi-scroll p:last-child{margin-bottom:0}
+.jgi-scroll .jgi-hello{
+  margin-bottom:24px;font-size:36px;line-height:1.1;font-weight:650;letter-spacing:-.035em;
+  background:linear-gradient(95deg,#fff 30%,var(--jgi-accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.letter-close:focus-visible{
-  outline:2px solid rgba(255,154,136,.72);
-  outline-offset:3px;
+.jgi-foot{
+  position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:16px 18px 18px 26px;border-top:1px solid var(--jgi-line);background:rgba(11,14,19,.72);
 }
-
-/* body */
-.letter-body{
-  position:relative;
-  z-index:1;
-  padding:34px 40px 40px;
+.jgi-who{display:flex;align-items:center;gap:12px;min-width:0}
+.jgi-avatar{flex:0 0 auto;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#fff;color:#101114;font:800 12px/1 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.02em}
+.jgi-name{display:block;font-size:14px;font-weight:650;color:#fff;white-space:nowrap}
+.jgi-role{display:block;margin-top:4px;font:500 10px/1.2 var(--jgi-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--jgi-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jgi-cta{
+  appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:12px;height:46px;padding:0 8px 0 20px;border-radius:999px;
+  background:#fff;color:#0b0e13;font:650 14px/1 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.01em;white-space:nowrap;
+  box-shadow:0 0 0 1px rgba(255,255,255,.25),0 12px 34px -10px rgba(217,75,50,.7);
+  transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease;
 }
-.letter-copy{
-  margin:0 auto;
-  max-width:86ch;
-  color:#333b45;
-  font-size:17px;
-  line-height:1.78;
-  letter-spacing:-.004em;
+.jgi-cta:hover{transform:translateY(-1px);box-shadow:0 0 0 1px rgba(255,255,255,.35),0 18px 44px -10px rgba(217,75,50,.85)}
+.jgi-cta-arrow{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--jgi-accent);color:#fff;transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.jgi-cta-arrow svg{width:13px;height:13px;display:block}
+.jgi-cta:hover .jgi-cta-arrow{transform:translateX(3px)}
+.jgi button:focus-visible{outline:2px solid var(--jgi-accent-2);outline-offset:3px}
+.jgi.is-closing{animation:jgi-out .42s ease both}
+.jgi.is-closing .jgi-card{animation:jgi-drop .42s cubic-bezier(.4,0,1,1) both}
+html.jgi-lock,html.jgi-lock body{overflow:hidden}
+@keyframes jgi-fade{from{opacity:0}}
+@keyframes jgi-rise{from{opacity:0;transform:translateY(28px) scale(.97);filter:blur(10px)}}
+@keyframes jgi-in{from{opacity:0;transform:translateY(10px);filter:blur(6px)}}
+@keyframes jgi-spin{to{--jgi-angle:360deg}}
+@keyframes jgi-pulse{0%{box-shadow:0 0 0 0 rgba(255,128,107,.55)}100%{box-shadow:0 0 0 10px rgba(255,128,107,0)}}
+@keyframes jgi-out{to{opacity:0}}
+@keyframes jgi-drop{to{opacity:0;transform:translateY(14px) scale(.98);filter:blur(8px)}}
+@keyframes jgi-sheet{from{transform:translateY(100%)}}
+@media (max-width:640px){
+  .jgi{padding:0;place-items:end center}
+  .jgi-card{width:100%;height:92dvh;border-radius:24px 24px 0 0;animation-name:jgi-sheet;animation-duration:.6s}
+  .jgi-head{padding:20px 14px 12px 20px}
+  .jgi-head::before{content:"";position:absolute;top:7px;left:50%;width:36px;height:4px;margin-left:-18px;border-radius:9px;background:rgba(255,255,255,.18)}
+  .jgi-read,.jgi-x kbd,.jgi-role,.jgi-cta-long{display:none}
+  .jgi-x{width:32px;padding:0;justify-content:center}
+  .jgi-progress{margin:0 20px}
+  .jgi-scroll{padding:28px 22px 36px}
+  .jgi-scroll .jgi-hello{font-size:29px}
+  .jgi-scroll p{font-size:15.5px;line-height:1.7}
+  .jgi-foot{padding:12px 12px calc(12px + env(safe-area-inset-bottom)) 16px}
+  .jgi-avatar{width:34px;height:34px}
+  .jgi-cta{height:44px;padding-left:18px}
 }
-.letter-copy p{
-  margin:0 0 20px;
-}
-.letter-copy p:last-child{
-  margin-bottom:0;
-}
-.letter-copy strong{
-  color:var(--text);
-  font-weight:700;
-}
-.letter-copy a{
-  color:inherit;
-}
-.letter-copy .salute{
-  color:var(--text);
-}
-.letter-divider{
-  width:100%;
-  height:1px;
-  margin:0 0 28px;
-  background:linear-gradient(90deg, rgba(16,17,20,.10), rgba(16,17,20,.04) 48%, rgba(217,75,50,.16));
-  opacity:.92;
-}
-
-/* mobile */
-@media (max-width:760px){
-  .letter-overlay{
-    padding:10px;
-  }
-  .letter-window{
-    width:100%;
-    max-height:94dvh;
-    border-radius:26px;
-  }
-  .letter-bar{
-    height:58px;
-    padding:0 12px 0 16px;
-  }
-  .letter-pill{
-    font-size:12.5px;
-  }
-  .letter-close{
-    width:36px;
-    height:36px;
-    font-size:21px;
-  }
-  .letter-body{
-    padding:24px 20px 28px;
-  }
-  .letter-copy{
-    max-width:none;
-    font-size:15.5px;
-    line-height:1.68;
-  }
-  .letter-copy p{
-    margin-bottom:18px;
-  }
-}
-
 @media (prefers-reduced-motion:reduce){
-  .letter-close{transition:none}
+  .jgi,.jgi *,.jgi *::before{animation:none !important;transition:none !important}
 }
-.letter-overlay,.letter-overlay *{box-sizing:border-box}
-html.letter-open,html.letter-open body{overflow:hidden}
-@media print{.letter-overlay{display:none !important}}
+@media print{.jgi{display:none !important}}
 </style>
 </head>
 <body>
-  <div class="letter-overlay" id="letterOverlay">
-    <section class="letter-window" role="dialog" aria-modal="true" aria-label="Intro letter to Vishnu">
-      <div class="letter-bar">
-        <div class="letter-pill"><span class="dot" aria-hidden="true"></span><span>Intro letter</span></div>
-        <button class="letter-close" id="letterClose" aria-label="Close">×</button>
+<div class="jgi" id="jgi" role="dialog" aria-modal="true" aria-labelledby="jgi-hello">
+  <div class="jgi-card">
+    <div class="jgi-glow" aria-hidden="true"></div>
+    <div class="jgi-head">
+      <div class="jgi-eyebrow"><span class="jgi-live" aria-hidden="true"></span>Intro letter</div>
+      <div class="jgi-meta">
+        <span class="jgi-read"></span>
+        <button class="jgi-x" type="button" data-jgi-close aria-label="Close intro"><kbd>esc</kbd><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
       </div>
-
-      <div class="letter-body">
-        <div class="letter-divider" aria-hidden="true"></div>
-
-        <div class="letter-copy">
-          <p>Hey Vishnu,</p>
-
-          <p>Josh here, I'm a mate of Dilip's, and he recently shared your profile and what you've been building.</p>
-
-          <p>Reading about ego, I got instantly locked in.</p>
-
-          <p>Love the yōkai bet. Fault-tolerant folklore is very much my sort of thing.</p>
-
-          <p>Coincidentally, or maybe not, since I think all builders are doing some version of this, I'm building a personal agent - Goku is his name.</p>
-
-          <p>Of course he goes from base to Super to his final form, Ultra Instinct - or, for the normie, GPT-5 Sol, Fable 5.1 and GPT-6 Astra - a leader, he can summon various agents with various characteristics and strengths, whether Vegeta to support the hard task or the Ginyu Force for the mundane, whether marketing, social management or admin - as you can see, I am still stuck in the 80s.</p>
-
-          <p>Anyways, I brought him up because I too was trying to give him a personality, and I gathered: what are we but the sum of our memories, mistakes, wins and regrets? Or maybe not, as Philip K. Dick wrote the bear case: what happens when the memory is planted. Your yōkai are that debate shipped as a product, and I think it is the right bet - so I placed my own memory layer, Memento, built around cognitive-neuroscience concepts and episodic consolidation that lets experience shape his personality without promoting every passing mood into canon.</p>
-
-          <p>Would love to bring that work into the conversation about how your yōkai develop relationships over time. That shared history is an interesting retention thesis, too.</p>
-
-          <p>I'd love to help build both the characters and the community (my marketing side can't help itself) around them.</p>
-
-          <p>I also saw what you're building in your ego game-agent architecture for autonomous gameplay in 3D environments. I'm close to the Razer team, including Min and their newly formed AI team, and happy to help start a convo if needed.</p>
-
-          <p>Related to 3D envs, my most recent pet project is SPOTNOOK, an AI-native 3D property platform - its finished version could be described as GTA 6 x PropertyGuru, but it's a cute lil guy called NOOK that brings you around a 3D world showcasing a behemothic database built on the actual God's Eye tech.</p>
-
-          <p>Anyways, thought I should share my CV - just close this intro and you have access to it; my casual portfolio is also on the main URL. Would love to meet, catch up over coffee or vodka and see where we could cook together.</p>
-        </div>
+    </div>
+    <div class="jgi-progress" aria-hidden="true"><i></i></div>
+    <div class="jgi-scroll" tabindex="-1">
+        <p class="jgi-hello" id="jgi-hello">Hey Vishnu,</p>
+        <p>Josh here, I'm a mate of Dilip's, and he recently shared your profile and what you've been building.</p>
+        <p>Reading about ego, I got instantly locked in.</p>
+        <p>Love the yōkai bet. Fault-tolerant folklore is very much my sort of thing.</p>
+        <p>Coincidentally, or maybe not, since I think all builders are doing some version of this, I'm building a personal agent - Goku is his name.</p>
+        <p>Of course he goes from base to Super to his final form, Ultra Instinct - or, for the normie, GPT-5 Sol, Fable 5.1 and GPT-6 Astra - a leader, he can summon various agents with various characteristics and strengths, whether Vegeta to support the hard task or the Ginyu Force for the mundane, whether marketing, social management or admin - as you can see, I am still stuck in the 80s.</p>
+        <p>Anyways, I brought him up because I too was trying to give him a personality, and I gathered: what are we but the sum of our memories, mistakes, wins and regrets? Or maybe not, as Philip K. Dick wrote the bear case: what happens when the memory is planted. Your yōkai are that debate shipped as a product, and I think it is the right bet - so I placed my own memory layer, Memento, built around cognitive-neuroscience concepts and episodic consolidation that lets experience shape his personality without promoting every passing mood into canon.</p>
+        <p>Would love to bring that work into the conversation about how your yōkai develop relationships over time. That shared history is an interesting retention thesis, too.</p>
+        <p>I'd love to help build both the characters and the community (my marketing side can't help itself) around them.</p>
+        <p>I also saw what you're building in your ego game-agent architecture for autonomous gameplay in 3D environments. I'm close to the Razer team, including Min and their newly formed AI team, and happy to help start a convo if needed.</p>
+        <p>Related to 3D envs, my most recent pet project is SPOTNOOK, an AI-native 3D property platform - its finished version could be described as GTA 6 x PropertyGuru, but it's a cute lil guy called NOOK that brings you around a 3D world showcasing a behemothic database built on the actual God's Eye tech.</p>
+        <p>Anyways, thought I should share my CV - just close this intro and you have access to it; my casual portfolio is also on the main URL. Would love to meet, catch up over coffee or vodka and see where we could cook together.</p>
+    </div>
+    <div class="jgi-foot">
+      <div class="jgi-who">
+        <div class="jgi-avatar" aria-hidden="true">JG</div>
+        <div><span class="jgi-name">Josh Gier</span><span class="jgi-role">Founder · Product · AI Systems · Growth</span></div>
       </div>
-    </section>
+      <button class="jgi-cta" type="button" data-jgi-close><span>Open<span class="jgi-cta-long"> technical</span> CV</span><span class="jgi-cta-arrow" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+    </div>
   </div>
+</div>
 <a class="cv-skip" href="#cv-top">Skip to CV</a>
 <header aria-label="CV navigation" class="cv-header">
 <div class="cv-header-inner">
@@ -1484,20 +1399,61 @@ sustained utilisation → self-host / colo / owned</pre><div class="formula">TCO
 })();
 </script><script>
 (() => {
-  const overlay = document.getElementById('letterOverlay');
-  const close = document.getElementById('letterClose');
+  const root = document.getElementById('jgi');
+  if (!root) return;
+  const html = document.documentElement;
+  const card = root.querySelector('.jgi-card');
+  const scroller = root.querySelector('.jgi-scroll');
+  const read = root.querySelector('.jgi-read');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  document.documentElement.classList.add('letter-open');
+  html.classList.add('jgi-lock');
+  scroller.querySelectorAll('p').forEach((p, i) => p.style.setProperty('--jgi-i', Math.min(i, 9)));
+  const words = scroller.textContent.trim().split(/\s+/).length;
+  read.textContent = Math.max(1, Math.round(words / 230)) + ' min read';
 
-  function hide(){
-    overlay.style.display = 'none';
-    document.documentElement.classList.remove('letter-open');
+  const progress = () => {
+    const max = scroller.scrollHeight - scroller.clientHeight;
+    root.style.setProperty('--jgi-p', max > 0 ? Math.min(1, scroller.scrollTop / max) : 1);
+  };
+  scroller.addEventListener('scroll', progress, { passive: true });
+  progress();
+
+  if (!reduced) {
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
   }
 
-  close.addEventListener('click', hide);
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') hide();
-  });
+  let closed = false;
+  function finish() {
+    root.hidden = true;
+    html.classList.remove('jgi-lock');
+  }
+  function close() {
+    if (closed) return;
+    closed = true;
+    document.removeEventListener('keydown', onKey);
+    if (reduced) return finish();
+    root.classList.add('is-closing');
+    setTimeout(finish, 420);
+  }
+  function onKey(e) {
+    if (e.key === 'Escape') return close();
+    if (e.key !== 'Tab') return;
+    const items = [...card.querySelectorAll('button')];
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && (document.activeElement === first || !card.contains(document.activeElement))) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  }
+  document.addEventListener('keydown', onKey);
+  root.querySelectorAll('[data-jgi-close]').forEach(b => b.addEventListener('click', close));
+  scroller.focus({ preventScroll: true });
 })();
 </script>
 </body>
