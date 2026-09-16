@@ -100,8 +100,9 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
  },[stage,surface,seen,topic,path]);
 
  useEffect(()=>{
-  if(stage!=="tour"||!step?.highlight)return;
-  const click=(event:MouseEvent)=>{const el=(event.target as Element|null)?.closest?.("[data-home-guide]") as HTMLElement|null;if(!el)return;const expected=document.querySelector(step.highlight);if(expected&&el===expected)emit("home_guide_target_clicked",{person,mode,target:el.dataset.homeGuide});else if(el.dataset.homeGuide?.startsWith("nav-"))emit("home_guide_detour",{person,mode,expected:(expected as HTMLElement|null)?.dataset.homeGuide,actual:el.dataset.homeGuide})};
+  const highlightSelector=step?.highlight;
+  if(stage!=="tour"||!highlightSelector)return;
+  const click=(event:MouseEvent)=>{const el=(event.target as Element|null)?.closest?.("[data-home-guide]") as HTMLElement|null;if(!el)return;const expected=document.querySelector<HTMLElement>(highlightSelector);if(expected&&el===expected)emit("home_guide_target_clicked",{person,mode,target:el.dataset.homeGuide});else if(el.dataset.homeGuide?.startsWith("nav-"))emit("home_guide_detour",{person,mode,expected:expected?.dataset.homeGuide,actual:el.dataset.homeGuide})};
   document.addEventListener("click",click,true);return()=>document.removeEventListener("click",click,true)
  },[stage,step,person,mode]);
 
