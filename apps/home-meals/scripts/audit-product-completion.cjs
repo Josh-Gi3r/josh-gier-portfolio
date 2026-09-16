@@ -10,7 +10,7 @@ const mustNot=(rel,re,msg)=>{const text=read(rel);if(re.test(text))fail(`${rel}:
 for(const rel of ['app/page.tsx','app/cook/page.tsx','app/prep/page.tsx','app/kitchen/page.tsx','app/plan/page.tsx','app/history/page.tsx','app/learn/page.tsx','app/scan/page.tsx','app/prep/day/page.tsx','app/prep/mids/page.tsx','app/prep/boosters/page.tsx','app/cook/[slug]/page.tsx','app/cook/[slug]/cook/page.tsx'])if(!exists(rel))fail(`${rel}: required user route missing`);
 must('app/cook/[slug]/page.tsx',/getLiveRecipeV7/,'recipe detail route is not gated by the live V7 catalogue');
 must('app/cook/[slug]/cook/page.tsx',/getLiveRecipeV7/,'cooking route is not gated by the live V7 catalogue');
-must('components/FirstRunKitchen.tsx',/Kitchen is empty/,'confirmed-empty first run is missing');
+must('components/FirstRunKitchen.tsx',/Nothing yet/,'confirmed-empty first run is missing');
 must('components/FirstRunKitchen.tsx',/Add what we have/,'manual first-run path is missing');
 must('components/FirstRunKitchen.tsx',/Start empty, then add only the food and prep that are actually here\./,'manual first-run path must establish empty before adding observed stock');
 must('components/app/Prep.tsx',/Start with GOLD · SAMBAL · RED/,'small active-prep starter is missing');
@@ -47,13 +47,13 @@ for(const id of [...mids,...boosters])if(!keyRe(id).test(prepHeroes))fail(`prep 
 for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx','components/app/PrepDay.tsx']){
  must(rel,/recordMeasuredProduction/,'prep UI must record actual measured finished output');
  must(rel,/packetBreakdownV6/,'prep UI must derive full storage packets plus loose remainder');
- must(rel,/finished output/i,'prep UI must tell the household to measure actual finished output');
+ must(rel,/(finished output|How much did you make|Tell me how much you made)/i,'prep UI must tell the household to measure actual finished output');
  mustNot(rel,/recordPortionedProduction\(/,'active prep UI still logs count×legacy portions');
  mustNot(rel,/batchOutputMl|batchYield|portionMl/,'active prep UI regressed to assumed-yield fields');
 }
 must('components/HouseholdStateV12.tsx',/recordMeasuredProduction/,'v12 state does not support V6 measured-output production');
 must('components/HouseholdStateV12.tsx',/confirmSuggestedWeek/,'v12 state does not expose explicit week approval');
-must('components/app/Home.tsx',/IDEA FOR TONIGHT/,'Home preview still masquerades as a confirmed Tonight');
+must('components/app/Home.tsx',/DINNER IDEA/,'Home preview still masquerades as a confirmed Tonight');
 must('components/app/Prep.tsx',/hm-prep-library-card/,'Prep library is not image-led/interactive');
 must('components/app/Prep.tsx',/Caramelised onion foundation/,'ONION is still presented as a core base');
 

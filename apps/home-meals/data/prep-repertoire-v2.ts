@@ -5,9 +5,9 @@ export const optionalPrepIdsV2=new Set(["onion"] as const);
 export const coreMotherIdsV2=canonicalPrepComponentsV2.filter(x=>x.tier==="mother"&&!optionalPrepIdsV2.has(x.id as "onion")).map(x=>x.id);
 
 export const prepStarterSetsV2={
-  small:{id:"small",label:"Start small",description:"Three flexible mothers with broad cuisine coverage.",componentIds:["gold","sambal","red"] as const},
-  balanced:{id:"balanced",label:"Balanced",description:"Five mothers spanning Indian, Malaysian, Western and stock-led dinners.",componentIds:["gold","sambal","red","rempah","clear"] as const},
-  fullMothers:{id:"full-mothers",label:"All core bases",description:"All seven core bases active; mids, boosters and optional foundations stay demand-led.",componentIds:coreMotherIdsV2},
+  small:{id:"small",label:"Start small",description:"Three useful bases that cover a lot of dinners.",componentIds:["gold","sambal","red"] as const},
+  balanced:{id:"balanced",label:"Balanced",description:"Five bases for a wider mix of dinners.",componentIds:["gold","sambal","red","rempah","clear"] as const},
+  fullMothers:{id:"full-mothers",label:"All core bases",description:"All seven core bases. Add sauces and boosters only when we need them.",componentIds:coreMotherIdsV2},
 } as const;
 
 export function prepIdsForRecipeV2(recipeId:string){return recipePrepV2(recipeId).map(x=>x.componentId)}
