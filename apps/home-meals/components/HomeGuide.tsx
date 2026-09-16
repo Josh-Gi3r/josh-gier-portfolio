@@ -22,9 +22,9 @@ const surfaceAnchor:Record<Surface,string>={home:".hm-tonight",cook:".hm-cook-he
 const surfaceName:Record<Surface,string>={home:"Home",cook:"Cook",prep:"Prep",kitchen:"Kitchen",plan:"Plan"};
 const FULL_LINE:Record<Surface,string>={
  home:"This is home base. Tonight and the week start here.",
- cook:"All our recipes live here. Once Kitchen is set, ‘Ready now’ means the recorded kitchen says we can actually make it.",
+ cook:"All our recipes live here. Once Kitchen is set, ‘Ready now’ means we can actually make it with what’s at home.",
  prep:"Prep is our shortcut stash — bases, pastes, sauces and boosters we make ahead so dinner’s easier.",
- kitchen:"Kitchen is what we actually have — fridge, freezer and pantry. Tap things to update them or use the camera. Home won’t pretend something is here if we haven’t recorded it.",
+ kitchen:"Kitchen is what we actually have — fridge, freezer and pantry. Tap things to update them or use the camera. Home won’t pretend something is here if we haven’t added it.",
  plan:"This is our week. Suggestions aren’t locked until we confirm them, and either of us can change anything we don’t fancy."
 };
 const QUICK_LINE:Record<Surface,string>={
@@ -67,15 +67,15 @@ function toRect(r:DOMRect):Rect{return{left:r.left,top:r.top,width:r.width,heigh
 function lineFor(surface:Surface,mode:GuideMode){return mode==="quick"?QUICK_LINE[surface]:FULL_LINE[surface]}
 function promptFor(surface:Surface){return surface==="cook"?"Tap Cook.":surface==="prep"?"Now Prep.":surface==="kitchen"?"Next, Kitchen.":surface==="plan"?"Have a look at Plan.":"Tap Home and I’ll wrap up."}
 function topicStep(topic:Topic,path:string):Omit<Step,"actions">|null{
- const orb='[data-home-guide="orb"]',camera='[data-home-guide="camera"]',voice='[data-home-guide="voice"]';
+ const orb='[data-home-guide="orb"]',camera='[data-home-guide="camera"]';
  if(topic==="home")return path==="/"?{anchor:surfaceAnchor.home,highlight:surfaceAnchor.home,line:"Home is the quick read: tonight, what’s coming up, and anything Home thinks needs attention.",expression:"talk"}:null;
  if(topic==="cook")return path==="/cook"?{anchor:surfaceAnchor.cook,line:"Cook is the whole recipe library. Filters like Ready now, favourites and not lately are just different ways into the same recipes.",expression:"talk"}:null;
- if(topic==="prep")return path.startsWith("/prep")?{anchor:path==="/prep"?surfaceAnchor.prep:".hm-title-row",line:"Prep is the make-ahead system. Bases start dishes, mids and sauces shape them, boosters finish them. Prep Day only makes what the confirmed week actually needs.",expression:"thinking"}:null;
- if(topic==="kitchen")return path==="/kitchen"?{anchor:surfaceAnchor.kitchen,line:"Kitchen is household truth: fridge, freezer and pantry. Home only uses what we’ve actually recorded.",expression:"talk"}:null;
+ if(topic==="prep")return path.startsWith("/prep")?{anchor:path==="/prep"?surfaceAnchor.prep:".hm-title-row",line:"Prep is the make-ahead system. Bases start dishes, mids and sauces shape them, boosters finish them. Prep Day only makes what the week actually needs.",expression:"thinking"}:null;
+ if(topic==="kitchen")return path==="/kitchen"?{anchor:surfaceAnchor.kitchen,line:"Kitchen is the fridge, freezer and pantry — basically what we have at home. Home only uses what we’ve actually added.",expression:"talk"}:null;
  if(topic==="plan")return path==="/plan"?{anchor:surfaceAnchor.plan,line:"Plan is our shared week. We can move dinners around, change our minds and confirm the week when it actually looks right.",expression:"talk"}:null;
  if(topic==="ask")return document.querySelector(orb)?{anchor:orb,highlight:orb,line:"Tap the green orb and ask me normally. The mic beside it is the same thing spoken instead of typed.",expression:"affectionate"}:null;
  if(topic==="camera"){
-  if(path==="/scan")return{anchor:".hm-scan .stage",line:"Camera is reference, not magic. Show me the fridge, freezer, pantry, receipt, prep or dinner — I suggest what I see, and nothing changes until you confirm it.",expression:"look"};
+  if(path==="/scan")return{anchor:".hm-scan .stage",line:"Show me the fridge, freezer, pantry, receipt, prep or dinner. I’ll suggest what I can see, and nothing changes until you confirm it.",expression:"look"};
   return document.querySelector(camera)?{anchor:camera,highlight:camera,line:"That camera is for showing me instead of typing. I’ll suggest what I see and you confirm before Kitchen changes.",expression:"look"}:null;
  }
  if(topic==="cooking"){
@@ -99,8 +99,8 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
   window.addEventListener("home-meals:guide",summon as EventListener);return()=>window.removeEventListener("home-meals:guide",summon as EventListener)
  },[person,router]);
  useEffect(()=>{
-  if(person!=="g"||stage!=="idle"||!surface||readFirstRun("g")!=="unseen")return;
-  const timer=window.setTimeout(()=>{if(document.querySelector('[role="dialog"][aria-modal="true"]'))return;setMode("first");setSeen(new Set());setStage("welcome");emit("home_guide_started",{person:"g",mode:"first"})},900);
+  if(!person||stage!=="idle"||!surface||readFirstRun(person)!=="unseen")return;
+  const timer=window.setTimeout(()=>{if(document.querySelector('[role="dialog"][aria-modal="true"]'))return;setMode("first");setSeen(new Set());setStage("welcome");emit("home_guide_started",{person,mode:"first"})},900);
   return()=>window.clearTimeout(timer)
  },[person,stage,surface]);
  useEffect(()=>{
@@ -126,7 +126,7 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
 
  const step=useMemo<Step|null>(()=>{
   const orb='[data-home-guide="orb"]';
-  if(stage==="welcome")return{anchor:orb,highlight:orb,line:"Hey sunshine ☀️. Come, I’ll show you around. Takes a minute.",expression:"hello",actions:[{label:"Show me",onClick:startFirst,primary:true},{label:"Not now",onClick:()=>stop("dismissed")}]};
+  if(stage==="welcome")return{anchor:orb,highlight:orb,line:person==="g"?"Hey sunshine ☀️. Come, I’ll show you around. Takes a minute.":"Quick tour. I’ll show you how everything fits together. Takes a minute.",expression:"hello",actions:[{label:"Show me",onClick:startFirst,primary:true},{label:"Not now",onClick:()=>stop("dismissed")}]};
   if(stage==="menu")return{anchor:orb,highlight:orb,line:"Yep. Quick lap, the whole thing again, or just one bit?",expression:"affectionate",actions:[{label:"Quick refresher",onClick:startQuick,primary:true},{label:"Whole thing",onClick:startFull},{label:"One bit",onClick:openTopics},...(currentTopic?[{label:"This screen",onClick:()=>startTopic(currentTopic,true)}]:[])]};
   if(stage==="topics")return{anchor:orb,highlight:orb,line:"What do you want me to show you?",expression:"thinking",actions:[...(["home","cook","prep","kitchen","plan","ask","camera","cooking","history"] as Topic[]).map(t=>({label:topicLabels[t],onClick:()=>startTopic(t),primary:t==="ask"})),{label:"Back",onClick:()=>setStage("menu")}]};
   if(stage==="topic"){
@@ -134,25 +134,25 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
    return{...base,actions:[{label:"Got it",onClick:()=>stop("closed"),primary:true},{label:"More help",onClick:()=>setStage("menu")}]};
   }
   if(stage==="finish"){
-   const replay=mode!=="first";const line=mode==="first"?"And this little green thing is me. Tap it whenever you’re not sure — ask me, talk to me, show me something, or get me to walk you through any bit again.":mode==="quick"?"Yep, that’s the app. Tap me anytime if you only want a refresher on one bit.":"That’s the whole thing again. Tap me anytime for a quick refresher or one bit.";
+   const replay=mode!=="first";const firstLine=person==="g"?"And this little green thing is me. Tap it whenever you’re not sure — ask me, talk to me, show me something, or get me to walk you through any bit again.":"That’s the lot. The green orb is Home — tap it anytime to ask, talk, show it something, or replay any part of this.";const line=mode==="first"?firstLine:mode==="quick"?"Yep, that’s the app. Tap me anytime if you only want a refresher on one bit.":"That’s the whole thing again. Tap me anytime for a quick refresher or one bit.";
    return{anchor:orb,highlight:orb,line,expression:mode==="first"?"wink":"pleased",actions:[{label:mode==="first"?"Got it":"Done",onClick:()=>stop(mode==="first"?"completed":"closed"),primary:true},...(replay?[{label:"One bit",onClick:openTopics}]:[])]};
   }
   if(stage!=="tour"||!surface)return null;
   const effective=new Set(seen);effective.add(surface);const remaining=CORE.filter(x=>!effective.has(x));const progress={current:Math.min(effective.size,CORE.length),total:CORE.length};
-  // Kitchen truth is something the walkthrough teaches, never a prerequisite for seeing the walkthrough.
+  // Kitchen setup is something the walkthrough teaches, never a prerequisite for seeing the walkthrough.
   if(!h.kitchenReady&&surface==="home"){
-   const line=mode==="quick"?"Home is where tonight and the week come together. Kitchen is the truth underneath it — tap Kitchen.":"This is Home. Tonight and the week live here, but I won’t make up what we have. Kitchen is the truth underneath everything, so tap Kitchen and I’ll show you how it works.";
+   const line=mode==="quick"?"Home is where tonight and the week come together. Kitchen is what sits underneath it — tap Kitchen.":"This is Home. Tonight and the week live here. Before Home can tell us what’s ready, it needs to know what we have. Tap Kitchen and I’ll show you how it works.";
    return{anchor:orb,highlight:navFor.kitchen,line,expression:"look",progress};
   }
   if(!h.kitchenReady&&surface==="kitchen"){
    const next=remaining[0]??"home";
-   const line=mode==="quick"?"Kitchen is what we actually have. Update it by tapping things or use the camera. You can keep touring now.":"This is Kitchen — fridge, freezer and pantry, basically what we actually have. Tap anything to update it or use the camera; when it matches reality, hit Kitchen checked. You don’t have to finish it right now to keep looking around.";
+   const line=mode==="quick"?"Kitchen is what we actually have. Update it by tapping things or use the camera. You can keep touring now.":"This is Kitchen — fridge, freezer and pantry, basically what we actually have. Tap anything to update it or use the camera; when it looks right, hit Kitchen checked. You don’t have to finish it right now to keep looking around.";
    return{anchor:surfaceAnchor.kitchen,highlight:navFor[next],line:`${line} ${promptFor(next)}`,expression:"talk",progress};
   }
   if(!remaining.length&&surface!=="home")return{anchor:surfaceAnchor[surface],highlight:navFor.home,line:`${lineFor(surface,mode)} Tap Home and I’ll wrap up.`,expression:"look",progress};
   const next=remaining[0];if(!next)return null;
   return{anchor:surfaceAnchor[surface],highlight:navFor[next],line:`${lineFor(surface,mode)} ${promptFor(next)}`,expression:mode==="quick"?"pleased":"look",progress};
- },[stage,surface,seen,topic,path,mode,currentTopic,h.kitchenReady]);
+ },[stage,surface,seen,topic,path,mode,currentTopic,h.kitchenReady,person]);
 
  useEffect(()=>{
   const highlightSelector=step?.highlight;
