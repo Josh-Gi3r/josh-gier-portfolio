@@ -17,7 +17,10 @@ const frames=['idle','talk','happy','affectionate','wink','surprised','thinking'
 must(layout.includes('HomeGuideProvider'),'guide provider is not mounted');
 must(globals.includes('home-guide.css'),'guide CSS is not loaded');
 must(guide.includes('getHouseholdPerson'),'guide is not person-aware');
-must(guide.includes('person!=="g"'),'automatic first-run is not restricted to G');
+must(!guide.includes('person!=="g"'),'automatic first-run is still restricted to G');
+must(guide.includes('readFirstRun(person)'),'automatic first-run does not use per-person state');
+must(guide.includes('person==="g"?"Hey sunshine'),'G-specific welcome is missing');
+must(guide.includes('Quick tour. I’ll show you how everything fits together.'),'Josh-specific first-run welcome is missing');
 must(guide.includes('home-meals:guide'),'summoned guide event is missing');
 must(guide.includes('Quick refresher')&&guide.includes('Whole thing')&&guide.includes('One bit'),'summoned refresher modes are incomplete');
 must(guide.includes('This screen'),'contextual refresher is missing');
@@ -37,7 +40,7 @@ must(css.includes('@media(prefers-reduced-motion:reduce)'),'CSS reduced-motion f
 must(css.includes('min-height:44px'),'guide action touch targets are below the 44px project standard');
 must(!css.includes('.hm-guide-face'),'temporary CSS-drawn face returned');
 for(const name of frames){const p=path.join(root,`public/images/home-guide/${name}.webp`);must(fs.existsSync(p),`Josh guide frame ${name} is missing`);const buf=fs.readFileSync(p);must(buf.length>2500,`Josh guide frame ${name} looks like a placeholder`);must(buf.toString('ascii',0,4)==='RIFF'&&buf.toString('ascii',8,12)==='WEBP',`Josh guide frame ${name} is not a valid WebP container`);must(css.includes(`/images/home-guide/${name}.webp`),`Josh guide frame ${name} is not wired into the guide`)}
-must(spec.includes('First-run journey for G')&&spec.includes('Summoned guide: Josh or G'),'walkthrough implementation spec is incomplete');
+must(spec.includes('First-run journey for Josh + G')&&spec.includes('Summoned guide: Josh or G'),'walkthrough implementation spec is incomplete');
 for(const phrase of ['automatic first-run guide once','Quick refresher','Whole thing','One bit','reduced-motion'])must(tests.includes(phrase),`browser acceptance missing ${phrase}`);
 
-console.log('Home Meals talking-head guide V14 audit passed · 9 approved Josh expression frames · G-first-run only · quick/full/topic replay · detour-tolerant · deep-topic help · viewport-safe · reduced-motion aware');
+console.log('Home Meals talking-head guide V14 audit passed · 9 approved Josh expression frames · Josh + G first-use walkthrough · quick/full/topic replay · detour-tolerant · deep-topic help · viewport-safe · reduced-motion aware');
