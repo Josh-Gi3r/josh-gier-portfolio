@@ -16,7 +16,7 @@ const CORE:Surface[]=["home","cook","prep","kitchen","plan"];
 const GUIDE_KEY="home-meals-guide-v1";
 const routeFor:Record<Surface,string>={home:"/",cook:"/cook",prep:"/prep",kitchen:"/kitchen",plan:"/plan"};
 const navFor:Record<Surface,string>={home:'[data-home-guide="nav-home"]',cook:'[data-home-guide="nav-cook"]',prep:'[data-home-guide="nav-prep"]',kitchen:'[data-home-guide="nav-kitchen"]',plan:'[data-home-guide="nav-plan"]'};
-const surfaceAnchor:Record<Surface,string>={home:'[data-home-guide="home-tonight"]',cook:'[data-home-guide="surface-cook"]',prep:'[data-home-guide="surface-prep"]',kitchen:'[data-home-guide="surface-kitchen"]',plan:'[data-home-guide="surface-plan"]'};
+const surfaceAnchor:Record<Surface,string>={home:".hm-tonight",cook:".hm-cook-head",prep:".hm-prep-v10-head",kitchen:".hm-kitchen-head",plan:".hm-plan-head"};
 const surfaceName:Record<Surface,string>={home:"Home",cook:"Cook",prep:"Prep",kitchen:"Kitchen",plan:"Plan"};
 const surfaceLine:Record<Surface,string>={
  home:"This is the important bit — what are we eating?",
