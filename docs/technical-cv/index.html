@@ -1,35 +1,1248 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Josh Gier | Technical CV</title>
 <style>
-html,body{margin:0;min-height:100%;background:#edf0f4;color:#171c24;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-#loading{min-height:100vh;display:grid;place-items:center;font-size:13px;color:#66717f}
-</style>
-</head>
-<body>
-<div id="loading" role="status" aria-live="polite">Loading technical CV…</div>
-<script>
-(async()=>{
-  const loading=document.getElementById('loading');
-  try{
-    if(!('DecompressionStream' in window)) throw new Error('Browser does not support DecompressionStream');
-    const response=await fetch('./payload.b64',{cache:'no-store'});
-    if(!response.ok) throw new Error(`payload ${response.status}`);
-    const b64=(await response.text()).trim();
-    const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
-    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-    const html=await new Response(stream).text();
-    document.open();
-    document.write(html);
-    document.close();
-  }catch(error){
-    console.error(error);
-    loading.textContent='Unable to load technical CV.';
+  :root{
+    --ink:#101114;
+    --muted:#5b616a;
+    --line:#d9dde3;
+    --panel:#f6f7f9;
+    --accent:#d94b32;
+    --accent2:#242a33;
+    --code:#0d1117;
+    --codeink:#d6e2f0;
+    --paper:#fff;
   }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#eceff3;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+  a{color:inherit;text-decoration:none;border-bottom:1px solid #aeb5bf}
+  .toolbar{position:fixed;right:18px;top:18px;z-index:20;display:flex;gap:8px}
+  .toolbar button{border:1px solid #c7ccd3;background:#fff;border-radius:999px;padding:9px 13px;font-weight:700;cursor:pointer;box-shadow:0 2px 14px rgba(0,0,0,.08)}
+  .page{width:min(1120px,calc(100vw - 28px));margin:24px auto 80px;background:var(--paper);box-shadow:0 18px 70px rgba(27,34,44,.13);padding:58px 64px 72px}
+  .eyebrow{font:700 11px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+  h1{font-size:56px;line-height:.97;margin:10px 0 16px;letter-spacing:-.045em}
+  .role{font-size:21px;font-weight:750;max-width:920px;letter-spacing:-.015em}
+  .contact{display:flex;flex-wrap:wrap;gap:10px 20px;margin-top:18px;color:var(--muted);font-size:13px}
+  .thesis{font-size:20px;line-height:1.42;margin:34px 0 26px;padding:22px 24px;border-left:5px solid var(--accent);background:#faf4f2;font-weight:650}
+  .metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:28px 0 34px}
+  .metric{padding:16px 14px;border:1px solid var(--line);background:#fff}
+  .metric b{display:block;font-size:24px;line-height:1.05;letter-spacing:-.03em}
+  .metric span{display:block;margin-top:6px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+  section{padding-top:34px;margin-top:34px;border-top:2px solid var(--ink)}
+  h2{font-size:25px;letter-spacing:-.03em;margin:0 0 18px}
+  h3{font-size:18px;margin:0 0 6px;letter-spacing:-.02em}
+  h4{font-size:13px;margin:18px 0 7px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+  .sub{color:var(--muted);font-size:13px;margin-top:3px}.project-desc{font-size:13.5px;line-height:1.5;margin:9px 0 10px;color:#2c323a}.project-desc b{color:#111}.factline{font-size:13px;line-height:1.55;margin:5px 0;color:#252b33}.rule{margin-top:12px;padding:10px 12px;background:#f4f6f8;border-left:3px solid #7d8794;font:650 11.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#303844}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
+  .card{border:1px solid var(--line);padding:20px;background:#fff;break-inside:avoid;box-sizing:border-box;height:100%}
+  .card.tint{background:var(--panel)}
+  .card.hero{border-top:4px solid var(--accent)}
+  .tagrow{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 14px}
+  .tag{font:650 10px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#eef1f4;border:1px solid #d8dde3;border-radius:999px;padding:6px 8px;color:#343a43}
+  ul{margin:9px 0 0;padding-left:18px}
+  li{margin:6px 0}
+  .tight li{margin:3px 0}
+  .dense{font-size:12.5px}
+  .techline{font:600 11.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#2d3440}
+  pre{white-space:pre-wrap;margin:12px 0 0;padding:14px 15px;background:var(--code);color:var(--codeink);border-radius:6px;font:500 11.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+  .formula{font:700 15px/1.4 Georgia,serif;padding:12px 15px;background:#f8f8f8;border:1px solid var(--line);margin:10px 0}
+  .why{margin-top:12px;padding:10px 12px;background:#fff8e8;border-left:3px solid #e3a226;font-size:12.5px;font-weight:700}
+  .rolehead{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;margin-bottom:12px}
+  .date{font:700 11px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--muted);white-space:nowrap}
+  .experience{margin-top:26px;break-inside:avoid}
+  .experience + .experience{border-top:1px solid var(--line);padding-top:26px}
+  .cols{columns:2;column-gap:34px}
+  .cols > *{break-inside:avoid}
+  .small{font-size:11.5px;color:var(--muted)}
+  .quote{font-size:22px;line-height:1.28;font-weight:800;letter-spacing:-.025em;margin:20px 0}
+  .accent{color:var(--accent)}
+  .kicker{font-weight:800}
+  .commercial{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+  .commercial .c{padding:13px;border:1px solid var(--line);background:#fff}
+  .commercial b{font-size:18px;display:block}
+  .commercial span{font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:750;letter-spacing:.05em}
+  .footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:var(--muted);font-size:10.5px}
+  .hero-shell{position:relative;overflow:hidden;border:1px solid #171b22;background:#0d1117;color:#eef3f8;padding:34px 34px 30px;margin:-8px 0 26px;box-shadow:0 24px 50px rgba(13,17,23,.16)}
+  .hero-shell:before{content:"";position:absolute;inset:0;opacity:.16;background-image:linear-gradient(rgba(255,255,255,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.10) 1px,transparent 1px);background-size:34px 34px;transform:perspective(520px) rotateX(62deg) scale(1.5);transform-origin:50% 100%;pointer-events:none}
+  .hero-shell:after{content:"";position:absolute;width:520px;height:520px;border-radius:50%;right:-250px;top:-310px;background:radial-gradient(circle,rgba(217,75,50,.28),rgba(217,75,50,0) 68%);pointer-events:none}
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:34px;align-items:stretch}
+  .hero-shell .eyebrow{color:#ff806b}
+  .hero-shell h1{color:#fff;margin-top:8px}
+  .hero-title{font-size:20px;font-weight:780;letter-spacing:-.02em;margin-top:5px}
+  .hero-facts{margin-top:18px;max-width:760px;font-size:14px;line-height:1.55;color:#cbd3dd}
+  .hero-facts b{color:#fff}
+  .hero-contact{display:flex;flex-wrap:wrap;gap:9px 16px;margin-top:20px;color:#9eabb8;font-size:11.5px}
+  .hero-contact a{border-color:#59616d}
+  .hero-note{margin-top:18px;padding-top:15px;border-top:1px solid #2a313b;font:600 11.5px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#aeb8c4}
+  .hero-note strong{color:#f0f4f8}
+  .system-visual{position:relative;min-height:322px;display:flex;align-items:center;justify-content:center}
+  .iso{position:relative;width:290px;height:260px;transform:translateY(4px)}
+  .iso-card{position:absolute;width:220px;height:62px;border:1px solid rgba(255,255,255,.22);background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.035));box-shadow:0 16px 36px rgba(0,0,0,.24);transform:skewY(-10deg) rotate(-2deg);padding:12px 15px;color:#e8edf3;backdrop-filter:blur(3px)}
+  .iso-card b{display:block;font:750 10px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.09em;text-transform:uppercase;color:#ff806b}
+  .iso-card span{display:block;margin-top:6px;font:600 10.5px/1.25 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#cbd4de}
+  .iso-1{left:24px;top:18px}.iso-2{left:42px;top:72px}.iso-3{left:60px;top:126px}.iso-4{left:78px;top:180px}
+  .signal-dot{position:absolute;width:7px;height:7px;border-radius:50%;background:#ff806b;box-shadow:0 0 0 5px rgba(255,128,107,.10),0 0 20px rgba(255,128,107,.65)}
+  .signal-a{right:22px;top:40px}.signal-b{left:5px;bottom:42px}.signal-c{right:52px;bottom:18px}
+  .track-record{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:20px 0 8px}
+  .track-record .metric{padding:13px 12px;background:#fff}
+  .track-record .metric b{font-size:21px}
+  .landing-band{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;margin:14px 0 32px}
+  .landing-band .card{padding:16px 18px}
+  .landing-band p{margin:5px 0 0;font-size:13px;color:var(--muted)}
+  .micro-stack{font:650 11px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#303844}
+  .scope{font:750 9px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.11em;text-transform:uppercase;color:#8a4a3e;margin:2px 0 7px}
+  @media(max-width:850px){.page{padding:36px 24px}.hero-grid,.landing-band{grid-template-columns:1fr}.system-visual{min-height:260px}.track-record{grid-template-columns:1fr 1fr}.metrics,.grid2,.grid3,.commercial{grid-template-columns:1fr 1fr}.rolehead{grid-template-columns:1fr}.cols{columns:1}h1{font-size:44px}.codeproof{grid-template-columns:1fr}.toolbar{display:none}}
+  @media(max-width:520px){.track-record,.metrics,.grid2,.grid3,.commercial{grid-template-columns:1fr}.hero-shell{padding:26px 20px}.system-visual{display:none}}
+  @media print{
+    body{background:#fff}
+    .toolbar{display:none}
+    .page{width:auto;margin:0;box-shadow:none;padding:14mm 15mm 16mm}
+    .hero-shell{background:#fff;color:#101114;border:1px solid #bbb;box-shadow:none;padding:22px}.hero-shell:before,.hero-shell:after,.system-visual{display:none}.hero-grid{grid-template-columns:1fr}.hero-shell h1,.hero-shell .hero-facts b,.hero-title{color:#101114}.hero-facts,.hero-note,.hero-contact{color:#4e5660}.hero-shell .eyebrow{color:#d94b32}
+    section,.card,.experience,pre{break-inside:avoid}
+    a{border-bottom:none}
+    @page{size:A4;margin:0}
+  }
+
+  .card h4:first-of-type{margin-top:14px}
+  .grid2 > .card{display:flex;flex-direction:column}
+  .grid2 > .card > .rule:last-child,.grid2 > .card > .why:last-child{margin-top:12px}
+  .grid2 > .card pre + ul{margin-top:10px}
+  .card .formula{margin-top:9px;margin-bottom:9px}
+
+  .grid2 > .card{justify-content:flex-start}
+  .project-desc{margin-bottom:12px}
+  .card ul:last-child{margin-bottom:0}
+
+  /* Independent R&D only: equal columns, no min-content blowout, paired cards stretch identically. */
+  .rnd .grid2{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+  .rnd .grid2 > *{min-width:0}
+  .rnd .card{min-width:0;overflow-wrap:anywhere}
+  .rnd .card > :last-child{margin-bottom:0}
+</style>
+<style id="cv-screen-design">/* Technical CV, screen edition. Original content and print rules are retained.
+   Projects remain complete, paired documents. No internal paired rows, clamps,
+   accordions, filler content, fixed card heights or independently scrolling cards. */
+@media screen {
+  :root {
+    --ink: #171c24;
+    --muted: #535d6b;
+    --line: #d8dee7;
+    --panel: #f6f8fa;
+    --accent: #b63d29;
+    --paper: #ffffff;
+  }
+  html { scroll-padding-top: 86px; }
+  body { background: #edf0f4; font-size: 14px; line-height: 1.5; }
+  .toolbar { display: none; }
+  .page {
+    width: min(1120px, calc(100% - 48px)); margin: 24px auto 48px;
+    padding: 40px 40px 44px; border: 1px solid #dbe1e8;
+    box-shadow: 0 12px 42px rgba(24,35,52,.055);
+  }
+  .cv-header {
+    position: sticky; top: 0; z-index: 30; background: #ffffff;
+    border-bottom: 1px solid var(--line);
+  }
+  .cv-header-inner {
+    max-width: 1120px; min-height: 60px; padding: 8px 24px;
+    margin: auto; display: flex; gap: 24px; align-items: center;
+  }
+  .cv-brand { display:flex; align-items:center; gap:10px; flex-shrink:0; border:0; }
+  .cv-monogram { width:32px; height:32px; display:grid; place-items:center;
+    background:#171c24; color:#fff; font-size:12px; font-weight:800; border-radius:4px; }
+  .cv-brand-text { font-size:12px; font-weight:750; letter-spacing:.01em; }
+  .cv-navigation { display:flex; gap:3px; align-items:center; margin-left:auto; }
+  .cv-navigation a { border:0; border-radius:4px; padding:12px 9px; min-height:44px; font-size:12px;
+    font-weight:650; color:#535d6b; white-space:nowrap; }
+  .cv-navigation a:hover { color:var(--ink); background:#f1f4f7; }
+  .cv-navigation a[aria-current='location'] { color:var(--accent); background:#fcf0ec; }
+  .cv-header-actions { display:flex; gap:6px; flex-shrink:0; }
+  .cv-button { min-height:44px; padding:10px 14px; border:1px solid #c6ced8;
+    border-radius:5px; background:#fff; color:#171c24; line-height:1.3;
+    font-family:inherit; font-size:12px; font-weight:650; cursor:pointer; }
+  .cv-button:hover { background:#f2f5f8; }
+  .cv-menu-button { display:block; }
+  .cv-menu-panel { max-width:1120px; margin:auto; padding:12px 24px 20px; border-top:1px solid var(--line); }
+  .cv-menu-panel[hidden] { display:none; }
+  .cv-menu-links { display:grid; grid-template-columns:1fr 1fr; gap:4px 10px; }
+  .cv-menu-links a { padding:12px; border:0; font-weight:650; font-size:13px; }
+  .cv-menu-links a:hover { background:#f2f5f8; }
+  .cv-project-select { margin-top:12px; }
+  .cv-project-select label { display:block; color:var(--muted); font-size:12px; margin-bottom:6px; }
+  .cv-project-select select { width:100%; min-height:44px; font:inherit; font-size:13px;
+    border:1px solid #bdc7d3; background:#fff; padding:10px; border-radius:4px; }
+  .cv-skip { position:fixed; left:16px; top:-80px; z-index:50; padding:12px 18px;
+    background:#171c24; color:white; border:0; border-radius:4px; }
+  .cv-skip:focus { top:8px; }
+  .cv-backtop { position:fixed; right:max(16px, calc((100vw - 1340px) / 2)); bottom:20px;
+    width:44px; height:44px; display:grid; place-items:center; border:1px solid #b8c2cf;
+    border-radius:6px; background:#fff; color:var(--ink); font-size:20px; z-index:25;
+    box-shadow:0 2px 10px #18233412; }
+  .cv-backtop[hidden] { display:none; }
+  a:focus-visible, button:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+    outline:3px solid #2362a3; outline-offset:4px;
+  }
+  main:focus, section:focus, article:focus { outline:none; }
+  .hero-shell { margin:0 0 24px; padding:30px; box-shadow:none; border-radius:6px; }
+  .hero-grid { grid-template-columns:minmax(0,1.55fr) minmax(270px,.65fr); gap:28px; }
+  .hero-shell h1 { font-size:56px; line-height:1; margin:12px 0 14px; }
+  .hero-title { font-size:20px; }
+  .hero-facts { font-size:14px; line-height:1.55; }
+  .hero-contact { font-size:12px; gap:8px 14px; color:#b4becb; }
+  .hero-contact a { display:inline-block; padding:3px 0; }
+  .hero-note { font-size:12px; line-height:1.5; }
+  .track-record { grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; margin:20px 0 12px; }
+  .metric, .commercial .c { border-radius:4px; }
+  .track-record .metric { padding:16px 12px; }
+  .track-record .metric b { font-size:22px; line-height:1.15; }
+  .metric span { line-height:1.45; font-size:10px; letter-spacing:.035em; }
+  .landing-band { grid-template-columns:1fr 1fr; gap:16px; margin:16px 0 30px; }
+  .landing-band .card { padding:18px 20px; }
+  .landing-band .card p { font-size:13px; line-height:1.5; }
+  .micro-stack { font-weight:550; font-size:12px; line-height:1.5; margin-top:5px; }
+  section { margin-top:32px; padding-top:26px; border-top:2px solid #202833;
+    scroll-margin-top:12px; }
+  section > .eyebrow { margin-bottom:8px; line-height:1.5; }
+  h2 { font-size:26px; line-height:1.22; letter-spacing:-.025em; margin:0 0 20px; }
+  h3 { font-size:18px; line-height:1.3; letter-spacing:-.015em; margin:0 0 8px; text-wrap:pretty; }
+  h4, .card h4:first-of-type { font-size:11.5px; line-height:1.4; letter-spacing:.07em;
+    margin:18px 0 8px; color:#4a5666; }
+  .grid2, .rnd .grid2 { grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:stretch; }
+  .grid3 { grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; align-items:stretch; }
+  .grid2 > *, .grid3 > *, .hero-grid > *, .landing-band > *, .track-record > *, .commercial > * {
+    min-width:0;
+  }
+  .card { display:flex; flex-direction:column; justify-content:flex-start; padding:20px; border-radius:5px; height:auto; min-width:0;
+    font-size:15px; line-height:1.5; overflow-wrap:anywhere; }
+  .card.hero { border-top:3px solid var(--accent); }
+  .grid2 > .card { display:flex; flex-direction:column; justify-content:flex-start; }
+  .card > :last-child { margin-bottom:0; }
+  .dense { font-size:15px; }
+  .sub { font-size:12px; line-height:1.5; }
+  .project-desc { font-size:14px; line-height:1.5; margin:8px 0 12px; color:#303944; }
+  .scope { font-size:9px; line-height:1.45; letter-spacing:.07em; margin:4px 0 7px; }
+  .techline { font-size:12px; font-weight:550; line-height:1.5; overflow-wrap:anywhere; }
+  .techline + .scope { margin-top:12px; }
+  .tagrow { gap:6px; margin:12px 0; }
+  .tag { font-size:10px; font-weight:600; line-height:1.15; max-width:100%; padding:6px 8px;
+    color:#424f60; background:#f2f5f8; border-color:#d7dfe8; }
+  ul { margin:10px 0 0; padding-left:18px; }
+  li, .tight li { margin:5px 0; }
+  li::marker { color:#697585; }
+  pre { min-width:0; max-width:100%; margin:12px 0 10px; padding:14px;
+    font-size:12px; line-height:1.5; font-weight:400; border-radius:5px;
+    background:#101720; color:#dce6f1; white-space:pre-wrap; overflow-wrap:anywhere; }
+  .formula, .card .formula { min-width:0; max-width:100%; font-size:15px; font-weight:600;
+    line-height:1.5; padding:12px 14px; margin:10px 0; background:#f4f6f9;
+    border:1px solid #e0e5ed; border-radius:4px; overflow-wrap:anywhere; }
+  .formula sub, .formula sup { line-height:0; }
+  .rule { font-size:11.5px; line-height:1.5; font-weight:550; padding:12px 14px;
+    margin-top:14px; background:#edf1f6; border-left:3px solid #667b97; }
+  .why { font-size:13px; line-height:1.5; font-weight:600; padding:12px 14px; }
+  .experience { margin-top:26px; }
+  .rolehead { gap:16px; }
+  .date { font-size:11px; line-height:1.5; }
+  .factline { font-size:14px; line-height:1.55; margin:8px 0 18px; }
+  .commercial { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+  .commercial span { display:block; margin-top:6px; font-size:10px; line-height:1.4; }
+  .footer { gap:12px; flex-wrap:wrap; font-size:11px; }
+}
+@media screen and (max-width:1100px) {
+  .cv-header-inner { gap:12px; }
+  .cv-brand-text { display:none; }
+  .page { padding:28px; width:calc(100% - 32px); }
+  .hero-grid { grid-template-columns: minmax(0,1fr) minmax(260px,.55fr); gap:20px; }
+  .track-record { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media screen and (max-width:1100px) {
+  .cv-navigation { display:none; }
+  .cv-header-actions { margin-left:auto; }
+  .cv-menu-button { display:block; }
+  .cv-brand-text { display:block; }
+  .hero-grid { grid-template-columns:1fr; }
+  .system-visual { display:none; }
+  .grid2, .rnd .grid2 { grid-template-columns:minmax(0,1fr); }
+  .grid3 { grid-template-columns:minmax(0,1fr); }
+  .card { height:auto; }
+  .rolehead { grid-template-columns:1fr; gap:6px; }
+  .cols { columns:1; }
+}
+@media screen and (max-width:600px) {
+  html { scroll-padding-top:80px; }
+  .page { width:100%; border:0; margin:0 auto; padding:18px 16px 36px; box-shadow:none; }
+  .cv-header-inner { min-height:60px; padding:8px 16px; gap:8px; }
+  .cv-brand { gap:8px; }
+  .cv-brand-text { font-size:11px; }
+  .cv-button { padding:9px 10px; }
+  .cv-menu-panel { padding:8px 16px 16px; max-height:calc(100dvh - 68px); overflow-y:auto; }
+  .hero-shell { padding:24px 20px; margin-bottom:18px; }
+  .hero-shell h1 { font-size:42px; }
+  .hero-shell .eyebrow { font-size:10px; line-height:1.55; }
+  .hero-title { font-size:18px; line-height:1.4; }
+  .hero-facts { font-size:14px; line-height:1.6; }
+  .hero-note { font-size:11.5px; }
+  .hero-contact { overflow-wrap:anywhere; }
+  .track-record,.metrics,.commercial { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .track-record .metric { padding:14px 12px; }
+  .landing-band { grid-template-columns:1fr; gap:12px; }
+  .card,.landing-band .card { padding:18px; }
+  section { padding-top:22px; margin-top:28px; scroll-margin-top:8px; }
+  h2 { font-size:23px; line-height:1.3; }
+  h3 { font-size:18px; }
+  .card,.dense { font-size:14px; }
+  pre { font-size:12px; padding:12px; }
+  .date { white-space:normal; }
+  .footer { font-size:10.5px; padding-right:42px; }
+  .cv-backtop { right:12px; bottom:12px; }
+}
+@media screen and (max-width:360px) {
+  .cv-brand-text { display:none; }
+  .page { padding:14px 12px 30px; }
+  .hero-shell { padding:22px 16px; }
+  .card, .landing-band .card { padding:16px; }
+  .formula,.card .formula { font-size:14px; padding:10px 12px; }
+}
+@media screen and (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+@media print { .cv-header,.cv-skip,.cv-backtop { display:none !important; } }
+/* Two document columns need their full reading measure. Below it, use complete
+   single-column cards rather than compressing type or retaining empty rows. */
+@media screen and (max-width:1167px) {
+  .grid2,.rnd .grid2,.grid3 { grid-template-columns:minmax(0,1fr); }
+}
+@media screen {
+  /* Keep the decorative system labels inside their own layer. */
+  .iso { width:290px; height:300px; }
+  .iso-card { width:218px; height:70px; padding:12px 14px; }
+  .iso-1 { left:6px; top:0; }
+  .iso-2 { left:22px; top:72px; }
+  .iso-3 { left:38px; top:144px; }
+  .iso-4 { left:54px; top:216px; }
+  .techline,.micro-stack,.hero-note,.rule { font-weight:500; }
+}
+@media screen and (max-width:1167px) {
+  /* On narrow screens the persistent JG link returns to the top; no floating
+     control may cover a paragraph, formula or code block. */
+  .cv-backtop { display:none; }
+}
+</style><noscript><style>@media screen {.cv-header{position:static}.cv-header-actions{display:none}.cv-navigation{display:flex;flex-wrap:wrap}.cv-header-inner{flex-wrap:wrap}.cv-brand-text{display:block}}</style></noscript><meta content="Josh Gier: founder, AI systems builder, product and growth. Technical projects, systems architecture and operating experience." name="description"/></head>
+<body><a class="cv-skip" href="#cv-top">Skip to CV</a>
+<header aria-label="CV navigation" class="cv-header">
+<div class="cv-header-inner">
+<a aria-label="Josh Gier, back to top" class="cv-brand" href="#cv-top"><span aria-hidden="true" class="cv-monogram">JG</span><span class="cv-brand-text">Technical CV</span></a>
+<nav aria-label="CV sections" class="cv-navigation"><a href="#technical-work">Technical work</a><a href="#independent-rd">R&amp;D projects</a><a href="#experience">Experience</a><a href="#systems-decisions">Systems</a><a href="#operating-range">Operating range</a><a href="#education">Education</a></nav>
+<div class="cv-header-actions"><button aria-controls="cv-contents" aria-expanded="false" class="cv-button cv-menu-button" type="button">Contents</button><button aria-label="Print or save the complete CV as PDF" class="cv-button cv-print" type="button">Print / PDF</button></div>
+</div>
+<div class="cv-menu-panel" hidden="" id="cv-contents">
+<nav aria-label="Mobile CV sections" class="cv-menu-links"><a href="#technical-work">Technical work</a><a href="#independent-rd">R&amp;D projects</a><a href="#experience">Experience</a><a href="#systems-decisions">Systems</a><a href="#operating-range">Operating range</a><a href="#education">Education</a></nav>
+<div class="cv-project-select"><label for="cv-project-jump">Jump to a project</label><select id="cv-project-jump"><option value="">Choose a project…</option><option value="project-goku">GOKU</option><option value="project-memento">MEMENTO</option><option value="project-spotnook">SPOTNOOK</option><option value="project-blueballs">BLUEBALLS</option><option value="project-pocket-t">Pocket-T</option><option value="project-buzz">Buzz / Preview Studio</option><option value="project-sera-for-agents">Sera for Agents</option><option value="project-4sight">4Sight</option><option value="project-telegram-p2p-fx">Telegram P2P FX</option><option value="project-nextcurrency">NextCurrency</option><option value="project-yours">Aier → Yours</option><option value="project-esportz">KDArena → Coliseum → Esportz.fun</option><option value="project-enterprise-architecture">Enterprise data / automation</option><option value="project-enterprise-portfolio">18-product enterprise portfolio</option></select></div>
+</div>
+</header>
+<div class="toolbar"><button onclick="window.print()">Print / Save PDF</button></div>
+<main class="page" id="cv-top" tabindex="-1">
+<div class="hero-shell">
+<div class="hero-grid">
+<div>
+<div class="eyebrow">Founder · AI systems builder · Product · Growth · Revenue</div>
+<h1>Josh Gier</h1>
+<div class="hero-title">Founder / Product / AI Systems / Growth</div>
+<div class="hero-facts">
+<b>Aier Studios.</b> Founded an AI-native generative marketing company built around proprietary automation: multi-million-dollar revenue, &gt;50% gross margin, 25 full-time staff, work across 30+ markets and US$9M+ in managed client campaign budgets; completed a <b>US$3M acqui-hire by Coliseum</b>.<br/><br/>
+<b>Coliseum.</b> Post-acquisition, led <b>product, growth, revenue and operations</b> across a 4M-member gaming ecosystem; reached <b>200K active users in eight months</b>. During that operating period the company raised <b>US$15M led by The Chernin Group</b>, with Kevin Durant's 35V, Barstool and others.<br/><br/>
+<b>CBRE Asia Pacific.</b> Built and ran the regional enterprise SaaS/data/analytics business from 2 people to 50+ direct / 250+ delivery across seven markets and <b>US$100M annual revenue</b>; originated and closed the <b>US$1B NTT relationship</b>.<br/><br/>
+<b>Sera Protocol.</b> Built APAC commercial and product motion around onchain FX: <b>30 signed agreements from 70+ relationships</b>, &gt;60% pilot-to-commercial conversion, a median cycle under 90 days, <b>15 market makers / institutional LPs</b> and close to <b>US$6M in committed launch liquidity</b>.
+</div>
+<div class="hero-contact">
+<span>Singapore</span><span>joshua.gier@gmail.com</span><span><a href="https://linkedin.com/in/joshgier">linkedin.com/in/joshgier</a></span><span><a href="https://github.com/Josh-Gi3r">github.com/Josh-Gi3r</a></span><span><a href="https://josh-gier.com">josh-gier.com</a></span>
+</div>
+<div class="hero-note"><strong>Current R&amp;D:</strong> persistent agents · memory systems · spatial computing · programmable finance · developer infrastructure. <strong>Operating record:</strong> founder P&amp;L · product · growth · community · enterprise sales · partnerships · capital formation.</div>
+</div>
+<div aria-label="technical systems visual" class="system-visual">
+<div class="iso">
+<div class="iso-card iso-1"><b>MODEL / INFERENCE</b><span>routing · TTFT · KV · evals · COGS</span></div>
+<div class="iso-card iso-2"><b>MEMORY / IDENTITY</b><span>episodic · semantic · reconsolidation</span></div>
+<div class="iso-card iso-3"><b>RUNTIME / STATE</b><span>FSM · replay · tools · side effects</span></div>
+<div class="iso-card iso-4"><b>WORLD / MARKET</b><span>3D · finance · users · revenue</span></div>
+<i class="signal-dot signal-a"></i><i class="signal-dot signal-b"></i><i class="signal-dot signal-c"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="track-record">
+<div class="metric"><b>US$1B</b><span>NTT relationship originated / closed</span></div>
+<div class="metric"><b>US$100M</b><span>annual APAC SaaS / data / analytics revenue</span></div>
+<div class="metric"><b>US$3M</b><span>Aier → Coliseum acqui-hire</span></div>
+<div class="metric"><b>4M → 200K</b><span>community → active users in 8 months</span></div>
+<div class="metric"><b>US$9M+</b><span>client campaign budgets managed</span></div>
+<div class="metric"><b>US$15M</b><span>Coliseum raise led by The Chernin Group</span></div>
+</div>
+<div class="landing-band">
+<div class="card tint" data-card-id="card-01">
+<div class="eyebrow">Career</div>
+<p><b>CBRE 2013–21:</b> APAC enterprise SaaS, data and analytics. <b>Aier 2021–25:</b> founder/CEO of an AI-native generative marketing company. <b>Coliseum, post-acquisition:</b> product, growth, revenue and operations. <b>Sera 2025–26:</b> APAC commercial + product systems for onchain FX.</p>
+</div>
+<div class="card" data-card-id="card-02">
+<div class="eyebrow">Current R&amp;D</div>
+<div class="micro-stack">persistent agents · temporal memory · model routing · evals · distributed state · realtime voice · 3D/spatial computing · fintech/onchain · developer tooling · data/ML/RPA · GPU/inference economics</div>
+</div>
+</div>
+<section id="technical-work" tabindex="-1">
+<h2>Technical work</h2>
+<div class="grid3 dense">
+<div class="card tint" data-card-id="card-03"><h3>AI / LLM systems</h3><div class="scope">BUILT / HANDS-ON</div><div class="techline">model routing · structured outputs · RAG/retrieval · reranking · eval harnesses · grounding/claim checks · provider abstraction · prompt/prefix caching · canary/shadow model migration · cost per accepted output</div><div class="scope">ARCHITECTURE / R&amp;D</div><div class="techline">synthetic data · SFT · LoRA/QLoRA · preference tuning · distillation · calibration</div><div class="techline" style="margin-top:8px">eval axes: factuality · NER/entity resolution · schema pass · calibration · judge disagreement · task success · regression gates · cost/quality frontier</div></div>
+<div class="card tint" data-card-id="card-04"><h3>Inference / accelerators</h3><div class="scope">ARCHITECTURE / DECISION FLUENCY</div><div class="techline">TTFT · prefill/decode · tok/s · p50/p95/p99 · KV residency · PagedAttention · continuous batching · prefix cache · speculative decoding · FP8/INT8/4-bit · tensor/pipeline parallelism · vLLM · TensorRT-LLM · Triton</div><div class="techline" style="margin-top:8px">working set = weights + KV + activations; prefill is compute-heavy, decode becomes memory-bandwidth/KV sensitive; batching raises throughput while queueing raises latency. Capacity planning follows useful tok/s at target p95, not peak benchmark throughput.</div></div>
+<div class="card tint" data-card-id="card-05"><h3>Agent runtimes</h3><div class="scope">BUILT / HANDS-ON</div><div class="techline">FSMs · checkpoint/replay · idempotency · transactional outbox · leases · schedulers · heartbeats · long-running jobs · MCP · capability boundaries · side-effect control · multi-agent coordination</div><div class="techline" style="margin-top:8px">action journal · replay cursor · lease expiry · dead-letter/retry paths · read/write tool separation · human approval for irreversible side effects · bounded autonomy budgets · concurrency quotas · tool timeouts · cancellation/compensation semantics · per-agent budgets</div></div>
+<div class="card tint" data-card-id="card-06"><h3>State / memory / data</h3><div class="scope">BUILT / HANDS-ON</div><div class="techline">Postgres · PostGIS · pgvector/HNSW · SQLite · MySQL · append-only event logs · JSONB provenance · temporal state · episodic/semantic/relationship memory · reconsolidation · decay · migrations · PITR · version lineage · snapshot/rebuild paths</div></div>
+<div class="card tint" data-card-id="card-07"><h3>Systems / realtime / network</h3><div class="scope">BUILT / HANDS-ON</div><div class="techline">Rust · TypeScript/Node · Python/FastAPI · WebRTC · RTP/Opus · WebSockets · VAD · endpointing · barge-in · queues · backpressure · circuit breakers · edge/stateful workers · Docker · reconnect/session identity · liveness/heartbeat</div></div>
+<div class="card tint" data-card-id="card-08"><h3>Hardware / infrastructure</h3><div class="scope">ARCHITECTURE / PROCUREMENT FLUENCY</div><div class="techline">Apple Silicon/NPU · L40S/RTX · H100/H200/B200 · VRAM/HBM · PCIe/SXM · NVLink/NVSwitch · NCCL/RDMA · NVMe · NIC bandwidth · GPU utilisation · API/on-demand/reserved/spot/colo/owned · $/useful-GPU-hour · power/thermal · rack density</div></div>
+<div class="card tint" data-card-id="card-09"><h3>Security / reliability</h3><div class="scope">BUILT / RELEASE DISCIPLINE</div><div class="techline">IAM · RBAC/RLS · KMS · secrets · external signing · sandboxing · prompt-injection boundaries · fuzzing · chaos · race/restart tests · SBOM · SAST/DAST · rollback · audit trails · tenancy isolation · kill switches · recovery drills</div></div>
+<div class="card tint" data-card-id="card-10"><h3>Spatial / world systems</h3><div class="scope">BUILT + R&amp;D</div><div class="techline">PostGIS · Cesium/3D Tiles · scene graphs · canonical geometry/evidence · ray/frustum logic · solar/shadow analysis · procedural geometry · digital-twin architecture · Unreal/C++ / Unity/C# R&amp;D · embodied agents · IFC/glTF conversion · LOD/tile streaming</div></div>
+<div class="card tint" data-card-id="card-11"><h3>Commercial systems</h3><div class="scope">OPERATED AT SCALE</div><div class="techline">CAC · LTV:CAC · ROAS · cohort retention · attribution · pricing · entitlements · model COGS · capacity procurement · P&amp;L · NRR · enterprise GTM · community loops · product telemetry · forecast/pipeline · experimentation · margin by workload · capital efficiency</div></div>
+</div>
+</section>
+<section class="rnd" id="independent-rd" tabindex="-1">
+<div class="eyebrow">Personal R&amp;D · systems I build because I want them to exist</div>
+<h2>Independent R&amp;D · agents, memory, spatial systems, programmable money</h2>
+<div class="grid2">
+<article class="card hero" data-card-id="card-12" id="project-goku" tabindex="-1">
+<h3>GOKU · persistent personal-agent runtime on OpenClaw</h3>
+<p class="project-desc"><b>Goku is my long-lived personal agent: model choice is transient; identity, memory, tools, permissions and relationship state are durable.</b> OpenClaw provides the runtime. Specialist agents, MCP tools, heartbeats, Memento and a DBZ-inspired scheduler let cognition scale up or down without resetting the person-like state around it.</p>
+<div class="sub">DBZ temperament: cheerful, permanently hungry, always looking for a harder fight. The forms are compute states.</div>
+<div class="tagrow"><span class="tag">OpenClaw</span><span class="tag">MCP</span><span class="tag">model router</span><span class="tag">heartbeat</span><span class="tag">specialist agents</span><span class="tag">Memento</span></div>
+<ul class="tight">
+<li><b>Base · Opus 5</b> — routine cognition, tool use and synthesis.</li>
+<li><b>Super Saiyan · Fable 5</b> — deeper multi-step planning and review.</li>
+<li><b>Ultra Instinct · Astra 6</b> — high-entropy escalation when quality gain justifies latency and cost.</li>
+</ul>
+<div class="formula">m* = argmax<sub>m</sub>(Q<sub>m</sub> − λL<sub>m</sub> − μC<sub>m</sub> − ρR<sub>m</sub>)</div>
+<pre>task → entropy / uncertainty / modality / tool-risk
+     → latency SLO + quality floor + cost ceiling
+     → deterministic | cache | Base | SSJ | Ultra Instinct
+     → verifier / outcome telemetry → routing update</pre>
+<h4>Context allocator / scheduler</h4>
+<div class="formula">B<sub>ctx</sub> = B<sub>identity</sub> + B<sub>working</sub> + B<sub>retrieval</sub> + B<sub>tools</sub> + B<sub>decode-reserve</sub></div>
+<div class="techline">immutable identity prefix → prefix/provider cache · active task → working set · Memento recall → ranked evidence packet · tool output → TTL/dedupe/compaction · reserve → completion + recovery budget</div>
+<ul class="tight">
+<li><b>Admission control:</b> interactive work outranks heartbeats/background jobs; deadline, expected quality gain, risk and budget decide run-now vs cheaper form vs async batch.</li>
+<li><b>Route regret:</b> sampled shadow/challenger runs compare the chosen form with a stronger model; verifier disagreement, retries and outcome quality become routing evidence.</li>
+<li><b>Agent SLOs:</b> p95 TTFT · tool success · context-overflow rate · fallback rate · recall precision · $/completed task · background compute/day.</li>
+</ul>
+<h4>Inference / hardware crossover</h4>
+<div class="techline">API burst → local Apple Silicon/private reflex work → open-weight serving with vLLM/PagedAttention → continuous batching + KV/prefix reuse → speculative decoding → FP8/INT8/4-bit only when sustained throughput and cache reuse beat provider margin after idle-time cost.</div>
+<h4>Sleep / dream cycle</h4>
+<pre>idle window → episode/session flush → salience + dedupe
+→ contradiction scan → Memento consolidate/reconsolidate
+→ dormancy/reactivation → next-session context compile</pre>
+<h4>Authority / persona state</h4>
+<div class="techline">capability registry → read/tool/write class → policy + budget + current-state precondition → optional approval → idempotency key → side effect → receipt. Stronger cognition never silently widens authority.</div>
+<div class="techline" style="margin-top:8px">durable traits + relationship state + goals compile separately from transient mood/task context; behavioural regression probes catch provider/model drift without freezing personality inside one checkpoint.</div>
+<h4>Proactive autonomy / checkpointing</h4>
+<pre>heartbeat tick → observe inbox/world/tool state
+→ classify {ignore | remind | plan | act-within-capability}
+→ reserve cost/risk budget → specialist fanout if needed
+→ checkpoint plan + tool receipts → side effect
+→ verify outcome → update working state / memory candidate</pre>
+<ul class="tight">
+<li><b>Autonomy budget:</b> background work is bounded by daily token/$ ceilings, tool-risk class and interruption policy; idle cognition cannot silently consume unlimited compute or authority.</li>
+<li><b>Checkpoint/replay:</b> long tasks persist plan step, tool inputs/outputs, idempotency identity and outstanding commitments so process death resumes from durable work rather than repeating side effects.</li>
+<li><b>Specialist isolation:</b> research/build/review agents receive scoped context and capabilities; results merge through typed artifacts/evidence instead of sharing one unbounded conversational memory.</li>
+</ul>
+<h4>Cache / token economics</h4>
+<div class="techline">stable identity + policy → long-lived prefix cache · task/tool schemas → reusable prompt blocks · retrieved evidence → short-lived semantic cache · tool results → TTL keyed by source/version · context compaction preserves commitments + causal tool history before prose.</div>
+<div class="techline" style="margin-top:8px">telemetry joins model route → fresh/cache tokens → TTFT/decode → tool fanout → verifier/retry → human correction → task outcome, so optimization targets cost per successful task rather than nominal $/token.</div>
+<h4>Multi-agent concurrency / merge</h4>
+<div class="techline">parent task → spawn specialist(task_id, capability_set, context_slice, budget) → parallel tool/reasoning work → typed artifact/evidence result → verifier/conflict check → merge into parent state. Specialists do not share one mutable scratchpad; causal IDs make fanout/retry/review attributable.</div>
+<ul class="tight"><li><b>Conflict policy:</b> deterministic state wins over prose; contradictory specialist claims remain separate evidence until a resolver can compare source, freshness and confidence.</li><li><b>Failure isolation:</b> one specialist timeout degrades that branch, not the identity/runtime; bounded retries and fallback tiers preserve the parent task's checkpoint and budget.</li></ul>
+<div class="rule">identity_state ∉ provider_session_state · memory, permissions, tools, relationships and behavioural continuity remain app-owned across provider/model swaps.</div>
+</article>
+<article class="card hero" data-card-id="card-13" id="project-memento" tabindex="-1">
+<h3>MEMENTO · temporal memory compiler</h3>
+<p class="project-desc"><b>Memento treats memory as a lifecycle, not a vector lookup.</b> Immutable episodes accumulate evidence; salience, corroboration, novelty, confidence and future utility decide what becomes durable semantic/self state, what weakens, what becomes contested and what is reconsolidated after new evidence arrives.</p>
+<div class="sub">The design borrows from cognitive-neuroscience ideas: episodic vs semantic memory, consolidation, reconsolidation, salience, forgetting, retrieval strengthening and spaced repetition — implemented as inspectable software state rather than a literal brain simulation.</div>
+<div class="tagrow"><span class="tag">append-only evidence</span><span class="tag">salience</span><span class="tag">consolidation</span><span class="tag">reconsolidation</span><span class="tag">decay</span><span class="tag">MCP</span><span class="tag">eval harness</span></div>
+<pre>episode / observation (immutable)
+→ encode + source/provenance
+→ salience / novelty / confidence / recurrence
+→ candidate memory
+→ corroboration / promotion threshold
+→ compiled semantic / autobiographical / relationship state
+→ decay / dormancy / contradiction
+→ reconsolidation → retrieval → behaviour</pre>
+<div class="formula">P(m)=w<sub>s</sub>S+w<sub>r</sub>R+w<sub>n</sub>N+w<sub>c</sub>C+w<sub>u</sub>U</div>
+<div class="formula">strength(t)=strength₀·e<sup>−λΔt</sup>   |   Score(m,q)=αcos(e<sub>m</sub>,e<sub>q</sub>)+βS+γR+δrelationship+εgoal</div>
+<h4>Biological analogy → software architecture</h4>
+<div class="techline">hippocampal-style episodic indexing ≈ append-only event store + retrieval pointers · systems consolidation ≈ promotion into compiled semantic/self state · reconsolidation ≈ versioned rewrite after contradictory evidence · forgetting ≈ strength decay/dormancy, not evidence deletion · rehearsal/spaced repetition ≈ scheduled refresh before retrieval probability collapses.</div>
+<h4>Memory model comparison</h4>
+<pre>archive memory = append → exact replay
+vector memory  = embed → ANN top-k
+graph memory   = entity/relation → traversal
+Memento        = episode → evidence → promote/decay/contest
+                 → reconsolidate → compiled behavioural state</pre>
+<h4>Runtime / data plane</h4>
+<div class="techline">Postgres/SQLite canonical state · append-only event log · JSONB provenance/version lineage · pgvector/HNSW derived recall index · background lifecycle workers · MCP remember/recall/forget/inspect/consolidate/explain surface · embedding-version migrations.</div>
+<ul class="tight">
+<li><b>Zero-LLM lifecycle path:</b> timestamps, recurrence, access frequency, promotion thresholds, corroboration, decay, dormancy and versioning stay deterministic where possible.</li>
+<li><b>Write amplification:</b> most episodes remain episodes; durable semantic/self state is compiled only after evidence crosses policy thresholds.</li>
+<li><b>Index migration:</b> embedding version is metadata, not identity; dual-index rebuild + shadow recall permits HNSW/model migration without rewriting canonical memories.</li>
+<li><b>Memory safety:</b> source trust, contradiction edges and status gates expose poisoning/stale belief; contested memories can be withheld from high-consequence context until reconciled.</li>
+</ul>
+<h4>Reconsolidation / working-set economics</h4>
+<pre>semantic_conflict(new_event,memory) &gt; τ
+→ contested + contradiction edge
+→ load lineage + counter-evidence
+→ deterministic reconcile if possible
+→ LLM only for unresolved semantic ambiguity
+→ memory_state vN+1; retain vN + provenance</pre>
+<div class="techline">context compiler pins identity + active commitments first; evicts redundant/low-salience material; summaries retain source pointers; token budget is optimized for useful recalled evidence, not maximum injected context.</div>
+<h4>Evals</h4>
+<div class="techline">precision(write) · recall@k · contradiction F1 · false-memory rate · stale-memory rate · correction rate · context-compression ratio · write→promotion ratio · reconsolidation queue depth · $/1K events · behavioural continuity after provider/model swap.</div>
+<h4>Complementary learning / interference control</h4>
+<div class="techline">fast episodic capture and slower semantic consolidation follow a complementary-learning pattern: new experiences are written immediately, but durable abstractions require repeated/corroborated evidence so one surprising event cannot catastrophically rewrite identity or long-lived beliefs.</div>
+<div class="formula">retrieval_strength ≠ storage_strength   |   promote when evidence_gain − contradiction_risk − rewrite_cost &gt; τ</div>
+<ul class="tight">
+<li><b>Interference:</b> semantically similar episodes are clustered/deduped but retain separate provenance; consolidation merges evidence, not source identity.</li>
+<li><b>Prediction error:</b> large mismatch between expected and observed state raises salience and can trigger reconsolidation rather than blindly reinforcing the prior memory.</li>
+<li><b>Retrieval-induced strengthening:</b> successful, consequence-bearing recall can increase accessibility while low-value repetition alone does not automatically increase truth confidence.</li>
+<li><b>Sleep analogy:</b> off-critical-path lifecycle workers replay high-salience/contradictory episodes, refresh decaying memories and compile a smaller next-session state without spending frontier inference on every event.</li>
+</ul>
+<div class="techline" style="margin-top:8px">salience acts like a write gate rather than a truth score: emotionally/operationally consequential events may be easier to retrieve, but confidence still comes from provenance and corroboration. Accessibility and belief confidence are intentionally different variables.</div>
+<div class="techline" style="margin-top:8px">the eval harness therefore tests memory as behaviour over time, not only retrieval relevance on one query.</div>
+<div class="rule">authority(memory_state)=event_lineage + promotion_policy + versioned_reconciliation · ANN/HNSW is a derived index, never canonical belief state.</div>
+</article>
+<article class="card hero" data-card-id="card-14" id="project-spotnook" tabindex="-1">
+<h3>SPOTNOOK · AI-native property exploration + spatial decision system</h3>
+<p class="project-desc"><b>SPOTNOOK is an AI-native property exploration platform that makes search spatial, conversational and executable.</b> Natural-language intent, live property evidence and agentic tools resolve into a persistent 3D world of Singapore buildings, floors and spaces. <b>NOOK</b> is the persistent spatial agent across text, voice, map and 3D: it maintains the brief, selected objects, evidence, scenarios and actions while the user moves between discovery, inspection, comparison and decision.</p>
+<div class="sub">Describe → Spot → Inspect → Compare → Decide. Input modality changes; canonical property identity and decision state do not.</div>
+<div class="tagrow"><span class="tag">Postgres/PostGIS</span><span class="tag">canonical property graph</span><span class="tag">Cesium / 3D Tiles</span><span class="tag">React/TS</span><span class="tag">WebRTC</span><span class="tag">NOOK agent mesh</span><span class="tag">prediction ledger</span><span class="tag">Unreal R&amp;D</span></div>
+<h4>Intent compiler / active search</h4>
+<pre>text | voice | map click | selected geometry | direct edit
+→ context resolver + entity extraction
+→ hard / soft / open typed constraint graph
+→ canonical subject resolution
+→ feasible-set query + deterministic feature compute
+→ ranking / Pareto frontier / uncertainty
+→ explanation packet + provenance
+→ user mutation → invalidate dependent state → recompute</pre>
+<div class="formula">F={x | ∀h<sub>j</sub>(x)=true}   |   rank(x)=Σw<sub>i</sub>f<sub>i</sub>(x)−λ·uncertainty(x)−μ·constraint_risk(x)</div>
+<div class="formula">q* = argmax<sub>q</sub> E[ΔH(shortlist | answer(q))] − κ·interaction_friction(q)</div>
+<ul class="tight">
+<li><b>Constraint preservation:</b> explicit headcount, budget, move date, access, fit, growth and operating needs become typed state; the model may parse ambiguity but cannot silently drop a requirement.</li>
+<li><b>Active clarification:</b> NOOK asks only when the expected information gain can materially change the feasible set or ranking.</li>
+<li><b>Shared semantic context:</b> “these three”, “same landlord”, “this floor”, a voice command, a map selection and a comparison edit point at the same canonical subjects/scenario.</li>
+<li><b>Specialist-agent mesh:</b> coordinator + geometry/fit + market/history + finance + commute + evidence + decision-brief specialists; capabilities are tool-scoped and outputs mutate typed application state, not chat-only memory.</li>
+</ul>
+<h4>Canonical world model / evidence graph</h4>
+<div class="techline">Place → Parcel → Development → Building/Tower → Floor → Space. Listings, availability episodes, occupiers, leases, transactions, geometry assets, source observations and predictions are separate temporal objects. One provider observation is evidence; identity is resolved across sources before state attaches to the world.</div>
+<pre>source observation → raw snapshot → normalized observation
+→ identity / relationship resolution → assertion + provenance
+→ canonical property graph → temporal events / market state
+→ deterministic analytics → agent/tool/UI projection</pre>
+<h4>Spatial kernel / renderer</h4>
+<pre>source CRS → canonical geographic frame → building-local ENU
+→ floor-local XY / unit polygon
+→ PostGIS GiST/R-tree + spatial joins
+→ mesh / glTF-GLB / 3D Tiles hierarchy
+→ frustum + screen-space-error selection
+→ GPU tile cache / picking / camera state</pre>
+<div class="techline">MultiPolygon parts/holes · geometry versioning · ST_Contains/ST_Intersects/ST_DWithin-class queries · shared physical scale · floor slicing · adjacency · building hit targets · ray/frustum logic · solar/shadow inputs only when geometry capability allows it.</div>
+<h4>God's-eye / digital-twin R&amp;D</h4>
+<pre>OSM / Overture / URA / OneMap
++ rights-cleared CAD / IFC / GLB / floorplans
++ imagery / photos / future licensed capture
+→ identity reconciliation + CRS / datum normalization
+→ geometry capability + provenance envelope
+→ footprint / parts / massing / floorplate
+→ SfM / photogrammetry / NeRF / 3DGS candidates
+→ LOD / 3D Tiles / Cesium streamed Singapore
+→ Unreal-class scene / ECS / navmesh / embodied-agent path</pre>
+<h4>Typed brief / dependency graph</h4>
+<pre>Constraint {
+  subject_id?; predicate; op; value; unit;
+  priority: HARD | SOFT | OPEN;
+  confidence; provenance; status;
+  depends_on[]; invalidates[];
+}
+Brief = DAG&lt;Constraint, Scenario, Evidence&gt;</pre>
+<div class="techline">an edit is not “new chat”: mutate one node, walk invalidation edges, recompute only affected candidate features/ranks/visuals, retain unaffected evidence and preserve the originating camera/selection/scenario.</div>
+<h4>Query execution / cache topology</h4>
+<pre>brief hash + scenario version
+→ canonical candidate IDs
+→ PostGIS spatial filters / joins
+→ temporal market snapshot
+→ deterministic feature vector
+→ model/ranker only where learned judgment adds value
+→ explanation/evidence packet
+→ cache by {subject,scenario,method,version}</pre>
+<ul class="tight">
+<li><b>Incremental recompute:</b> moving a budget threshold should not rerun geometry conversion or rebuild the world; changing a floor/unit invalidates fit/adjacency/cost descendants but not unrelated market history.</li>
+<li><b>Temporal engine:</b> availability episode, asking update, occupier/lease event, transaction and source observation keep effective time + observed time + provenance; “current” is a projection over versioned facts, not a mutable row.</li>
+<li><b>Prediction ledger:</b> every learned estimate stores feature/version/method/time alongside later actual outcome so calibration, drift and cohort error can be measured by district/building/size band rather than only globally.</li>
+</ul>
+<h4>Scene graph / agent embodiment</h4>
+<div class="techline">entity = canonical property subject · components = transform/geometry/floor/space/evidence/availability/selection/analysis · systems = render/picking/LOD/navigation/sun/fit/annotation. NOOK references entity IDs and capabilities, so “this building” or a voice interruption resolves to the same scene object the renderer and evidence graph use.</div>
+<div class="formula">camera_state + selected_entity + scenario_version + time_cursor = spatial_context</div>
+<h4>NOOK planner / tool contract</h4>
+<pre>Intent {utterance, selection, scenario, time_cursor}
+→ resolve references to canonical subject_ids
+→ planner emits PlanStep[]
+   {tool, subjects, preconditions, cost, reversible, output_schema}
+→ capability registry checks evidence + authority
+→ deterministic tool / specialist agent executes
+→ typed Artifact {data, method, provenance, confidence}
+→ compositor chooses map | plan | table | chart | 3D | brief
+→ state patch + explanation + next-action candidates</pre>
+<ul class="tight">
+<li><b>Model boundary:</b> LLMs parse intent, choose/sequence tools and explain trade-offs; PostGIS, route engines, financial calculators, geometry kernels and evidence stores own numerical/physical truth.</li>
+<li><b>Reversible planning:</b> inspect/filter/compare actions are cheap and replayable; enquiry, save/share or external mutation is capability-gated with explicit preconditions and receipts.</li>
+<li><b>Context compaction:</b> NOOK persists canonical IDs, constraints, scenario version, pinned evidence and unresolved checks; prose history can compact without losing the decision state needed to resume.</li>
+</ul>
+<h4>Spatial relation graph / physical computation</h4>
+<div class="techline">unit adjacency · floor-above/below · same-stack · same-landlord · walkable entrance/MRT graph · frontage/orientation · floor/core/column obstacles become typed relations over the canonical subject graph. Fit and navigation can therefore be computed from geometry/topology instead of inferred from listing prose.</div>
+<div class="formula">fit(space,brief)=usable_polygon − core − circulation − exclusions → seat/room/adjacency constraints</div>
+<div class="techline">external sun/view work, when inputs qualify, becomes geometry math: solar vector(time,lat,lon) + facade/opening orientation + obstruction mesh + ray/frustum/occlusion. Capability gates distinguish approximate massing from measured floor/opening geometry so a photoreal scene never masquerades as measurement.</div>
+<h4>Decision vector / sensitivity engine</h4>
+<pre>x = [occupancy_cost, cash_required, commute_p50/p95,
+     fit_score, growth_headroom, move_risk, market_pressure,
+     landlord/history signals, evidence_confidence]
+feasible(x) = all HARD constraints
+frontier = non_dominated(feasible_set)
+scenario Δ = rank(vN+1) − rank(vN)</pre>
+<div class="techline">recommendation stability is measured, not asserted: perturb rent, fit-out, attendance, headcount, weighting or move date and record which candidates stay on the Pareto frontier. Explanations cite the feature/evidence deltas that moved an option.</div>
+<h4>Prediction / decision science</h4>
+<div class="techline">hard constraints define feasibility; preferences rank inside the feasible set; sensitivity/Pareto checks expose unstable recommendations. Market models can score asking-vs-achieved, availability pressure, expiry risk, time-on-market and likely-clearing bands; every prediction is versioned against later actual outcomes for calibration/drift.</div>
+<h4>Realtime / compute / cost</h4>
+<div class="techline">CPU/server: intent graph + PostGIS + finance/route/scenario math · client GPU: Cesium/WebGL scene, LOD, picking, camera · offline/batch: geometry conversion, tiles, embeddings, historical aggregates · frontier LLM: ambiguity, planning and explanation only · WebRTC/VAD/barge-in dispatch into the same state graph.</div>
+<ul class="tight">
+<li><b>Render SLOs:</b> time-to-first-useful-world · p95 action/camera latency · tile-cache hit · GPU memory · draw calls · long-task budget · geometry-upgrade success.</li>
+<li><b>Decision evals:</b> constraint-preservation · entity-resolution accuracy · provenance coverage · ranking stability under perturbation · geometry-capability coverage · tool success · cost/decision session.</li>
+</ul>
+<h4>World-cache / invalidation economics</h4>
+<div class="techline">immutable geometry/source artifacts cache by content/version; property packets cache by canonical subject + evidence revision; scenario outputs cache by brief/scenario hash. A changed asking term invalidates cost/rank descendants, not the 3D mesh; a geometry revision invalidates spatial analyses, not historical transaction evidence.</div>
+<ul class="tight"><li><b>Compute placement:</b> expensive reconstruction/tiling runs offline once and streams many times; per-session work stays incremental so richer worlds do not imply frontier-model or GPU recomputation on every question.</li><li><b>Failure semantics:</b> if a renderer/provider/agent fails, canonical selection, brief and evidence state survive; the product can fall back in representation without losing the decision graph.</li></ul>
+<div class="techline" style="margin-top:8px">state restoration key = {brief_id, scenario_version, selected_subject_ids, camera, lens, time_cursor}; deep links and reloads can resume the same analytical object instead of reconstructing context from prose.</div>
+<div class="techline" style="margin-top:8px">cache eviction follows evidence/version invalidation before LRU so stale property truth never survives merely because it is hot.</div>
+<div class="rule">canonical(subject_id) &gt; provider/listing IDs · analysis = inputs + method/version + capability + provenance · NOOK can interpret and plan, but cannot manufacture geometry, rent, route or evidence state.</div>
+</article>
+<article class="card hero" data-card-id="card-15" id="project-blueballs" tabindex="-1">
+<h3>BLUEBALLS · virtualised JIT liquidity + open financial OS</h3>
+<p class="project-desc"><b>Blueballs is an open-source banking and FX operating system for institutions that want to own the financial control plane.</b> Banking APIs, exact accounting, policy, pricing, provider orchestration, multi-source liquidity, reservations and settlement live behind one developer surface. The unusual layer is a <b>just-in-time virtual market</b>: heterogeneous balance sheets remain independent until executable capacity is policy-authorised and reserved.</p>
+<div class="tagrow"><span class="tag">181 banking ops</span><span class="tag">12-package monorepo</span><span class="tag">BigInt route math</span><span class="tag">JIT reservations</span><span class="tag">Durable Objects</span><span class="tag">Solidity / Foundry</span><span class="tag">OpenAPI</span></div>
+<pre>PRIVATE_MARKET ┐
+ISSUER         │
+INSTITUTIONAL_LP├→ policy-authorised slices
+NEOBANK        │   {price, capacity, expiry, auth, source}
+BANK_TREASURY  │
+BANK_PRINCIPAL ┘
+                 ↓
+BigInt rational price ordering → exact-output split
+→ reservePlan(routeId) → reservationHandle[]
+→ firm executable route → execute → finality / reconciliation</pre>
+<h4>Implemented route planner</h4>
+<div class="techline">validateSlice() enforces source type, asset pair, policyAuthorizationId, positive BigInt capacity/price terms and expiry. comparePrice() cross-multiplies integer rationals, avoiding floating-point FX ordering error. Eligible slices sort O(n log n); exact-output allocation is O(n).</div>
+<ul class="tight">
+<li><b>Virtual liquidity:</b> private orders, issuers, institutional LPs, neobanks, treasury and principal inventory become one policy-normalised executable surface without pretending the underlying capital is one pool.</li>
+<li><b>Firmness is a state transition:</b> route construction is provisional; a firm route exists only after every selected leg returns a reservation handle.</li>
+<li><b>Compensating rollback:</b> a later reservation failure releases already-reserved legs in reverse order; release failures are retained as structured recovery evidence.</li>
+<li><b>Finality:</b> command commit, provider submission, provider acceptance, chain/fiat settlement and reconciliation are separate states with stable idempotency identity.</li>
+</ul>
+<h4>Routing R&amp;D / next optimizer</h4>
+<div class="formula">min Σpᵢxᵢ + λ·fragmentation + μ·settlementRisk + ν·reserveTime   s.t. Σxᵢ=D, 0≤xᵢ≤capacityᵢ</div>
+<div class="techline">shadow scoring can add source reliability, historical fill probability, settlement latency and expected reconciliation cost before any learned policy receives authority over live capacity reservation.</div>
+<h4>Distributed runtime / release proof</h4>
+<pre>API command → tenant principal / auth → domain transition
+→ ledger + event/outbox → provider intent → adapter/side effect
+→ evidence / finality / reconciliation → projection / webhook</pre>
+<div class="techline">Node/SQLite ↔ Cloudflare Workers/Durable Objects · provider-neutral adapters · OpenAPI/SDK contracts · Solidity AtomicRouter · Foundry fuzz/invariants · restart/eviction · migrations/recovery · load/chaos · SBOM · dependency/container scanning · source-SHA parity.</div>
+<ul class="tight">
+<li><b>Single writer where money requires it:</b> authoritative account/market shards serialize the irreversible mutation; read projections and analytics fan out separately.</li>
+<li><b>Backpressure:</b> quote fanout/provider jobs are bounded per tenant/source; replayable work scales independently from irreversible writes.</li>
+<li><b>Race objective:</b> minimise snapshot→completed-reservation time; measure stale-slice rejection, reservation conflict, quote→firm latency and released-capacity recovery.</li>
+<li><b>Failure containment:</b> one provider/source failure shrinks the eligible set or fails the route; it must not silently downgrade a firm quote or corrupt unrelated balances.</li>
+</ul>
+<div class="techline">metrics: quote p50/p95 · eligible-source fanout · fill ratio · route fragmentation · price improvement · reservation latency · locked-capital ms · compensating-release failure · reconciliation age · $/successful settlement.</div>
+<h4>Financial command kernel</h4>
+<pre>request → authenticated tenant/human principal
+→ lifecycle + contract preflight
+→ domain transition
+→ exact ledger postings (integer minor/atomic units)
+→ durable event + outbox + idempotency result
+→ audit/correlation evidence
+→ COMMIT
+external provider work starts only from durable intent</pre>
+<ul class="tight">
+<li><b>Accounting invariants:</b> every transaction balances exactly; balances derive from postings; customer accounts cannot cross below zero at the posting layer; decimal API values are parsed into integer authoritative units before arithmetic.</li>
+<li><b>Exactly-once financial effect over retrying infrastructure:</b> idempotency identity survives HTTP retries, worker restarts and provider ambiguity; reconciliation closes the gap between transport evidence and business finality.</li>
+</ul>
+<h4>Money primitives / programmable institution</h4>
+<div class="techline">reserve-backed instruments · settlement receipts · coverage accounting · custody/wallet/account primitives · cards/payments · approvals · treasury/principal capacity · stablecoin FX · optional AtomicRouter settlement all share the same ledger/policy/finality contracts.</div>
+<ul class="tight">
+<li><b>Coverage model:</b> issued liabilities, backing reserves and settlement receipts can be reconciled as typed positions rather than product-specific counters; new monetary products reuse the accounting kernel instead of inventing a parallel truth system.</li>
+<li><b>Atomic token path:</b> signed taker intent + maker liquidity + cancellation + segregated vault accounting + atomic token settlement sit inside the onchain transaction; fiat/provider edges retain independent evidence/finality state.</li>
+</ul>
+<h4>Provider conformance / product compiler</h4>
+<div class="techline">brief {markets,currencies,capabilities,rails} → explicit requirements graph → provider capability/market/rail evidence → explainable match → isolated sandbox → implementation contract. Provider adapters keep bank/card/KYC/custody/liquidity behavior behind conformance boundaries, so a market-specific provider swap does not rewrite ledger or lifecycle semantics.</div>
+<div class="techline" style="margin-top:8px">AI may propose architecture/configuration; credentials, quotas, approvals, kill switches and protected financial commands remain deterministic authority. Release proof binds lifecycle, FX, Worker eviction/restart, migrations, chaos, Foundry invariants, SBOM and container scans to the exact source tree.</div>
+<h4>Reservation / contention semantics</h4>
+<pre>market snapshot vN → eligible slices
+→ deterministic exact-output plan
+→ reserve legs in plan order
+→ conflict/stale slice? fail + compensate prior handles
+→ all handles live? quote becomes FIRM
+→ execution consumes reserved capacity
+→ unused/failed capacity releases with evidence</pre>
+<div class="techline">price math remains integer/rational end-to-end; ceilDiv() prevents underfunding exact-output legs. Reservation is the synchronization boundary between embarrassingly parallel discovery and scarce executable capacity, so read fanout can scale aggressively while contention stays explicit.</div>
+<h4>Settlement / reconciliation automaton</h4>
+<pre>PROPOSED → RESERVED → SIGNED → SUBMITTED
+→ PROVIDER_ACCEPTED | ONCHAIN_PENDING | FIAT_PENDING
+→ PARTIAL | SETTLED
+→ RECONCILE {missing_receipt, amount_mismatch, timeout, duplicate}
+→ CLOSED with final evidence</pre>
+<ul class="tight">
+<li><b>Evidence before belief:</b> HTTP 200, tx broadcast or provider acknowledgement are transport states; canonical money state changes only when the required settlement/coverage evidence closes the lifecycle.</li>
+<li><b>Recovery:</b> restart/eviction reloads durable command, reservation/provider intent, idempotency key and last accepted evidence; workers resume reconciliation rather than resubmitting blind.</li>
+<li><b>Operational SLOs:</b> reservation conflict rate · stale-quote rejection · provider acceptance latency · settlement tail p95/p99 · reconciliation age · orphaned reservation count · ledger/evidence divergence = 0.</li>
+</ul>
+<h4>Scale-out / consistency model</h4>
+<div class="techline">partition authoritative writes by tenant/account/market shard · serialize ledger-critical transitions · transactional outbox for provider/webhook work · replayable read projections for balances/market views/analytics · bounded queues + circuit breakers per external source · PITR/migration proof before shard movement.</div>
+<div class="techline" style="margin-top:8px">the trusted core therefore stays small: exact accounting, policy, authority, reservation/finality and evidence. Product UI, provider selection, analytics, read models and generated blueprints can scale or change independently around those invariants.</div>
+<h4>Monetary coverage engine</h4>
+<div class="techline">instrument liability → reserve asset position → coverage ratio / eligibility policy → mint/burn or transfer lifecycle → settlement receipt → reconciliation. The same typed coverage state can support reserve-backed money products without hiding reserve sufficiency inside an issuer-specific API.</div>
+<h4>Provider orchestration / durable side effects</h4>
+<pre>domain command committed
+→ provider_job PENDING {idempotency_key, encrypted_payload}
+→ SUBMITTING → SUBMITTED(provider_ref)
+→ ACCEPTED | PENDING_FINALITY | FAILED_RETRYABLE
+→ evidence poll/webhook/reconcile
+→ FINAL | RECONCILE | DEAD_LETTER</pre>
+<ul class="tight">
+<li><b>Outbox-before-I/O:</b> external work becomes durable before network submission, so a process crash between commit and provider call cannot erase intent.</li>
+<li><b>Retry discipline:</b> stable provider/idempotency identity distinguishes safe replay from a new money movement; retry policy is specific to lifecycle state rather than generic exponential backoff around an opaque request.</li>
+<li><b>Provider ambiguity:</b> timeout after submission is not “failed”; the job moves to evidence/reconciliation until remote state proves whether value moved.</li>
+<li><b>Adapter conformance:</b> providers implement the same lifecycle/evidence contract even when upstream APIs expose different status vocabularies, webhook models or settlement rails.</li>
+</ul>
+<h4>IAM / attribution contract</h4>
+<div class="techline">tenant principal → machine credential / human session → scope + resource authority → optional human approval → signed attribution bound to credential + method + path + query + body → audit correlation. A machine can operate only inside delegated capability; approval identity is preserved through async provider work.</div>
+<div class="formula">authority(command)=tenant ∩ credential_scope ∩ resource_policy ∩ lifecycle_precondition ∩ approval</div>
+<h4>Treasury / capacity risk</h4>
+<div class="techline">available liquidity is not merely balance: executable capacity is balance × policy × tenor/expiry × venue/provider availability × settlement path × concentration limits. Reservations therefore consume risk-adjusted capacity, not just quoted notional.</div>
+<ul class="tight"><li><b>Exposure controls:</b> source/asset/counterparty ceilings, minimum residual inventory and route concentration can reject a mathematically cheap route before execution.</li><li><b>Rebalancing signal:</b> reserved/settled flows update treasury exposure and can trigger replenish/rebalance jobs without coupling the trading request to one hard-coded venue.</li></ul>
+<div class="rule">firm(route):=∀legᵢ[policyᵢ=authorized ∧ reservationHandleᵢ≠∅ ∧ expiryᵢ&gt;now] · transport success and business finality remain separate states.</div>
+</article>
+</div>
+<div class="grid2" style="margin-top:16px">
+<article class="card" data-card-id="card-16" id="project-pocket-t" tabindex="-1">
+<h3>Pocket-T · process-resilient agent control plane</h3>
+<p class="project-desc"><b>Pocket-T is a persistent remote control plane for local terminals and coding agents.</b> A Rust PTY shim, private tmux process owner and TypeScript daemon keep the real shell alive while browsers/phones reconnect, project agent state and approve destructive actions.</p>
+<div class="techline">Rust · libc · forkpty() · raw tty/signals · private tmux server · Unix sockets · TypeScript registry/daemon · ws-v3 · @xterm/headless · Svelte PWA · Web Push</div>
+<pre>Terminal.app → Rust forkpty shim → private tmux process owner
+                               ↘ Unix socket → registry/daemon
+browser/PWA ⇄ WSS / tunnel ⇄ relay ⇄ daemon ⇄ SAME live PTY</pre>
+<ul class="tight dense">
+<li>~1,080 LOC native Rust PTY proxy + ~4,100 LOC TypeScript daemon/control plane.</li>
+<li><b>Process resurrection:</b> shim dies, tmux survives; daemon re-pipes through a headless shim so the original shell/agent remains browser-drivable with scrollback rather than restarting.</li>
+<li><b>Two renders, one byte stream:</b> raw VT terminal is authoritative; agent chat/thought/tool/result/approval/cost events are a non-blocking projection.</li>
+<li><b>Backpressure/reconnect:</b> browser backgrounding, transient WSS failure and daemon restart rehydrate session catalogue/state without inbound ports, VPN or SSH.</li>
+<li><b>Terminal correctness:</b> raw bytes, PTY resize/signal propagation and scrollback stay below the agent renderer; structured projections can fail without corrupting the terminal.</li>
+<li><b>Operator safety:</b> destructive PreToolUse approvals surface to mobile/Web Push and fail closed when exposed; browser auth uses bearer token + Origin allowlist.</li>
+<li><b>Cost telemetry:</b> exact transcript token counts, cache reads/writes and model pricing; streamed partials dedupe before the live USD meter.</li>
+</ul>
+<h4>Transport / ownership semantics</h4>
+<div class="techline">daemon owns session catalogue + process attachment; browser is disposable subscriber. One authoritative PTY may have multiple ephemeral observers; approval binds to action ID so reconnect cannot duplicate an irreversible decision.</div>
+<div class="techline" style="margin-top:8px">SLOs: reconnect p50/p95 · daemon-restart recovery · buffered-byte backlog · WSS liveness · approval round-trip · parser overhead · duplicate/drop rate.</div>
+<div class="techline" style="margin-top:8px">replay cursor + session generation + monotonic event/action IDs let a reconnect distinguish historical scrollback, live terminal bytes and already-decided approvals without duplicating user-visible or destructive state.</div>
+<div class="techline" style="margin-top:8px">control-plane health can degrade independently from the terminal data plane: losing push, parser or agent metadata must not interrupt raw PTY I/O or tmux process ownership.</div>
+<div class="rule">lifetime(PTY/process) ⟂ lifetime(transport) ⟂ lifetime(UI) · reconnecting a client must never imply restarting the authoritative shell.</div>
+</article>
+<article class="card" data-card-id="card-17" id="project-buzz" tabindex="-1">
+<h3>Buzz / Preview Studio · signed multi-agent work</h3>
+<p class="project-desc"><b>My fork of Block's Buzz adds signed artifact review and multi-agent collaboration to a local-first human/agent workspace.</b> Preview Studio introduces immutable revisions, comments and approve/request-changes; Institution Studio extends the event model toward named specialist agent teams.</p>
+<div class="techline">31 Rust crates · Tauri 2 · React · Nostr signed events · capability manifest · renderer registry · local artifact library · sandboxed preview · additive-only fork</div>
+<pre>agent identity / human identity → signed workspace event
+→ artifact pointer → revisionₙ → renderer capability
+→ comment / time-region anchor
+→ APPROVED | CHANGES_REQUESTED | PENDING
+→ next agent / human action</pre>
+<ul class="tight dense">
+<li><b>Artifact state machine:</b> immutable revision lineage + explicit review decisions replace mutation of one opaque generated file.</li>
+<li><b>Renderer boundary:</b> image/video/PDF capability is registry-selected; PDF preview is sandboxed and restricted to local data:/blob: surfaces.</li>
+<li><b>Agent topology:</b> named specialists have role/ownership boundaries instead of inheriting orchestrator authority.</li>
+<li><b>Fork engineering:</b> additive-only authored directories, upstream-owned edits recorded in FORK_PATCHES, pinned upstream SHA and tested merge lane.</li>
+<li><b>Isolation:</b> sandbox runner uses separate bundle identity, app-data directory and keyring so experimental review state cannot contaminate production Buzz state.</li>
+</ul>
+<h4>Relay convergence / artifact ABI</h4>
+<div class="techline">signed event id + author + kind + timestamp + parent/revision pointer form sync identity; duplicate/out-of-order relay delivery converges locally without trusting arrival order. Capability manifests let older clients retain unknown signed events without executing unsupported behaviour.</div>
+<div class="techline" style="margin-top:8px">artifact type/version + content pointer + renderer capability + review anchor are the portable contract; comments bind to revision/time/region so a later render cannot silently move what a human approved.</div>
+<h4>Permission topology</h4>
+<div class="techline">human/agent capabilities remain explicit per workspace/action. A specialist can author/propose without inheriting approve, publish, secret-bearing or destructive capabilities from the orchestrator that invoked it.</div>
+<div class="techline" style="margin-top:8px">offline/local edits retain signed parentage; relay reconnect merges by event identity and lineage rather than last-arrival-wins, so review history survives duplicated delivery and disconnected work.</div>
+<div class="techline" style="margin-top:8px">review state can be rebuilt from signed events alone; local cache loss changes latency, not authorship or approval history.</div>
+<div class="rule">revisionₙ is immutable once signed/published · revisionₙ₊₁=new event+parent pointer · review decision is explicit state, not overwritten file metadata.</div>
+</article>
+</div>
+</section>
+<section id="experience" tabindex="-1">
+<div class="eyebrow">Professional experience</div>
+<h2>Operating record · product, distribution, capital</h2>
+<article class="experience">
+<div class="rolehead"><div><h3>Sera Protocol · Head of Growth</h3><div class="sub">Singapore / Kuala Lumpur · APAC revenue · partnerships · liquidity · pricing · product systems · agentic FX</div></div><div class="date">AUG 2025 — AUG 2026</div></div>
+<div class="factline"><b>Head of Growth mandate: build APAC revenue, partnerships, liquidity and market adoption for onchain FX.</b> Closed 30 partnership/integration agreements from 70+ relationships, &gt;60% pilot-to-commercial conversion and a median cycle under 90 days; assembled 15 market makers / institutional LPs with close to US$6M committed as launch liquidity. Alongside the commercial motion, built Sera for Agents, 4Sight, Telegram P2P FX and NextCurrency around the integration, execution and market-intelligence problems counterparties were actually encountering.</div>
+<div class="grid2 dense">
+<div class="card tint" data-card-id="card-18" id="project-sera-for-agents" tabindex="-1">
+<h3>Sera for Agents · agentic FX execution kernel</h3>
+<p class="project-desc"><b>A developer and AI-agent control plane over Sera's onchain FX settlement protocol.</b> It converts market/treasury intent into typed, inspectable tools while keeping signing, notional policy and settlement state outside the language model.</p>
+<div class="techline">TypeScript · MCP/CLI · Zod · stdio/HTTP · EIP-712 · x402 · external signer · SQLite history · multi-host MCP</div>
+<pre>LLM / host intent
+→ typed MCP tool + Zod contract
+→ read / analyse / quote / prepare boundary
+→ quote UUID + TTL + route evidence
+→ policy / notional ceiling
+→ external EIP-712 signature
+→ execute
+→ settlement FSM / history / reconciliation</pre>
+<ul class="tight">
+<li>32 tools across discovery, multi-source FX, liquidity probing, route/depth inference, maker ladders, quote/execute, treasury, settlement and history.</li>
+<li><b>Parallel market computation:</b> corridor scans, external-mid comparison, triangular drift, synthetic depth and round-trip-cost paths fan out read-only work before a route reaches a signing boundary.</li>
+<li><b>Historical reconstruction:</b> served rates/quotes persist locally when the upstream protocol has no OHLC primitive, enabling series, volatility and corridor P&amp;L from the execution surface itself.</li>
+<li><b>Observability:</b> model/host → tool/version → quote TTL → route source → policy decision → signer → tx/settlement state → retries/reconciliation → latency/cost.</li>
+<li><b>Agent-safe authority:</b> discovery/reasoning can be probabilistic; write paths are schema-bound, externally signed, notional-capped and replayable from persisted evidence.</li>
+<li><b>Quote binding:</b> quote UUID, pair/side/notional, route evidence, TTL and policy snapshot travel together; execution rejects expired or materially changed intent rather than asking the model to infer whether a quote is still safe.</li>
+<li><b>SLOs:</b> quote p50/p95 · TTL expiry-before-sign · signer latency · tool schema-failure rate · retry/reconciliation age · cost per successful agent settlement.</li>
+</ul>
+<h4>Tool/runtime partition</h4>
+<pre>read / discover / analyse → parallel + cacheable
+quote / route              → deterministic market snapshot
+prepare                    → policy-bound intent
+sign                       → external wallet / signer
+execute                    → serialized money mutation
+reconcile                  → async durable worker</pre>
+<div class="techline">low-risk market questions can stay on cheap/cacheable paths; frontier reasoning earns its cost only for synthesis/planning. The write path never depends on model memory for quote identity, policy or signer authority.</div>
+<h4>Host / capability boundary</h4>
+<div class="techline">MCP host identity + tool version + environment + signer capability are explicit runtime inputs. A desktop agent, CLI process or remote host can share read tools while execute/treasury tools require the appropriate capability and signer policy; tool availability is not inferred from conversational context.</div>
+<h4>Market compute / cache discipline</h4>
+<div class="techline">corridor discovery, maker ladders and external-mid checks can reuse short-TTL market snapshots; quote/execute never reuse stale intent. Cache hit, snapshot age, fanout latency and quote invalidation are observable independently from model latency.</div>
+<h4>Treasury / exposure state</h4>
+<div class="techline">asset/corridor inventory, maker ladders, notional ceilings, target balances and rebalance intent live in persisted treasury state rather than model context. Read tools can inspect exposure and simulate rebalance routes; value movement still crosses policy + quote + signer boundaries.</div>
+<div class="techline" style="margin-top:8px">agent proposals can optimise inventory utilisation or corridor coverage, but execution evidence is keyed to quote/route/transaction identity so treasury P&amp;L and reconciliation remain reconstructable after retries or host/model changes.</div>
+<pre>policy snapshot
+→ asset / corridor allowlist
+→ notional + exposure ceilings
+→ quote UUID + TTL + route evidence
+→ external EIP-712 signer
+→ execute / settlement / reconcile</pre>
+<div class="rule">execute := valid_quote ∧ policy_pass ∧ authorised_signer ∧ current_state · model output alone has zero settlement authority.</div>
+</div>
+<div class="card tint" data-card-id="card-19" id="project-4sight" tabindex="-1">
+<h3>4Sight · durable consumer money state</h3>
+<p class="project-desc"><b>4Sight is a self-custodial consumer money app spanning prediction markets, stablecoin FX and DeFi yield.</b> A durable operation ledger normalises providers with incompatible quote, signature, submission and finality semantics into one recoverable money-state model.</p>
+<div class="techline">Next.js/React · viem/wagmi · Privy · Polymarket · LI.FI · Kyber · Aave · Morpho · Pendle · GMX · Hyperliquid · zkP2P · Bridge · Sera</div>
+<pre>INTENT
+→ DISCOVERY / QUOTE / ROUTE
+→ AWAIT_SIGNATURE
+→ SUBMITTED(provider, tx/ref)
+→ PENDING / PARTIAL / CONFIRMED
+→ FAILED | EXPIRED | RECONCILE
+→ durable operation ledger</pre>
+<ul class="tight">
+<li><b>Adapter contract:</b> heterogeneous DEX/bridge/lending/perps/prediction-market providers map into one operation envelope; provider response ≠ canonical money state.</li>
+<li><b>Crash/reload recovery:</b> route/quote/signed intent/transaction evidence lives in durable operation state so the UI can resume rather than infer status from a spinner.</li>
+<li><b>Kill-switch symmetry:</b> client controls and server-side enforcement both exist; disabling dangerous operations does not depend on shipping a new frontend bundle.</li>
+<li><b>900+ tests:</b> unit/integration/fork paths, secret scanning, coverage gates and live transaction proof around the state machine.</li>
+<li><b>Adversarial proof:</b> a deliberately vulnerable canary exists specifically to demonstrate the audit/release gate catches a known bad condition.</li>
+<li><b>Failure budget:</b> stale quote, user rejection, chain revert, provider timeout, dropped receipt and ambiguous finality terminate in explicit states instead of a generic `error` boolean.</li>
+</ul>
+<h4>Provider contract / finality matrix</h4>
+<div class="techline">adapter metadata carries quote TTL, approval/signature prerequisites, submission receipt shape, canonical transaction/reference ID, confirmation/finality evidence and reconciliation method. Normalisation gives one app state machine without pretending a bridge, DEX, lending market and prediction exchange settle the same way.</div>
+<ul class="tight"><li><b>Runtime metrics:</b> quote age at signature · approval→submit latency · submit→confirmed latency · ambiguous-finality age · reconcile success · provider failure rate · operation recovery after reload.</li></ul>
+<h4>Operation identity / recovery</h4>
+<pre>operation_id + provider + quote/route snapshot
+→ wallet/account + chain/domain
+→ approval/signature evidence
+→ submission ref / tx hash
+→ confirmation/finality evidence
+→ reconcile cursor / last checked at</pre>
+<div class="techline">reload recovery rehydrates from durable operation identity and asks the provider/chain for evidence; it never guesses completion from local UI state. Provider adapters can retry reads freely while write retries stay idempotency- and state-gated.</div>
+<h4>Wallet / chain authority boundary</h4>
+<pre>selected wallet/account + chain/domain
+→ spender / allowance / approval state
+→ typed transaction request
+→ explicit user signature
+→ broadcast / provider submission
+→ receipt / confirmation / finality
+→ durable operation update</pre>
+<h4>Preflight / fork proof</h4>
+<pre>route + account snapshot
+→ balance / allowance / approval checks
+→ calldata / value / slippage bounds
+→ fork or simulation execution
+→ expected asset/state deltas
+→ invariant / policy assertions
+→ only then expose sign / submit</pre>
+<div class="techline">preflight and live execution remain separate evidence classes: a successful simulation reduces execution risk but never substitutes for the signed transaction, provider receipt or chain finality that closes the durable operation.</div>
+<div class="rule">canonical_operation_state = durable operation ledger · provider response and browser UI are projections; refresh/process death cannot erase an in-flight money transition.</div>
+</div>
+<div class="card tint" data-card-id="card-20" id="project-telegram-p2p-fx" tabindex="-1">
+<h3>Telegram P2P FX · money changer in chat</h3>
+<p class="project-desc"><b>A Telegram-native P2P FX / money-changer runtime</b> where discovery, negotiation, payment evidence, escrow and bounded agent assistance live inside the chat surface without giving the assistant authority to release value.</p>
+<div class="techline">React 19 · Telegram SDK · tRPC · Drizzle/MySQL · ethers 6 · EIP-712 · Sepolia testnet</div>
+<pre>TAKER_INTENT
+→ MAKER_ACCEPTED
+→ ESCROW_LOCKED
+→ OFFLINE_FIAT_PAYMENT_PENDING
+→ PAYMENT_EVIDENCE
+→ MAKER_CONFIRM / DISPUTE / TIMEOUT
+→ RELEASE | REFUND</pre>
+<ul class="tight">
+<li><b>Three-leg escrow:</b> designed around the real constraint that the market maker may be offline when the taker completes offchain payment.</li>
+<li><b>Signed state transitions:</b> EIP-712 binds actor, trade and action; replay protection/invariants prevent chat text from becoming authority.</li>
+<li><b>Grounded assistant:</b> market/FX answers are tool/data-backed; a trade-on-behalf agent is capability-bounded and cannot silently cross the escrow/signature boundary.</li>
+<li><b>Persistence:</b> Drizzle/MySQL holds trade, actor and transition state; Telegram is the interface, not the database.</li>
+<li><b>Readiness gate:</b> seven deterministic invariants plus testnet execution before any mainnet release path.</li>
+</ul>
+<h4>Concurrency / recovery</h4>
+<div class="techline">trade version + actor + action + nonce live in the signed transition envelope; duplicate Telegram callbacks or reconnects resolve idempotently against durable trade state. Timeouts are domain transitions, not browser timers.</div>
+<ul class="tight"><li><b>Latency/cost split:</b> chat UX stays fast on cached/read-only market data; chain writes, signatures and settlement confirmations are asynchronous and surfaced as explicit pending/finality states.</li><li><b>Failure cases modelled:</b> maker disappears, taker pays late, duplicate callback, stale quote, signer rejects, chain tx reverts, evidence conflicts or escrow expires.</li></ul>
+<h4>State / security / observability</h4>
+<div class="techline">optimistic trade versioning · idempotency key per transition · EIP-712 domain separation · replay nonce · outbox for Telegram notifications · escrow monitor / timeout worker · signed audit trail · structured dispute evidence.</div>
+<ul class="tight"><li><b>Exactly-once effect over at-least-once delivery:</b> duplicate Telegram callbacks, reconnects and retrying workers converge on the same transition id; the handler can be replayed without double-release.</li><li><b>Risk partition:</b> assistant/model calls remain read-mostly and bounded; escrow mutation requires typed transition + actor authority + signature + current-state precondition.</li><li><b>Metrics:</b> p50/p95 assistant latency · quote age · signer latency · escrow lock→release time · duplicate-callback suppression · timeout/dispute rate · failed transition cause · model/tool cost per completed trade.</li><li><b>Compute economics:</b> cache corridor/rate context, keep negotiation/retrieval on low-cost models and reserve frontier reasoning for ambiguous disputes or multi-step trade planning.</li></ul>
+<h4>Dispute / timeout worker</h4>
+<div class="techline">deadline-indexed escrow monitor → pending trade scan → signed/current-state check → notify maker/taker → timeout/refund transition or structured dispute queue; worker retries are idempotent against transition_id + trade_version.</div>
+</div>
+<div class="card tint" data-card-id="card-21" id="project-nextcurrency" tabindex="-1">
+<h3>NextCurrency · autonomous intelligence → pipeline</h3>
+<p class="project-desc"><b>An autonomous stablecoin/payments market-intelligence, publishing and commercial-signal engine.</b> It continuously watches issuers, banks, payment networks and regulators, compiles source evidence into coverage and resolves reader/company behaviour into scored CRM state.</p>
+<div class="techline">monitor/schedule → source ingest → extract → entity resolution → research graph → draft → factual/entity eval → publish → attribution → account score / CRM</div>
+<pre>cheap model: extract / classify / cluster / tag
+frontier model: synthesis / narrative / ambiguity
+verifier: claim + named-entity + source grounding
+human review: only below confidence / high consequence
+telemetry: article → company → session → lead → SQL</pre>
+<ul class="tight">
+<li><b>Entity graph:</b> issuer/product/person/rail/regulator identities persist across articles and CRM, so repeated mentions accumulate account context rather than reset per post.</li>
+<li><b>Cost routing:</b> extraction and enrichment stay on lower-cost paths; high-context drafting/reasoning earns expensive inference; stable context is reused/compacted instead of replayed.</li>
+<li><b>Eval flywheel:</b> corrected factual, entity and attribution failures become golden/regression cases for future model/prompt releases.</li>
+<li><b>Publishing as sensor:</b> first-touch attribution and company-level engagement feed sales priority; reader/company activity only becomes pipeline after attribution, entity resolution and scored CRM state.</li>
+<li><b>Live in &lt;8 weeks:</b> no editorial headcount; became Sera's largest single source of issuer SQLs.</li>
+</ul>
+<h4>Research / inference control plane</h4>
+<div class="techline">scheduler + crawl queue · freshness TTL · canonical company/entity IDs · source tiering · dedupe · embedding/retrieval cache · low-cost extraction models · frontier synthesis · claim/NER verifier · publish queue · attribution event stream · CRM score.</div>
+<ul class="tight"><li><b>Token economics:</b> chunk once, reuse evidence packets, cache stable issuer/company context, batch extraction/classification and reserve frontier context windows for synthesis that changes the published answer.</li><li><b>Accuracy:</b> source-grounding precision, named-entity F1, claim support rate, duplicate-entity rate, draft acceptance, correction rate and attribution integrity become release metrics for model/prompt changes.</li><li><b>Scoring state:</b> article/company/session/lead events retain timestamp, source confidence and identity lineage so recency/intent/product-fit scoring can be recalculated when weights change instead of baking a one-off lead score into the CRM.</li><li><b>Model release:</b> challenger prompts/models run against golden factual/entity cases; no promotion if factuality, NER or attribution regresses even when narrative quality improves.</li><li><b>Claim graph:</b> published assertions retain source URL/document, retrieval time, entity IDs and evidence span so corrections can invalidate/rebuild affected articles and account signals instead of re-researching the entire corpus.</li><li><b>Crawl/freshness budget:</b> source cadence + business importance + change probability set queue priority and TTL; high-churn issuer/regulatory sources can refresh faster without paying frontier-model cost on unchanged documents.</li><li><b>Ops:</b> rate limits/backpressure on source ingestion, stale-source alerts, failed-job replay and model/provider fallback keep daily publishing alive without editorial headcount.</li><li><b>Business yield:</b> p95 research latency · $/published article · SQL/article · company-engagement→SQL conversion · sponsor gross margin · model cost as % of content revenue.</li></ul>
+</div>
+</div>
+<div class="commercial">
+<div class="c"><b>30</b><span>signed partnerships / integrations</span></div>
+<div class="c"><b>15</b><span>market makers / institutional LPs</span></div>
+<div class="c"><b>US$6M</b><span>launch liquidity committed by 15 MM / LPs</span></div>
+<div class="c"><b>US$1.2M</b><span>MYRT reserves secured in 10 days</span></div>
+</div>
+</article>
+<article class="experience">
+<div class="rolehead"><div><h3>Aier Studios · Founder &amp; CEO</h3><div class="sub">Singapore / Paris · AI-native generative marketing company built around proprietary automation · product, engineering, clients, growth, revenue and P&amp;L</div></div><div class="date">DEC 2021 — AUG 2025</div></div>
+<div class="factline"><b>Founded Aier Studios, an AI-native generative marketing company, and completed a US$3M acqui-hire into Coliseum.</b> Built proprietary automation across research, creative production, media operations and analytics into the operating model: 25 full-time staff, campaign teams up to 40, 30+ markets, US$9M+ in managed client campaign budgets, multi-million-dollar revenue and &gt;50% gross margin. Clients included Revolut, LEGO, Tiger Beer, Bosch Professional, PIF and high-growth gaming/Web3 launches. Automation reduced creative-production cost ~60% and cut brief-to-live time in half.</div>
+<div class="grid2 dense">
+<div class="card hero" data-card-id="card-22" id="project-yours" tabindex="-1"><h3>Aier automation stack → Yours</h3><p class="project-desc"><b>Aier began with proprietary automation for research, content, media operations and analytics; Yours is the later software formalisation of that operating model.</b> The current system senses markets and competitors, resolves accounts/entities, plans campaigns, generates copy/image/video, executes channel work, measures CAC/ROAS/cohort behaviour and feeds observed outcomes back into model and policy evaluation.</p><div class="techline">heterogeneous ingest → dedupe/entity resolution → retrieval/context compiler → reasoning/planning → multimodal generation → verifier → channel execution → attribution → policy update</div><ul class="tight"><li>Competitor, market, audience, creator, press and campaign sensing.</li><li>Entity graph + lead/account enrichment + opportunity scoring + CRM/work queues.</li><li>Copy/image/video/placement matrices · creator briefs · PR/social · localisation · Meta/Google/TikTok/YouTube execution.</li><li>Provider-neutral model gateway · per-task budget reservation · provider receipts · fallback · model bakeoffs.</li><li>Eval surface: grounding precision · NER accuracy · claims integrity · schema-validity rate · hallucination incidence · acceptance/rejection rate.</li><li>Optimisation: prompt/prefix caching · context compaction · batch enrichment/variants · low-entropy small-model routing · frontier escalation.</li></ul><pre>observe → retrieve → reason → generate
+→ validate → execute → measure
+→ attribute → update policy</pre><ul class="tight"><li>Commercial telemetry closes the loop: asset/campaign lineage links model+prompt+creative+channel to CAC, ROAS, cohort retention, revenue and gross-margin outcomes.</li><li>Workload economics: batch low-entropy enrichment/variants; reserve stronger reasoning for planning, synthesis and consequential output.</li></ul><div class="why"><b>Current Yours architecture:</b> 19 workspaces · 12 named AI roles · provider-neutral model gateway · Postgres/pgvector + forced RLS · AWS KMS/S3/Secrets · background workers · strict JSON actions · chaos-tested release gates.</div>
+<h4>Inference / commercial optimisation plane</h4>
+<pre>task signature = modality + entropy + context + risk + value
+→ cheapest model above eval floor
+→ stable-prefix / retrieval-context cache
+→ structured output + verifier
+→ asset lineage id
+→ placement / spend / audience
+→ conversion / revenue / cohort
+→ regression + routing update</pre>
+<ul class="tight"><li><b>Model economics:</b> track fresh/cached tokens, retries, verifier passes, latency, revision rate and human-touch minutes against <b>cost per accepted asset / qualified lead / funded customer</b>, not model-token price in isolation.</li><li><b>Shadow migration:</b> challenger models can run against golden tasks before promotion; provider abstraction, strict JSON actions and per-task budget receipts make a model swap an infrastructure decision rather than a rewrite.</li><li><b>Closed-loop lineage:</b> source evidence → research state → prompt/model/version → generated asset → channel/placement → spend → click/conversion → revenue/retention. Marketing performance becomes training/eval evidence for the next policy cycle.</li></ul>
+<h4>Runtime / throughput / cost control</h4>
+<div class="techline">Postgres/pgvector + forced RLS · queue-backed background workers · KMS/Secrets/S3 · provider-neutral gateway · task budgets · structured JSON actions · render/media workers · publish adapters · retry/dead-letter paths · per-tenant quotas.</div>
+<div class="formula">model* = argmin cost(task, model)   s.t. eval_score ≥ quality_floor, p95 ≤ latency_SLO, context ≤ window, risk ≤ policy</div>
+<ul class="tight"><li><b>Concurrency:</b> research/enrichment/variant generation can batch and parallelise; account-critical planning and publish mutations preserve versioned campaign state and approval lineage.</li><li><b>Media compute:</b> image/video workloads are separately metered from text inference; queue depth, render latency, provider failure and cost/accepted asset determine whether generation stays API-based or moves toward reserved/self-hosted capacity.</li><li><b>Memory:</b> brand truth, approved claims, current offer and permissions compile deterministically into every relevant run; episodic campaign history and semantic retrieval add context while canonical business truth stays app-owned.</li><li><b>Prediction:</b> creative/channel priors can rank variants, but real spend and conversion outcomes close the loop; prediction error, calibration and lift become model-selection evidence.</li></ul>
+</div>
+<div class="card hero" data-card-id="card-23" id="project-esportz" tabindex="-1">
+<h3>KDArena → Coliseum → Esportz.fun · competitive gaming + prediction systems</h3>
+<p class="project-desc"><b>KDArena began as competitive-gaming infrastructure, Coliseum scaled the product/community layer, and Esportz.fun is the current expression of that lineage:</b> discovery, tournaments, quests/rewards, ranks and esports prediction markets connected by persistent player/game/event identity.</p>
+<div class="techline">KDArena: PHP 8 · CodeIgniter 4 · MySQL · tournament/result state   →   Esportz.fun: Astro 5 SSR · React 19 islands · PostgreSQL/Drizzle · Cloudflare R2 · Vercel</div>
+<pre>player / game / tournament identity
+→ bracket / match / authoritative result
+→ prediction market {YES, NO, price, closes_at}
+→ user position / Esportz Gold
+→ verified resolution evidence
+→ payout / XP / rank / leaderboard
+→ quests / retention / next event</pre>
+<ul class="tight">
+<li><b>KDArena primitive:</b> organiser/player roles, registration, brackets, scoring, results, rewards and competition history established the event/state foundation.</li>
+<li><b>Coliseum evolution:</b> that foundation expanded into consumer product loops: quests, cohorts, referrals, reactivation, Telegram/community surfaces and large-scale acquisition.</li>
+<li><b>Esportz.fun now:</b> 149+ games · predictions · quests/rewards · rankings · tournaments; Astro SSR + React islands.</li>
+<li><b>Resolution boundary:</b> probability is not truth. Official/verified outcome evidence closes the market; positions, payouts and leaderboard/reward updates derive from resolved event state.</li>
+</ul>
+<h4>Current market surface → authoritative runtime</h4>
+<div class="techline">the current React prediction surface already models Yes/No selection, order-book-style price/share ladders, price history and explicit resolution criteria. The production path is to move market/position truth from local/mock arrays into a versioned event/position ledger while keeping the same UI contract.</div>
+<pre>Market {event_id, question, closes_at, resolution_rule}
+Outcome {side, price, volume}
+Position {user_id, market_id, side, shares, avg_price}
+Resolution {outcome, evidence[], resolved_at}
+Reward {gold, xp, rank_delta}</pre>
+<ul class="tight"><li><b>Order integrity:</b> market version + user + idempotency key bind every position change; close-time state blocks late orders before resolution can mutate payout state.</li><li><b>Binary invariant:</b> Yes/No prices express complementary crowd belief; settlement pays only the resolved side while losing positions expire, independent from XP/rank policy.</li></ul>
+<h4>Prediction / market architecture path</h4>
+<div class="formula">P(outcome|x)=calibrated prior   |   market_price≈crowd probability   |   edge=P<sub>model</sub>−P<sub>market</sub></div>
+<div class="techline">team/player form · patch/meta · map/mode · roster/news signals · Elo/Glicko-style priors · bracket Monte Carlo · Brier/log-loss · calibration drift · backtest by competition/version.</div>
+<pre>event feed → canonical event id → feature snapshot
+→ model / market prior → orders/positions
+→ close → verified resolution → idempotent payout
+→ XP/rank/leaderboard → next discovery/event</pre>
+<ul class="tight"><li><b>Scale:</b> hot competitions partition independently; public brackets/markets/leaderboards fan out through cache/read models/CDN/WebSockets while authoritative result/position/payout writes stay on a smaller transactional core.</li><li><b>Learning loop:</b> model probability, market-implied probability and resolved outcome are stored together so calibration error and market-vs-model spread become measurable.</li></ul>
+<h4>Player identity / progression graph</h4>
+<div class="techline">User → game affinities → follows/reviews/guides → tournament participation → quest progress → prediction positions → Gold/XP → rank/leaderboard becomes one longitudinal profile rather than separate anonymous sessions. Discovery and monetisation can therefore condition on earned state, not only recency/clickstream.</div>
+<ul class="tight"><li><b>Recommender surface:</b> game/content/event candidates can rank from genre/platform affinity, social/tournament participation, quest completion and prediction history while separating engagement features from authoritative reward/market state.</li><li><b>Experimentation:</b> assignment id + cohort + exposure event + downstream quest/prediction/retention outcome make product-loop changes measurable without rewriting the competition or market ledger.</li></ul>
+<div class="rule">prediction estimates probability · verified event state settles value · consumer game loops wrap the same canonical event graph.</div>
+</div>
+</div>
+<h4>Post-acquisition operating scale · Coliseum + commercial proof</h4>
+<div class="commercial">
+<div class="c"><b>~60%</b><span>lower creative production cost</span></div>
+<div class="c"><b>½</b><span>brief-to-live time</span></div>
+<div class="c"><b>US$9M+</b><span>client campaign budgets managed</span></div>
+<div class="c"><b>US$3M</b><span>Aier acqui-hire / exit</span></div>
+<div class="c"><b>4M → 200K</b><span>community to active users in 8 months</span></div>
+<div class="c"><b>100K</b><span>Telegram bot users across seven groups</span></div>
+<div class="c"><b>US$15M</b><span>Coliseum raise with TCG, 35V, Barstool + others</span></div>
+<div class="c"><b>US$5M</b><span>JEDSTAR pre-seed + KRED presale</span></div>
+</div>
+<div class="grid2" style="margin-top:14px">
+<div class="card" data-card-id="card-24"><h3>Selected consumer / community outcomes</h3><ul class="tight dense"><li><b>Saitama:</b> 370K+ holders; holder CAC US$6 → US$2.</li><li><b>VeVe:</b> 350K active users; 1.4M collectibles sold in 2021.</li><li><b>Bubblemaps:</b> TGE target hit in 10 seconds; ~13,500% oversubscribed.</li><li><b>YGG SEA:</b> 110K+ community; helped support US$15M across two rounds.</li><li><b>Immortal Game:</b> 3M+ community footprint; registered-player CAC US$25 → US$12.</li><li><b>Cult DAO:</b> ~US$150M market cap within two months of launch.</li></ul></div>
+<div class="card" data-card-id="card-25"><h3>Selected global brand outcomes</h3><ul class="tight dense"><li><b>Revolut France:</b> funded-account CAC €35 → €20; 150M+ impressions.</li><li><b>LEGO:</b> 120M video views; retargeted purchase ROAS 3× → 5×.</li><li><b>Bosch Professional:</b> 12K qualified professionals; 8K UGC posts; repeat participation 40%.</li><li><b>Tiger Beer:</b> 250K AR/QR interactions; 25M video views; 80M impressions.</li><li><b>PIF / Savvy Games:</b> 700 media placements; 400 qualified industry enquiries.</li></ul></div>
+</div>
+</article>
+<article class="experience">
+<div class="rolehead"><div><h3>CBRE Asia Pacific · Regional Technology Lead, APAC</h3><div class="sub">Earlier: Associate Director / Strategy &amp; Consulting · enterprise SaaS, data, analytics, ML/RPA and transformation</div></div><div class="date">APR 2013 — DEC 2021</div></div>
+<div class="factline"><b>Built and ran CBRE's APAC enterprise SaaS, data and analytics business.</b> Scaled from 2 people to 50+ direct / 250+ delivery across seven markets and US$100M annual revenue, with full P&amp;L, product development/commercialisation, pricing, forecast, partners, sales and regional demand. The portfolio covered 18 products for global banks, technology companies and government; the demand engine sourced the majority of new-logo pipeline. Originated and closed the US$1B NTT relationship using a custom utilisation/cost/location application as the entry point.</div>
+<div class="grid2 dense">
+<div class="card tint" data-card-id="card-26" id="project-enterprise-architecture" tabindex="-1">
+<h3>Enterprise data / automation architecture</h3>
+<p class="project-desc"><b>Custom operating software for global banks, technology companies and government portfolios:</b> ingest HR/finance/portfolio/facilities/procurement data, resolve it into shared domain objects, compute scenarios, automate repetitive workflows with RPA and expose auditable decisions to thousands of users/workpoints across markets.</p>
+<pre>HRIS / finance / lease / FM / project / spreadsheet / sensor feeds
+→ ETL / validation / entity &amp; master-data normalisation
+→ workforce + building + lease + cost feature store
+→ deterministic scenario / optimisation engines
+→ ML / forecasting / segmentation where useful
+→ RPA queue / bot workers / exception state
+→ human approval / write-back / downstream system
+→ dashboard / planner / workflow product
+→ adoption + financial / operational telemetry</pre>
+<ul class="tight">
+<li><b>RPA as a state machine:</b> `QUEUED → VALIDATED → ENRICHED → NEEDS_REVIEW → APPROVED → WRITE_BACK → VERIFIED`; malformed or ambiguous records route to humans instead of being silently coerced.</li>
+<li><b>ML boundary:</b> predictions/scores could rank or forecast; deterministic headcount, area, cost and lease calculations stayed reproducible and explainable to finance/HR/real-estate stakeholders.</li>
+<li><b>Entity resolution:</b> people, sites, leases, cost centres, departments, projects and suppliers had to survive naming differences across countries/source systems before portfolio analytics were meaningful.</li>
+<li><b>Scenario optimisation:</b> location/space/cost alternatives, workforce demand, occupancy ratios, phasing and procurement options expressed as constrained business scenarios rather than one opaque model score.</li>
+<li><b>Enterprise controls:</b> permissions, auditability, localisation, language, data residency, regional process variance and human exception handling were architecture inputs, not post-launch compliance patches.</li>
+<li><b>Data quality:</b> source freshness, completeness, duplicate/entity-match rate, invalid units/currencies and cross-system reconciliation were observable states; bad data entered exception queues rather than silently contaminating scenario outputs.</li>
+<li><b>Change control:</b> assumptions, coefficients and workflow rules were versioned alongside scenario inputs so a finance/portfolio team could reproduce why two runs differed after a policy or data update.</li>
+<li><b>Operating telemetry:</b> ingestion freshness · rule exceptions · bot success/retry · forecast error · scenario runtime · workflow cycle time · adoption/utilisation · renewal/expansion · data-quality exceptions by source.</li>
+</ul>
+<div class="formula">objective = occupancy cost + move/capex + commute/friction + constraint penalties   subject to capacity / timing / policy</div>
+</div>
+<div class="card tint" data-card-id="card-27" id="project-enterprise-portfolio" tabindex="-1">
+<h3>18-product enterprise portfolio</h3>
+<p class="project-desc"><b>Commercialised and implemented a regional portfolio spanning workforce/location analytics, workplace planning, employee experience, lease administration, facilities, capital projects and commercial modelling.</b> Consulting methods, fragmented source systems and regional process variation were encoded into versioned data models, scenario engines, workflows and integrations that another team could rerun and audit.</p>
+<div class="techline">Vantage Analytics · Portfolio Optimizer · Global LaborView · Dimension · Geoskill · Spacer · Plans/Plans Pro · BUILD · Host · Sequentra · ServiceInsight · Kahua · Capital Planner · Estimator · Calc + related enterprise tools</div>
+<pre>source-of-record systems
+→ canonical domain model
+→ rules / scenario / optimisation service
+→ workflow + integration/API layer
+→ role-specific planner / dashboard
+→ implementation telemetry
+→ adoption / renewal / expansion</pre>
+<ul class="tight">
+<li><b>Portfolio Optimizer / analytics:</b> combine workforce, location, lease and cost signals into alternatives a client could challenge by changing assumptions instead of accepting a consultant's static spreadsheet.</li>
+<li><b>Occupancy planning software:</b> live requirements → two-week sprint releases → usability tests on active accounts; scenario logic became reusable SaaS and remains in global use more than a decade later.</li>
+<li><b>Workflow products:</b> approval chains, validation, facilities/project hand-offs, procurement and capital planning converted email/spreadsheet process into explicit application state.</li>
+<li><b>Commercial engineering:</b> software + implementation entered around US$100K–250K and expanded into multi-year programmes; product adoption measured through seats/sites, utilisation, time-to-value, renewal and expansion.</li>
+<li><b>Release surface:</b> localisation, language, permissions, data residency, client-specific process variants, partner implementation boundaries and regional supportability.</li>
+<li><b>Demand instrumentation:</b> product/buyer positioning, regional content, ABM/events and sales enablement were tied to Salesforce MQL/SQL/opportunity progression; marketing sourced the majority of new-logo pipeline.</li>
+<li><b>Implementation surface:</b> source-system mapping, permissions/SSO, client rules, migration/UAT, adoption telemetry and support ownership were part of productisation; the product had to survive hand-off from pursuit to implementation to renewal.</li>
+</ul>
+<div class="rule">reproducible_solution = versioned_inputs + assumptions + calculations + workflow_state + exception_handling · consulting IP becomes software only when the original consultant is no longer required to rerun it.</div>
+</div>
+</div>
+<div class="commercial">
+<div class="c"><b>2 → 250+</b><span>regional technology organisation</span></div>
+<div class="c"><b>US$100M</b><span>annual SaaS / data / analytics revenue</span></div>
+<div class="c"><b>&gt;120%</b><span>NRR on strategic accounts</span></div>
+<div class="c"><b>US$1B</b><span>NTT global client originated / closed</span></div>
+</div>
+<div class="small" style="margin-top:12px">Strategic clients across tenure included NTT, Google, Microsoft, LinkedIn, Standard Chartered, HSBC, UOB, Singapore Ministry of Health and other government agencies.</div>
+</article>
+</section>
+<section id="systems-decisions" tabindex="-1">
+<h2>Systems decisions</h2>
+<div class="grid2 dense">
+<div class="card" data-card-id="card-28"><h3>Inference</h3><pre>request
+→ deterministic / cached answer if sufficient
+→ small/open model
+→ mid-tier reasoner
+→ frontier escalation only above quality/risk threshold</pre><div class="formula">m* = argmax(Q<sub>m</sub> − λ·TTFT<sub>m</sub> − μ·COGS<sub>m</sub> − ρ·risk<sub>m</sub>)</div><div class="techline">Measure cost/successful task, verifier disagreement, route regret, cache hit, retries and p95 latency. Nominal $/token is not the optimisation target.</div><div class="techline" style="margin-top:8px">Escalate only when expected quality gain clears added latency + COGS; stable prefixes/tool schemas should hit cache before buying more reasoning.</div></div>
+<div class="card" data-card-id="card-29"><h3>Identity</h3><pre>model/provider = replaceable cognitive engine
+identity ABI   = durable schema + version
+memory         = evidence + compiled state
+tools          = capability-scoped interfaces
+relationships  = versioned compounding state</pre><div class="techline">Provider sessions are caches, never identity. Schema migrations preserve stable IDs/provenance; behavioural state can be replayed/recompiled after model or embedding migration.</div><div class="formula">stable_identity_id ≠ provider_user_id ≠ session_id</div><div class="techline">Compatibility is explicit: schema version, migration function, provenance and capability set travel with state. A model upgrade may change cognition without minting a new person, memory graph or permission surface.</div></div>
+<div class="card" data-card-id="card-30"><h3>Compute</h3><pre>burst / low duty cycle → API / on-demand
+predictable baseline  → reserved capacity
+replayable batch      → spot / interruptible
+sustained utilisation → self-host / colo / owned</pre><div class="formula">TCO/useful-token = (GPU + power + idle + ops + network) / accepted throughput</div><div class="techline">Decision inputs: VRAM/HBM fit · batch/concurrency · cache reuse · utilisation · queue depth · power/thermal · egress · engineering overhead · failure/replacement time.</div><div class="techline" style="margin-top:8px">Buy/host only after measured sustained duty cycle; otherwise idle silicon is just prepaid latency. Track useful-GPU-hour, queue saturation, accepted-token throughput and memory-bandwidth headroom at the target batch/concurrency. Break-even must include idle capacity and ops.</div></div>
+<div class="card" data-card-id="card-31"><h3>State</h3><pre>command → validate → durable intent
+→ transaction / event + outbox
+→ external side effect
+→ evidence / acknowledgement
+→ reconcile → projection</pre><div class="techline">Exactly-once business effect over at-least-once delivery through idempotency keys, current-state preconditions and replay. Vectors/graphs remain indexes/projections; canonical truth stays versioned, auditable and migratable. RPO/RTO, retry/backoff and compensating actions are domain design.</div><div class="formula">effect(idempotency_key) ≤ 1   even when delivery(idempotency_key) ≥ 1</div><div class="techline">Consistency scope follows the invariant: serialize the trusted mutation; let derived read models and analytics converge asynchronously.</div></div>
+</div>
+</section>
+<section id="operating-range" tabindex="-1">
+<h2>Operating range</h2>
+<div class="grid3 dense">
+<div class="card" data-card-id="card-32"><h3>Engineering</h3><div class="techline">PRD → state machine → RFC/ADR → sprint → review → QA/verifier → release gate · CI/CD · CODEOWNERS · migrations · incident/root-cause discipline · hiring by subsystem · acceptance evidence · post-release telemetry</div></div>
+<div class="card" data-card-id="card-33"><h3>Commercial</h3><div class="techline">enterprise sales · MEDDPICC · pricing · packaging · entitlements · CAC/LTV/ROAS · attribution · NRR · P&amp;L · capacity/vendor procurement · margin · partnerships · financing support · forecast/pipeline</div></div>
+<div class="card" data-card-id="card-34"><h3>Culture / product taste</h3><div class="techline">AI agents · artificial personhood · games · cyberpunk · anime/DBZ/SAO · Philip K. Dick · spatial worlds · markets · communities · software that feels alive · interfaces with character · weirdness worth preserving</div></div>
+</div>
+</section>
+<section id="education" tabindex="-1">
+<h2>Education / languages</h2>
+<div class="grid2 dense">
+<div class="card" data-card-id="card-35"><h3>Nanyang Technological University, Singapore</h3><ul class="tight"><li>Advanced Professional Certificate in Product Management for AI &amp; Digital Finance — enrolled.</li><li>NTU PACE SCTP · Cohort 1 · 3 Oct 2026–23 Jan 2027.</li></ul></div>
+<div class="card" data-card-id="card-36"><h3>Languages / citizenship</h3><ul class="tight"><li>Singaporean; raised in France; ~20 years in Southeast Asia.</li><li>English &amp; French — native.</li><li>Bahasa Indonesia &amp; Spanish — fluent.</li></ul></div>
+</div>
+</section>
+<div class="footer"><span>Josh Gier · Founder / AI Systems Builder</span><span>josh-gier.com · github.com/Josh-Gi3r</span></div>
+</main>
+<a aria-label="Back to top" class="cv-backtop" hidden="" href="#cv-top">↑</a><script>/* Navigation only. The CV is fully readable without JavaScript. */
+(() => {
+  const toggle = document.querySelector('.cv-menu-button');
+  const panel = document.getElementById('cv-contents');
+  const backTop = document.querySelector('.cv-backtop');
+  const desktop = matchMedia('(min-width: 1101px)');
+  const setOpen = (open, returnFocus = false) => {
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    if (returnFocus) toggle.focus();
+  };
+  toggle.addEventListener('click', () => setOpen(panel.hidden));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !panel.hidden) setOpen(false, true);
+  });
+  document.addEventListener('click', event => {
+    if (!panel.hidden && !event.target.closest('.cv-header')) setOpen(false);
+  });
+  desktop.addEventListener('change', () => { if (desktop.matches) setOpen(false); });
+  const jump = (id, focus = true) => {
+    const target = document.getElementById(id);
+    if (!target) return;
+    setOpen(false);
+    target.scrollIntoView({block:'start'});
+    if (focus) {
+      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+      target.focus({preventScroll:true});
+    }
+  };
+  document.querySelectorAll('.cv-header a[href^="#"],.cv-backtop,.cv-skip').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      const id = link.getAttribute('href').slice(1);
+      jump(id);
+      try { history.replaceState(null, '', '#' + id); } catch (_) { /* local preview */ }
+    });
+  });
+  document.getElementById('cv-project-jump').addEventListener('change', event => {
+    if (event.target.value) jump(event.target.value);
+    event.target.value = '';
+  });
+  document.querySelector('.cv-print').addEventListener('click', () => window.print());
+  const sections = [...document.querySelectorAll('main > section')];
+  let pending = false;
+  const updateLocation = () => {
+    pending = false;
+    backTop.hidden = window.scrollY < 800;
+    let active = '';
+    for (const section of sections) {
+      if (section.getBoundingClientRect().top <= 150) active = section.id;
+    }
+    document.querySelectorAll('.cv-navigation a').forEach(link => {
+      if (link.hash === '#' + active) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+  window.addEventListener('scroll', () => {
+    if (!pending) { pending = true; requestAnimationFrame(updateLocation); }
+  }, {passive:true});
+  updateLocation();
 })();
-</script>
-</body>
+
+/* Optical row balancing. Content and type size never change. At desktop sizes,
+   distribute only small residual height differences through existing block
+   spacing, at no more than 4 CSS px per boundary. Never create a large spacer,
+   fixed-height panel, clipped text or reordered column. Single columns are not
+   balanced. Native equal-height grid is the readable no-JS fallback. */
+(() => {
+  const groups = [...document.querySelectorAll('.grid2,.grid3,.landing-band')];
+  const original = new Map();
+  let timer;
+  const reset = () => {
+    for (const [element,value] of original) {
+      if (value) element.style.marginBottom = value;
+      else element.style.removeProperty('margin-bottom');
+    }
+    original.clear();
+    document.querySelectorAll('[data-rhythm-extra]').forEach(card => card.removeAttribute('data-rhythm-extra'));
+  };
+  const balance = () => {
+    reset();
+    if (matchMedia('print').matches) return;
+    const updates = [];
+    for (const group of groups) {
+      const cards = [...group.children].filter(card => card.classList.contains('card'));
+      const rows = [];
+      for (const card of cards) {
+        const y = card.getBoundingClientRect().top;
+        let row = rows.find(row => Math.abs(row.y-y)<1);
+        if (!row) { row={y,cards:[]}; rows.push(row); }
+        row.cards.push(card);
+      }
+      for (const row of rows) {
+        if (row.cards.length < 2) continue;
+        for (const card of row.cards) {
+          const children = [...card.children];
+          const last = children.at(-1);
+          if (!last) continue;
+          const style = getComputedStyle(card);
+          const gap = card.getBoundingClientRect().bottom - last.getBoundingClientRect().bottom
+            - parseFloat(style.paddingBottom) - parseFloat(style.borderBottomWidth)
+            - parseFloat(getComputedStyle(last).marginBottom);
+          const candidates = [...children.slice(0,-1).filter(element => element.tagName !== 'H3'), ...card.querySelectorAll('ul > li')];
+          if (gap <= 6 || !candidates.length) continue;
+          const extra = Math.min(4, (gap-4)/candidates.length);
+          updates.push({card,extra,candidates:candidates.map(element=>({element,
+            original:element.style.marginBottom,base:parseFloat(getComputedStyle(element).marginBottom)}))});
+        }
+      }
+    }
+    for (const {card,extra,candidates} of updates) {
+      card.dataset.rhythmExtra = extra.toFixed(3);
+      for (const {element,original:old,base} of candidates) {
+        original.set(element,old);
+        element.style.marginBottom = `${base+extra}px`;
+      }
+    }
+    document.documentElement.dataset.layoutReady = 'true';
+    window.dispatchEvent(new Event('cv-layout-ready'));
+  };
+  window.addEventListener('resize', () => { clearTimeout(timer); timer=setTimeout(balance,100); });
+  matchMedia('print').addEventListener('change', event => { if (event.matches) reset(); else balance(); });
+  window.addEventListener('beforeprint',reset);
+  window.addEventListener('afterprint',balance);
+  document.fonts.ready.then(balance);
+})();
+</script></body>
 </html>
