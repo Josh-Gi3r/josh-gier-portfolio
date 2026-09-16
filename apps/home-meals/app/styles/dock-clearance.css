@@ -1,18 +1,26 @@
-/* Keep fixed page actions physically clear of the persistent Home camera/orb/voice dock. */
+/* Keep the persistent Home camera/orb/voice dock separated from both navigation and fixed page actions. */
 :root{
-  --hm-ai-dock-top:calc(150px + env(safe-area-inset-bottom));
-  --hm-fixed-action-bottom:calc(166px + env(safe-area-inset-bottom));
+  /* Bottom nav is --bar-h. The floating input pill must sit above it, never touch/overlap its top edge. */
+  --hm-nav-dock-gap:12px;
+  --hm-ai-dock-pill-bottom:calc(var(--bar-h) + var(--hm-nav-dock-gap));
+  /* Compact V8 pill is 66px tall: 58px orb + 4px vertical padding on each side. */
+  --hm-ai-dock-top:calc(var(--hm-ai-dock-pill-bottom) + 66px);
+  --hm-fixed-action-gap:16px;
+  --hm-fixed-action-bottom:calc(var(--hm-ai-dock-top) + var(--hm-fixed-action-gap));
 }
 
-/* The dock occupies the space immediately above the bottom nav. Fixed page CTAs must sit above it, never behind it. */
+/* Explicitly override the compact-dock offset from completion.css so the pill clears navigation by 12px. */
+.hm-bar-pill{bottom:var(--hm-ai-dock-pill-bottom)}
+
+/* Fixed page CTAs (Make SAAG, Start cooking, etc.) stay above the raised dock with their own 16px air gap. */
 .hm-main:not(.cooking) .hm-cta{bottom:var(--hm-fixed-action-bottom)}
-.hm-main:not(.cooking){padding-bottom:calc(254px + env(safe-area-inset-bottom))}
+.hm-main:not(.cooking){padding-bottom:calc(var(--hm-fixed-action-bottom) + 92px)}
 
 /* If a route has both a fixed CTA and a Home hint, keep the hint above the CTA as well. */
-body:has(.hm-main:not(.cooking) .hm-cta) .hm-bar-hint{bottom:calc(270px + env(safe-area-inset-bottom))}
+body:has(.hm-main:not(.cooking) .hm-cta) .hm-bar-hint{bottom:calc(var(--hm-fixed-action-bottom) + 104px)}
 
-/* Short phones need at least the same clearance; do not compress actions back into the AI dock. */
+/* Never squeeze the CTA back into the AI dock on short phones. Clearance is invariant. */
 @media (max-height:700px){
-  .hm-main:not(.cooking) .hm-cta{bottom:calc(162px + env(safe-area-inset-bottom))}
-  body:has(.hm-main:not(.cooking) .hm-cta) .hm-bar-hint{bottom:calc(266px + env(safe-area-inset-bottom))}
+  .hm-main:not(.cooking) .hm-cta{bottom:var(--hm-fixed-action-bottom)}
+  body:has(.hm-main:not(.cooking) .hm-cta) .hm-bar-hint{bottom:calc(var(--hm-fixed-action-bottom) + 104px)}
 }

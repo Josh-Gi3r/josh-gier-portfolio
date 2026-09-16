@@ -31,6 +31,7 @@ must(has(pwa,'serviceWorker','controllerchange','cookingRoute','SKIP_WAITING','N
 must(has(status,'askHome','vision','realtimeVoice','householdSync','database'),"System-status endpoint no longer reports critical runtime capabilities");
 must(has(storage,'homeFridgeDays:3','reheatTargetC:74','freezeSuitability','lunchSuitability'),"Leftover/reheat policy is missing");
 must(has(dock,'.hm-main:not(.cooking) .hm-cta','--hm-fixed-action-bottom'),"Fixed-action dock clearance guard is missing");
+must(has(dock,'--hm-nav-dock-gap:12px','.hm-bar-pill{bottom:var(--hm-ai-dock-pill-bottom)}','--hm-fixed-action-gap:16px'),"Dock/nav/CTA separation contract is missing");
 
 if(errors.length){console.error(`\nHome Meals runtime feature audit FAILED (${errors.length})`);for(const e of errors)console.error(` - ${e}`);process.exit(1)}
-console.log("\nHome Meals runtime feature audit passed · persistent Ask/camera/voice · typed AI actions require confirmation · 6 Vision scan modes + meal photos · cooking resume/timers/wake-lock/reconciliation/ratings/notes · 7-day Plan + shopping/prep · sync/recovery · PWA update safety · leftover/reheat policy · dock clearance");
+console.log("\nHome Meals runtime feature audit passed · persistent Ask/camera/voice · typed AI actions require confirmation · 6 Vision scan modes + meal photos · cooking resume/timers/wake-lock/reconciliation/ratings/notes · 7-day Plan + shopping/prep · sync/recovery · PWA update safety · leftover/reheat policy · dock/nav/CTA clearance");
