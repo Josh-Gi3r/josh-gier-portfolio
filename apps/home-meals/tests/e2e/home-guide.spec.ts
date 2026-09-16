@@ -24,12 +24,23 @@ async function expectNoCollision(page:Page){
  expect(overlaps,"talking-head card must not cover the persistent Home input dock").toBe(false);
 }
 
+async function summonGuide(page:Page){
+ await page.getByRole("button",{name:"Ask Home"}).last().click();
+ const ask=page.getByRole("dialog",{name:"Ask Home"});
+ await expect(ask).toBeVisible();
+ await ask.getByRole("button",{name:"Show me around"}).click();
+ const guide=page.locator("[data-home-guide-overlay]");
+ await expect(guide).toBeVisible();
+ return guide;
+}
+
 test("G gets the automatic first-run guide once and can dismiss it permanently",async({page})=>{
  await seedPerson(page,"g");
  await page.goto("/",{waitUntil:"domcontentloaded"});
  const guide=page.locator("[data-home-guide-overlay]");
  await expect(guide).toBeVisible({timeout:4000});
  await expect(guide).toContainText("Hey sunshine");
+ await expect(page.locator(".hm-guide-sprite")).toBeVisible();
  await expectNoCollision(page);
  await guide.getByRole("button",{name:"Not now"}).click();
  await expect(guide).toHaveCount(0);
@@ -47,13 +58,14 @@ test("Josh never gets automatic G onboarding",async({page})=>{
  await expect(page.locator("[data-home-guide-overlay]")).toHaveCount(0);
 });
 
-test("first-run guide advances through real navigation and accepts detours",async({page})=>{
+test("first-run guide uses real navigation, progress and accepts detours",async({page})=>{
  await seedPerson(page,"g");
  await page.goto("/",{waitUntil:"domcontentloaded"});
  const guide=page.locator("[data-home-guide-overlay]");
  await expect(guide).toBeVisible({timeout:4000});
  await guide.getByRole("button",{name:"Show me",exact:true}).click();
- await expect(page.locator(".hm-guide-copy")).toContainText("recipes are in Cook");
+ await expect(page.locator(".hm-guide-copy")).toContainText("home base");
+ await expect(page.locator(".hm-guide-progress")).toContainText("1/5");
  await page.locator('[data-home-guide="nav-cook"]').click();
  await expect(page).toHaveURL(/\/cook$/);
  await expect(page.locator(".hm-guide-copy")).toContainText("All our recipes live here");
@@ -64,20 +76,35 @@ test("first-run guide advances through real navigation and accepts detours",asyn
  await expectNoCollision(page);
 });
 
-test("Show me around is deliberately summonable from the green orb after onboarding",async({page})=>{
+test("Show me around offers Quick refresher, Whole thing, One bit and This screen",async({page})=>{
  await seedPerson(page,"josh","completed");
  await page.goto("/",{waitUntil:"domcontentloaded"});
- await page.getByRole("button",{name:"Ask Home"}).last().click();
- const ask=page.getByRole("dialog",{name:"Ask Home"});
- await expect(ask).toBeVisible();
- await ask.getByRole("button",{name:"Show me around"}).click();
- const guide=page.locator("[data-home-guide-overlay]");
- await expect(guide).toBeVisible();
- await expect(guide).toContainText("Quick lap");
- await expect(guide.getByRole("button",{name:"Cook"})).toBeVisible();
- await expect(guide.getByRole("button",{name:"Prep"})).toBeVisible();
- await expect(guide.getByRole("button",{name:"Kitchen"})).toBeVisible();
- await expect(guide.getByRole("button",{name:"Plan"})).toBeVisible();
+ const guide=await summonGuide(page);
+ for(const label of ["Quick refresher","Whole thing","One bit","This screen"])await expect(guide.getByRole("button",{name:label})).toBeVisible();
+});
+
+test("One bit exposes deep help topics and History routes to the real screen",async({page})=>{
+ await seedPerson(page,"g","completed");
+ await page.goto("/",{waitUntil:"domcontentloaded"});
+ const guide=await summonGuide(page);
+ await guide.getByRole("button",{name:"One bit"}).click();
+ for(const label of ["Home","Cook","Prep","Kitchen","Plan","Ask & voice","Camera","Cooking","History"])await expect(guide.getByRole("button",{name:label})).toBeVisible();
+ await guide.getByRole("button",{name:"History"}).click();
+ await expect(page).toHaveURL(/\/history$/);
+ await expect(page.locator(".hm-guide-copy")).toContainText("keeps Home from getting repetitive");
+});
+
+test("Quick refresher replays without changing G first-run completion",async({page})=>{
+ await seedPerson(page,"g","completed");
+ await page.goto("/",{waitUntil:"domcontentloaded"});
+ const guide=await summonGuide(page);
+ await guide.getByRole("button",{name:"Quick refresher"}).click();
+ await expect(page.locator(".hm-guide-copy")).toContainText("tonight and the week at a glance");
+ await page.locator('[data-home-guide="nav-cook"]').click();
+ await expect(page).toHaveURL(/\/cook$/);
+ await expect(page.locator(".hm-guide-copy")).toContainText("Cook is all our recipes");
+ const state=await page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-guide-v1:g")||"{}"));
+ expect(state.status).toBe("completed");
 });
 
 test("guide has a static reduced-motion equivalent",async({browser})=>{
