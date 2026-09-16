@@ -1,0 +1,13 @@
+const fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const guide=read('components/HomeGuide.tsx');
+const kitchen=read('components/FirstRunKitchen.tsx');
+const fail=msg=>{throw new Error(`Home guide Kitchen V15 audit failed: ${msg}`)};
+if(guide.includes('person!=="g"||!h.kitchenReady'))fail('G tutorial is gated on Kitchen readiness');
+if(!guide.includes('Kitchen truth is something the walkthrough teaches'))fail('walkthrough no longer treats Kitchen as teaching content');
+if(!guide.includes('This is Kitchen — fridge, freezer and pantry'))fail('unknown-Kitchen teaching copy is missing');
+if(!guide.includes('home-meals:guide-state'))fail('guide does not signal completion/dismissal to fallback onboarding');
+if(!kitchen.includes('guidePending'))fail('legacy Kitchen modal can pre-empt G tutorial');
+if(!kitchen.includes('home-meals:guide-state'))fail('legacy Kitchen flow does not resume after tutorial exit');
+console.log('Home Meals guide Kitchen V15 audit passed · G tutorial starts before Kitchen truth · Kitchen taught in-tour · legacy truth flow resumes after exit');
