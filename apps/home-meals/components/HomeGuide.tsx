@@ -22,9 +22,9 @@ const surfaceAnchor:Record<Surface,string>={home:".hm-tonight",cook:".hm-cook-he
 const surfaceName:Record<Surface,string>={home:"Home",cook:"Cook",prep:"Prep",kitchen:"Kitchen",plan:"Plan"};
 const FULL_LINE:Record<Surface,string>={
  home:"This is home base. Tonight and the week start here.",
- cook:"All our recipes live here. ‘Ready now’ only means Kitchen says we can actually make it.",
+ cook:"All our recipes live here. Once Kitchen is set, ‘Ready now’ means the recorded kitchen says we can actually make it.",
  prep:"Prep is our shortcut stash — bases, pastes, sauces and boosters we make ahead so dinner’s easier.",
- kitchen:"Kitchen is what we actually have. If it isn’t recorded here, Home won’t pretend it is.",
+ kitchen:"Kitchen is what we actually have — fridge, freezer and pantry. Tap things to update them or use the camera. Home won’t pretend something is here if we haven’t recorded it.",
  plan:"This is our week. Suggestions aren’t locked until we confirm them, and either of us can change anything we don’t fancy."
 };
 const QUICK_LINE:Record<Surface,string>={
@@ -91,7 +91,7 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
  const path=usePathname(),router=useRouter(),h=useHousehold();
  const[person,setPerson]=useState<HouseholdPerson|null>(null),[stage,setStage]=useState<Stage>("idle"),[mode,setMode]=useState<GuideMode>("topic"),[seen,setSeen]=useState<Set<Surface>>(new Set()),[topic,setTopic]=useState<Topic|null>(null),[blocked,setBlocked]=useState(false);
  const surface=surfaceFromPath(path),currentTopic=topicFromPath(path),lastSurface=useRef<Surface|null>(null);
- const stop=(reason:"dismissed"|"completed"|"closed")=>{if(mode==="first"&&person){if(reason==="completed")writeFirstRun(person,"completed");else writeFirstRun(person,"dismissed")}emit(`home_guide_${reason}`,{person,mode});setStage("idle");setSeen(new Set());setTopic(null)};
+ const stop=(reason:"dismissed"|"completed"|"closed")=>{if(mode==="first"&&person){if(reason==="completed")writeFirstRun(person,"completed");else writeFirstRun(person,"dismissed");window.dispatchEvent(new Event("home-meals:guide-state"))}emit(`home_guide_${reason}`,{person,mode});setStage("idle");setSeen(new Set());setTopic(null)};
 
  useEffect(()=>{const sync=()=>setPerson(getHouseholdPerson());sync();window.addEventListener("home-meals:person",sync);return()=>window.removeEventListener("home-meals:person",sync)},[]);
  useEffect(()=>{
@@ -99,10 +99,10 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
   window.addEventListener("home-meals:guide",summon as EventListener);return()=>window.removeEventListener("home-meals:guide",summon as EventListener)
  },[person,router]);
  useEffect(()=>{
-  if(person!=="g"||!h.kitchenReady||stage!=="idle"||!surface||readFirstRun("g")!=="unseen")return;
+  if(person!=="g"||stage!=="idle"||!surface||readFirstRun("g")!=="unseen")return;
   const timer=window.setTimeout(()=>{if(document.querySelector('[role="dialog"][aria-modal="true"]'))return;setMode("first");setSeen(new Set());setStage("welcome");emit("home_guide_started",{person:"g",mode:"first"})},900);
   return()=>window.clearTimeout(timer)
- },[person,h.kitchenReady,stage,surface]);
+ },[person,stage,surface]);
  useEffect(()=>{
   if(stage!=="tour"||!surface)return;
   setSeen(prev=>{if(prev.has(surface))return prev;const next=new Set(prev);next.add(surface);return next});
@@ -139,10 +139,20 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
   }
   if(stage!=="tour"||!surface)return null;
   const effective=new Set(seen);effective.add(surface);const remaining=CORE.filter(x=>!effective.has(x));const progress={current:Math.min(effective.size,CORE.length),total:CORE.length};
+  // Kitchen truth is something the walkthrough teaches, never a prerequisite for seeing the walkthrough.
+  if(!h.kitchenReady&&surface==="home"){
+   const line=mode==="quick"?"Home is where tonight and the week come together. Kitchen is the truth underneath it — tap Kitchen.":"This is Home. Tonight and the week live here, but I won’t make up what we have. Kitchen is the truth underneath everything, so tap Kitchen and I’ll show you how it works.";
+   return{anchor:orb,highlight:navFor.kitchen,line,expression:"look",progress};
+  }
+  if(!h.kitchenReady&&surface==="kitchen"){
+   const next=remaining[0]??"home";
+   const line=mode==="quick"?"Kitchen is what we actually have. Update it by tapping things or use the camera. You can keep touring now.":"This is Kitchen — fridge, freezer and pantry, basically what we actually have. Tap anything to update it or use the camera; when it matches reality, hit Kitchen checked. You don’t have to finish it right now to keep looking around.";
+   return{anchor:surfaceAnchor.kitchen,highlight:navFor[next],line:`${line} ${promptFor(next)}`,expression:"talk",progress};
+  }
   if(!remaining.length&&surface!=="home")return{anchor:surfaceAnchor[surface],highlight:navFor.home,line:`${lineFor(surface,mode)} Tap Home and I’ll wrap up.`,expression:"look",progress};
   const next=remaining[0];if(!next)return null;
   return{anchor:surfaceAnchor[surface],highlight:navFor[next],line:`${lineFor(surface,mode)} ${promptFor(next)}`,expression:mode==="quick"?"pleased":"look",progress};
- },[stage,surface,seen,topic,path,mode,currentTopic]);
+ },[stage,surface,seen,topic,path,mode,currentTopic,h.kitchenReady]);
 
  useEffect(()=>{
   const highlightSelector=step?.highlight;

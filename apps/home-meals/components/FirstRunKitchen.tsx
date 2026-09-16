@@ -8,9 +8,11 @@ import {feedback} from "@/lib/feedback";
 
 /** First-run truth choice. Unknown is not the same thing as confirmed empty. */
 export function FirstRunKitchen(){
- const path=usePathname(),h=useHousehold(),[syncReady,setSyncReady]=useState(false);
+ const path=usePathname(),h=useHousehold(),[syncReady,setSyncReady]=useState(false),[guidePending,setGuidePending]=useState(true);
  useEffect(()=>{let live=true;const check=async()=>{try{const res=await fetch("/api/household/session",{cache:"no-store"}),info=await res.json() as {configured?:boolean;authenticated?:boolean};if(!live)return;setSyncReady(!info.configured|| (!!info.authenticated&&!!getHouseholdPerson()))}catch{if(live)setSyncReady(true)}};void check();const ready=()=>setSyncReady(true);window.addEventListener("home-meals:sync-ready",ready);return()=>{live=false;window.removeEventListener("home-meals:sync-ready",ready)}},[]);
- if(!syncReady||h.kitchenReady||!(path==="/"||path==="/kitchen"))return null;
+ useEffect(()=>{const checkGuide=()=>{try{const person=getHouseholdPerson(),raw=person==="g"?localStorage.getItem("home-meals-guide-v1:g"):null;setGuidePending(person==="g"&&!raw)}catch{setGuidePending(false)}};checkGuide();window.addEventListener("home-meals:person",checkGuide);window.addEventListener("home-meals:guide-state",checkGuide);return()=>{window.removeEventListener("home-meals:person",checkGuide);window.removeEventListener("home-meals:guide-state",checkGuide)}},[]);
+ // G learns Kitchen inside the talking-head walkthrough first. Do not let the legacy truth-choice modal pre-empt that tutorial.
+ if(!syncReady||guidePending||h.kitchenReady||!(path==="/"||path==="/kitchen"))return null;
  const empty=()=>{h.confirmEmptyKitchen();feedback("success");window.setTimeout(()=>{window.location.href="/prep"},40)};
  const manual=()=>{h.confirmEmptyKitchen();feedback("success");window.setTimeout(()=>{window.location.href="/kitchen"},40)};
  return <div className="hm-sheet-backdrop" role="presentation">
