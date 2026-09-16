@@ -4,22 +4,22 @@
 
 Home Guide teaches the real Home Meals product through the real UI. It never creates onboarding pages, fake screenshots, locked demo screens, or a separate tutorial mode.
 
-The guide is Josh as a small transparent animated 3D sticker head with a speech bubble. The tone is natural couple-language: warm, casual, occasionally affectionate, never corporate, childish, or over-performative.
+The guide uses the small transparent animated 3D Josh sticker head with a speech bubble. For G, the tone is natural couple-language: warm, casual and occasionally affectionate. For Josh, the same guide is straightforward and familiar rather than pretending Josh is talking romantically to himself.
 
-Automatic onboarding is only for G on first use after Kitchen truth is established. Josh never gets an automatic tour. After the first run, either Josh or G can summon the guide from the existing green Home orb with **Show me around**.
+Automatic onboarding is for **both Josh and G on first use**. It is tracked separately per person. G gets the couple-style opening; Josh gets a neutral quick-tour opening. After first use, either Josh or G can summon the guide from the existing green Home orb with **Show me around**.
 
 ## Product standards
 
-1. **Teach by doing.** G taps the actual Cook / Prep / Kitchen / Plan controls. The guide points; it never reproduces controls.
+1. **Teach by doing.** Josh or G taps the actual Cook / Prep / Kitchen / Plan controls. The guide points; it never reproduces controls.
 2. **Activation before feature dumping.** First run teaches the five core mental models plus the Home orb. Deep features stay available as specific help topics.
 3. **User controls pace.** No timed auto-advance. Navigation or an explicit action advances the experience.
 4. **Never trap the user.** The underlying app stays usable. Detours are accepted. Escape / close always exits.
 5. **Progressive disclosure.** Camera, voice, live cooking and History are explained on demand instead of bloating first run.
 6. **Permissions at intent.** The guide can explain camera / voice, but only the real camera / voice action may trigger OS permission prompts.
-7. **Persistent but not nagging.** G gets one automatic opportunity. Completion or dismissal prevents automatic reappearance. Replay remains manual.
+7. **Persistent but not nagging.** Each person gets one automatic opportunity. Completion or dismissal prevents automatic reappearance for that person. Replay remains manual.
 8. **Spatial safety.** Head and bubble avoid the target, fixed CTA, persistent input dock, bottom nav, focused inputs and the visual keyboard viewport.
 9. **Accessible equivalent.** Text is always present. Audio is optional. Reduced-motion users receive the same guidance without travel/bobbing/talking animation.
-10. **Small personality, high usefulness.** Pet names are occasional. The guide sounds like Josh helping G, not a customer-success agent.
+10. **Small personality, high usefulness.** Pet names are for G only and occasional. The guide is useful first, never customer-success theatre.
 
 ## Character contract
 
@@ -41,35 +41,46 @@ The nine expression frames are:
 
 All are transparent, head-only assets. No torso, shoulders, room, card portrait, fake environment, or independently redesigned face is allowed. New reactions must preserve the approved face shape, skin tone, freckles, beard geometry, hair and 3D-sticker treatment.
 
-## First-run journey for G
+## First-run journey for Josh + G
 
 ### Trigger
 
-- person === `g`
-- Kitchen truth is established
+- person is `josh` or `g`
 - current route is one of the five core surfaces
-- G guide state is `unseen`
+- that person's guide state is `unseen`
 - no modal sheet/dialog is open
+
+Kitchen readiness is **not** a prerequisite. If Kitchen is still unknown, the walkthrough teaches Kitchen early and continues from there.
 
 ### Entry
 
 **Anchor:** green Home orb  
-**Expression:** affectionate / hello pop  
-**Copy:** `Hey sunshine ☀️. Come, I’ll show you around. Takes a minute.`  
+**Expression:** hello pop
+
+For G:
+
+`Hey sunshine ☀️. Come, I’ll show you around. Takes a minute.`
+
+For Josh:
+
+`Quick tour. I’ll show you how everything fits together. Takes a minute.`
+
 **Actions:** `Show me` / `Not now`
 
-`Not now` permanently stops automatic prompting. G can still summon the guide later.
+`Not now` permanently stops automatic prompting for that person. The guide can still be summoned later.
 
 ### Core lap
 
-The preferred order is Home → Cook → Prep → Kitchen → Plan → Home, but this is adaptive, not locked. If G chooses another main tab, the guide follows her actual route, explains where she went, and continues with the remaining unseen surfaces.
+When Kitchen is already set, the preferred order is Home → Cook → Prep → Kitchen → Plan → Home. The route remains adaptive rather than locked. If the user chooses another main tab, the guide follows the actual route, explains where they went, and continues with the remaining unseen surfaces.
+
+When Kitchen is not set, the walkthrough goes Home → Kitchen first so the user understands what Kitchen is and how to update it, then continues through the remaining core surfaces. The user does not have to finish Kitchen setup before continuing the tour.
 
 | Surface | Core teaching point | Preferred next action |
 | --- | --- | --- |
-| Home | `This is home base. Tonight and the week start here.` | Tap Cook |
-| Cook | `All our recipes live here. ‘Ready now’ only means Kitchen says we can actually make it.` | Tap Prep |
+| Home | `This is home base. Tonight and the week start here.` | Tap Cook, or Kitchen first when Kitchen is unknown |
+| Cook | `All our recipes live here. Once Kitchen is set, ‘Ready now’ means we can actually make it with what’s at home.` | Tap Prep |
 | Prep | `Prep is our shortcut stash — bases, pastes, sauces and boosters we make ahead so dinner’s easier.` | Tap Kitchen |
-| Kitchen | `Kitchen is what we actually have. If it isn’t recorded here, Home won’t pretend it is.` | Tap Plan |
+| Kitchen | `Kitchen is what we actually have — fridge, freezer and pantry. Tap things to update them or use the camera.` | Tap Plan / next unseen area |
 | Plan | `This is our week. Suggestions aren’t locked until we confirm them, and either of us can change anything we don’t fancy.` | Return Home |
 
 A subtle `n/5` progress cue communicates length without turning the experience into a wizard.
@@ -77,11 +88,19 @@ A subtle `n/5` progress cue communicates length without turning the experience i
 ### Finish
 
 **Anchor:** green Home orb  
-**Expression:** wink / pleased  
-**Copy:** `And this little green thing is me. Tap it whenever you’re not sure — ask me, talk to me, show me something, or get me to walk you through any bit again.`  
+**Expression:** wink / pleased
+
+For G:
+
+`And this little green thing is me. Tap it whenever you’re not sure — ask me, talk to me, show me something, or get me to walk you through any bit again.`
+
+For Josh:
+
+`That’s the lot. The green orb is Home — tap it anytime to ask, talk, show it something, or replay any part of this.`
+
 **Action:** `Got it`
 
-Completion persists `completed` for G and never auto-runs again.
+Completion persists separately for Josh and G and never auto-runs again for that person.
 
 ## Summoned guide: Josh or G
 
@@ -117,10 +136,10 @@ Finish: `Yep, that’s the app. Tap me anytime if you only want a refresher on o
 `Cook is the whole recipe library. Filters like Ready now, favourites and not lately are just different ways into the same recipes.`
 
 **Prep**  
-`Prep is the make-ahead system. Bases start dishes, mids and sauces shape them, boosters finish them. Prep Day only makes what the confirmed week actually needs.`
+`Prep is the make-ahead system. Bases start dishes, mids and sauces shape them, boosters finish them. Prep Day only makes what the week actually needs.`
 
 **Kitchen**  
-`Kitchen is household truth: fridge, freezer and pantry. Home only uses what we’ve actually recorded.`
+`Kitchen is the fridge, freezer and pantry — basically what we have at home. Home only uses what we’ve actually added.`
 
 **Plan**  
 `Plan is our shared week. We can move dinners around, change our minds and confirm the week when it actually looks right.`
@@ -130,7 +149,7 @@ Finish: `Yep, that’s the app. Tap me anytime if you only want a refresher on o
 
 **Camera**  
 Persistent control: `That camera is for showing me instead of typing. I’ll suggest what I see and you confirm before Kitchen changes.`  
-Inside Scan: `Camera is reference, not magic. Show me the fridge, freezer, pantry, receipt, prep or dinner — I suggest what I see, and nothing changes until you confirm it.`
+Inside Scan: `Show me the fridge, freezer, pantry, receipt, prep or dinner. I’ll suggest what I can see, and nothing changes until you confirm it.`
 
 **Cooking**  
 From Cook: `Pick any recipe. Open it, then Start cooking gives you the step-by-step cooking mode, timers, finish logging, ratings and notes.`  
@@ -153,7 +172,7 @@ Terminal values:
 - `completed`
 - `dismissed`
 
-Automatic first run reads only G's state. Manual replay does not overwrite first-run state for either person.
+Automatic first run reads the **current person's** state. Josh and G therefore get independent first-use walkthroughs on the same browser/device profile. Manual replay does not overwrite first-run state for either person.
 
 Transient runtime state:
 
@@ -226,8 +245,11 @@ These events exist for acceptance and debugging, never to make the guide nag mor
 
 A release fails if any of these regress:
 
-- automatic walkthrough appears for Josh;
-- dismissed/completed G walkthrough returns automatically;
+- Josh or G no longer gets the automatic first-use walkthrough when their state is unseen;
+- dismissed/completed walkthrough returns automatically for that person;
+- G receives Josh's neutral opening or Josh receives G's `sunshine` opening;
+- Kitchen readiness becomes a prerequisite for first-run walkthrough;
+- fallback Kitchen setup pre-empts either person's first-use walkthrough;
 - replay disappears from Ask Home;
 - quick / full / one-bit / this-screen help disappears;
 - guide blocks the real target or persistent dock;
@@ -250,4 +272,5 @@ A release fails if any of these regress:
 - independently redesigned Josh faces between reactions;
 - customer-success language (`module`, `workflow`, `congratulations`, etc.);
 - calling G `sunshine` in every message;
+- calling Josh `sunshine` in the walkthrough;
 - covering a CTA, keyboard, camera control, bottom navigation or the element being explained.
