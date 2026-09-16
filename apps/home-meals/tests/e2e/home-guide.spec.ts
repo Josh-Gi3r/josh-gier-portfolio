@@ -51,11 +51,21 @@ test("G gets the automatic first-run guide once and can dismiss it permanently",
  expect(state.status).toBe("dismissed");
 });
 
-test("Josh never gets automatic G onboarding",async({page})=>{
+test("Josh gets the automatic first-run guide once and can dismiss it permanently",async({page})=>{
  await seedPerson(page,"josh");
  await page.goto("/",{waitUntil:"domcontentloaded"});
+ const guide=page.locator("[data-home-guide-overlay]");
+ await expect(guide).toBeVisible({timeout:4000});
+ await expect(guide).toContainText("Quick tour");
+ await expect(guide).not.toContainText("sunshine");
+ await expectNoCollision(page);
+ await guide.getByRole("button",{name:"Not now"}).click();
+ await expect(guide).toHaveCount(0);
+ await page.reload({waitUntil:"domcontentloaded"});
  await page.waitForTimeout(1300);
- await expect(page.locator("[data-home-guide-overlay]")).toHaveCount(0);
+ await expect(guide).toHaveCount(0);
+ const state=await page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-guide-v1:josh")||"{}"));
+ expect(state.status).toBe("dismissed");
 });
 
 test("first-run guide uses real navigation, progress and accepts detours",async({page})=>{
