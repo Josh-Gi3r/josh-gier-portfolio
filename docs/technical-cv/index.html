@@ -330,8 +330,246 @@
      control may cover a paragraph, formula or code block. */
   .cv-backtop { display:none; }
 }
-</style><noscript><style>@media screen {.cv-header{position:static}.cv-header-actions{display:none}.cv-navigation{display:flex;flex-wrap:wrap}.cv-header-inner{flex-wrap:wrap}.cv-brand-text{display:block}}</style></noscript><meta content="Josh Gier: founder, AI systems builder, product and growth. Technical projects, systems architecture and operating experience." name="description"/></head>
-<body><a class="cv-skip" href="#cv-top">Skip to CV</a>
+</style><noscript><style>@media screen {.cv-header{position:static}.cv-header-actions{display:none}.cv-navigation{display:flex;flex-wrap:wrap}.cv-header-inner{flex-wrap:wrap}.cv-brand-text{display:block}}</style></noscript><meta content="Josh Gier: founder, AI systems builder, product and growth. Technical projects, systems architecture and operating experience." name="description"/><style>
+/* intro letter popup */
+.letter-overlay{
+  --bg:#f4f6f8;
+  --bg-2:#ffffff;
+  --glass:rgba(255,255,255,.74);
+  --glass-2:rgba(255,255,255,.54);
+  --glass-3:rgba(16,17,20,.06);
+  --text:#101114;
+  --sub:#343b44;
+  --muted:#7c8794;
+  --accent:#d94b32;
+  --accent-soft:#ef8d7a;
+}
+
+
+/* overlay */
+.letter-overlay{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:rgba(237,240,244,.46);
+  backdrop-filter:blur(26px) saturate(1.05);
+  -webkit-backdrop-filter:blur(26px) saturate(1.05);
+  z-index:1000;
+}
+
+/* letter window */
+.letter-window{
+  position:relative;
+  width:min(980px, calc(100vw - 48px));
+  max-height:min(88vh, 980px);
+  overflow:auto;
+  border-radius:32px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02) 16%, rgba(255,255,255,.00) 32%),
+    var(--glass);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:
+    0 32px 110px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -1px 0 rgba(255,255,255,.04);
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.20) transparent;
+}
+
+/* soft internal sheen */
+.letter-window::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255,255,255,.88), transparent 28%),
+    radial-gradient(circle at 100% 0%, rgba(217,75,50,.08), transparent 28%);
+  mix-blend-mode:normal;
+}
+
+/* minimal chrome */
+.letter-bar{
+  position:sticky;
+  top:0;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  height:64px;
+  padding:0 18px 0 22px;
+  background:linear-gradient(180deg, rgba(255,255,255,.84), rgba(255,255,255,.62));
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(20,28,38,.08);
+}
+.letter-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  color:#7f8995;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.01em;
+}
+.letter-pill .dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:linear-gradient(180deg, var(--accent-soft), var(--accent));
+  box-shadow:0 0 14px rgba(217,75,50,.48);
+  flex:0 0 auto;
+}
+.letter-close{
+  width:38px;
+  height:38px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;
+  background:rgba(16,17,20,.04);
+  color:#68727d;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+  transition:background .16s ease, transform .16s ease, border-color .16s ease;
+}
+.letter-close:hover{
+  background:rgba(255,255,255,.10);
+  border-color:rgba(255,255,255,.16);
+  transform:scale(1.03);
+}
+.letter-close:focus-visible{
+  outline:2px solid rgba(255,154,136,.72);
+  outline-offset:3px;
+}
+
+/* body */
+.letter-body{
+  position:relative;
+  z-index:1;
+  padding:34px 40px 40px;
+}
+.letter-copy{
+  margin:0 auto;
+  max-width:86ch;
+  color:#333b45;
+  font-size:17px;
+  line-height:1.78;
+  letter-spacing:-.004em;
+}
+.letter-copy p{
+  margin:0 0 20px;
+}
+.letter-copy p:last-child{
+  margin-bottom:0;
+}
+.letter-copy strong{
+  color:var(--text);
+  font-weight:700;
+}
+.letter-copy a{
+  color:inherit;
+}
+.letter-copy .salute{
+  color:var(--text);
+}
+.letter-divider{
+  width:100%;
+  height:1px;
+  margin:0 0 28px;
+  background:linear-gradient(90deg, rgba(16,17,20,.10), rgba(16,17,20,.04) 48%, rgba(217,75,50,.16));
+  opacity:.92;
+}
+
+/* mobile */
+@media (max-width:760px){
+  .letter-overlay{
+    padding:10px;
+  }
+  .letter-window{
+    width:100%;
+    max-height:94dvh;
+    border-radius:26px;
+  }
+  .letter-bar{
+    height:58px;
+    padding:0 12px 0 16px;
+  }
+  .letter-pill{
+    font-size:12.5px;
+  }
+  .letter-close{
+    width:36px;
+    height:36px;
+    font-size:21px;
+  }
+  .letter-body{
+    padding:24px 20px 28px;
+  }
+  .letter-copy{
+    max-width:none;
+    font-size:15.5px;
+    line-height:1.68;
+  }
+  .letter-copy p{
+    margin-bottom:18px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .letter-close{transition:none}
+}
+.letter-overlay,.letter-overlay *{box-sizing:border-box}
+html.letter-open,html.letter-open body{overflow:hidden}
+@media print{.letter-overlay{display:none !important}}
+</style>
+</head>
+<body>
+  <div class="letter-overlay" id="letterOverlay">
+    <section class="letter-window" role="dialog" aria-modal="true" aria-label="Intro letter to Vishnu">
+      <div class="letter-bar">
+        <div class="letter-pill"><span class="dot" aria-hidden="true"></span><span>Intro letter</span></div>
+        <button class="letter-close" id="letterClose" aria-label="Close">×</button>
+      </div>
+
+      <div class="letter-body">
+        <div class="letter-divider" aria-hidden="true"></div>
+
+        <div class="letter-copy">
+          <p>Hey Vishnu,</p>
+
+          <p>Josh here, I'm a mate of Dilip's, and he recently shared your profile and what you've been building.</p>
+
+          <p>Reading about ego, I got instantly locked in.</p>
+
+          <p>Love the yōkai bet. Fault-tolerant folklore is very much my sort of thing.</p>
+
+          <p>Coincidentally, or maybe not, since I think all builders are doing some version of this, I'm building a personal agent - Goku is his name.</p>
+
+          <p>Of course he goes from base to Super to his final form, Ultra Instinct - or, for the normie, GPT-5 Sol, Fable 5.1 and GPT-6 Astra - a leader, he can summon various agents with various characteristics and strengths, whether Vegeta to support the hard task or the Ginyu Force for the mundane, whether marketing, social management or admin - as you can see, I am still stuck in the 80s.</p>
+
+          <p>Anyways, I brought him up because I too was trying to give him a personality, and I gathered: what are we but the sum of our memories, mistakes, wins and regrets? Or maybe not, as Philip K. Dick wrote the bear case: what happens when the memory is planted. Your yōkai are that debate shipped as a product, and I think it is the right bet - so I placed my own memory layer, Memento, built around cognitive-neuroscience concepts and episodic consolidation that lets experience shape his personality without promoting every passing mood into canon.</p>
+
+          <p>Would love to bring that work into the conversation about how your yōkai develop relationships over time. That shared history is an interesting retention thesis, too.</p>
+
+          <p>I'd love to help build both the characters and the community (my marketing side can't help itself) around them.</p>
+
+          <p>I also saw what you're building in your ego game-agent architecture for autonomous gameplay in 3D environments. I'm close to the Razer team, including Min and their newly formed AI team, and happy to help start a convo if needed.</p>
+
+          <p>Related to 3D envs, my most recent pet project is SPOTNOOK, an AI-native 3D property platform - its finished version could be described as GTA 6 x PropertyGuru, but it's a cute lil guy called NOOK that brings you around a 3D world showcasing a behemothic database built on the actual God's Eye tech.</p>
+
+          <p>Anyways, thought I should share my CV - just close this intro and you have access to it; my casual portfolio is also on the main URL. Would love to meet, catch up over coffee or vodka and see where we could cook together.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+<a class="cv-skip" href="#cv-top">Skip to CV</a>
 <header aria-label="CV navigation" class="cv-header">
 <div class="cv-header-inner">
 <a aria-label="Josh Gier, back to top" class="cv-brand" href="#cv-top"><span aria-hidden="true" class="cv-monogram">JG</span><span class="cv-brand-text">Technical CV</span></a>
@@ -1244,5 +1482,23 @@ sustained utilisation → self-host / colo / owned</pre><div class="formula">TCO
   window.addEventListener('afterprint',balance);
   document.fonts.ready.then(balance);
 })();
-</script></body>
+</script><script>
+(() => {
+  const overlay = document.getElementById('letterOverlay');
+  const close = document.getElementById('letterClose');
+
+  document.documentElement.classList.add('letter-open');
+
+  function hide(){
+    overlay.style.display = 'none';
+    document.documentElement.classList.remove('letter-open');
+  }
+
+  close.addEventListener('click', hide);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') hide();
+  });
+})();
+</script>
+</body>
 </html>
