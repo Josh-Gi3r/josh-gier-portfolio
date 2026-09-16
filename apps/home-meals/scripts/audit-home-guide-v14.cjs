@@ -12,7 +12,7 @@ const css=read('app/styles/home-guide.css');
 const globals=read('app/globals.css');
 const tests=read('tests/e2e/home-guide.spec.ts');
 const spec=read('HOME_GUIDE_WALKTHROUGH_V14.md');
-const sprite=path.join(root,'public/images/home-guide/josh-head-sprite.webp');
+const frames=['idle','talk','happy','affectionate','wink'];
 
 must(layout.includes('HomeGuideProvider'),'guide provider is not mounted');
 must(globals.includes('home-guide.css'),'guide CSS is not loaded');
@@ -35,11 +35,9 @@ must(ask.includes('home-meals:guide'),'Show me around does not summon the guide'
 must(css.includes('pointer-events:none')&&css.includes('pointer-events:auto'),'nonmodal pointer-event contract is missing');
 must(css.includes('@media(prefers-reduced-motion:reduce)'),'CSS reduced-motion fallback is missing');
 must(css.includes('min-height:44px'),'guide action touch targets are below the 44px project standard');
-must(css.includes("/images/home-guide/josh-head-sprite.webp"),'approved Josh sticker sprite is not wired');
 must(!css.includes('.hm-guide-face'),'temporary CSS-drawn face returned');
-must(fs.existsSync(sprite),'Josh sticker sprite file is missing');
-must(fs.statSync(sprite).size>100000,'Josh sticker sprite looks like a placeholder or failed export');
+for(const name of frames){const p=path.join(root,`public/images/home-guide/${name}.webp`);must(fs.existsSync(p),`Josh guide frame ${name} is missing`);const buf=fs.readFileSync(p);must(buf.length>2500,`Josh guide frame ${name} looks like a placeholder`);must(buf.toString('ascii',0,4)==='RIFF'&&buf.toString('ascii',8,12)==='WEBP',`Josh guide frame ${name} is not a valid WebP container`);must(css.includes(`/images/home-guide/${name}.webp`),`Josh guide frame ${name} is not wired into the guide`)}
 must(spec.includes('First-run journey for G')&&spec.includes('Summoned guide: Josh or G'),'walkthrough implementation spec is incomplete');
 for(const phrase of ['automatic first-run guide once','Quick refresher','Whole thing','One bit','reduced-motion'])must(tests.includes(phrase),`browser acceptance missing ${phrase}`);
 
-console.log('Home Meals talking-head guide V14 audit passed · approved Josh sticker · G-first-run only · quick/full/topic replay · detour-tolerant · deep-topic help · viewport-safe · reduced-motion aware');
+console.log('Home Meals talking-head guide V14 audit passed · approved Josh head frames · G-first-run only · quick/full/topic replay · detour-tolerant · deep-topic help · viewport-safe · reduced-motion aware');
