@@ -1,0 +1,186 @@
+{
+  "version": 16,
+  "audit_base_commit": "10786957326f6f678710ab756749a495ce852f3e",
+  "status": "discovery_complete_remediation_pending_review",
+  "severity": {
+    "P0": "destructive data risk, security/privacy, safety, unrecoverable action or app-wide blocker",
+    "P1": "blocks or seriously confuses a normal household journey",
+    "P2": "meaningful UX/copy/IA inconsistency without blocking completion",
+    "P3": "polish"
+  },
+  "findings": [
+    {
+      "id": "SAFE-001",
+      "severity": "P0",
+      "areas": ["STATE", "SYNC", "COPY"],
+      "title": "Phone-only reset could reset the shared Josh + G household",
+      "evidence": "Browser reproduction captured a household PUT after Start the kitchen over with kitchenReady=false, weekStatus=unplanned, history=[] and ratings={} even though the sheet said this phone.",
+      "decision": "Remove user-accessible reset until shared reset is deliberately designed.",
+      "status": "fixed_in_v16"
+    },
+    {
+      "id": "SYNC-001",
+      "severity": "P1",
+      "areas": ["SYNC", "STATE", "FLOW"],
+      "title": "Clean additional device is falsely classified as conflicting local data",
+      "evidence": "Fresh zero-filled V12 stock objects are truthy to meaningfulPayload(); clean-join browser run showed This device already has Home Meals data.",
+      "decision": "Ignore untouched/default/zero scaffolding when deciding whether local state is meaningful.",
+      "status": "open"
+    },
+    {
+      "id": "FLOW-001",
+      "severity": "P1",
+      "areas": ["FLOW", "SYNC", "UI"],
+      "title": "Expired G session shows Connect Josh + G and the Josh guide together",
+      "decision": "Central entry coordinator; auth owns the screen before onboarding.",
+      "status": "open"
+    },
+    {
+      "id": "FLOW-002",
+      "severity": "P1",
+      "areas": ["FLOW", "SYNC", "KITCHEN", "UI"],
+      "title": "Sync conflict and Kitchen setup can stack simultaneously",
+      "evidence": "Reproduced the real screenshot class in Chromium with both high-attention decisions active.",
+      "decision": "Sync resolution precedes Kitchen/setup UI.",
+      "status": "open"
+    },
+    {
+      "id": "FLOW-003",
+      "severity": "P1",
+      "areas": ["FLOW", "KITCHEN", "UI"],
+      "title": "Fresh G sees talking-head guide over legacy Home onboarding",
+      "decision": "G guide becomes the sole G first-use teaching experience.",
+      "status": "open"
+    },
+    {
+      "id": "FLOW-004",
+      "severity": "P1",
+      "areas": ["FLOW", "KITCHEN", "UI"],
+      "title": "Fresh Josh can see Home first-run and FirstRunKitchen together",
+      "decision": "Give Josh one minimal setup path.",
+      "status": "open"
+    },
+    {
+      "id": "FLOW-005",
+      "severity": "P1",
+      "areas": ["FLOW", "UI", "STATE"],
+      "title": "No single arbiter owns entry/setup/recovery layers",
+      "decision": "Order: auth/code > person > sync > first-use > Kitchen > ordinary sheets.",
+      "status": "open"
+    },
+    {
+      "id": "SYNC-002",
+      "severity": "P1",
+      "areas": ["SYNC", "COPY", "FLOW"],
+      "title": "Conflict resolution is too opaque for an overwrite decision",
+      "evidence": "state should win / become canonical with Use shared household / Keep this device and no useful difference summary.",
+      "decision": "Normal language plus meaningful differences and last-change context.",
+      "status": "open"
+    },
+    {
+      "id": "COOK-001",
+      "severity": "P1",
+      "areas": ["COOKING", "STATE", "AI"],
+      "title": "Leftovers are promised but not persisted as a household object",
+      "evidence": "Cooking copy promises two leftovers; current observation writes leftoverWeightG=null and no portion/location lifecycle exists.",
+      "decision": "Preferred: explicit remaining portions + Fridge/Freezer/None + later consumption.",
+      "status": "open"
+    },
+    {
+      "id": "COPY-001",
+      "severity": "P2",
+      "areas": ["COPY", "UI"],
+      "title": "Internal engineering language appears across active UI",
+      "evidence": "Examples include Kitchen truth, canonical, qualitative, repertoire, reconciled, packet equivalents, production batch, storage packet, source-tested formulation and reference minutes.",
+      "decision": "Full active-surface human-language rewrite plus regression gate.",
+      "status": "open"
+    },
+    {
+      "id": "AI-001",
+      "severity": "P2",
+      "areas": ["AI", "VOICE", "COPY"],
+      "title": "AI layer is not strongly fenced from internal vocabulary",
+      "decision": "Reason over technical context; final user language must be natural household English.",
+      "status": "open"
+    },
+    {
+      "id": "IA-001",
+      "severity": "P2",
+      "areas": ["FLOW", "COOKING", "UI"],
+      "title": "From what we have builder is not directly discoverable from Cook",
+      "decision": "Restore a visible Cook entry without cluttering the page.",
+      "status": "open"
+    },
+    {
+      "id": "MEMORY-001",
+      "severity": "P2",
+      "areas": ["HISTORY", "STATE", "SYNC"],
+      "title": "Dinner photos are device-local while other couple memory is shared",
+      "decision": "Make this an explicit product decision; preferred direction is bounded shared household photo memory.",
+      "status": "open"
+    },
+    {
+      "id": "COPY-002",
+      "severity": "P2",
+      "areas": ["PREP", "COPY"],
+      "title": "Prep and Help often explain machinery before the household action",
+      "decision": "Lead with what to do; preserve detailed measurement rules underneath.",
+      "status": "open"
+    },
+    {
+      "id": "VISION-001",
+      "severity": "P2",
+      "areas": ["CAMERA", "AI", "COPY"],
+      "title": "Vision presentation reads like model diagnostics",
+      "decision": "Keep confidence and confirmation behavior; humanize labels and actions.",
+      "status": "open"
+    },
+    {
+      "id": "PWA-001",
+      "severity": "P2",
+      "areas": ["PWA", "COPY"],
+      "title": "Offline promise may be broader than guaranteed cache coverage",
+      "decision": "Narrow copy or proactively cache the week/needed dynamic recipe routes.",
+      "status": "open"
+    },
+    {
+      "id": "GUIDE-001",
+      "severity": "P2",
+      "areas": ["FLOW", "COPY"],
+      "title": "Guide behavior is sound but some copy still sounds like the data model",
+      "decision": "Include all guide dialogue in the human-language pass.",
+      "status": "open"
+    },
+    {
+      "id": "GUIDE-002",
+      "severity": "P3",
+      "areas": ["UI", "MOBILE"],
+      "title": "Josh reaction assets use mixed 112px and 80px source dimensions",
+      "decision": "Inspect on real iPhone and normalize only if sharpness/apparent scale changes are visible.",
+      "status": "open"
+    }
+  ],
+  "verified_passes": [
+    "representative active routes return successfully without browser page errors",
+    "no horizontal overflow observed on representative 390px routes",
+    "no broken loaded images observed on representative routes",
+    "fixed CTA and persistent Home dock clearance holds on sampled short-phone routes",
+    "smart Ask Home produces one active dialog in the configured-AI path",
+    "recipe add-to-week works",
+    "Plan Shop mode can add checked purchases to Kitchen",
+    "cooking reaches Done and writes a history event",
+    "Prep family/detail navigation works",
+    "History entries link to recipes",
+    "sampled visible controls have accessible names and at least 44px geometry",
+    "typed AI and Vision remain confirmation-first",
+    "guide replay, detours and reduced-motion have acceptance coverage"
+  ],
+  "execution_order": [
+    "A: entry/sync/onboarding orchestration",
+    "B: one coherent first-use system",
+    "C: app-wide human-language rewrite and AI voice contract",
+    "D: truthful leftover state",
+    "E: Cook builder discoverability and shared meal-photo decision",
+    "F: real-device PWA/camera/mic acceptance"
+  ]
+}
