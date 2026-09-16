@@ -1,0 +1,39 @@
+{
+  "version": 17,
+  "audit_base_commit": "935cae4d4e471e42dab9137ef6d00905f79dcd63",
+  "status": "visual_acceptance_rejected_remediation_open",
+  "findings": [
+    {"id":"VUX-001","severity":"P1","area":"FIRST_USE_STATE","title":"Josh screenshot is not a true zero-state despite no conscious household decisions","status":"open"},
+    {"id":"VUX-002","severity":"P1","area":"FIRST_USE_FLOW","title":"Multiple first-use systems compete instead of one arbiter owning entry","status":"open"},
+    {"id":"VUX-003","severity":"P1","area":"GUIDE_VISUAL","title":"Walkthrough lacks scrim/spotlight and competes with live page","status":"open"},
+    {"id":"VUX-004","severity":"P1","area":"GUIDE_LAYOUT","title":"Guide close control clips off-screen on several core steps","status":"open"},
+    {"id":"VUX-005","severity":"P1","area":"GUIDE_COMPOSITION","title":"Josh head and speech bubble are not visually accepted as one coherent composition","status":"open"},
+    {"id":"VUX-006","severity":"P1","area":"HOME_ZERO_STATE","title":"Pre-seeded default week is exposed before the household explicitly builds a week","status":"open"},
+    {"id":"VUX-007","severity":"P2","area":"TOUCH","title":"Multiple real controls remain below the 44px mobile target","status":"open"},
+    {"id":"VUX-008","severity":"P2","area":"COPY","title":"Internal data-model and QA language remains user-visible","status":"open"},
+    {"id":"VUX-009","severity":"P2","area":"GUIDE_TYPE","title":"Primary walkthrough copy drops to 13px on small phones","status":"open"},
+    {"id":"VUX-010","severity":"P2","area":"PREP_TYPE","title":"Prep category descriptions render at 11px","status":"open"},
+    {"id":"VUX-011","severity":"P2","area":"PLAN_HIERARCHY","title":"Unplanned Plan exposes full operational consequence before user commitment","status":"open"},
+    {"id":"VUX-012","severity":"P2","area":"KITCHEN_HIERARCHY","title":"Confirmed-empty Kitchen immediately becomes a long repetitive inventory control list","status":"open"},
+    {"id":"VUX-013","severity":"P2","area":"RECIPE_HIERARCHY","title":"Recipe detail foregrounds methodology/provenance jargon over household utility","status":"open"},
+    {"id":"VUX-014","severity":"P3","area":"TYPOGRAPHY_DENSITY","title":"11–12px utility text is overused across dense screens","status":"open"}
+  ],
+  "verified_passes": [
+    "no sampled horizontal overflow at 390px",
+    "guide card avoids persistent dock in sampled states",
+    "guide card avoids bottom navigation in sampled states",
+    "core routes load without browser page errors in deterministic visual pass",
+    "cooking mode remains comparatively focused",
+    "Scan and History empty states are comparatively clear",
+    "Prep category-first IA remains directionally strong"
+  ],
+  "execution_order": [
+    "1_first_use_arbiter_and_state_diagnosis",
+    "2_walkthrough_visual_rebuild",
+    "3_touch_target_sweep",
+    "4_human_language_and_recipe_presentation",
+    "5_home_plan_kitchen_first_use_hierarchy",
+    "6_typography_density_polish",
+    "7_repeat_visual_acceptance_and_real_device_review"
+  ]
+}
