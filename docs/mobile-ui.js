@@ -48,7 +48,7 @@ if(header&&!header.querySelector('.mobile-menu-toggle')){
     <div class="mobile-menu-section">
       <span class="mobile-menu-label">Documents</span>
       <a href="/assets/Josh-Gier-CV.docx" download>Download CV <b>↓</b></a>
-      <a href="https://technical-cv.josh-gier.com/" target="_blank" rel="noopener">Technical CV <b>↗</b></a>
+      <a href="https://technical-cv.josh-gier.com/?ref=portfolio" target="_blank" rel="noopener">Technical CV <b>↗</b></a>
       <a href="/assets/Josh-Gier-Portfolio.docx" download>Download portfolio <b>↓</b></a>
     </div>
     <div class="mobile-menu-section mobile-menu-links">

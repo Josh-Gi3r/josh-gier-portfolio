@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
+<script>if(new URLSearchParams(location.search).get('ref')==='portfolio')document.documentElement.classList.add('jgi-skip');</script>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Josh Gier | Technical CV</title>
 <style>
@@ -346,7 +347,7 @@
   -webkit-font-smoothing:antialiased;color:var(--jgi-ink);
   animation:jgi-fade .5s ease both;
 }
-.jgi[hidden]{display:none}
+.jgi[hidden],html.jgi-skip .jgi{display:none}
 .jgi *,.jgi *::before,.jgi *::after{box-sizing:border-box}
 .jgi-card{
   position:relative;display:flex;flex-direction:column;isolation:isolate;overflow:hidden;
@@ -1406,6 +1407,14 @@ sustained utilisation → self-host / colo / owned</pre><div class="formula">TCO
   const root = document.getElementById('jgi');
   if (!root) return;
   const html = document.documentElement;
+  // Opened from josh-gier.com: no intro letter. Drop the marker so a copied URL still shows it.
+  if (html.classList.contains('jgi-skip')) {
+    root.hidden = true;
+    const url = new URL(location.href);
+    url.searchParams.delete('ref');
+    history.replaceState(null, '', url.pathname + url.search + url.hash);
+    return;
+  }
   const card = root.querySelector('.jgi-card');
   const scroller = root.querySelector('.jgi-scroll');
   const read = root.querySelector('.jgi-read');
