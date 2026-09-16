@@ -13,7 +13,7 @@ const effect=between(sync,'useEffect(()=>','const connect=');
 must(sync,/remote\.version===0\|\|!remote\.payload[\s\S]*?pushLocal\(0,current\)[\s\S]*?saved==="conflict"[\s\S]*?fetchRemote\(\)[\s\S]*?setConflict\(fresh\)/,'first-write race must fetch the winning remote before entering conflict UI');
 must(sync,/localChanged&&remoteChanged[\s\S]*?setConflict\(remote\)[\s\S]*?setState\("conflict"\)/,'concurrent local/remote change must surface an explicit conflict');
 must(sync,/if\(!res\.ok\)throw new Error\("sync_write"\)/,'failed writes must not be treated as successful');
-must(sync,/Your local Home Meals still works and will retry automatically\./,'sync failure must preserve local usability and explain retry');
+must(sync,/This phone still works. I’ll try again automatically\./,'sync failure must preserve local usability and explain retry');
 
 assert(!!applyRemote,'applyRemote block could not be inspected');
 if(applyRemote){

@@ -1,0 +1,18 @@
+const fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..'),failures=[];const read=p=>fs.readFileSync(path.join(root,p),'utf8'),fail=m=>failures.push(m);
+const guide=read('components/HomeGuide.tsx'),first=read('components/FirstRunKitchen.tsx'),sync=read('components/HouseholdSyncV12.tsx'),state=read('components/HouseholdStateV12.tsx'),home=read('components/app/Home.tsx'),plan=read('components/app/Plan.tsx'),kitchen=read('components/app/Kitchen.tsx'),prep=read('components/app/PrepV10.tsx'),ask=read('app/api/ask-home/route.ts'),css=read('app/styles/home-guide.css'),completion=read('app/styles/completion.css'),prepCss=read('app/styles/prep-v10.css');
+if(!guide.includes('Hey sunshine! ☀️')||!guide.includes('Quick tour? I’ll show you around.'))fail('person-specific first-use openings are missing');
+for(const token of ['kitchenLesson===0','kitchenLesson===1','kitchenLesson===2','kitchen-tabs','kitchen-scan','kitchen-checked'])if(!guide.includes(token)&&!kitchen.includes(token))fail(`Kitchen walkthrough contract missing ${token}`);
+if(!css.includes('.hm-guide-layer.intro')||!css.includes('rgba(8,21,14,.28)')||!css.includes('9999px rgba(8,21,14,.46)')||!css.includes('.hm-guide-scrim'))fail('guide scrim/spotlight contract missing');
+if(css.includes('top:-38px')||!css.includes('transition:none')||!css.includes('.hm-guide-bubble:has(.hm-guide-close)'))fail('guide close/composition contract regressed');
+if(!home.includes('h.weekStatus!=="unplanned"')||!home.includes('DINNER IDEA'))fail('Home can expose a pseudo-week before household choice');
+if(!plan.includes('h.weekStatus!=="unplanned"')||!plan.includes('What should I work with?')||!plan.includes('Make our week'))fail('Plan zero-state hierarchy regressed');
+if(!state.includes('state.weekStatus==="unplanned"?[]'))fail('unplanned state still creates shopping/prep needs');
+if(!first.includes('Nothing yet')||!first.includes('Add what we have'))fail('first Kitchen choice is incomplete');
+if(!kitchen.includes('calmEntry')||!kitchen.includes('Browse all'))fail('empty Kitchen is no longer calm/progressive');
+if(!prep.includes('At home')||!prep.includes('Our prep'))fail('Prep no longer separates physical stock from usual prep');
+if(!sync.includes('data-household-sync-blocker')||!sync.includes('We made changes on two devices'))fail('sync arbitration regressed');
+if(!ask.includes('Talk like a normal helpful person in their home')||!ask.includes('Never expose internal product or data-model language'))fail('Ask Home internal-language fence missing');
+for(const token of ['.hm-bubble-actions>*{min-height:44px','.hm-us{min-height:44px','.hm-build{min-height:44px','[aria-label="Ask Home"]{min-width:44px'])if(!completion.includes(token))fail(`44px interaction guard missing ${token}`);
+if(!prepCss.includes('.hm-prep-v10-category p{font-size:13px')||!prepCss.includes('.hm-prep-family-v10-hero p{font-size:13px'))fail('Prep category descriptive type regressed');
+if(failures.length){console.error(`\nHome Meals human-copy / guide V18 audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals human-copy / guide V18 audit passed · true zero-state · human copy fence · guide focus · calm Kitchen · 44px mobile interactions');

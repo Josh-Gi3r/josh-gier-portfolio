@@ -5,7 +5,7 @@
 .hm-chip{min-height:44px;height:44px}
 .hm-chip.sm{min-height:44px;height:44px}
 .hm-chip.tint{min-height:44px;height:44px}
-.hm-sec a,.hm-sec button{min-height:44px;padding-block:6px}
+.hm-sec a,.hm-sec button{min-width:44px;min-height:44px;padding-block:6px}
 .hm-session .hm-btn{min-height:44px;height:44px}
 .hm-plan-tile .hm-btn{min-height:44px;height:44px}
 .hm-chiplist a,.hm-chiplist button{min-height:44px}
@@ -30,7 +30,7 @@
 .hm-level-labels{font-size:12px}
 
 /* Maintain comfortable targets for unlabeled action buttons that use the shared pill language. */
-button.hm-pill,a.hm-pill{min-height:44px;padding-block:7px}
+button.hm-pill,a.hm-pill{min-width:44px;min-height:44px;padding-block:7px}
 
 /* Household hydration/sync must never flash an empty white page. */
 [aria-label="Loading Home Meals"]{min-height:100dvh;display:grid;place-items:center;background:var(--page);color:var(--green-deep);font-weight:800;letter-spacing:-.02em}
@@ -55,3 +55,13 @@ button.hm-pill,a.hm-pill{min-height:44px;padding-block:7px}
 .hm-prep-library-expanded{padding-top:4px}.hm-prep-photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:14px var(--gutter) 0}.hm-prep-photo-card{border-radius:25px;background:#fff;box-shadow:var(--shadow-card);overflow:hidden;min-width:0}.hm-prep-photo-card .photo{display:block;height:150px;position:relative;background:#dfe8e2;color:#fff}.hm-prep-photo-card .photo>img,.hm-prep-photo-card .photo>span{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.hm-prep-photo-card .shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(27,42,34,.82))}.hm-prep-photo-card .code{position:absolute;left:12px;bottom:11px;font-size:18px;font-weight:800}.hm-prep-photo-card .stock{position:absolute;right:9px;top:9px;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.9);color:var(--green-deep);font-size:9px;font-weight:800}.hm-prep-photo-card .copy{padding:11px 12px 12px}.hm-prep-photo-card .copy strong,.hm-prep-photo-card .copy small{display:block}.hm-prep-photo-card .copy strong{font-size:13px}.hm-prep-photo-card .copy small{font-size:10px;line-height:1.3;color:var(--muted-2);margin-top:3px;min-height:26px}.hm-prep-photo-card .copy button{margin-top:9px;min-height:38px;width:100%;border-radius:14px;background:var(--tint-green);color:var(--green-deep);font-size:11px;font-weight:800}.hm-prep-photo-card .copy button.on{background:var(--grad-green-short);color:#fff}
 .hm-cooking .text{min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word}.hm-step{min-width:0;grid-template-columns:34px minmax(0,1fr) auto;overflow:hidden}.hm-step>div{min-width:0}.hm-step p,.hm-step small{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
 @media(min-width:640px){.hm-prep-library-card{height:250px}.hm-prep-active-grid,.hm-prep-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* V18 interaction pass: every visible primary/secondary action clears the 44px mobile target. */
+.hm-bubble-actions>*{min-height:44px;height:44px}
+.hm-us{min-height:44px}
+.hm-build{min-height:44px;height:44px}
+.hm-plan-hero .acts .swap{min-height:44px;height:44px}
+[aria-label="Ask Home"]{min-width:44px;min-height:44px}
+.hm-empty a,.hm-empty button{min-height:44px;display:inline-flex;align-items:center}
+.hm-week{padding-left:12px;padding-right:12px;gap:4px}
+.hm-days{margin-left:-10px;margin-right:-10px;gap:4px}

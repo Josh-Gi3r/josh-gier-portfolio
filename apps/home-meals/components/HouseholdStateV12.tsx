@@ -68,7 +68,7 @@ export function HouseholdStateV12Provider({children}:{children:React.ReactNode})
  useEffect(()=>{if(hydrated)localStorage.setItem(KEY,JSON.stringify(state))},[hydrated,state]);
 
  const componentStock=useMemo(()=>componentStockV12(state),[state.componentBatches,state.manualComponentStock]);
- const planningWeek=state.weekStatus==="suggested"&&state.suggestedWeek?.length===7?state.suggestedWeek:state.week;
+ const planningWeek=state.weekStatus==="unplanned"?[]:state.weekStatus==="suggested"&&state.suggestedWeek?.length===7?state.suggestedWeek:state.week;
  const prepNeeds=useMemo(()=>prepNeedsForRecipesV7(planningWeek,componentStock),[planningWeek,componentStock]);
  const shoppingNeeds=useMemo(()=>shoppingNeedsForPlanV7(planningWeek.map(recipeId=>({recipeId})),state.ingredientStock,state.qualitativeIngredientStock),[planningWeek,state.ingredientStock,state.qualitativeIngredientStock]);
 

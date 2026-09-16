@@ -20,9 +20,9 @@ export function HouseholdMemory(){
  const empty=!h.history.length&&!memory.notes.length&&!Object.values(h.favourites).some(Boolean);
  return <section id="memory" aria-label="Our history">
   <SectionHead title="Our history" action={<Link href="/cook">Recipes ›</Link>}/>
-  {empty?<div className="hm-empty"><strong>Nothing to learn from yet.</strong>Cook, rate and leave a note. Home keeps the useful parts here.<br/><Link href="/cook">Choose dinner ›</Link></div>:<>
+  {empty?<div className="hm-empty"><strong>Nothing here yet.</strong>Cook something, rate it, and leave a note if there’s anything worth remembering.<br/><Link href="/cook">Choose dinner ›</Link></div>:<>
    <div className="hm-stats" style={{marginTop:14}}><Stat v={h.history.length} k="dinners logged"/><Stat v={memory.cookedIds.length} k="recipes cooked" tint="var(--tint-peach)"/><Stat v={memory.versions} k="recipe changes" tint="var(--tint-sky)"/></div>
-   {memory.loved.length>0&&<><SectionHead title="Both loved" action={<span className="muted">4★ or better from each</span>}/><div className="hm-rail">{memory.loved.map(r=><MealTile key={r.id} recipe={r} sub={`J ${h.ratings[r.id]?.josh}★ · G ${h.ratings[r.id]?.g}★`}/>)}</div></>}
+   {memory.loved.length>0&&<><SectionHead title="Both loved" action={<span className="muted">both gave 4★ or better</span>}/><div className="hm-rail">{memory.loved.map(r=><MealTile key={r.id} recipe={r} sub={`J ${h.ratings[r.id]?.josh}★ · G ${h.ratings[r.id]?.g}★`}/>)}</div></>}
    {memory.split.length>0&&<><SectionHead title="We disagree on these"/><div className="hm-memory-lines">{memory.split.map(r=><Link key={r.id} href={`/cook/${r.id}`} className="hm-card hm-lift"><strong>{recipeTitle(r.id,r.title)}</strong><small>Josh {h.ratings[r.id]?.josh}★ · G {h.ratings[r.id]?.g}★</small></Link>)}</div></>}
    {memory.notes.length>0&&<><SectionHead title="Recent notes"/><div className="hm-memory-lines">{memory.notes.map((n,i)=>{const r=getRecipe(n.id);return <Link key={`${n.id}-${n.at}-${i}`} href={`/cook/${n.id}`} className="hm-card hm-lift"><small>{n.author==="josh"?"Josh":n.author==="g"?"G":"Home"} · {recipeTitle(r.id,r.title)}</small><p>“{n.text}”</p></Link>})}</div></>}
   </>}

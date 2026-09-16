@@ -7,9 +7,9 @@ const fail=msg=>{throw new Error(`Home guide Kitchen V15 audit failed: ${msg}`)}
 if(guide.includes('person!=="g"'))fail('Josh is still excluded from automatic first-use walkthrough');
 if(!guide.includes('readFirstRun(person)'))fail('first-use walkthrough is not tracked per person');
 if(!guide.includes('Kitchen setup is something the walkthrough teaches'))fail('walkthrough no longer treats Kitchen as teaching content');
-if(!guide.includes('This is Kitchen — fridge, freezer and pantry'))fail('unknown-Kitchen teaching copy is missing');
+if(!guide.includes('This is Kitchen: fridge, freezer and pantry')||!guide.includes('kitchen-tabs')||!guide.includes('kitchen-scan')||!guide.includes('kitchen-checked'))fail('unknown-Kitchen micro-walkthrough is missing');
 if(!guide.includes('home-meals:guide-state'))fail('guide does not signal completion/dismissal to fallback onboarding');
-if(!kitchen.includes('guidePending'))fail('fallback Kitchen sheet can pre-empt first-use walkthrough');
+if(!kitchen.includes('guidePending')||!kitchen.includes('syncBlocked'))fail('fallback Kitchen sheet can pre-empt first-use walkthrough or sync resolution');
 if(!kitchen.includes('home-meals-guide-v1:${person}'))fail('fallback Kitchen sheet does not defer for both Josh and G');
 if(!kitchen.includes('home-meals:guide-state'))fail('fallback Kitchen flow does not resume after walkthrough exit');
 console.log('Home Meals guide Kitchen V15 audit passed · Josh + G walkthrough starts before Kitchen setup · Kitchen taught in-tour · fallback setup resumes after exit');

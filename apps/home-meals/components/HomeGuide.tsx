@@ -21,17 +21,17 @@ const navFor:Record<Surface,string>={home:'[data-home-guide="nav-home"]',cook:'[
 const surfaceAnchor:Record<Surface,string>={home:".hm-tonight",cook:".hm-cook-head",prep:".hm-prep-v10-head",kitchen:".hm-kitchen-head",plan:".hm-plan-head"};
 const surfaceName:Record<Surface,string>={home:"Home",cook:"Cook",prep:"Prep",kitchen:"Kitchen",plan:"Plan"};
 const FULL_LINE:Record<Surface,string>={
- home:"This is home base. Tonight and the week start here.",
- cook:"All our recipes live here. Once Kitchen is set, ‘Ready now’ means we can actually make it with what’s at home.",
- prep:"Prep is our shortcut stash — bases, pastes, sauces and boosters we make ahead so dinner’s easier.",
- kitchen:"Kitchen is what we actually have — fridge, freezer and pantry. Tap things to update them or use the camera. Home won’t pretend something is here if we haven’t added it.",
- plan:"This is our week. Suggestions aren’t locked until we confirm them, and either of us can change anything we don’t fancy."
+ home:"This is Home. Dinner, the week and anything that needs attention show up here.",
+ cook:"Cook is all our recipes. ‘Ready now’ only shows meals we can make with what’s at home.",
+ prep:"Prep is the stuff we make ahead — curry bases, sauces and little flavour boosters that make dinner quicker.",
+ kitchen:"Kitchen is what we have at home — fridge, freezer and pantry. Keep it roughly up to date and I can tell you what we can cook.",
+ plan:"Plan is our week. Move anything around, change your mind, and only keep it when it looks good."
 };
 const QUICK_LINE:Record<Surface,string>={
- home:"Home is tonight and the week at a glance.",
+ home:"Home is dinner and the week at a glance.",
  cook:"Cook is all our recipes.",
  prep:"Prep is the make-ahead stuff that makes dinner quicker.",
- kitchen:"Kitchen is what we physically have.",
+ kitchen:"Kitchen is what we have at home.",
  plan:"Plan is our shared week."
 };
 const topicLabels:Record<Topic,string>={home:"Home",cook:"Cook",prep:"Prep",kitchen:"Kitchen",plan:"Plan",ask:"Ask & voice",camera:"Camera",cooking:"Cooking",history:"History"};
@@ -68,30 +68,30 @@ function lineFor(surface:Surface,mode:GuideMode){return mode==="quick"?QUICK_LIN
 function promptFor(surface:Surface){return surface==="cook"?"Tap Cook.":surface==="prep"?"Now Prep.":surface==="kitchen"?"Next, Kitchen.":surface==="plan"?"Have a look at Plan.":"Tap Home and I’ll wrap up."}
 function topicStep(topic:Topic,path:string):Omit<Step,"actions">|null{
  const orb='[data-home-guide="orb"]',camera='[data-home-guide="camera"]';
- if(topic==="home")return path==="/"?{anchor:surfaceAnchor.home,highlight:surfaceAnchor.home,line:"Home is the quick read: tonight, what’s coming up, and anything Home thinks needs attention.",expression:"talk"}:null;
- if(topic==="cook")return path==="/cook"?{anchor:surfaceAnchor.cook,line:"Cook is the whole recipe library. Filters like Ready now, favourites and not lately are just different ways into the same recipes.",expression:"talk"}:null;
- if(topic==="prep")return path.startsWith("/prep")?{anchor:path==="/prep"?surfaceAnchor.prep:".hm-title-row",line:"Prep is the make-ahead system. Bases start dishes, mids and sauces shape them, boosters finish them. Prep Day only makes what the week actually needs.",expression:"thinking"}:null;
- if(topic==="kitchen")return path==="/kitchen"?{anchor:surfaceAnchor.kitchen,line:"Kitchen is the fridge, freezer and pantry — basically what we have at home. Home only uses what we’ve actually added.",expression:"talk"}:null;
- if(topic==="plan")return path==="/plan"?{anchor:surfaceAnchor.plan,line:"Plan is our shared week. We can move dinners around, change our minds and confirm the week when it actually looks right.",expression:"talk"}:null;
- if(topic==="ask")return document.querySelector(orb)?{anchor:orb,highlight:orb,line:"Tap the green orb and ask me normally. The mic beside it is the same thing spoken instead of typed.",expression:"affectionate"}:null;
+ if(topic==="home")return path==="/"?{anchor:surfaceAnchor.home,highlight:surfaceAnchor.home,line:"Home is the quick look: dinner, what’s coming up, and anything that needs attention.",expression:"talk"}:null;
+ if(topic==="cook")return path==="/cook"?{anchor:surfaceAnchor.cook,line:"Cook is all our recipes. Use Ready now, favourites or Not lately when you want a quicker way in.",expression:"talk"}:null;
+ if(topic==="prep")return path.startsWith("/prep")?{anchor:path==="/prep"?surfaceAnchor.prep:".hm-title-row",line:"Prep is what we make ahead. Bases, sauces and boosters save time later; Prep Day pulls together what the week needs.",expression:"thinking"}:null;
+ if(topic==="kitchen")return path==="/kitchen"?{anchor:surfaceAnchor.kitchen,line:"Kitchen is the fridge, freezer and pantry — basically what we have at home. Keep it close enough and I can tell you what we can make.",expression:"talk"}:null;
+ if(topic==="plan")return path==="/plan"?{anchor:surfaceAnchor.plan,line:"Plan is our week. Move dinners around, swap anything you don’t fancy, and keep it when it feels right.",expression:"talk"}:null;
+ if(topic==="ask")return document.querySelector(orb)?{anchor:orb,highlight:orb,line:"Tap the green orb and just ask. The mic beside it does the same thing out loud.",expression:"affectionate"}:null;
  if(topic==="camera"){
-  if(path==="/scan")return{anchor:".hm-scan .stage",line:"Show me the fridge, freezer, pantry, receipt, prep or dinner. I’ll suggest what I can see, and nothing changes until you confirm it.",expression:"look"};
-  return document.querySelector(camera)?{anchor:camera,highlight:camera,line:"That camera is for showing me instead of typing. I’ll suggest what I see and you confirm before Kitchen changes.",expression:"look"}:null;
+  if(path==="/scan")return{anchor:".hm-scan .stage",line:"Show me the fridge, freezer, pantry, a receipt, prep or dinner. I’ll tell you what I can see and you decide what to keep.",expression:"look"};
+  return document.querySelector(camera)?{anchor:camera,highlight:camera,line:"Use the camera when showing me is easier than typing. I’ll suggest what I see and you decide what to add.",expression:"look"}:null;
  }
  if(topic==="cooking"){
   if(/^\/cook\/[^/]+\/cook$/.test(path))return{anchor:".hm-cooking .body",line:"This is live cooking mode: one step at a time, timers when they matter, swipe or Next to move on, and Done logs dinner at the end.",expression:"talk"};
   if(/^\/cook\/[^/]+$/.test(path))return{anchor:".hm-recipe-title",highlight:".hm-cta .primary",line:"This is the recipe page. Check what goes in, the steps and what Kitchen says — then Start cooking when you’re ready.",expression:"talk"};
   return path==="/cook"?{anchor:surfaceAnchor.cook,line:"Pick any recipe. Open it, then Start cooking gives you the step-by-step cooking mode, timers, finish logging, ratings and notes.",expression:"talk"}:null;
  }
- if(topic==="history")return path==="/history"?{anchor:".hm-title-row",line:"History is what keeps Home from getting repetitive. It remembers what we cooked, when, favourites and Josh/G ratings separately.",expression:"pleased"}:null;
+ if(topic==="history")return path==="/history"?{anchor:".hm-title-row",line:"History remembers what we cooked, when we had it, and what each of us thought. That helps dinner ideas stay fresh.",expression:"pleased"}:null;
  return null;
 }
 
 export function HomeGuideProvider({children}:{children:React.ReactNode}){
  const path=usePathname(),router=useRouter(),h=useHousehold();
- const[person,setPerson]=useState<HouseholdPerson|null>(null),[stage,setStage]=useState<Stage>("idle"),[mode,setMode]=useState<GuideMode>("topic"),[seen,setSeen]=useState<Set<Surface>>(new Set()),[topic,setTopic]=useState<Topic|null>(null),[blocked,setBlocked]=useState(false);
+ const[person,setPerson]=useState<HouseholdPerson|null>(null),[stage,setStage]=useState<Stage>("idle"),[mode,setMode]=useState<GuideMode>("topic"),[seen,setSeen]=useState<Set<Surface>>(new Set()),[topic,setTopic]=useState<Topic|null>(null),[kitchenLesson,setKitchenLesson]=useState(0),[blocked,setBlocked]=useState(false);
  const surface=surfaceFromPath(path),currentTopic=topicFromPath(path),lastSurface=useRef<Surface|null>(null);
- const stop=(reason:"dismissed"|"completed"|"closed")=>{if(mode==="first"&&person){if(reason==="completed")writeFirstRun(person,"completed");else writeFirstRun(person,"dismissed");window.dispatchEvent(new Event("home-meals:guide-state"))}emit(`home_guide_${reason}`,{person,mode});setStage("idle");setSeen(new Set());setTopic(null)};
+ const stop=(reason:"dismissed"|"completed"|"closed")=>{if(mode==="first"&&person){if(reason==="completed")writeFirstRun(person,"completed");else writeFirstRun(person,"dismissed");window.dispatchEvent(new Event("home-meals:guide-state"))}emit(`home_guide_${reason}`,{person,mode});setStage("idle");setSeen(new Set());setTopic(null);setKitchenLesson(0)};
 
  useEffect(()=>{const sync=()=>setPerson(getHouseholdPerson());sync();window.addEventListener("home-meals:person",sync);return()=>window.removeEventListener("home-meals:person",sync)},[]);
  useEffect(()=>{
@@ -118,15 +118,15 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
   check();const observer=new MutationObserver(check);observer.observe(document.body,{childList:true,subtree:true});return()=>observer.disconnect()
  },[stage]);
 
- const startFirst=()=>{feedback("tap");setMode("first");setSeen(new Set());setTopic(null);setStage("tour");if(path!=="/")router.push("/");emit("home_guide_first_run_accepted",{person})};
- const startFull=()=>{feedback("tap");setMode("full");setSeen(new Set());setTopic(null);setStage("tour");if(path!=="/")router.push("/");emit("home_guide_full_replay",{person})};
- const startQuick=()=>{feedback("tap");setMode("quick");setSeen(new Set());setTopic(null);setStage("tour");if(path!=="/")router.push("/");emit("home_guide_quick_refresher",{person})};
+ const startFirst=()=>{feedback("tap");setMode("first");setSeen(new Set());setTopic(null);setKitchenLesson(0);setStage("tour");if(path!=="/")router.push("/");emit("home_guide_first_run_accepted",{person})};
+ const startFull=()=>{feedback("tap");setMode("full");setSeen(new Set());setTopic(null);setKitchenLesson(0);setStage("tour");if(path!=="/")router.push("/");emit("home_guide_full_replay",{person})};
+ const startQuick=()=>{feedback("tap");setMode("quick");setSeen(new Set());setTopic(null);setKitchenLesson(0);setStage("tour");if(path!=="/")router.push("/");emit("home_guide_quick_refresher",{person})};
  const openTopics=()=>{feedback("tap");setMode("topic");setTopic(null);setStage("topics");emit("home_guide_topic_menu",{person})};
  const startTopic=(t:Topic,stay=false)=>{feedback("tap");setMode("topic");setTopic(t);setStage("topic");if(!stay){if(t==="history")router.push("/history");else if(t==="cooking")router.push("/cook");else if(t==="ask"||t==="camera"){}else router.push(routeFor[t as Surface])}emit("home_guide_specific_help_selected",{person,topic:t})};
 
  const step=useMemo<Step|null>(()=>{
   const orb='[data-home-guide="orb"]';
-  if(stage==="welcome")return{anchor:orb,highlight:orb,line:person==="g"?"Hey sunshine ☀️. Come, I’ll show you around. Takes a minute.":"Quick tour. I’ll show you how everything fits together. Takes a minute.",expression:"hello",actions:[{label:"Show me",onClick:startFirst,primary:true},{label:"Not now",onClick:()=>stop("dismissed")}]};
+  if(stage==="welcome")return{anchor:orb,highlight:orb,line:person==="g"?"Hey sunshine! ☀️ Come, I’ll show you around. Takes a minute.":"Quick tour? I’ll show you around. Takes a minute.",expression:"hello",actions:[{label:"Show me",onClick:startFirst,primary:true},{label:"Not now",onClick:()=>stop("dismissed")}]};
   if(stage==="menu")return{anchor:orb,highlight:orb,line:"Yep. Quick lap, the whole thing again, or just one bit?",expression:"affectionate",actions:[{label:"Quick refresher",onClick:startQuick,primary:true},{label:"Whole thing",onClick:startFull},{label:"One bit",onClick:openTopics},...(currentTopic?[{label:"This screen",onClick:()=>startTopic(currentTopic,true)}]:[])]};
   if(stage==="topics")return{anchor:orb,highlight:orb,line:"What do you want me to show you?",expression:"thinking",actions:[...(["home","cook","prep","kitchen","plan","ask","camera","cooking","history"] as Topic[]).map(t=>({label:topicLabels[t],onClick:()=>startTopic(t),primary:t==="ask"})),{label:"Back",onClick:()=>setStage("menu")}]};
   if(stage==="topic"){
@@ -134,25 +134,28 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
    return{...base,actions:[{label:"Got it",onClick:()=>stop("closed"),primary:true},{label:"More help",onClick:()=>setStage("menu")}]};
   }
   if(stage==="finish"){
-   const replay=mode!=="first";const firstLine=person==="g"?"And this little green thing is me. Tap it whenever you’re not sure — ask me, talk to me, show me something, or get me to walk you through any bit again.":"That’s the lot. The green orb is Home — tap it anytime to ask, talk, show it something, or replay any part of this.";const line=mode==="first"?firstLine:mode==="quick"?"Yep, that’s the app. Tap me anytime if you only want a refresher on one bit.":"That’s the whole thing again. Tap me anytime for a quick refresher or one bit.";
+   const replay=mode!=="first";const firstLine=person==="g"?"That’s it, sunshine. Tap the green orb anytime you want help, want to talk, or want to show me something.":"That’s it. Tap the green orb anytime you want help, want to talk, or want to show me something.";const line=mode==="first"?firstLine:mode==="quick"?"Yep, that’s the app. Tap me anytime if you only want a refresher on one bit.":"That’s the whole thing again. Tap me anytime for a quick refresher or one bit.";
    return{anchor:orb,highlight:orb,line,expression:mode==="first"?"wink":"pleased",actions:[{label:mode==="first"?"Got it":"Done",onClick:()=>stop(mode==="first"?"completed":"closed"),primary:true},...(replay?[{label:"One bit",onClick:openTopics}]:[])]};
   }
   if(stage!=="tour"||!surface)return null;
   const effective=new Set(seen);effective.add(surface);const remaining=CORE.filter(x=>!effective.has(x));const progress={current:Math.min(effective.size,CORE.length),total:CORE.length};
   // Kitchen setup is something the walkthrough teaches, never a prerequisite for seeing the walkthrough.
   if(!h.kitchenReady&&surface==="home"){
-   const line=mode==="quick"?"Home is where tonight and the week come together. Kitchen is what sits underneath it — tap Kitchen.":"This is Home. Tonight and the week live here. Before Home can tell us what’s ready, it needs to know what we have. Tap Kitchen and I’ll show you how it works.";
+   const line=mode==="quick"?"Home is dinner and the week. Tap Kitchen and I’ll show you how I know what we can make.":"This is Home. Before I can tell us what we can cook, show me what’s in the kitchen. Tap Kitchen.";
    return{anchor:orb,highlight:navFor.kitchen,line,expression:"look",progress};
   }
   if(!h.kitchenReady&&surface==="kitchen"){
    const next=remaining[0]??"home";
-   const line=mode==="quick"?"Kitchen is what we actually have. Update it by tapping things or use the camera. You can keep touring now.":"This is Kitchen — fridge, freezer and pantry, basically what we actually have. Tap anything to update it or use the camera; when it looks right, hit Kitchen checked. You don’t have to finish it right now to keep looking around.";
-   return{anchor:surfaceAnchor.kitchen,highlight:navFor[next],line:`${line} ${promptFor(next)}`,expression:"talk",progress};
+   if(mode==="quick")return{anchor:surfaceAnchor.kitchen,highlight:navFor[next],line:`Kitchen is the fridge, freezer and pantry. Keep it roughly right, and I can tell you what we can make. ${promptFor(next)}`,expression:"talk",progress};
+   if(kitchenLesson===0)return{anchor:surfaceAnchor.kitchen,highlight:'[data-home-guide="kitchen-tabs"]',line:"This is Kitchen: fridge, freezer and pantry. These three tabs are how I know what’s at home.",expression:"talk",progress,actions:[{label:"Next",onClick:()=>setKitchenLesson(1),primary:true}]};
+   if(kitchenLesson===1)return{anchor:'[data-home-guide="kitchen-tabs"]',highlight:'[data-home-guide="kitchen-scan"]',line:"Fastest way? Show me. The camera helps you add what’s here without typing everything in.",expression:"look",progress,actions:[{label:"Next",onClick:()=>setKitchenLesson(2),primary:true}]};
+   if(kitchenLesson===2)return{anchor:'[data-home-guide="kitchen-scan"]',highlight:'[data-home-guide="kitchen-checked"]',line:"When it looks roughly right, tap Kitchen checked. It doesn’t have to be perfect; we can fix it anytime.",expression:"pleased",progress,actions:[{label:"Keep touring",onClick:()=>setKitchenLesson(3),primary:true}]};
+   return{anchor:surfaceAnchor.kitchen,highlight:navFor[next],line:`That’s enough to get going. ${promptFor(next)}`,expression:"pleased",progress};
   }
   if(!remaining.length&&surface!=="home")return{anchor:surfaceAnchor[surface],highlight:navFor.home,line:`${lineFor(surface,mode)} Tap Home and I’ll wrap up.`,expression:"look",progress};
   const next=remaining[0];if(!next)return null;
   return{anchor:surfaceAnchor[surface],highlight:navFor[next],line:`${lineFor(surface,mode)} ${promptFor(next)}`,expression:mode==="quick"?"pleased":"look",progress};
- },[stage,surface,seen,topic,path,mode,currentTopic,h.kitchenReady,person]);
+ },[stage,surface,seen,topic,path,mode,currentTopic,h.kitchenReady,person,kitchenLesson]);
 
  useEffect(()=>{
   const highlightSelector=step?.highlight;
@@ -161,10 +164,10 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
   document.addEventListener("click",click,true);return()=>document.removeEventListener("click",click,true)
  },[stage,step,person,mode]);
 
- return <>{children}{stage!=="idle"&&!blocked&&step&&<GuideOverlay step={step} onClose={()=>stop(mode==="first"?"dismissed":"closed")}/>}</>;
+ return <>{children}{stage!=="idle"&&!blocked&&step&&<GuideOverlay step={step} intro={stage==="welcome"} onClose={()=>stop(mode==="first"?"dismissed":"closed")}/>}</>;
 }
 
-function GuideOverlay({step,onClose}:{step:Step;onClose:()=>void}){
+function GuideOverlay({step,intro,onClose}:{step:Step;intro:boolean;onClose:()=>void}){
  const cardRef=useRef<HTMLDivElement>(null),[pos,setPos]=useState({left:16,top:90}),[highlight,setHighlight]=useState<Rect|null>(null),[reduceMotion,setReduceMotion]=useState(false);
  useEffect(()=>{const mq=window.matchMedia("(prefers-reduced-motion: reduce)"),sync=()=>setReduceMotion(mq.matches);sync();mq.addEventListener?.("change",sync);return()=>mq.removeEventListener?.("change",sync)},[]);
  useEffect(()=>{const key=(event:KeyboardEvent)=>{if(event.key==="Escape")onClose()};window.addEventListener("keydown",key);return()=>window.removeEventListener("keydown",key)},[onClose]);
@@ -189,12 +192,12 @@ function GuideOverlay({step,onClose}:{step:Step;onClose:()=>void}){
   })};
   place();window.addEventListener("resize",place);window.addEventListener("scroll",place,true);window.visualViewport?.addEventListener("resize",place);window.visualViewport?.addEventListener("scroll",place);const ro=new ResizeObserver(place),mo=new MutationObserver(place),anchor=document.querySelector(step.anchor);if(anchor)ro.observe(anchor);mo.observe(document.body,{childList:true,subtree:true});return()=>{window.cancelAnimationFrame(raf);window.removeEventListener("resize",place);window.removeEventListener("scroll",place,true);window.visualViewport?.removeEventListener("resize",place);window.visualViewport?.removeEventListener("scroll",place);ro.disconnect();mo.disconnect()}
  },[step.anchor,step.highlight]);
- return <div className={`hm-guide-layer ${reduceMotion?"reduce":""}`} data-home-guide-overlay>
+ return <div className={`hm-guide-layer ${intro?"intro":"active"} ${reduceMotion?"reduce":""}`} data-home-guide-overlay>
+  {!intro&&!highlight&&<div className="hm-guide-scrim"/>}
   {highlight&&<div className="hm-guide-highlight" style={{left:highlight.left-6,top:highlight.top-6,width:highlight.width+12,height:highlight.height+12}}/>}
   <div ref={cardRef} className="hm-guide-card" style={{left:pos.left,top:pos.top} as CSSProperties}>
-   <button className="hm-guide-close" onClick={onClose} aria-label="Stop guide">×</button>
    <GuideHead expression={step.expression}/>
-   <div className="hm-guide-bubble"><div className="hm-guide-copy" role="status" aria-live="polite">{step.line}</div>{step.progress&&<div className="hm-guide-progress" aria-label={`Guide progress ${step.progress.current} of ${step.progress.total}`}><span>{step.progress.current}/{step.progress.total}</span><i>{Array.from({length:step.progress.total},(_,i)=><b key={i} className={i<step.progress!.current?"on":""}/>)}</i></div>}{step.actions&&<div className="hm-guide-actions">{step.actions.map(a=><button key={a.label} className={a.primary?"primary":""} onClick={a.onClick}>{a.label}</button>)}</div>}</div>
+   <div className="hm-guide-bubble">{!intro&&<button className="hm-guide-close" onClick={onClose} aria-label="Stop guide">×</button>}<div className="hm-guide-copy" role="status" aria-live="polite">{step.line}</div>{step.progress&&<div className="hm-guide-progress" aria-label={`Guide progress ${step.progress.current} of ${step.progress.total}`}><span>{step.progress.current}/{step.progress.total}</span><i>{Array.from({length:step.progress.total},(_,i)=><b key={i} className={i<step.progress!.current?"on":""}/>)}</i></div>}{step.actions&&<div className="hm-guide-actions">{step.actions.map(a=><button key={a.label} className={a.primary?"primary":""} onClick={a.onClick}>{a.label}</button>)}</div>}</div>
   </div>
  </div>
 }
