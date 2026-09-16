@@ -1,0 +1,53 @@
+name: Patch technical CV metrics
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-cv-metrics.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Update technical CV metric copy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('docs/technical-cv/index.html')
+          s = p.read_text(encoding='utf-8')
+
+          replacements = {
+              '<div class="metric"><b>US$1B</b><span>NTT relationship originated / closed</span></div>': '<div class="metric"><b>US$1B</b><span>largest single deal closed</span></div>',
+              '<div class="metric"><b>US$100M</b><span>annual APAC SaaS / data / analytics revenue</span></div>': '<div class="metric"><b>US$100M</b><span>annual revenue business built &amp; led</span></div>',
+              '<div class="metric"><b>US$3M</b><span>Aier → Coliseum acqui-hire</span></div>': '<div class="metric"><b>US$3M</b><span>founder exit / acqui-hire</span></div>',
+              '<div class="metric"><b>4M → 200K</b><span>community → active users in 8 months</span></div>': '<div class="metric"><b>4M / 200K</b><span>community scale / active users in 3 months</span></div>',
+              '<div class="metric"><b>US$15M</b><span>Coliseum raise led by The Chernin Group</span></div>': '<div class="metric"><b>US$15M</b><span>latest capital raise · led by TCG</span></div>',
+              '200K active users in eight months': '200K active users in three months',
+              '<div class="c"><b>4M → 200K</b><span>community to active users in 8 months</span></div>': '<div class="c"><b>4M / 200K</b><span>community to active users in 3 months</span></div>',
+          }
+
+          for old, new in replacements.items():
+              count = s.count(old)
+              if count != 1:
+                  raise SystemExit(f'Expected exactly one match for {old!r}; found {count}')
+              s = s.replace(old, new)
+
+          p.write_text(s, encoding='utf-8')
+          Path('.github/workflows/patch-cv-metrics.yml').unlink()
+          PY
+      - name: Commit and push
+        run: |
+          git config user.name "Josh G"
+          git config user.email "129348785+Josh-Gi3r@users.noreply.github.com"
+          git add -A
+          git commit -m "Technical CV: sharpen headline metrics"
+          git push origin HEAD:main
