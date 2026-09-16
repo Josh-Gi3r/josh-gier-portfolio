@@ -1,6 +1,6 @@
-// One control owns both tracks. Browsers refuse audio before a user gesture, so sound
-// starts on the visitor's first tap, click or key press anywhere in the room unless
-// they previously switched it off. No audio request or playback before that gesture.
+// One control owns both tracks. Unless the visitor previously switched it off, sound
+// starts as soon as the browser allows: on load where autoplay is permitted, otherwise
+// on the first tap, click, key press or touch anywhere in the room.
 export function installSound() {
   const button=document.querySelector('#sound-toggle');
   const music=document.querySelector('#sound-music');
@@ -40,7 +40,7 @@ export function installSound() {
     state('off');
     memory.set('off');
   }
-  async function start() {
+  async function start(quiet=false) {
     const attempt=++token;
     wanted=true; state('loading');
     try {
@@ -57,27 +57,51 @@ export function installSound() {
       });
       state('on');
       memory.set('on');
+      return true;
     } catch {
-      if(attempt!==token)return;
+      if(attempt!==token)return false;
       wanted=false;
       tracks.forEach(track=>track.pause());
       if(context)context.suspend().catch(()=>{});
+      if(quiet){state('off');return false;}
       state('error');
       document.querySelector('#announcer').textContent='Sound could not start. Use Retry sound to try again.';
+      return false;
+    }
+  }
+  // Some browsers allow sound without a gesture, e.g. for a site the visitor has used
+  // before. Probe that silently on load; if it is refused, the first gesture starts it.
+  async function tryAutoplay() {
+    const volumes=tracks.map(track=>track.volume);
+    tracks.forEach(track=>{track.volume=0;});
+    try {
+      await Promise.all(tracks.map(track=>track.play()));
+      tracks.forEach((track,i)=>{track.volume=volumes[i];});
+      if(!wanted)start(true);
+    } catch {
+      tracks.forEach((track,i)=>{track.volume=volumes[i];});
+      if(!wanted)tracks.forEach(track=>track.pause());
     }
   }
   button.addEventListener('click',()=>wanted?stop():start());
-  // Start on the first gesture anywhere, which is what the autoplay policy allows.
-  // The Sound button keeps its own click handling; a gesture on it is left alone.
+  // Start on the first gesture the autoplay policy accepts. Clicks, taps and key presses
+  // always count; mobile browsers may also accept the end of a touch, including a scroll
+  // swipe. Mouse movement and scrolling alone never unlock audio in any browser. Refused
+  // tries stay quiet and the listeners stay armed until sound is on. The Sound button
+  // keeps its own click handling; a gesture on it disarms this.
   if(memory.get()!=='off'){
-    const armed=['pointerdown','keydown'];
+    const armed=['pointerdown','keydown','touchend'];
+    let trying=false;
+    const disarm=()=>armed.forEach(type=>document.removeEventListener(type,firstGesture,true));
     const firstGesture=event=>{
-      armed.forEach(type=>document.removeEventListener(type,firstGesture,true));
-      if(button.contains(event.target))return;
+      if(button.contains(event.target)){disarm();return;}
       if(event.type==='keydown'&&['Shift','Control','Alt','Meta','Tab'].includes(event.key))return;
-      if(!wanted)start();
+      if(trying||button.dataset.state==='on'){if(button.dataset.state==='on')disarm();return;}
+      trying=true;
+      start(true).then(ok=>{trying=false;if(ok)disarm();});
     };
     armed.forEach(type=>document.addEventListener(type,firstGesture,true));
+    tryAutoplay();
   }
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){token++;tracks.forEach(track=>track.pause());if(context)context.suspend().catch(()=>{});}
