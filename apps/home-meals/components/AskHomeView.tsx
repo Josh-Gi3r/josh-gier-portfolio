@@ -16,6 +16,7 @@ export function AskHomeView({messages,q,setQ,onSend,onClose,cameraHref,quick,loa
  const[dismissed,setDismissed]=useState<Record<string,boolean>>({});
  const conversation=messages.some(m=>m.who==="you");
  const submit=(e:FormEvent)=>{e.preventDefault();onSend()};
+ const showGuide=()=>{onClose();window.setTimeout(()=>window.dispatchEvent(new Event("home-meals:guide")),90)};
  return <div className="hm-ask" role="presentation">
   <section className="hm-ask-inner" role="dialog" aria-modal="true" aria-label="Ask Home">
    <div className="hm-ask-top">
@@ -40,7 +41,7 @@ export function AskHomeView({messages,q,setQ,onSend,onClose,cameraHref,quick,loa
     {loading&&<div className="hm-ask-msg home"><Orb size={36}/><div className="hm-bubble hm-ask-typing"><i/><i/><i/></div></div>}
    </div>
    <div className="hm-ask-foot">
-    <div className={`hm-ask-chips ${conversation?"":"center"}`}>{quick.map(c=><button key={c.text} className="hm-chip sm" onClick={()=>onSend(c.text)}>{c.label}</button>)}</div>
+    <div className={`hm-ask-chips ${conversation?"":"center"}`}><button className="hm-chip sm" onClick={showGuide}>Show me around</button>{quick.map(c=><button key={c.text} className="hm-chip sm" onClick={()=>onSend(c.text)}>{c.label}</button>)}</div>
     <form className="hm-ask-composer" data-ask-composer onSubmit={submit}>
      <Link href={cameraHref} className="cam" aria-label="Show Home with camera" onClick={onClose}><Icon name="camera" size={20}/></Link>
      <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Or type it…" aria-label="Ask Home" autoFocus enterKeyHint="send"/>
