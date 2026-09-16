@@ -12,7 +12,7 @@ const css=read('app/styles/home-guide.css');
 const globals=read('app/globals.css');
 const tests=read('tests/e2e/home-guide.spec.ts');
 const spec=read('HOME_GUIDE_WALKTHROUGH_V14.md');
-const frames=['idle','talk','happy','affectionate','wink'];
+const frames=['idle','talk','happy','affectionate','wink','surprised','thinking','laughing','sheepish'];
 
 must(layout.includes('HomeGuideProvider'),'guide provider is not mounted');
 must(globals.includes('home-guide.css'),'guide CSS is not loaded');
@@ -40,4 +40,4 @@ for(const name of frames){const p=path.join(root,`public/images/home-guide/${nam
 must(spec.includes('First-run journey for G')&&spec.includes('Summoned guide: Josh or G'),'walkthrough implementation spec is incomplete');
 for(const phrase of ['automatic first-run guide once','Quick refresher','Whole thing','One bit','reduced-motion'])must(tests.includes(phrase),`browser acceptance missing ${phrase}`);
 
-console.log('Home Meals talking-head guide V14 audit passed · approved Josh head frames · G-first-run only · quick/full/topic replay · detour-tolerant · deep-topic help · viewport-safe · reduced-motion aware');
+console.log('Home Meals talking-head guide V14 audit passed · 9 approved Josh expression frames · G-first-run only · quick/full/topic replay · detour-tolerant · deep-topic help · viewport-safe · reduced-motion aware');
