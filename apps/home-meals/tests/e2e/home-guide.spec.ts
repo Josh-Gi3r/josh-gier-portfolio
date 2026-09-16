@@ -7,8 +7,12 @@ async function seedPerson(page:Page,person:"josh"|"g",guideStatus?:"completed"|"
   localStorage.setItem("home-meals-household-v12",JSON.stringify(state));
   localStorage.setItem("home-meals-welcome-seen-v1","1");
   localStorage.setItem("home-meals-person-v1",person);
-  localStorage.removeItem(`home-meals-guide-v1:${person}`);
-  if(guideStatus)localStorage.setItem(`home-meals-guide-v1:${person}`,JSON.stringify({status:guideStatus,at:new Date().toISOString()}));
+  const seedKey=`home-meals-guide-test-seeded:${person}`;
+  if(!sessionStorage.getItem(seedKey)){
+   localStorage.removeItem(`home-meals-guide-v1:${person}`);
+   if(guideStatus)localStorage.setItem(`home-meals-guide-v1:${person}`,JSON.stringify({status:guideStatus,at:new Date().toISOString()}));
+   sessionStorage.setItem(seedKey,"1");
+  }
  },{state:seed,person,guideStatus});
 }
 
