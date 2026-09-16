@@ -11,7 +11,8 @@ for(const rel of ['app/page.tsx','app/cook/page.tsx','app/prep/page.tsx','app/ki
 must('app/cook/[slug]/page.tsx',/getLiveRecipeV7/,'recipe detail route is not gated by the live V7 catalogue');
 must('app/cook/[slug]/cook/page.tsx',/getLiveRecipeV7/,'cooking route is not gated by the live V7 catalogue');
 must('components/FirstRunKitchen.tsx',/Kitchen is empty/,'confirmed-empty first run is missing');
-must('components/FirstRunKitchen.tsx',/Start from zero and add what we have/,'manual first-run path is missing');
+must('components/FirstRunKitchen.tsx',/Add what we have/,'manual first-run path is missing');
+must('components/FirstRunKitchen.tsx',/Start empty, then add only the food and prep that are actually here\./,'manual first-run path must establish empty before adding observed stock');
 must('components/app/Prep.tsx',/Start with GOLD · SAMBAL · RED/,'small active-prep starter is missing');
 must('components/app/Cook.tsx',/By prep/,'prep-based recipe browse is missing');
 must('components/app/Cook.tsx',/Never cooked/,'history-aware recipe browse is missing');
