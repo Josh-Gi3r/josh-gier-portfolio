@@ -1,8 +1,9 @@
 {
   "version": 19,
   "name": "Josh Presence + Guides + Show Me",
-  "status": "production_ready",
+  "status": "production_complete",
   "base_sha": "c6b49699908bee62fba7434da56ddda16402ee86",
+  "implementation_sha": "f08e7f7036eb820c9ac8427203f2a94a2006c68e",
   "branch": "home-meals-v19-josh-presence",
   "principles": [
     "one_josh_never_two",
@@ -48,7 +49,9 @@
       "tasks": [
         "smart_ask_copy",
         "remove_orb_language",
-        "remove_repertoire_language"
+        "remove_repertoire_language",
+        "remove_active_prep_language",
+        "replace_internal_recency_shorthand"
       ]
     },
     "qa_release": {
@@ -61,9 +64,10 @@
         "typecheck": "passed",
         "build": "passed",
         "e2e": "passed_176_of_176",
+        "higgsfield_visual_qa": "passed_with_findings_fixed",
         "branch_deploy": "passed_exact_sha",
-        "main_fast_forward": "pending",
-        "production_sha_verify": "pending"
+        "main_fast_forward": "complete",
+        "production_sha_verify": "complete"
       }
     }
   },
@@ -78,16 +82,30 @@
       "430x844"
     ],
     "household_state_schema_change_expected": false,
-    "food_engine_change_expected": false
+    "food_engine_change_expected": false,
+    "assistant_hint_min_touch_target_px": 44
   },
-  "latest_qa_sha": "e7b5f149574b17b2a974d6b1e18aa8991a5eb2dd",
+  "latest_qa_sha": "f08e7f7036eb820c9ac8427203f2a94a2006c68e",
   "latest_qa_evidence": {
-    "railway_deployment_id": "733cdb83-f78f-4c19-a404-0a5ce1047fc6",
+    "qa_railway_deployment_id": "2dcfdfbe-dd98-4bce-b46b-853c75b2b389",
     "playwright": "176_passed",
-    "railway_healthcheck": "passed"
+    "visual_qa": {
+      "tool": "Higgsfield Playwright sandbox",
+      "settled_single_josh": "passed_home_cook_more_show_me",
+      "document_overflow": "zero_on_checked_phone_surfaces",
+      "guide_head_bubble_overlap": "none",
+      "guide_dock_nav_overlap": "none",
+      "assistant_hint": "211x44_at_390x844",
+      "copy_leaks_removed": [
+        "repertoire",
+        "active prep",
+        "ratings · prep · recency"
+      ],
+      "fake_camera_viewfinder": "absent"
+    },
+    "production_railway_deployment_id": "8489d32c-8365-48af-8d58-0b92588bcc4f",
+    "production_status": "success",
+    "production_domain": "meals.josh-gier.com"
   },
-  "production_next": [
-    "fast_forward_main",
-    "verify_exact_production_sha"
-  ]
+  "production_next": []
 }
