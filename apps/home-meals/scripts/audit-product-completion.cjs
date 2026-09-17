@@ -22,11 +22,7 @@ must('components/app/Recipe.tsx',/r\.source\.url/,'recipe page must render the e
 // V7 live promotion must be visible across every user-facing decision surface, not only the recipe browser.
 for(const [rel,token] of [['components/app/Cook.tsx','allLiveRecipesV7'],['components/app/Home.tsx','allLiveRecipesV7'],['components/app/Plan.tsx','allLiveRecipesV7'],['components/app/Builder.tsx','allLiveRecipesV7'],['components/app/Kitchen.tsx','ingredientUiCatalogV7'],['components/app/Scan.tsx','ingredientUiCatalogV7'],['components/app/Shell.tsx','allLiveRecipesV7'],['components/AskHomeView.tsx','getLiveRecipeV7'],['app/api/ask-home/route.ts','buildAssistantContextV7'],['components/app/PrepDay.tsx','prepJobsForWeekV7']])must(rel,new RegExp(token),`V7 live surface missing ${token}`);
 mustNot('components/AskHomeView.tsx',/recipe-nutrition|nutritionFor\s*\(/,'Ask Home cards regressed to placeholder nutrition');
-
-// Retired truth/runtime files stay retired so stale quantities and v11 sync cannot creep back into the product.
 for(const rel of ['components/HouseholdSync.tsx','data/foundation.ts','data/foundation-ops.ts','data/meal-plan.ts'])if(exists(rel))fail(`${rel}: retired legacy file was reintroduced`);
-
-// Legacy ml/yield compatibility fields are allowed only inside explicit migration/archive code, never current UI/catalogue math.
 mustNot('components/app/Shell.tsx',/remainingMl|outputMl|shortMl|\bml in the freezer\b/,'local Home answers regressed to ml-only prep assumptions');
 mustNot('components/HouseholdState.tsx',/neededMl|onHandMl|shortMl|outputMl|remainingMl/,'v3 bridge reintroduced ml-only aliases');
 mustNot('lib/tones.ts',/portionLabel|freezeFormat/,'UI shape copy depends on retired freezer-shape assumptions');
@@ -34,7 +30,6 @@ mustNot('data/home-data.ts',/portionMl|batchYield|totalMl|parentMotherIds/,'disp
 mustNot('data/prep-catalog.ts',/parentMotherIds|portionMl|batchYield/,'prep display metadata reintroduced a parallel relationship/yield truth');
 mustNot('data/stock-math.ts',/neededMl|onHandMl|shortMl|outputMl|remainingMl|batchOutputMl|componentConsumptionMl|prepDemandForWeekMl/,'stock compatibility math regressed to ml-only aliases');
 
-// Food visuals: every current prep object must have a real hero, every mother a process sequence.
 const motherHeroes=read('data/mother-hero-assets.ts'),process=read('data/mother-process-assets.ts'),prepHeroes=read('data/prep-hero-assets.ts');
 const mothers=['red','blond','gold','sambal','rempah','clear','dark','onion'];
 const mids=['makhani','saag','korma','rendang','laksa','malaysian-kari','asam-pedas','thai-green','thai-red','nam-prik-pao','krapow','nuoc-cham','wok-brown','wok-white','char-siu','douban','ginger-scallion','dashi','teriyaki','jp-curry','k-anchovy','gochujang','harissa','chipotle','pesto','duxelles'];
@@ -43,11 +38,10 @@ const keyRe=id=>new RegExp(`(?:^|\\n)\\s*(?:["']${id}["']|${id.replace(/-/g,'\\-
 for(const id of mothers){if(!keyRe(id).test(motherHeroes))fail(`mother hero missing: ${id}`);if(!new RegExp(`(?:^|\\n)\\s*${id}\\s*:\\s*\\[`,'m').test(process))fail(`mother process sequence missing: ${id}`)}
 for(const id of [...mids,...boosters])if(!keyRe(id).test(prepHeroes))fail(`prep hero missing: ${id}`);
 
-// V6 prep truth: production is measured after cooking, then divided into storage packets + remainder.
 for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx','components/app/PrepDay.tsx']){
  must(rel,/recordMeasuredProduction/,'prep UI must record actual measured finished output');
  must(rel,/packetBreakdownV6/,'prep UI must derive full storage packets plus loose remainder');
- must(rel,/(finished output|weigh or measure|measure what you actually|how much you made)/i,'prep UI must tell the household to measure the real post-cook amount');
+ must(rel,/(finished output|How much did you make|Tell me how much you made|what you actually made)/i,'prep UI must tell the household to measure actual finished output');
  mustNot(rel,/recordPortionedProduction\(/,'active prep UI still logs count×legacy portions');
  mustNot(rel,/batchOutputMl|batchYield|portionMl/,'active prep UI regressed to assumed-yield fields');
 }
@@ -57,13 +51,11 @@ must('components/app/Home.tsx',/DINNER IDEA/,'Home preview still masquerades as 
 must('components/app/Prep.tsx',/hm-prep-library-card/,'Prep library is not image-led/interactive');
 must('components/app/Prep.tsx',/Caramelised onion foundation/,'ONION is still presented as a core base');
 
-// Cooking may log history without changing stock, but only explicitly; silent fallback is forbidden.
 must('components/HouseholdState.tsx',/logMealWithoutStock/,'v3 bridge does not expose explicit log-only cooking');
 must('components/app/Cooking.tsx',/stockConsumed/,'cooking completion does not distinguish reconciled stock from log-only history');
 must('components/app/Cooking.tsx',/logMealWithoutStock/,'cooking does not explicitly select the log-only fallback');
 mustNot('components/HouseholdStateV12.tsx',/catch\s*\{\s*return\s+historyOnly/,'cookMeal still silently records history when stock reconciliation fails');
 
-// AI/vision/voice are wired to real household truth; vision must not POST an empty image on page load.
 must('components/VisionRuntime.tsx',/fetch\("\/api\/vision",\{cache:"no-store"\}\)/,'vision configuration check must be GET-only');
 mustNot('components/VisionRuntime.tsx',/imageDataUrl:\s*""/,'vision still sends an empty image request');
 must('components/SmartAskRuntime.tsx',/set_active_prep_set/,'Ask Home cannot confirm repertoire changes');
@@ -73,34 +65,22 @@ must('app/api/ask-home/route.ts',/function cleanHref\(/,'AI navigation routes mu
 must('app/api/ask-home/route.ts',/never invent route names such as \/week/,'AI route instructions must explicitly forbid invented navigation paths');
 must('app/api/ask-home/route.ts',/max_output_tokens:\s*3000/,'full-week structured planning lost the response budget proven in production');
 
-// Visible controls must remain understandable to assistive tech.
+// Accessible controls. V19 replaces the old icon-only Kitchen button with a text-labelled manual path.
 must('components/app/Scan.tsx',/aria-label="Choose a photo from the library"/,'photo-library control is unlabeled');
 must('components/app/Scan.tsx',/aria-label="Take a photo"/,'camera shutter control is unlabeled');
-must('components/app/Scan.tsx',/aria-label="Open Kitchen"/,'icon-only Kitchen control is unlabeled');
-must('components/app/Scan.tsx',/aria-label="Take the photo"/,'camera CTA input is unlabeled');
+must('components/app/Scan.tsx',/hm-show-manual/,'Show Me manual-entry escape is missing');
+must('components/app/Scan.tsx',/aria-label="Take (?:a|the) photo"/,'camera CTA input is unlabeled');
 must('components/app/Kitchen.tsx',/aria-label=\{`Find in the \$\{tab\.toLowerCase\(\)\}`\}/,'Kitchen search input lost its accessible name');
 
-// Mobile ergonomics and hydration.
 const completion=read('app/styles/completion.css');
 for(const token of ['.hm-btn.xs','.hm-chip{','.hm-sec a,.hm-sec button','.hm-stepper button','.hm-scan-panel .modes button','.hm-bar-tab','[aria-label="Loading Home Meals"]'])if(!completion.includes(token))fail(`completion.css missing guardrail: ${token}`);
 must('app/globals.css',/completion\.css/,'completion accessibility guardrails are not loaded');
-
-// PWA/offline shell covers all primary completed routes and uses a fresh v12 cache.
 must('public/sw.js',/home-meals-v12/,'service-worker cache version is stale');
 for(const route of ["'/history'","'/prep/boosters'","'/prep/day'","'/scan'"])if(!read('public/sw.js').includes(route))fail(`service worker CORE missing ${route}`);
-
-// Security/privacy basics for the private household sync.
 must('app/api/household/session/route.ts',/httpOnly:true/,'household session cookie must be httpOnly');
 must('app/api/household/session/route.ts',/secure:true/,'household session cookie must be secure');
 must('lib/server-household.ts',/timingSafeEqual/,'household secret comparison is not timing-safe');
-
-// User-facing product copy should not expose implementation language.
-for(const rel of ['components/app/Plan.tsx','components/app/PrepDay.tsx','components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx']){
- mustNot(rel,/>\s*Canonical formulation\s*</i,'user-facing canonical-formulation jargon returned');
- mustNot(rel,/canonical prep graph/i,'user-facing dependency jargon returned');
-}
-
-// Repo-native release gates must exercise intelligence, journey, privacy, recovery and product completion.
+for(const rel of ['components/app/Plan.tsx','components/app/PrepDay.tsx','components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx']){mustNot(rel,/>\s*Canonical formulation\s*</i,'user-facing canonical-formulation jargon returned');mustNot(rel,/canonical prep graph/i,'user-facing dependency jargon returned')}
 must('package.json',/audit-intelligence-v2\.cjs/,'intelligence audit is not in audit:data');
 must('package.json',/audit-household-journey\.cjs/,'household journey audit is not in audit:data');
 must('package.json',/audit-household-api\.cjs/,'household API hardening audit is not in audit:data');
@@ -108,6 +88,6 @@ must('package.json',/audit-private-ai\.cjs/,'private AI security audit is not in
 must('package.json',/audit-sync-recovery\.cjs/,'sync recovery audit is not in audit:data');
 must('package.json',/audit-live-promotion-v7\.cjs/,'V7 live-promotion audit is not in audit:data');
 must('package.json',/audit-integrated-redteam-v8\.cjs/,'V8 integrated red-team audit is not in audit:data');
+must('package.json',/audit-josh-presence-v19\.cjs/,'V19 Josh-presence audit is not in audit:data');
 must('package.json',/audit-product-completion\.cjs/,'product-completion audit is not in audit:data');
-
-if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · V7 live promotion surfaces · stale legacy truth removed · full prep imagery · V6 measured-output packet prep · explicit cook reconciliation · validated AI routes · AI/vision/voice wiring · accessible controls · mobile/PWA/privacy guardrails');
+if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · V7 live promotion surfaces · stale legacy truth removed · full prep imagery · V6 measured-output prep · explicit cook reconciliation · validated AI routes · Josh/Ask/Vision/Voice wiring · accessible controls · mobile/PWA/privacy guardrails');
