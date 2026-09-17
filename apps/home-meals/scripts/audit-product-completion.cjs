@@ -41,7 +41,7 @@ for(const id of [...mids,...boosters])if(!keyRe(id).test(prepHeroes))fail(`prep 
 for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx','components/app/PrepDay.tsx']){
  must(rel,/recordMeasuredProduction/,'prep UI must record actual measured finished output');
  must(rel,/packetBreakdownV6/,'prep UI must derive full storage packets plus loose remainder');
- must(rel,/(finished output|How much did you make|Tell me how much you made|what you actually made)/i,'prep UI must tell the household to measure actual finished output');
+ must(rel,/(finished output|How much did you make|Tell me how much you made|what you actually made|what you ended up with)/i,'prep UI must tell the household to measure actual finished output');
  mustNot(rel,/recordPortionedProduction\(/,'active prep UI still logs count×legacy portions');
  mustNot(rel,/batchOutputMl|batchYield|portionMl/,'active prep UI regressed to assumed-yield fields');
 }
