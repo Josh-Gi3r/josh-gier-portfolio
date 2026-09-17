@@ -21,7 +21,7 @@ must('components/app/Recipe.tsx',/r\.source\.url/,'recipe page must render the e
 
 // V7 live promotion must be visible across every user-facing decision surface, not only the recipe browser.
 for(const [rel,token] of [['components/app/Cook.tsx','allLiveRecipesV7'],['components/app/Home.tsx','allLiveRecipesV7'],['components/app/Plan.tsx','allLiveRecipesV7'],['components/app/Builder.tsx','allLiveRecipesV7'],['components/app/Kitchen.tsx','ingredientUiCatalogV7'],['components/app/Scan.tsx','ingredientUiCatalogV7'],['components/app/Shell.tsx','allLiveRecipesV7'],['components/AskHomeView.tsx','getLiveRecipeV7'],['app/api/ask-home/route.ts','buildAssistantContextV7'],['components/app/PrepDay.tsx','prepJobsForWeekV7']])must(rel,new RegExp(token),`V7 live surface missing ${token}`);
-mustNot('components/AskHomeView.tsx',/recipe-nutrition|nutritionFor\s*\(/,'Ask Home cards regressed to placeholder nutrition');
+mustNot('components/AskHomeView.tsx',/recipe-nutrition|nutritionFor\s*\(/,'Ask Josh cards regressed to placeholder nutrition');
 for(const rel of ['components/HouseholdSync.tsx','data/foundation.ts','data/foundation-ops.ts','data/meal-plan.ts'])if(exists(rel))fail(`${rel}: retired legacy file was reintroduced`);
 mustNot('components/app/Shell.tsx',/remainingMl|outputMl|shortMl|\bml in the freezer\b/,'local Home answers regressed to ml-only prep assumptions');
 mustNot('components/HouseholdState.tsx',/neededMl|onHandMl|shortMl|outputMl|remainingMl/,'v3 bridge reintroduced ml-only aliases');
@@ -58,12 +58,13 @@ mustNot('components/HouseholdStateV12.tsx',/catch\s*\{\s*return\s+historyOnly/,'
 
 must('components/VisionRuntime.tsx',/fetch\("\/api\/vision",\{cache:"no-store"\}\)/,'vision configuration check must be GET-only');
 mustNot('components/VisionRuntime.tsx',/imageDataUrl:\s*""/,'vision still sends an empty image request');
-must('components/SmartAskRuntime.tsx',/set_active_prep_set/,'Ask Home cannot confirm repertoire changes');
-must('components/SmartAskRuntime.tsx',/set_week/,'Ask Home cannot confirm full-week changes');
+must('components/SmartAskRuntime.tsx',/set_active_prep_set/,'Ask Josh cannot confirm prep-set changes');
+must('components/SmartAskRuntime.tsx',/set_week/,'Ask Josh cannot confirm full-week changes');
 must('components/VoiceRuntime.tsx',/home-meals-household-v12/,'voice is not using v12 household state');
-must('app/api/ask-home/route.ts',/function cleanHref\(/,'AI navigation routes must be validated against real Home Meals routes');
-must('app/api/ask-home/route.ts',/never invent route names such as \/week/,'AI route instructions must explicitly forbid invented navigation paths');
-must('app/api/ask-home/route.ts',/max_output_tokens:\s*3000/,'full-week structured planning lost the response budget proven in production');
+const askRoute=read('app/api/ask-home/route.ts');
+if(!/function cleanHref\(/.test(askRoute))fail('app/api/ask-home/route.ts: AI navigation routes must be validated against real Home Meals routes');
+if(!/ROUTES[\s\S]*href must be a real internal route/.test(askRoute))fail('app/api/ask-home/route.ts: AI route instructions must explicitly restrict navigation to real product routes');
+const outputBudget=Number(askRoute.match(/max_output_tokens:\s*(\d+)/)?.[1]||0);if(outputBudget<3000)fail('app/api/ask-home/route.ts: full-week structured planning needs at least the 3000-token response budget proven in production');
 
 // Accessible controls. V19 replaces the old icon-only Kitchen button with a text-labelled manual path.
 must('components/app/Scan.tsx',/aria-label="Choose a photo from the library"/,'photo-library control is unlabeled');
@@ -89,5 +90,6 @@ must('package.json',/audit-sync-recovery\.cjs/,'sync recovery audit is not in au
 must('package.json',/audit-live-promotion-v7\.cjs/,'V7 live-promotion audit is not in audit:data');
 must('package.json',/audit-integrated-redteam-v8\.cjs/,'V8 integrated red-team audit is not in audit:data');
 must('package.json',/audit-josh-presence-v19\.cjs/,'V19 Josh-presence audit is not in audit:data');
+must('package.json',/audit-conversation-memory-v20\.cjs/,'V20 conversation-memory audit is not in audit:data');
 must('package.json',/audit-product-completion\.cjs/,'product-completion audit is not in audit:data');
 if(failures.length){console.error(`\nHome Meals product-completion audit FAILED (${failures.length})`);for(const x of failures)console.error(` - ${x}`);process.exitCode=1}else console.log('\nHome Meals product-completion audit passed · complete household loop · V7 live promotion surfaces · stale legacy truth removed · full prep imagery · V6 measured-output prep · explicit cook reconciliation · validated AI routes · Josh/Ask/Vision/Voice wiring · accessible controls · mobile/PWA/privacy guardrails');
