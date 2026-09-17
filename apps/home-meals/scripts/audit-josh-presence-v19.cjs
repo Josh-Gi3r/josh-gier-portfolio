@@ -1,0 +1,23 @@
+const fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..'),errors=[];const read=p=>fs.readFileSync(path.join(root,p),'utf8'),must=(ok,msg)=>{if(!ok)errors.push(msg)};
+const layout=read('app/layout.tsx'),presence=read('components/JoshPresence.tsx'),bar=read('components/app/HomeBar.tsx'),says=read('components/app/HomeSays.tsx'),ask=read('components/AskHomeView.tsx'),smart=read('components/SmartAskRuntime.tsx'),guide=read('components/HomeGuide.tsx'),scan=read('components/app/Scan.tsx'),vision=read('components/VisionRuntime.tsx'),voice=read('components/VoiceRuntime.tsx'),help=read('components/app/Help.tsx'),cooking=read('components/app/Cooking.tsx'),css=read('app/styles/josh-presence.css');
+const frames=['idle','talk','happy','affectionate','wink','surprised','thinking','laughing','sheepish'];
+must(layout.includes('JoshPresenceProvider'),'root layout does not mount shared Josh presence');
+must(presence.includes('createPortal')&&presence.includes('priority')&&presence.includes('activeId'),'single-presence coordinator is missing');
+must(presence.includes('Object.values(slots).filter')&&presence.includes('sort((a,b)=>b.priority-a.priority'),'Josh arbitration is not priority-based');
+for(const name of frames){const p=path.join(root,`public/images/home-guide/${name}.webp`);must(fs.existsSync(p),`Josh expression missing: ${name}`);must(css.includes(`/images/home-guide/${name}.webp`),`Josh expression not wired: ${name}`)}
+for(const [name,text] of Object.entries({HomeBar:bar,HomeSays:says,AskHomeView:ask,HomeGuide:guide,Scan:scan,VisionRuntime:vision,VoiceRuntime:voice,Cooking:cooking}))must(!text.includes('<Orb '),`${name} still renders the anonymous orb as an assistant identity`);
+must(bar.includes('JoshPresenceAnchor priority={10}')&&says.includes('JoshPresenceAnchor priority={40}')&&ask.includes('JoshPresenceAnchor priority={80}')&&guide.includes('JoshPresenceAnchor priority={100}')&&scan.includes('JoshPresenceAnchor priority={70}')&&voice.includes('JoshPresenceAnchor priority={90}'),'presence priority stack is incomplete');
+must(help.includes('Show me around')&&help.includes('Quick refresher')&&help.includes('home-meals:guide'),'More cannot relaunch Josh guides');
+for(const topic of ['Kitchen setup','Build our week','Prep & freezer','Prep Day','Show me','Cooking mode','Ask & voice','History & ratings'])must(help.includes(topic),`More guide hub missing ${topic}`);
+must(guide.includes('Hey sunshine! ☀️'),'G-specific affectionate opening is missing');
+for(const bad of ['Now Prep.','Next, Kitchen.','green orb','home base','prep repertoire','active prep repertoire'])must(!guide.toLowerCase().includes(bad.toLowerCase()),`guide copy regressed: ${bad}`);
+must(guide.includes('hm-guide-cue')&&guide.includes('cueFor'),'guide no longer distinguishes explanation from tappable control cue');
+for(const mode of ['Fridge','Freezer','Pantry','Receipt','Prep','Meal'])must(scan.includes(`id:\"${mode}\"`)||scan.includes(`id:"${mode}"`),`Show Me mode missing ${mode}`);
+must(scan.includes('capture="environment"')&&scan.includes('aria-label="Take a photo"')&&scan.includes('aria-label="Choose a photo from the library"'),'native camera/library choices are missing');
+must(!scan.includes('className="frame"')&&!scan.includes('hm-scan .frame'),'fake web viewfinder returned');
+must(scan.includes('data-home-guide="show-josh-modes"')&&scan.includes('data-home-guide="show-josh-capture"'),'Show Me guide anchors are missing');
+must(vision.includes('Nothing changes until you confirm it.')&&vision.includes('applyItem'),'Vision confirmation contract is not visible/preserved');
+for(const bad of ['prep repertoire','active prep repertoire','household brain'])must(!smart.toLowerCase().includes(bad),`Ask copy leaks implementation language: ${bad}`);
+must(css.includes('.hm-build .hm-orb')&&css.includes('.hm-search button[aria-label="Ask Home"] .hm-orb'),'secondary page orbs are not suppressed');
+if(errors.length){console.error(`\nHome Meals Josh Presence V19 audit FAILED (${errors.length})`);for(const e of errors)console.error(` - ${e}`);process.exitCode=1}else console.log('\nHome Meals Josh Presence V19 audit passed · one shared Josh · 9 expressions · permanent guide hub · human guide copy · honest native camera flow · Ask/Voice/Vision integrated');
