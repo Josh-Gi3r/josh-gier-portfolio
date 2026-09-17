@@ -17,8 +17,8 @@ const status=read("app/api/system-status/route.ts");
 const storage=read("data/recipe-storage-v2.ts");
 const dock=read("app/styles/dock-clearance.css");
 
-must(has(bar,'aria-label="Ask Home"','aria-label="Talk to Home"','aria-label="Show Home with camera"'),"Persistent Home dock is missing Ask/camera/voice controls");
-must(has(ask,'/api/ask-home','home-meals:ask','applyMutation','set_day','set_week','set_active_prep_set','confirm_empty_kitchen'),"Typed Ask Home is missing its API/action-confirmation contract");
+must(has(bar,'aria-label="Ask Josh"','aria-label="Talk to Josh"','aria-label="Show Josh with camera"'),"Persistent Josh dock is missing Ask/camera/voice controls");
+must(has(ask,'/api/ask-home','home-meals:ask','applyMutation','set_day','set_week','set_active_prep_set','confirm_empty_kitchen'),"Typed Ask Josh is missing its API/action-confirmation contract");
 must(has(vision,'/api/vision','needsConfirmation','setIngredient','setComponent'),"Vision runtime is missing proposal/confirmation or Kitchen mutation wiring");
 for(const mode of ["Fridge","Freezer","Pantry","Receipt","Prep","Meal"])must(scan.includes(`"${mode}"`),`Scan mode missing: ${mode}`);
 must(has(scan,'capture="environment"','accept="image/*"','saveMealPhoto'),"Camera/library image inputs or meal-photo persistence are missing");
