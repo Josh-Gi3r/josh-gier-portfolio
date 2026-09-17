@@ -96,7 +96,7 @@ test("preview week, physical prep and maintenance repertoire remain distinct unt
   await page.addInitScript(state=>{const marker="home-meals-v10-lifecycle-seeded";if(localStorage.getItem(marker))return;localStorage.setItem("home-meals-household-v12",JSON.stringify(state));localStorage.setItem("home-meals-welcome-seen-v1","1");localStorage.setItem(marker,"1")},seed);
   await page.goto("/",{waitUntil:"domcontentloaded"});
   await expect(page.getByText("DINNER IDEA",{exact:true})).toBeVisible();
-  await expect(page.getByText("A week to look over",{exact:true})).toBeVisible();
+  await expect(page.getByText("This week",{exact:true})).toHaveCount(0);
   await page.goto("/prep",{waitUntil:"domcontentloaded"});
   await expect(page.getByRole("tab",{name:"Browse"})).toHaveAttribute("aria-selected","true");
   await expect(page.getByRole("link",{name:/Core bases/})).toBeVisible();
@@ -115,6 +115,9 @@ test("preview week, physical prep and maintenance repertoire remain distinct unt
   await page.getByRole("button",{name:/Build it for us/i}).click();
   await expect(page.getByRole("button",{name:"Use this week"})).toBeVisible();
   await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")!).weekStatus)).toBe("suggested");
+  await page.goto("/",{waitUntil:"domcontentloaded"});
+  await expect(page.getByText("A week to look over",{exact:true})).toBeVisible();
+  await page.goto("/plan",{waitUntil:"domcontentloaded"});
   await page.getByRole("button",{name:"Use this week"}).click();
   await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem("home-meals-household-v12")!).weekStatus)).toBe("confirmed");
   await page.goto("/",{waitUntil:"domcontentloaded"});
