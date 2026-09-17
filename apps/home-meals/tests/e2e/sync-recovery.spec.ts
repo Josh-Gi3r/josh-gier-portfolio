@@ -18,9 +18,9 @@ test("join conflict preserves both states until the household chooses",async({pa
   await seed(page,local);await sessionReady(page);
   await page.route("**/api/household",route=>route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(remote(4,shared))}));
   await page.goto("/",{waitUntil:"domcontentloaded"});
-  await expect(page.getByText("This device already has Home Meals data")).toBeVisible();
+  await expect(page.getByText("This phone already has Home Meals")).toBeVisible();
   expect(await activePrep(page)).toEqual(["red"]);
-  await page.getByRole("button",{name:"Use shared household"}).click();
+  await page.getByRole("button",{name:"Use shared version",exact:true}).click();
   await expect.poll(()=>activePrep(page)).toEqual(["gold"]);
 });
 
@@ -29,7 +29,7 @@ test("concurrent local and remote edits surface an explicit conflict",async({pag
   await seed(page,local,{version:4,lastSyncedPayload:stableStringify(base)});await sessionReady(page);
   await page.route("**/api/household",route=>route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(remote(5,shared))}));
   await page.goto("/",{waitUntil:"domcontentloaded"});
-  await expect(page.getByText("Two devices changed Home Meals")).toBeVisible();
+  await expect(page.getByText("We made changes on two devices")).toBeVisible();
   expect(await activePrep(page)).toEqual(["red"]);
 });
 
@@ -38,7 +38,7 @@ test("remote household changes are deferred during cooking then safely reconcile
   await seed(page,base,{version:4,lastSyncedPayload:stableStringify(base)});await sessionReady(page);
   await page.route("**/api/household",route=>route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(remote(5,shared))}));
   await page.goto("/cook/gold-chicken-curry/cook",{waitUntil:"domcontentloaded"});
-  await expect(page.getByText("Household updated")).toBeVisible();
+  await expect(page.getByText("Changes on the other phone")).toBeVisible();
   expect(await activePrep(page)).toEqual([]);
   expect(await page.evaluate(k=>JSON.parse(localStorage.getItem(k)!).version,META_KEY)).toBe(4);
   expect(await pendingExists(page)).toBe(true);
@@ -52,9 +52,9 @@ test("first-write race fetches the winning household before asking for a choice"
   await seed(page,local);await sessionReady(page);
   await page.route("**/api/household",async route=>{const method=route.request().method();if(method==="PUT")return route.fulfill({status:409,contentType:"application/json",body:JSON.stringify({error:"version_conflict"})});gets++;return route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(gets===1?remote(0,null):remote(1,winner))})});
   await page.goto("/",{waitUntil:"domcontentloaded"});
-  await expect(page.getByText("Two devices changed Home Meals")).toBeVisible();
+  await expect(page.getByText("We made changes on two devices")).toBeVisible();
   expect(gets).toBeGreaterThanOrEqual(2);
-  await page.getByRole("button",{name:"Use shared household"}).click();
+  await page.getByRole("button",{name:"Use shared version",exact:true}).click();
   await expect.poll(()=>activePrep(page)).toEqual(["gold"]);
 });
 
@@ -63,7 +63,7 @@ test("failed write keeps local household truth and surfaces automatic recovery",
   await seed(page,local,{version:1,lastSyncedPayload:stableStringify(base)});await sessionReady(page);
   await page.route("**/api/household",route=>route.request().method()==="PUT"?route.fulfill({status:500,contentType:"application/json",body:JSON.stringify({error:"write_failed"})}):route.fulfill({status:200,contentType:"application/json",body:JSON.stringify(remote(1,base))}));
   await page.goto("/",{waitUntil:"domcontentloaded"});
-  await expect(page.getByText("Household sync needs attention")).toBeVisible();
-  await expect(page.getByText("Your local Home Meals still works and will retry automatically.")).toBeVisible();
+  await expect(page.getByText("Couldn’t sync right now")).toBeVisible();
+  await expect(page.getByText("This phone still works. I’ll try again automatically.")).toBeVisible();
   expect(await activePrep(page)).toEqual(["red"]);
 });
