@@ -42,9 +42,9 @@ export function HomeBar(){
  return <div className="hm-bar">
   {hint&&<Link href={hint.href} className="hm-bar-hint" onClick={()=>feedback("tap")}>✦ {hint.text}</Link>}
   <div className="hm-bar-pill" aria-label="Home inputs">
-   <Link href={cameraHref} className="hm-bar-side" aria-label="Show Home with camera" data-home-guide="camera" onClick={()=>feedback("tap")}><Icon name="camera" size={22}/></Link>
-   <button className="hm-bar-orb" data-home-guide="orb" onClick={openAsk} aria-label="Ask Home"><JoshPresenceAnchor priority={10} expression="idle" size={58} observeVisibility={false}/></button>
-   <button className="hm-bar-side" data-home-guide="voice" onClick={startVoice} aria-label="Talk to Home"><Waves/></button>
+   <Link href={cameraHref} className="hm-bar-side" aria-label="Show Josh with camera" data-home-guide="camera" onClick={()=>feedback("tap")}><Icon name="camera" size={22}/></Link>
+   <button className="hm-bar-orb" data-home-guide="orb" onClick={openAsk} aria-label="Ask Josh"><JoshPresenceAnchor priority={10} expression="idle" size={58} observeVisibility={false}/></button>
+   <button className="hm-bar-side" data-home-guide="voice" onClick={startVoice} aria-label="Talk to Josh"><Waves/></button>
   </div>
   <nav className="hm-bar-nav" aria-label="Main navigation">
    {tabs.map(t=>{const on=isCurrent(path,t.href);return <Link key={t.href} href={t.href} data-home-guide={t.guide} className={`hm-bar-tab ${on?"on":""}`} aria-current={on?"page":undefined} onClick={()=>feedback("tap")}><Icon name={t.icon} size={24}/><span>{t.label}</span></Link>})}
