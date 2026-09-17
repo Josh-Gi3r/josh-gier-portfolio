@@ -15,11 +15,13 @@ test('G learns Kitchen inside the first tutorial even when Kitchen truth is unkn
  await expect(guide).toContainText('Hey sunshine');
  await expect(page.getByRole('dialog',{name:'Start Home Meals'})).toHaveCount(0);
  await guide.getByRole('button',{name:'Show me',exact:true}).click();
- await expect(page.locator('.hm-guide-copy')).toContainText('Kitchen is the truth');
+ await expect(page.locator('.hm-guide-copy')).toContainText('rough idea of what’s actually in the kitchen');
+ await expect(page.locator('.hm-guide-cue')).toContainText('Kitchen');
  await page.locator('[data-home-guide="nav-kitchen"]').click();
  await expect(page).toHaveURL(/\/kitchen$/);
- await expect(page.locator('.hm-guide-copy')).toContainText('This is Kitchen');
- await expect(page.locator('.hm-guide-copy')).toContainText('use the camera');
+ await expect(page.locator('.hm-guide-copy')).toContainText('fridge, freezer and pantry');
+ await guide.getByRole('button',{name:'Next',exact:true}).click();
+ await expect(page.locator('.hm-guide-copy')).toContainText('show me');
  await expect(page.getByRole('button',{name:/Kitchen checked/}).first()).toBeVisible();
 });
 
