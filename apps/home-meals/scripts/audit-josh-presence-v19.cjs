@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),errors=[];const read=p=>fs.readFileSync(path.join(root,p),'utf8'),must=(ok,msg)=>{if(!ok)errors.push(msg)};
-const layout=read('app/layout.tsx'),presence=read('components/JoshPresence.tsx'),bar=read('components/app/HomeBar.tsx'),says=read('components/app/HomeSays.tsx'),ask=read('components/AskHomeView.tsx'),smart=read('components/SmartAskRuntime.tsx'),guide=read('components/HomeGuide.tsx'),scan=read('components/app/Scan.tsx'),vision=read('components/VisionRuntime.tsx'),voice=read('components/VoiceRuntime.tsx'),help=read('components/app/Help.tsx'),cooking=read('components/app/Cooking.tsx'),css=read('app/styles/josh-presence.css');
+const layout=read('app/layout.tsx'),presence=read('components/JoshPresence.tsx'),bar=read('components/app/HomeBar.tsx'),says=read('components/app/HomeSays.tsx'),ask=read('components/AskHomeView.tsx'),smart=read('components/SmartAskRuntime.tsx'),guide=read('components/HomeGuide.tsx'),scan=read('components/app/Scan.tsx'),vision=read('components/VisionRuntime.tsx'),voice=read('components/VoiceRuntime.tsx'),help=read('components/app/Help.tsx'),cooking=read('components/app/Cooking.tsx'),home=read('components/app/Home.tsx'),cook=read('components/app/Cook.tsx'),css=read('app/styles/josh-presence.css');
 const frames=['idle','talk','happy','affectionate','wink','surprised','thinking','laughing','sheepish'];
 must(layout.includes('JoshPresenceProvider'),'root layout does not mount shared Josh presence');
 must(presence.includes('createPortal')&&presence.includes('priority')&&presence.includes('activeId'),'single-presence coordinator is missing');
@@ -19,5 +19,8 @@ must(!scan.includes('className="frame"')&&!scan.includes('hm-scan .frame'),'fake
 must(scan.includes('data-home-guide="show-josh-modes"')&&scan.includes('data-home-guide="show-josh-capture"'),'Show Me guide anchors are missing');
 must(vision.includes('Nothing changes until you confirm it.')&&vision.includes('applyItem'),'Vision confirmation contract is not visible/preserved');
 for(const bad of ['prep repertoire','active prep repertoire','household brain'])must(!smart.toLowerCase().includes(bad),`Ask copy leaks implementation language: ${bad}`);
+must(!home.toLowerCase().includes('choose a repertoire'),'Home copy regressed to repertoire jargon');
+for(const bad of ['active prep','ratings · prep · recency'])must(!cook.toLowerCase().includes(bad.toLowerCase()),`Cook copy leaks implementation language: ${bad}`);
 must(css.includes('.hm-build .hm-orb')&&css.includes('.hm-search button[aria-label="Ask Home"] .hm-orb'),'secondary page orbs are not suppressed');
+must(css.includes('.hm-bar-hint{min-height:44px}'),'assistant hint no longer guarantees a 44px touch target');
 if(errors.length){console.error(`\nHome Meals Josh Presence V19 audit FAILED (${errors.length})`);for(const e of errors)console.error(` - ${e}`);process.exitCode=1}else console.log('\nHome Meals Josh Presence V19 audit passed · one shared Josh · 9 expressions · permanent guide hub · human guide copy · honest native camera flow · Ask/Voice/Vision integrated');
