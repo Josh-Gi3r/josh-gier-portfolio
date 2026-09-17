@@ -19,9 +19,23 @@ async function seedPerson(page:Page,person:"josh"|"g",guideStatus?:"completed"|"
 async function expectNoCollision(page:Page){
  const card=await page.locator(".hm-guide-card").boundingBox();
  const dock=await page.locator(".hm-bar-pill").boundingBox();
- expect(card).toBeTruthy();expect(dock).toBeTruthy();
- const overlaps=!(card!.x+card!.width<=dock!.x||dock!.x+dock!.width<=card!.x||card!.y+card!.height<=dock!.y||dock!.y+dock!.height<=card!.y);
- expect(overlaps,"talking-head card must not cover the persistent Home input dock").toBe(false);
+ const nav=await page.locator(".hm-bar-nav").boundingBox();
+ expect(card).toBeTruthy();expect(dock).toBeTruthy();expect(nav).toBeTruthy();
+ const overlap=(a:NonNullable<typeof card>,b:NonNullable<typeof card>)=>!(a.x+a.width<=b.x||b.x+b.width<=a.x||a.y+a.height<=b.y||b.y+b.height<=a.y);
+ expect(overlap(card!,dock!),"talking-head card must not cover the persistent Home input dock").toBe(false);
+ expect(overlap(card!,nav!),"talking-head card must not cover bottom navigation").toBe(false);
+}
+
+async function expectGuideComposition(page:Page,{intro=false}:{intro?:boolean}={}){
+ const layer=page.locator("[data-home-guide-overlay]"),head=page.locator(".hm-guide-head"),bubble=page.locator(".hm-guide-bubble");
+ const [hb,bb]=await Promise.all([head.boundingBox(),bubble.boundingBox()]);expect(hb).toBeTruthy();expect(bb).toBeTruthy();
+ const overlap=!(hb!.x+hb!.width<=bb!.x||bb!.x+bb!.width<=hb!.x||hb!.y+hb!.height<=bb!.y||bb!.y+bb!.height<=hb!.y);expect(overlap,"Josh head must never be covered by the speech bubble").toBe(false);
+ if(intro){expect(await layer.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe("rgba(0, 0, 0, 0)");await expect(page.locator(".hm-guide-close")).toHaveCount(0)}
+ else{const close=page.locator(".hm-guide-close");await expect(close).toBeVisible();const cb=await close.boundingBox(),vp=page.viewportSize();expect(cb).toBeTruthy();expect(vp).toBeTruthy();expect(cb!.width).toBeGreaterThanOrEqual(44);expect(cb!.height).toBeGreaterThanOrEqual(44);expect(cb!.x).toBeGreaterThanOrEqual(0);expect(cb!.y).toBeGreaterThanOrEqual(0);expect(cb!.x+cb!.width).toBeLessThanOrEqual(vp!.width);expect(cb!.y+cb!.height).toBeLessThanOrEqual(vp!.height);const shadow=await page.locator(".hm-guide-highlight").evaluate(el=>getComputedStyle(el).boxShadow);expect(shadow).toContain("9999px")}
+}
+
+async function expectHighlightedTargetInViewport(page:Page){
+ const target=page.locator(".hm-guide-highlight");await expect(target).toBeVisible();const b=await target.boundingBox(),vp=page.viewportSize();expect(b).toBeTruthy();expect(vp).toBeTruthy();expect(b!.y).toBeGreaterThanOrEqual(0);expect(b!.y+b!.height).toBeLessThanOrEqual(vp!.height);
 }
 
 async function summonGuide(page:Page){
@@ -41,6 +55,7 @@ test("G gets the automatic first-run guide once and can dismiss it permanently",
  await expect(guide).toBeVisible({timeout:4000});
  await expect(guide).toContainText("Hey sunshine");
  await expect(page.locator(".hm-guide-sprite")).toBeVisible();
+ await expectGuideComposition(page,{intro:true});
  await expectNoCollision(page);
  await guide.getByRole("button",{name:"Not now"}).click();
  await expect(guide).toHaveCount(0);
@@ -58,6 +73,7 @@ test("Josh gets the automatic first-run guide once and can dismiss it permanentl
  await expect(guide).toBeVisible({timeout:4000});
  await expect(guide).toContainText("Quick tour");
  await expect(guide).not.toContainText("sunshine");
+ await expectGuideComposition(page,{intro:true});
  await expectNoCollision(page);
  await guide.getByRole("button",{name:"Not now"}).click();
  await expect(guide).toHaveCount(0);
@@ -74,15 +90,15 @@ test("first-run guide uses real navigation, progress and accepts detours",async(
  const guide=page.locator("[data-home-guide-overlay]");
  await expect(guide).toBeVisible({timeout:4000});
  await guide.getByRole("button",{name:"Show me",exact:true}).click();
- await expect(page.locator(".hm-guide-copy")).toContainText("home base");
+ await expectGuideComposition(page);
+ await expect(page.locator(".hm-guide-copy")).toContainText("This is Home");
  await expect(page.locator(".hm-guide-progress")).toContainText("1/5");
  await page.locator('[data-home-guide="nav-cook"]').click();
  await expect(page).toHaveURL(/\/cook$/);
- await expect(page.locator(".hm-guide-copy")).toContainText("All our recipes live here");
- // Deliberately ignore Prep and visit Kitchen. The guide follows instead of blocking the user.
+ await expect(page.locator(".hm-guide-copy")).toContainText("Cook is all our recipes");
  await page.locator('[data-home-guide="nav-kitchen"]').click();
  await expect(page).toHaveURL(/\/kitchen$/);
- await expect(page.locator(".hm-guide-copy")).toContainText("Kitchen is what we actually have");
+ await expect(page.locator(".hm-guide-copy")).toContainText("Kitchen is what we have at home");
  await expectNoCollision(page);
 });
 
@@ -101,7 +117,7 @@ test("One bit exposes deep help topics and History routes to the real screen",as
  for(const label of ["Home","Cook","Prep","Kitchen","Plan","Ask & voice","Camera","Cooking","History"])await expect(guide.getByRole("button",{name:label})).toBeVisible();
  await guide.getByRole("button",{name:"History"}).click();
  await expect(page).toHaveURL(/\/history$/);
- await expect(page.locator(".hm-guide-copy")).toContainText("keeps Home from getting repetitive");
+ await expect(page.locator(".hm-guide-copy")).toContainText("History remembers what we cooked");
 });
 
 test("Quick refresher replays without changing G first-run completion",async({page})=>{
@@ -109,7 +125,7 @@ test("Quick refresher replays without changing G first-run completion",async({pa
  await page.goto("/",{waitUntil:"domcontentloaded"});
  const guide=await summonGuide(page);
  await guide.getByRole("button",{name:"Quick refresher"}).click();
- await expect(page.locator(".hm-guide-copy")).toContainText("tonight and the week at a glance");
+ await expect(page.locator(".hm-guide-copy")).toContainText("dinner and the week at a glance");
  await page.locator('[data-home-guide="nav-cook"]').click();
  await expect(page).toHaveURL(/\/cook$/);
  await expect(page.locator(".hm-guide-copy")).toContainText("Cook is all our recipes");
@@ -127,4 +143,15 @@ test("guide has a static reduced-motion equivalent",async({browser})=>{
  await expect(guide).toHaveClass(/reduce/);
  await expect(guide.getByRole("button",{name:"Show me",exact:true})).toBeVisible();
  await context.close();
+});
+
+test("unknown Kitchen is taught through real controls and keeps the target on-screen",async({page})=>{
+ const unknown={...seed,weekStatus:"unplanned" as const,suggestedWeek:null,activePrepIds:[],componentBatches:[],manualComponentStock:{},ingredientStock:{},qualitativeIngredientStock:{},kitchenReady:false};
+ await page.addInitScript(({state})=>{localStorage.setItem("home-meals-household-v12",JSON.stringify(state));localStorage.setItem("home-meals-person-v1","g");localStorage.removeItem("home-meals-guide-v1:g")},{state:unknown});
+ await page.goto("/",{waitUntil:"domcontentloaded"});const guide=page.locator("[data-home-guide-overlay]");await expect(guide).toBeVisible({timeout:4000});await guide.getByRole("button",{name:"Show me",exact:true}).click();await page.locator('[data-home-guide="nav-kitchen"]').click();await expect(page).toHaveURL(/\/kitchen$/);
+ await expect(page.locator(".hm-guide-copy")).toContainText("fridge, freezer and pantry");await guide.getByRole("button",{name:"Next",exact:true}).click();await expect(page.locator(".hm-guide-copy")).toContainText("Fastest way? Show me");await guide.getByRole("button",{name:"Next",exact:true}).click();await expect(page.locator(".hm-guide-copy")).toContainText("Kitchen checked");await page.waitForTimeout(450);await expectHighlightedTargetInViewport(page);await guide.getByRole("button",{name:"Keep touring"}).click();await expect(page.locator(".hm-guide-copy")).toContainText("Tap Cook");
+});
+
+test("guide visual contract holds on canonical phones",async({browser})=>{
+ for(const viewport of [{width:360,height:640},{width:390,height:667},{width:390,height:844},{width:430,height:844}]){const context=await browser.newContext({viewport});const page=await context.newPage();await seedPerson(page,"g");await page.goto("/",{waitUntil:"domcontentloaded"});await expect(page.locator("[data-home-guide-overlay]")).toBeVisible({timeout:4000});await expectGuideComposition(page,{intro:true});await page.getByRole("button",{name:"Show me",exact:true}).click();await expectGuideComposition(page);await expectNoCollision(page);await context.close();}
 });
