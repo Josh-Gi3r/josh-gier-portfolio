@@ -41,8 +41,8 @@ export function Recipe({id}:{id:string}){
   <div className="hm-hero">{r.image?<img src={photo?.dataUrl??r.image} alt={title} width={780} height={840} loading="eager" fetchPriority="high" decoding="async"/>:<div className="initial">{title[0]}</div>}<div className="shade"/><div className="top"><RoundBack href="/cook" onPhoto label="Back to recipes"/><button className={`hm-round onphoto ${favourite?"heart":""}`} aria-label={favourite?"Remove from favourites":"Add to favourites"} onClick={()=>{h.toggleFavourite(id);feedback("change")}}>{favourite?"♥":"♡"}</button></div></div>
   <div className="hm-sheetpage" style={{paddingBottom:140}}>
    <span className="hm-kicker">{r.cuisine} · {inWeek>=0?longDays[inWeek]:"not in the week"}</span><h1 className="hm-recipe-title">{title}</h1><p className="hm-lead" style={{marginTop:8}}>{subtitle}</p>
-   <div className="hm-stats four"><Stat v={r.minutes} k="minutes"/><Stat v={kcal?`~${kcal.kcalPerPerson}`:"—"} k="kcal / person" tint="var(--tint-peach)"/><Stat v={kcal?kcal.mealWeight:"—"} k="meal"/><Stat v={f.targetServings} k="servings" tint="var(--tint-sky)"/></div>
-   <div className="hm-fine">Makes 4 servings — dinner for two plus two leftovers · {r.method} · {r.difficulty}</div>
+   <div className="hm-stats four"><Stat v={r.minutes} k="minutes"/><Stat v={kcal?`~${kcal.kcalPerPerson}`:"—"} k="kcal / person" tint="var(--tint-peach)"/><Stat v={kcal?kcal.mealWeight:"—"} k="meal style"/><Stat v={f.targetServings} k="servings" tint="var(--tint-sky)"/></div>
+   <div className="hm-fine">{kcal?`Calories are a recipe estimate (about ±${kcal.uncertaintyPct}%). They’ll get more accurate as we use our own ingredients and measured prep.`:"Calories aren’t estimated yet."} · Makes 4 servings — dinner for two plus two leftovers · {r.method} · {r.difficulty}</div>
    <HomeSays actions={says.actions}>{says.text}</HomeSays>
 
    <SectionHead title="What goes in" action={<span className={ready.state==="missing"?"peach":"muted"} style={{fontSize:13,fontWeight:700,color:ready.state==="ready"?"var(--green)":ready.state==="missing"?"var(--peach-text)":"var(--muted)"}}>{ready.label}</span>}/>
