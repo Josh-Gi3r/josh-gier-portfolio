@@ -34,7 +34,7 @@ for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','componen
  must(rel,/packetBreakdownV6/,'prep detail must derive V6 storage packets plus loose remainder');
  mustNot(rel,/recordPortionedProduction\(/,'active prep detail still logs count×legacy portions');
 }
-for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx','components/app/PrepDay.tsx'])must(rel,/finished output/i,'prep UX must ask for the actual finished output before packetising stock');
+for(const rel of ['components/app/Mother.tsx','components/app/Mid.tsx','components/app/Boosters.tsx','components/app/PrepDay.tsx'])must(rel,/(finished output|weigh or measure|measure what you actually|how much you made)/i,'prep UX must ask for a real post-cook measurement before portioning stock');
 
 must('components/app/Prep.tsx',/Our prep/,'Prep home must foreground household repertoire rather than only mothers');
 must('components/app/Prep.tsx',/Have now/,'Prep home must separate physical prep stock from maintenance repertoire');
