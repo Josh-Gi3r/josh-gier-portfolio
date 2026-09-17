@@ -5,13 +5,13 @@ import {getLiveRecipeV7} from "@/data/recipe-catalog-v7";
 import {recipeTitle} from "@/data/recipe-display";
 import {kcalReferenceForV3} from "@/data/recipe-kcal-reference-v3";
 import {Icon} from "./Icons";
-import {Orb,Waves} from "./app/Orb";
+import {JoshPresenceAnchor} from "./JoshPresence";
+import {Waves} from "./app/Orb";
 
 export type AskMessage={who:"you"|"home";text:string;mealIds?:string[];tags?:string[];href?:string|null;action?:string|null;extra?:ReactNode};
 type Quick={label:string;text:string};
 
-// Full-screen Ask Home. Shared by the on-device answers (Shell) and the household-brain runtime.
-// Home talks first, big orb while nothing has been said, then the conversation with photo picks.
+// Full-screen Ask Home. Josh is the single visible assistant presence; messages do not spawn extra avatars.
 export function AskHomeView({messages,q,setQ,onSend,onClose,cameraHref,quick,loading=false,status="Ask Home"}:{messages:AskMessage[];q:string;setQ:(v:string)=>void;onSend:(text?:string)=>void;onClose:()=>void;cameraHref:string;quick:Quick[];loading?:boolean;status?:string}){
  const[dismissed,setDismissed]=useState<Record<string,boolean>>({});
  const conversation=messages.some(m=>m.who==="you");
@@ -24,13 +24,13 @@ export function AskHomeView({messages,q,setQ,onSend,onClose,cameraHref,quick,loa
     <span>{status}</span>
     <Link href={cameraHref} className="hm-round green" aria-label="Show Home with camera" onClick={onClose}><Icon name="camera" size={20}/></Link>
    </div>
-   <div className="hm-ask-stage"><Orb size={conversation?96:164} label="Home"/></div>
+   <div className={`hm-ask-stage ${conversation?"conversation":""}`}><JoshPresenceAnchor priority={80} expression={loading?"thinking":conversation?"talk":"affectionate"} size={conversation?96:156} observeVisibility={false}/></div>
    <div className="hm-ask-scroll" aria-live="polite">
     {messages.map((m,i)=>{
      if(m.who==="you")return <div key={i} className="hm-ask-msg you"><div>{m.text}</div></div>;
      const picks=(m.mealIds??[]).filter(id=>!dismissed[`${i}:${id}`]).slice(0,4);
      return <div key={i} className="hm-ask-block">
-      <div className="hm-ask-msg home"><Orb size={36}/><div className="hm-bubble">{m.text}
+      <div className="hm-ask-msg home"><div className="hm-bubble">{m.text}
        {m.tags&&m.tags.length>0&&<div className="hm-ask-tags">{m.tags.filter(Boolean).map(t=><span key={t}>{t}</span>)}</div>}
        {m.extra}
        {m.href&&m.action&&<Link className="hm-ask-action" href={m.href} onClick={onClose}>{m.action} →</Link>}
@@ -38,7 +38,7 @@ export function AskHomeView({messages,q,setQ,onSend,onClose,cameraHref,quick,loa
       {picks.length>0&&<div className="hm-ask-picks" style={{marginTop:12}}>{picks.map(id=>{const r=getLiveRecipeV7(id);if(!r)return null;const title=recipeTitle(r.id,r.title),n=kcalReferenceForV3(r.id);return <div key={id} className="hm-tile">{r.image&&<img src={r.image} alt={title} loading="lazy"/>}<div className="shade deep"/><div className="copy"><strong>{title}</strong><small>{r.minutes} min{n?` · ~${n.kcalPerPerson} kcal/person`:""}</small><div className="acts"><Link className="yes" href={`/cook/${id}`} onClick={onClose}>Yes</Link><button className="nah" onClick={()=>setDismissed(v=>({...v,[`${i}:${id}`]:true}))}>Nah</button></div></div></div>})}</div>}
      </div>;
     })}
-    {loading&&<div className="hm-ask-msg home"><Orb size={36}/><div className="hm-bubble hm-ask-typing"><i/><i/><i/></div></div>}
+    {loading&&<div className="hm-ask-msg home"><div className="hm-bubble hm-ask-typing"><i/><i/><i/></div></div>}
    </div>
    <div className="hm-ask-foot">
     <div className={`hm-ask-chips ${conversation?"":"center"}`}><button className="hm-chip sm" onClick={showGuide}>Show me around</button>{quick.map(c=><button key={c.text} className="hm-chip sm" onClick={()=>onSend(c.text)}>{c.label}</button>)}</div>

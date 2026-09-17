@@ -4,10 +4,11 @@ import {usePathname} from "next/navigation";
 import {useMemo} from "react";
 import {Icon} from "../Icons";
 import {useHousehold} from "../HouseholdState";
+import {JoshPresenceAnchor} from "../JoshPresence";
 import {getComponent,getIngredient} from "@/data/home-data";
 import {ingredientsForRecipeV7} from "@/data/ingredient-engine-v7";
 import {feedback} from "@/lib/feedback";
-import {Orb,Waves} from "./Orb";
+import {Waves} from "./Orb";
 
 const tabs=[
  {href:"/",label:"Home",guide:"nav-home",icon:"home" as const},
@@ -20,8 +21,7 @@ const tabs=[
 const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 function isCurrent(path:string,href:string){return href==="/"?path==="/":path.startsWith(href)}
 
-// Bottom bar: six flat tabs on a frosted strip, with the camera · orb · voice pill floating above.
-// The orb IS the Ask Home button. A hint chip appears above the pill when Home has something to say.
+// Bottom bar: camera · Josh · voice above the six main tabs. Josh yields whenever a higher-priority assistant surface is speaking.
 export function HomeBar(){
  const path=usePathname();const h=useHousehold();
  const cookingRoute=/^\/cook\/[^/]+\/cook$/.test(path);
@@ -43,7 +43,7 @@ export function HomeBar(){
   {hint&&<Link href={hint.href} className="hm-bar-hint" onClick={()=>feedback("tap")}>✦ {hint.text}</Link>}
   <div className="hm-bar-pill" aria-label="Home inputs">
    <Link href={cameraHref} className="hm-bar-side" aria-label="Show Home with camera" data-home-guide="camera" onClick={()=>feedback("tap")}><Icon name="camera" size={22}/></Link>
-   <button className="hm-bar-orb" data-home-guide="orb" onClick={openAsk} aria-label="Ask Home"><Orb size={54}/></button>
+   <button className="hm-bar-orb" data-home-guide="orb" onClick={openAsk} aria-label="Ask Home"><JoshPresenceAnchor priority={10} expression="idle" size={58} observeVisibility={false}/></button>
    <button className="hm-bar-side" data-home-guide="voice" onClick={startVoice} aria-label="Talk to Home"><Waves/></button>
   </div>
   <nav className="hm-bar-nav" aria-label="Main navigation">
