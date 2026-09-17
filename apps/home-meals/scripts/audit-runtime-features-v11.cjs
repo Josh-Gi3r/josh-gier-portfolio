@@ -23,7 +23,7 @@ must(has(vision,'/api/vision','needsConfirmation','setIngredient','setComponent'
 for(const mode of ["Fridge","Freezer","Pantry","Receipt","Prep","Meal"])must(scan.includes(`"${mode}"`),`Scan mode missing: ${mode}`);
 must(has(scan,'capture="environment"','accept="image/*"','saveMealPhoto'),"Camera/library image inputs or meal-photo persistence are missing");
 must(has(voice,'navigator.mediaDevices?.getUserMedia','/api/live','/api/ask-home','SpeechRecognition','webkitSpeechRecognition','fillAsk(text)','home-meals:voice-proposal'),"Voice runtime lost realtime, fallback, household delegation or proposal safeguards");
-must(has(cooking,'sessionStorage','wakeLock','cookMeal(id)','logMealWithoutStock(id)','rateMeal','noteMeal','recordCookObservation','Start timer','Done — log it'),"Cooking runtime is missing resume/timer/wake-lock/reconciliation/ratings/notes or observation logging");
+must(has(cooking,'sessionStorage','wakeLock','cookMeal(id)','logMealWithoutStock(id)','rateMeal','noteMeal','recordCookObservation','Start timer','onClick={finish}>Done</button>'),"Cooking runtime is missing resume/timer/wake-lock/reconciliation/ratings/notes or observation logging");
 for(const day of ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"])must(plan.includes(`"${day}"`),`Plan lost ${day}`);
 must(has(plan,'aria-label="This week\'s dinners"','setDay','shoppingNeeds','prepNeeds'),"Plan lost week/calendar, shopping or prep integration");
 must(has(sync,'setInterval','conflict','cooking','version'),"Household sync lost polling/conflict/cooking-deferral semantics");
