@@ -79,8 +79,8 @@ test("first-run truth gates navigation, then primary navigation remains usable",
   await expect(dialog).toBeVisible();
   const cookBeforeSetup=page.getByRole("link",{name:/^Cook$/i}).last();
   await expect(cookBeforeSetup).toBeVisible();
-  await expect(dialog).toContainText("Unknown and empty are different");
-  await dialog.getByRole("button",{name:/Kitchen is empty/i}).click();
+  await expect(dialog).toContainText("What do we have at home?");
+  await dialog.getByRole("button",{name:"Nothing yet",exact:true}).click();
   await expect(page).toHaveURL(/\/prep$/);
   await expect(dialog).toBeHidden();
   for(const [label,path] of [["Cook","/cook"],["Prep","/prep"],["Kitchen","/kitchen"],["Plan","/plan"],["Home","/"]] as const){
@@ -95,8 +95,8 @@ test("preview week, physical prep and maintenance repertoire remain distinct unt
   const seed={version:12,week:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],weekStatus:"unplanned",suggestedWeek:null,planMode:"both",allowExtraPrep:true,monthlyPool:["gold-chicken-curry","sambal-udang","thai-green-chicken","pad-kra-pao","chicken-cacciatore","mustard-mushroom-chicken","beef-broccoli"],activePrepIds:[],componentBatches:[],manualComponentStock:{},ingredientStock:{},qualitativeIngredientStock:{},groceryChecked:{},ratings:{},recipeNotes:{},recipeVersions:{},history:[],cookObservations:[],useSoon:{},useSoonAt:{},favourites:{},kitchenReady:true,migrationWarnings:[]};
   await page.addInitScript(state=>{const marker="home-meals-v10-lifecycle-seeded";if(localStorage.getItem(marker))return;localStorage.setItem("home-meals-household-v12",JSON.stringify(state));localStorage.setItem("home-meals-welcome-seen-v1","1");localStorage.setItem(marker,"1")},seed);
   await page.goto("/",{waitUntil:"domcontentloaded"});
-  await expect(page.getByText("IDEA FOR TONIGHT",{exact:true})).toBeVisible();
-  await expect(page.getByText("A week Home could build",{exact:true})).toBeVisible();
+  await expect(page.getByText("DINNER IDEA",{exact:true})).toBeVisible();
+  await expect(page.getByText("A week to look over",{exact:true})).toBeVisible();
   await page.goto("/prep",{waitUntil:"domcontentloaded"});
   await expect(page.getByRole("tab",{name:"Browse"})).toHaveAttribute("aria-selected","true");
   await expect(page.getByRole("link",{name:/Core bases/})).toBeVisible();
