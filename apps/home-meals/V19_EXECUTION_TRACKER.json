@@ -1,1 +1,93 @@
-{"version":19,"name":"Josh Presence + Guides + Show Me","status":"implementation_complete_qa_in_progress","base_sha":"c6b49699908bee62fba7434da56ddda16402ee86","branch":"home-meals-v19-josh-presence","principles":["one_josh_never_two","one_guide_system_multiple_guides","human_personal_copy","honest_native_camera_flow","preserve_deterministic_household_truth"],"phases":{"identity_foundation":{"status":"complete","tasks":["reusable_josh_head","presence_coordinator","dock_migration","home_says_migration","ask_migration","guide_migration"]},"guide_system":{"status":"complete","tasks":["rewrite_full_tour","control_action_cues","task_guides","more_entry","replay_without_state_reset"]},"show_josh_camera":{"status":"complete","tasks":["remove_fake_viewfinder","capture_launcher","native_camera_and_library","photo_hero_after_capture","vision_confirmation_preserved"]},"assistant_copy":{"status":"complete","tasks":["smart_ask_copy","remove_orb_language","remove_repertoire_language"]},"qa_release":{"status":"in_progress","tasks":{"v19_audit":"passed","one_head_browser_tests":"written","canonical_phone_matrix":"written","audit_data":"passed_on_qa_branch","typecheck":"passed_on_qa_branch","build":"passed_on_qa_branch","e2e":"running_next","branch_deploy":"passed_before_final_e2e","main_fast_forward":"pending","production_sha_verify":"pending"}}},"acceptance":{"max_visible_josh_heads":1,"expression_assets":9,"camera_modes":6,"canonical_viewports":["360x640","390x667","390x844","430x844"],"household_state_schema_change_expected":false,"food_engine_change_expected":false},"latest_qa_sha":"5bb6f805a2d3fdad3657ac912315fd5eb21c5afd","production_next":["run_full_playwright_on_qa_service","fix_any_browser_failures","fast_forward_main","verify_exact_production_sha"]}
+{
+  "version": 19,
+  "name": "Josh Presence + Guides + Show Me",
+  "status": "production_ready",
+  "base_sha": "c6b49699908bee62fba7434da56ddda16402ee86",
+  "branch": "home-meals-v19-josh-presence",
+  "principles": [
+    "one_josh_never_two",
+    "one_guide_system_multiple_guides",
+    "human_personal_copy",
+    "honest_native_camera_flow",
+    "preserve_deterministic_household_truth"
+  ],
+  "phases": {
+    "identity_foundation": {
+      "status": "complete",
+      "tasks": [
+        "reusable_josh_head",
+        "presence_coordinator",
+        "dock_migration",
+        "home_says_migration",
+        "ask_migration",
+        "guide_migration"
+      ]
+    },
+    "guide_system": {
+      "status": "complete",
+      "tasks": [
+        "rewrite_full_tour",
+        "control_action_cues",
+        "task_guides",
+        "more_entry",
+        "replay_without_state_reset"
+      ]
+    },
+    "show_josh_camera": {
+      "status": "complete",
+      "tasks": [
+        "remove_fake_viewfinder",
+        "capture_launcher",
+        "native_camera_and_library",
+        "photo_hero_after_capture",
+        "vision_confirmation_preserved"
+      ]
+    },
+    "assistant_copy": {
+      "status": "complete",
+      "tasks": [
+        "smart_ask_copy",
+        "remove_orb_language",
+        "remove_repertoire_language"
+      ]
+    },
+    "qa_release": {
+      "status": "complete",
+      "tasks": {
+        "v19_audit": "passed",
+        "one_head_browser_tests": "passed",
+        "canonical_phone_matrix": "passed",
+        "audit_data": "passed",
+        "typecheck": "passed",
+        "build": "passed",
+        "e2e": "passed_176_of_176",
+        "branch_deploy": "passed_exact_sha",
+        "main_fast_forward": "pending",
+        "production_sha_verify": "pending"
+      }
+    }
+  },
+  "acceptance": {
+    "max_visible_josh_heads": 1,
+    "expression_assets": 9,
+    "camera_modes": 6,
+    "canonical_viewports": [
+      "360x640",
+      "390x667",
+      "390x844",
+      "430x844"
+    ],
+    "household_state_schema_change_expected": false,
+    "food_engine_change_expected": false
+  },
+  "latest_qa_sha": "e7b5f149574b17b2a974d6b1e18aa8991a5eb2dd",
+  "latest_qa_evidence": {
+    "railway_deployment_id": "733cdb83-f78f-4c19-a404-0a5ce1047fc6",
+    "playwright": "176_passed",
+    "railway_healthcheck": "passed"
+  },
+  "production_next": [
+    "fast_forward_main",
+    "verify_exact_production_sha"
+  ]
+}
