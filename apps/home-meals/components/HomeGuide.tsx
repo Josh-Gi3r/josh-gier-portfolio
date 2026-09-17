@@ -170,6 +170,15 @@ export function HomeGuideProvider({children}:{children:React.ReactNode}){
 function GuideOverlay({step,intro,onClose}:{step:Step;intro:boolean;onClose:()=>void}){
  const cardRef=useRef<HTMLDivElement>(null),[pos,setPos]=useState({left:16,top:90}),[highlight,setHighlight]=useState<Rect|null>(null),[reduceMotion,setReduceMotion]=useState(false);
  useEffect(()=>{const mq=window.matchMedia("(prefers-reduced-motion: reduce)"),sync=()=>setReduceMotion(mq.matches);sync();mq.addEventListener?.("change",sync);return()=>mq.removeEventListener?.("change",sync)},[]);
+ useEffect(()=>{
+  const selector=step.highlight??step.anchor,target=document.querySelector<HTMLElement>(selector);if(!target)return;
+  let raf1=0,raf2=0;raf1=window.requestAnimationFrame(()=>{raf2=window.requestAnimationFrame(()=>{
+   const vv=window.visualViewport,viewTop=vv?.offsetTop??0,viewHeight=vv?.height??window.innerHeight,r=target.getBoundingClientRect(),fixedTarget=!!target.closest(".hm-bar-nav,.hm-bar-pill");
+   const safeTop=viewTop+16,safeBottom=viewTop+viewHeight-(fixedTarget?16:176);
+   if(r.top<safeTop||r.bottom>safeBottom)target.scrollIntoView({block:"center",inline:"nearest",behavior:reduceMotion?"auto":"smooth"});
+  })});
+  return()=>{window.cancelAnimationFrame(raf1);window.cancelAnimationFrame(raf2)}
+ },[step.anchor,step.highlight,step.line,reduceMotion]);
  useEffect(()=>{const key=(event:KeyboardEvent)=>{if(event.key==="Escape")onClose()};window.addEventListener("keydown",key);return()=>window.removeEventListener("keydown",key)},[onClose]);
  useEffect(()=>{
   let raf=0;const place=()=>{window.cancelAnimationFrame(raf);raf=window.requestAnimationFrame(()=>{
