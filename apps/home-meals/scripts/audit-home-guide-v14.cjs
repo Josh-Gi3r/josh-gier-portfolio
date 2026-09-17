@@ -13,6 +13,7 @@ must(guide.includes('Quick tour? I’ll show you around.'),'Josh opening is miss
 must(guide.includes('Quick refresher')&&guide.includes('Whole thing')&&guide.includes('One bit')&&guide.includes('This screen'),'replay modes are incomplete');
 for(const topic of ['Ask & voice','Camera','Cooking','History'])must(guide.includes(topic),`missing topic ${topic}`);
 must(guide.includes('visualViewport')&&guide.includes('MutationObserver(place)'),'viewport/late-target positioning is missing');
+must(guide.includes('scrollIntoView')&&guide.includes('safeBottom=viewTop+viewHeight'),'off-screen guide targets are not brought into the usable viewport');
 must(guide.includes('prefers-reduced-motion')&&guide.includes('event.key==="Escape"'),'motion/Escape accessibility is missing');
 must(guide.includes('aria-live="polite"')&&guide.includes('input:focus')&&guide.includes('textarea:focus'),'guide accessibility/collision exclusions are missing');
 for(const id of ['nav-home','nav-cook','nav-prep','nav-kitchen','nav-plan','orb','camera','voice'])must(bar.includes(`\"${id}\"`),`missing live anchor ${id}`);
@@ -23,4 +24,4 @@ must(css.includes('pointer-events:none')&&css.includes('pointer-events:auto')&&c
 must(css.includes('@media(prefers-reduced-motion:reduce)')&&css.includes('transition:none'),'reduced-motion/static positioning missing');
 must(!css.includes('top:-38px')&&!css.includes('.hm-guide-face'),'detached close or temporary CSS face returned');
 for(const name of frames){const p=path.join(root,`public/images/home-guide/${name}.webp`);must(fs.existsSync(p),`Josh guide frame ${name} missing`);const b=fs.readFileSync(p);must(b.length>2500&&b.toString('ascii',0,4)==='RIFF'&&b.toString('ascii',8,12)==='WEBP',`Josh guide frame ${name} invalid`);must(css.includes(`/images/home-guide/${name}.webp`),`Josh guide frame ${name} unwired`)}
-console.log('Home Meals talking-head guide V14 audit passed · Josh + G first use · 9 expression frames · spotlight/scrim · viewport-safe · reduced-motion aware');
+console.log('Home Meals talking-head guide V14 audit passed · Josh + G first use · 9 expression frames · spotlight/scrim · target auto-scroll · viewport-safe · reduced-motion aware');
