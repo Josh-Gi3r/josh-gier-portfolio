@@ -81,7 +81,7 @@ test("first-run truth gates navigation, then primary navigation remains usable",
   await expect(cookBeforeSetup).toBeVisible();
   await expect(dialog).toContainText("What do we have at home?");
   await dialog.getByRole("button",{name:/Nothing yet/i}).click();
-  await expect(page).toHaveURL(/\/prep$/);
+  await expect(page).toHaveURL(/\/plan$/);
   await expect(dialog).toBeHidden();
   for(const [label,path] of [["Cook","/cook"],["Prep","/prep"],["Kitchen","/kitchen"],["Plan","/plan"],["Home","/"]] as const){
     const link=page.getByRole("link",{name:new RegExp(`^${label}$`,"i")}).last();
