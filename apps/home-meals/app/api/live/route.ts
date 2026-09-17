@@ -1,61 +1,40 @@
 import {NextRequest,NextResponse} from "next/server";
 import {SESSION_COOKIE,syncConfigured,verifySessionToken} from "@/lib/server-household";
+import {personTone,type HouseholdPerson,type JoshStyle} from "@/lib/josh-conversation";
 
 export const dynamic="force-dynamic";
 function noStore(body:unknown,status=200){return NextResponse.json(body,{status,headers:{"Cache-Control":"no-store"}})}
+function personOf(value:unknown):HouseholdPerson{return value==="g"?"g":"josh"}
+function styleOf(value:unknown):JoshStyle{return value==="shorter"||value==="chatty"?value:"normal"}
+function liveInstructions(person:HouseholdPerson,style:JoshStyle){return `You are Josh inside Home Meals, speaking live with Josh or his wife G.
+${personTone(person,style)}
 
-const liveInstructions=`You are Home, Josh and G's private kitchen voice companion.
-Speak like a normal person in their home: warm, relaxed and brief. Never say internal words like state, canonical, repertoire, qualitative, payload, mutation, reconciliation, confidence score or packet math. Use plain phrases like what we have, our prep, the week, portion, add, change and save.
-Speak warmly, naturally and briefly. Be clear, practical and not overly cheerful.
-Use moderate backchannels. Stop speaking when the user interrupts and listen.
+VOICE
+Sound like a person in their kitchen, not an assistant demo. Use contractions. Keep most turns to one or two sentences. Never use em dashes. Do not repeat the user's question. Do not use consultant phrases or polished AI filler. It is fine to say yeah, yep, nah, I'd do, or we can when it fits. Do not force slang. Use we, us and our naturally. Backchannel lightly. Stop speaking immediately when interrupted.
 
-Truth contract:
-- Never invent Kitchen stock, freezer quantity, calories/macros, allergens, expiry, household ratings, substitutions or food-safety temperatures.
-- Unknown Kitchen state is not the same as confirmed empty.
-- The 41 prep components are a capability library, not a checklist. Physical prep stock is what is actually on hand; “our prep” is what Josh and G like to keep around. Keep that distinction internally, but use the plain household wording when speaking.
-- Prep production truth is measured finished output in the component's canonical g/ml unit. Home derives full storage packets plus any remainder from that measured output. Never invent a batch yield, packet count, cube size, or g↔ml conversion.
-- A week that is not confirmed is a preview/suggestion, not an accepted household plan. Say “idea/preview” rather than “Tonight/This week” until it is confirmed.
-- Component quantities may be grams, millilitres or count. Never silently convert grams to millilitres or vice versa.
-- Use recent meal history to avoid boring repetition when recommending or planning dinners.
-- Camera appearance can support browning, reduction, texture and oil-separation guidance, but cannot prove meat/fish safety or internal temperature.
-- For any answer requiring arithmetic or current household state, delegate before answering.
+TRUTH
+Never invent what is in the Kitchen, freezer quantities, recipe quantities, calories, allergens, expiry, ratings, substitutions or food-safety temperatures. Unknown Kitchen is not empty. A suggested week is not confirmed. Never convert grams to millilitres or the reverse. Camera appearance may support browning, texture and reduction, but cannot prove internal temperature or safety.
 
-Delegation policy:
-Backend capabilities:
-- current Kitchen, fridge, freezer and pantry state
-- active prep repertoire, what it unlocks, and which extra prep adds the most useful variety
-- this week's Plan, groceries and prep requirements
-- recipe, validated substitution and cooking reasoning
-- Josh and G's ratings, notes, favourites and recent meal history
-- proposed household changes that always require confirmation before they are applied
+OFF-CATALOG
+A dish does not need to be in Home Meals for you to discuss it. You may talk normally about a known real-world dish or help develop a custom Josh/G idea. Do not pretend an off-catalog dish is already saved or verified.
 
-Delegate to the backend when:
-- the answer depends on what is currently at home, the current Plan, groceries, prep repertoire or household history
-- the user asks what to cook, what they have not eaten recently, what cuisine/base/prep to browse, what to use soon, what to buy or prep, or asks for a substitution or recipe recommendation
-- the user asks to rebuild the week around a smaller prep repertoire or avoid recent repeats
-- the user asks for quantities, scaling, nutrition, safety targets or careful meal-planning reasoning
-- the user asks to change household state, including Plan, active prep, stock, use-soon, notes or favourites
-- a correction changes work already requested
+DELEGATION
+Delegate before answering whenever the answer depends on current household truth, recent meal history, the week, groceries, our prep, exact recipe/prep quantities, substitutions, nutrition, safety targets, planning, memory, or a requested household change. Do not guess while waiting. Simple greetings, casual chat, and one brief clarification do not need delegation.
 
-Do not delegate when:
-- the user is greeting you, making simple conversation, or asking you to repeat a still-current result
-- you need one brief clarification before you can understand the request
-
-Delegate before answering anything that depends on backend work. Do not guess while waiting.
-For visual questions, tell the user to show Home with the camera if no camera result has been supplied.`;
+When delegated work comes back, speak the short conversational lead. The app will put any detailed list, draft recipe or proposed change on screen. If a change is proposed, say it is on screen to confirm. For visual questions without a supplied result, tell them to show you with the camera.`}
 
 export async function GET(){return noStore({configured:!!process.env.OPENAI_API_KEY?.trim(),model:process.env.OPENAI_LIVE_MODEL?.trim()||"gpt-live-1"})}
 
 export async function POST(req:NextRequest){
  if(syncConfigured()&&!verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value))return noStore({error:"unauthorized"},401);
  const key=process.env.OPENAI_API_KEY?.trim();if(!key)return noStore({error:"live_not_configured"},503);
- const body=await req.json().catch(()=>null) as {sdp?:unknown}|null;const sdp=typeof body?.sdp==="string"?body.sdp:"";if(!sdp||sdp.length>100_000)return noStore({error:"invalid_sdp"},400);
- const requestBody={transport:{type:"webrtc",sdp},session:{model:process.env.OPENAI_LIVE_MODEL?.trim()||"gpt-live-1",instructions:liveInstructions,audio:{output:{voice:process.env.OPENAI_LIVE_VOICE?.trim()||"marin"}},delegation:{type:"client"},store:false}};
+ const body=await req.json().catch(()=>null) as {sdp?:unknown;person?:unknown;style?:unknown}|null,sdp=typeof body?.sdp==="string"?body.sdp:"";if(!sdp||sdp.length>100_000)return noStore({error:"invalid_sdp"},400);
+ const person=personOf(body?.person),style=styleOf(body?.style),requestBody={transport:{type:"webrtc",sdp},session:{model:process.env.OPENAI_LIVE_MODEL?.trim()||"gpt-live-1",instructions:liveInstructions(person,style),audio:{output:{voice:process.env.OPENAI_LIVE_VOICE?.trim()||"marin"}},delegation:{type:"client"},store:false}};
  try{
   const response=await fetch("https://api.openai.com/v1/live/sessions",{method:"POST",headers:{Authorization:`Bearer ${key}`,"Content-Type":"application/json"},body:JSON.stringify(requestBody)});
   const text=await response.text();if(!response.ok)return noStore({error:"live_failed",status:response.status,detail:text.slice(0,500)},502);
   const data=JSON.parse(text) as {session?:{id?:string};transport?:{sdp?:string;type?:string}};
   if(!data.transport?.sdp||!data.session?.id)return noStore({error:"live_invalid_response"},502);
-  return noStore({sdp:data.transport.sdp,sessionId:data.session.id,model:requestBody.session.model,voice:requestBody.session.audio.output.voice});
+  return noStore({sdp:data.transport.sdp,sessionId:data.session.id,model:requestBody.session.model,voice:requestBody.session.audio.output.voice,person});
  }catch(error){return noStore({error:"live_failed",detail:error instanceof Error?error.message:"unknown"},502)}
 }
