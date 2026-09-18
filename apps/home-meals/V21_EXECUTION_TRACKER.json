@@ -1,7 +1,7 @@
 {
   "version": 21,
   "name": "Working Recipe Images",
-  "status": "in_progress",
+  "status": "qa_pending",
   "base_sha": "cb269ba9fbdb2ab2234cd043ac7109bb085b45fb",
   "branch": "home-meals-v21-recipe-images",
   "model_contract": {
@@ -21,37 +21,37 @@
       ]
     },
     "backend": {
-      "status": "pending",
+      "status": "complete",
       "tasks": [
-        "postgres_image_store",
-        "generation_endpoint",
-        "private_binary_endpoint",
-        "selection_endpoint",
-        "prompt_builder"
+        "complete",
+        "complete",
+        "complete",
+        "complete",
+        "complete"
       ]
     },
     "josh": {
-      "status": "pending",
+      "status": "complete",
       "tasks": [
-        "structured_image_action",
-        "explicit_request_execution",
-        "suggestion_flow",
-        "ask_preview"
+        "complete",
+        "complete",
+        "complete",
+        "complete"
       ]
     },
     "ui": {
-      "status": "pending",
+      "status": "complete",
       "tasks": [
-        "working_recipe_hero",
-        "generate",
-        "regenerate",
-        "alternate_candidate",
-        "select_candidate",
-        "cook_shelf_image"
+        "complete",
+        "complete",
+        "complete",
+        "complete",
+        "complete",
+        "complete"
       ]
     },
     "qa": {
-      "status": "pending",
+      "status": "in_progress",
       "tasks": [
         "v21_audit",
         "playwright",
