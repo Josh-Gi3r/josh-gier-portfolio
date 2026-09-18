@@ -1,6 +1,7 @@
 import {NextRequest,NextResponse} from "next/server";
 import {SESSION_COOKIE,syncConfigured,verifySessionToken} from "@/lib/server-household";
-import {getDraft,listDrafts,memoryConfigured,saveDraft,updateDraft,type StoredDraft} from "@/lib/server-memory";
+import {getDraft,listDrafts,memoryConfigured,saveDraft,selectedRecipeImage,updateDraft,type StoredDraft} from "@/lib/server-memory";
+import {householdRecipeStandardIssues} from "@/lib/household-recipe-standard";
 
 export const dynamic="force-dynamic";
 function noStore(body:unknown,status=200){return NextResponse.json(body,{status,headers:{"Cache-Control":"no-store"}})}
@@ -29,5 +30,6 @@ export async function PATCH(req:NextRequest){
  if(!memoryConfigured())return noStore({error:"memory_not_configured"},503);
  const body=await req.json().catch(()=>null) as {id?:unknown;status?:unknown;payload?:unknown}|null,id=typeof body?.id==="string"?body.id:"",status=typeof body?.status==="string"&&statuses.has(body.status as StoredDraft["status"])?body.status as StoredDraft["status"]:undefined,payload=body?.payload&&typeof body.payload==="object"?body.payload as Record<string,unknown>:undefined;
  if(!id||(!status&&!payload))return noStore({error:"invalid_draft_update"},400);
+ if(status==="household_approved"){const existing=await getDraft(id);if(!existing)return noStore({error:"not_found"},404);const nextPayload=payload??existing.payload,issues=householdRecipeStandardIssues(nextPayload),hero=await selectedRecipeImage(id);if(issues.length||!hero)return noStore({error:"recipe_standard_incomplete",issues,missingImage:!hero},409)}
  const draft=await updateDraft(id,{status,payload});return draft?noStore({draft}):noStore({error:"not_found"},404);
 }
