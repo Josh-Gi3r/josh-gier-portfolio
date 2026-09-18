@@ -3,6 +3,7 @@ import {normalizeJoshText} from "./josh-conversation";
 export type RecipeImageMode="initial"|"replace"|"candidate";
 export type RecipeImageActionType="none"|"suggest_generate_recipe_image"|"generate_recipe_image"|"regenerate_recipe_image";
 export type RecipeImageAction={type:RecipeImageActionType;lookHint:string|null};
+export const RECIPE_IMAGE_ACTION_TYPES:readonly RecipeImageActionType[]=["none","suggest_generate_recipe_image","generate_recipe_image","regenerate_recipe_image"];
 export type WorkingRecipeForImage={title:string;servings?:number|null;ingredients?:{name:string;quantity?:number|null;unit?:string|null}[];method?:string[];notes?:string[]};
 
 export const RECIPE_IMAGE_MODEL=process.env.OPENAI_RECIPE_IMAGE_MODEL?.trim()||"gpt-image-2.5-sunburst";
