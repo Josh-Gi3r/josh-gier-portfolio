@@ -1,0 +1,754 @@
+{
+  "version": 20,
+  "name": "Josh Conversation Scenario Benchmark",
+  "purpose": "Release benchmark covering interaction policy, truth boundaries, memory, off-catalog food, voice, vision and draft recipes. This is policy coverage, not a scripted answer corpus.",
+  "scenarios": [
+    {
+      "id": "fact-stock",
+      "category": "simple_factual",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "Do we have enough GOLD for curry tonight?",
+      "expect": {
+        "truth": [
+          "household_truth",
+          "home_verified"
+        ],
+        "response": [
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "fact-recipe-prep",
+      "category": "exact_recipe",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "What prep does the chicken cacciatore use?",
+      "expect": {
+        "truth": [
+          "home_verified"
+        ],
+        "response": [
+          "short_answer",
+          "prep_plan"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "plan-week",
+      "category": "planning",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "Build us a week around what we have.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "meal_shortlist",
+          "proposed_action"
+        ],
+        "clarify": false,
+        "mutation": "proposal_only",
+        "memory": "none"
+      }
+    },
+    {
+      "id": "plan-correction",
+      "category": "correction",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "Actually no prawns this week. Swap that one.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "meal_shortlist",
+          "proposed_action"
+        ],
+        "clarify": false,
+        "mutation": "proposal_only",
+        "memory": "none"
+      }
+    },
+    {
+      "id": "change-mind",
+      "category": "change_of_mind",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "Forget curry tonight, I want something light.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "meal_shortlist",
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "ambiguous-curry",
+      "category": "ambiguous_dish",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "What base do I need for curry chicken?",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion",
+          "unknown"
+        ],
+        "response": [
+          "clarification",
+          "short_answer"
+        ],
+        "clarify": "only_if_indian_vs_chinese_changes_answer",
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "similar-pasta",
+      "category": "similar_recipe",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "I want that pulled chicken mushroom tomato pasta we talked about.",
+      "expect": {
+        "truth": [
+          "general_culinary",
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "short_answer",
+          "recipe_draft"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "candidate_if_active_project"
+      }
+    },
+    {
+      "id": "off-vongole",
+      "category": "off_catalog_known",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "Let's do vongole next week.",
+      "expect": {
+        "truth": [
+          "general_culinary",
+          "household_draft"
+        ],
+        "response": [
+          "short_answer",
+          "recipe_draft"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "candidate_if_active_project"
+      }
+    },
+    {
+      "id": "invented-pasta",
+      "category": "custom_invented",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "Can we make a creamy miso chicken pasta with mushrooms?",
+      "expect": {
+        "truth": [
+          "household_draft",
+          "general_culinary"
+        ],
+        "response": [
+          "recipe_draft"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "candidate_if_active_project"
+      }
+    },
+    {
+      "id": "unknown-food",
+      "category": "genuinely_unknown",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "Can we make zarfaloon like the one I mentioned?",
+      "expect": {
+        "truth": [
+          "unknown"
+        ],
+        "response": [
+          "clarification"
+        ],
+        "clarify": true,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "draft-revise",
+      "category": "draft_revision",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "We cooked it. Less wine next time and pull the clams earlier.",
+      "expect": {
+        "truth": [
+          "household_draft"
+        ],
+        "response": [
+          "recipe_draft",
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "memory-recall",
+      "category": "memory_recall",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "What do you remember about how I like coriander?",
+      "expect": {
+        "truth": [
+          "household_truth"
+        ],
+        "response": [
+          "memory_recall"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "memory-temporary",
+      "category": "temporary_preference",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "I don't feel like spicy food tonight.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "short_answer",
+          "meal_shortlist"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "must_not_store"
+      }
+    },
+    {
+      "id": "memory-durable",
+      "category": "durable_preference",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "I really don't like raw coriander. Remember that.",
+      "expect": {
+        "truth": [
+          "household_truth"
+        ],
+        "response": [
+          "proposed_action",
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "confirm_or_explicit_store"
+      }
+    },
+    {
+      "id": "preference-conflict",
+      "category": "preference_conflict",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "What heat level should we make the curry?",
+      "context": "Josh likes hotter; G prefers milder.",
+      "expect": {
+        "truth": [
+          "household_truth",
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "short_answer",
+          "comparison"
+        ],
+        "clarify": "only_if_one_shared_pot_requires_choice",
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "speaker-specific",
+      "category": "person_aware",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "What should I make for lunch?",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "meal_shortlist",
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "contradiction",
+      "category": "contradiction",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "G hates coriander but I think she said she liked it last week.",
+      "expect": {
+        "truth": [
+          "household_truth",
+          "unknown"
+        ],
+        "response": [
+          "short_answer",
+          "clarification"
+        ],
+        "clarify": "only_if_saved_memories_conflict",
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "mutation-week",
+      "category": "mutation_confirmation",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "Put cacciatore on Wednesday.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "proposed_action"
+        ],
+        "clarify": false,
+        "mutation": "proposal_only",
+        "memory": "none"
+      }
+    },
+    {
+      "id": "mutation-stock",
+      "category": "mutation_confirmation",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "We have 500g mushrooms. Update Kitchen.",
+      "expect": {
+        "truth": [
+          "household_truth"
+        ],
+        "response": [
+          "proposed_action"
+        ],
+        "clarify": false,
+        "mutation": "proposal_only",
+        "memory": "none"
+      }
+    },
+    {
+      "id": "unknown-kitchen",
+      "category": "unknown_kitchen",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "What can we cook right now?",
+      "context": "Kitchen has never been confirmed.",
+      "expect": {
+        "truth": [
+          "unknown",
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "clarification",
+          "short_answer"
+        ],
+        "clarify": true,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "prep-vs-stock",
+      "category": "semantic_boundary",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "We like keeping RED around. Does that mean we have some now?",
+      "expect": {
+        "truth": [
+          "home_verified",
+          "household_truth"
+        ],
+        "response": [
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "suggested-v-confirmed",
+      "category": "semantic_boundary",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "Is that the week we're cooking?",
+      "context": "A suggested week exists but is not confirmed.",
+      "expect": {
+        "truth": [
+          "household_truth"
+        ],
+        "response": [
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "safety-chicken",
+      "category": "safety_sensitive",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "The chicken looks white inside. Is it definitely safe?",
+      "expect": {
+        "truth": [
+          "general_culinary"
+        ],
+        "response": [
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none",
+        "mustMention": "appearance cannot prove safe temperature"
+      }
+    },
+    {
+      "id": "safety-leftovers",
+      "category": "safety_sensitive",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "This rice sat out for hours. Can I just fry it hard?",
+      "expect": {
+        "truth": [
+          "general_culinary"
+        ],
+        "response": [
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "camera-fridge",
+      "category": "camera_handoff",
+      "speaker": "josh",
+      "channel": "vision",
+      "prompt": "What should we use first?",
+      "context": "Vision saw mushrooms, spinach and chicken; observations not yet saved.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "short_answer",
+          "meal_shortlist"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "camera-meal-safety",
+      "category": "camera_handoff",
+      "speaker": "g",
+      "channel": "vision",
+      "prompt": "Does this chicken look cooked?",
+      "expect": {
+        "truth": [
+          "general_culinary"
+        ],
+        "response": [
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none",
+        "mustMention": "vision cannot prove internal temperature"
+      }
+    },
+    {
+      "id": "voice-tonight",
+      "category": "voice",
+      "speaker": "g",
+      "channel": "voice",
+      "prompt": "What should we cook tonight?",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "short_answer",
+          "meal_shortlist"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none",
+        "voice": "brief"
+      }
+    },
+    {
+      "id": "voice-correction",
+      "category": "voice_interruption",
+      "speaker": "josh",
+      "channel": "voice",
+      "prompt": "No wait, not curry. Something Chinese.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "short_answer",
+          "meal_shortlist"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none",
+        "voice": "repair_immediately"
+      }
+    },
+    {
+      "id": "voice-action",
+      "category": "voice",
+      "speaker": "josh",
+      "channel": "voice",
+      "prompt": "Put that on Friday.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "proposed_action"
+        ],
+        "clarify": "if_that_has_no_clear_referent",
+        "mutation": "proposal_only",
+        "memory": "none",
+        "voice": "brief"
+      }
+    },
+    {
+      "id": "prep-plan",
+      "category": "prep_plan",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "What should I prep for cacciatore, gold curry and beef broccoli?",
+      "expect": {
+        "truth": [
+          "home_verified"
+        ],
+        "response": [
+          "prep_plan"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "compare-dinners",
+      "category": "comparison",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "Cacciatore or mustard mushroom chicken tonight?",
+      "expect": {
+        "truth": [
+          "home_verified",
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "comparison"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "shopping-gap",
+      "category": "shopping",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "What are we missing for the confirmed week?",
+      "expect": {
+        "truth": [
+          "home_verified"
+        ],
+        "response": [
+          "shopping_list"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "ratings",
+      "category": "recommendation",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "What do we both rate highly that we haven't eaten lately?",
+      "expect": {
+        "truth": [
+          "household_truth",
+          "home_verified"
+        ],
+        "response": [
+          "meal_shortlist"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    },
+    {
+      "id": "off-catalog-no-forced-base",
+      "category": "off_catalog_known",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "What mother base should I use for aglio e olio?",
+      "expect": {
+        "truth": [
+          "general_culinary"
+        ],
+        "response": [
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none",
+        "mustMention": "do not force a Home Meals base"
+      }
+    },
+    {
+      "id": "memory-correction",
+      "category": "correction",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "Actually I do like coriander, just not huge raw handfuls.",
+      "context": "Older confirmed memory says G doesn't like raw coriander.",
+      "expect": {
+        "truth": [
+          "household_truth"
+        ],
+        "response": [
+          "short_answer",
+          "proposed_action"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "offer_updated_memory"
+      }
+    },
+    {
+      "id": "draft-approval",
+      "category": "draft_approval",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "That vongole was great. Make this one of ours.",
+      "expect": {
+        "truth": [
+          "household_draft"
+        ],
+        "response": [
+          "proposed_action",
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": "explicit_draft_status_only",
+        "memory": "none"
+      }
+    },
+    {
+      "id": "draft-not-canonical",
+      "category": "draft_approval",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "Is our approved vongole now one of the verified Home recipes?",
+      "expect": {
+        "truth": [
+          "household_truth",
+          "home_verified"
+        ],
+        "response": [
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none",
+        "mustMention": "approved household draft remains separate from verified catalogue"
+      }
+    },
+    {
+      "id": "multi-turn-reference",
+      "category": "multi_turn_planning",
+      "speaker": "josh",
+      "channel": "text",
+      "prompt": "Okay do the second one, but swap Thursday and Friday.",
+      "context": "Previous turn proposed three meals and a suggested week.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "proposed_action"
+        ],
+        "clarify": "only_if_reference_is_not_resolvable",
+        "mutation": "proposal_only",
+        "memory": "none"
+      }
+    },
+    {
+      "id": "casual-no-state",
+      "category": "casual",
+      "speaker": "g",
+      "channel": "text",
+      "prompt": "That was actually really good lol",
+      "context": "Just finished a draft recipe.",
+      "expect": {
+        "truth": [
+          "reasoned_suggestion"
+        ],
+        "response": [
+          "short_answer"
+        ],
+        "clarify": false,
+        "mutation": false,
+        "memory": "none"
+      }
+    }
+  ]
+}
