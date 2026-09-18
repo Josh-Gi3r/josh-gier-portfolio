@@ -13,6 +13,7 @@ for(const table of ['home_meals_conversations','home_meals_conversation_messages
 must(memory.includes('postgres from "postgres"')&&!/pinecone|mem0|zep/i.test(memory),'memory must remain on household Postgres without external memory SaaS');
 must(memory.includes("status='confirmed'")&&memory.includes('relevantMemories'),'memory retrieval no longer restricts to confirmed memories');
 must(memory.includes("lower(subject)=lower")&&memory.includes('update home_meals_memories'),'memory deduplication/update guard is missing');
+must(memory.includes('personScoped=input.kind==="preference"')&&memory.includes('source_person is not distinct from ${input.sourcePerson}'),'personal preference memory must remain separate for Josh and G');
 must(conversationApi.includes('latestConversation')&&conversationApi.includes('conversationMessages'),'persistent conversation API is incomplete');
 must(memory.includes('and person=${person}')&&askApi.includes('conversationSummary')&&askApi.includes('updateConversationSummary'),'conversation continuity must stay person-bound and carry a compact running summary');
 must(memoryApi.includes('saveMemory')&&memoryApi.includes('deleteMemory'),'memory review/write API is incomplete');
