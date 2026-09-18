@@ -1,0 +1,72 @@
+{
+  "version": 21,
+  "name": "Working Recipe Images",
+  "status": "in_progress",
+  "base_sha": "cb269ba9fbdb2ab2234cd043ac7109bb085b45fb",
+  "branch": "home-meals-v21-recipe-images",
+  "model_contract": {
+    "default_model": "gpt-image-2.5-sunburst",
+    "default_quality": "max",
+    "default_size": "1536x1024",
+    "default_format": "webp"
+  },
+  "phases": {
+    "architecture": {
+      "status": "complete",
+      "tasks": [
+        "product_brief",
+        "storage_contract",
+        "josh_image_action_contract",
+        "acceptance_contract"
+      ]
+    },
+    "backend": {
+      "status": "pending",
+      "tasks": [
+        "postgres_image_store",
+        "generation_endpoint",
+        "private_binary_endpoint",
+        "selection_endpoint",
+        "prompt_builder"
+      ]
+    },
+    "josh": {
+      "status": "pending",
+      "tasks": [
+        "structured_image_action",
+        "explicit_request_execution",
+        "suggestion_flow",
+        "ask_preview"
+      ]
+    },
+    "ui": {
+      "status": "pending",
+      "tasks": [
+        "working_recipe_hero",
+        "generate",
+        "regenerate",
+        "alternate_candidate",
+        "select_candidate",
+        "cook_shelf_image"
+      ]
+    },
+    "qa": {
+      "status": "pending",
+      "tasks": [
+        "v21_audit",
+        "playwright",
+        "visual_qa",
+        "qa_deploy",
+        "production_smoke"
+      ]
+    }
+  },
+  "release_rules": {
+    "no_silent_mutation": true,
+    "no_auto_canonical_promotion": true,
+    "no_generation_without_user_request_or_visible_action": true,
+    "private_image_bytes": true,
+    "max_visible_josh_heads": 1,
+    "no_github_actions": true
+  }
+}
