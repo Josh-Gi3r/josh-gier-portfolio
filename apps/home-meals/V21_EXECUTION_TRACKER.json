@@ -68,5 +68,10 @@
     "private_image_bytes": true,
     "max_visible_josh_heads": 1,
     "no_github_actions": true
-  }
+  },
+  "qa_notes": [
+    "V21 audits and TypeScript passed on first exact branch gate.",
+    "Initial browser gate was blocked by the production-style household connect scrim because QA inherits production sync variables.",
+    "QA build command now clears sync credentials only for Playwright. Runtime QA remains household-authenticated."
+  ]
 }
