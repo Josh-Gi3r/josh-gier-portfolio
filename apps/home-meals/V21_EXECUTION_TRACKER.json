@@ -1,6 +1,6 @@
 {
   "version": 21,
-  "name": "Working Recipe Images",
+  "name": "Working Recipe Images + Household Recipe Standard",
   "status": "qa_pending",
   "base_sha": "cb269ba9fbdb2ab2234cd043ac7109bb085b45fb",
   "branch": "home-meals-v21-recipe-images",
@@ -56,7 +56,8 @@
         "v21_audit",
         "playwright",
         "visual_qa",
-        "qa_deploy",
+        "exact_head_qa_deploy",
+        "main_fast_forward",
         "production_smoke"
       ]
     }
@@ -67,13 +68,37 @@
     "no_generation_without_user_request_or_visible_action": true,
     "private_image_bytes": true,
     "max_visible_josh_heads": 1,
-    "no_github_actions": true
+    "no_github_actions": true,
+    "recipe_structure_parity_before_approval": true,
+    "exactly_one_selected_hero": true
   },
   "qa_notes": [
     "V21 audits and TypeScript passed on first exact branch gate.",
     "Initial browser gate was blocked by the production-style household connect scrim because QA inherits production sync variables.",
     "QA build command now clears sync credentials only for Playwright. Runtime QA remains household-authenticated.",
     "V20 browser compatibility restored with the legacy Save as draft accessibility name while keeping the V21 visible Save working recipe copy.",
-    "Playwright webserver isolation now clears DATABASE_URL as well as sync credentials, so repo browser tests cannot touch the shared household database."
-  ]
+    "Playwright webserver isolation now clears DATABASE_URL as well as sync credentials, so repo browser tests cannot touch the shared household database.",
+    "Household recipe standard added before main: approved household recipes require complete presentation metadata plus exactly one selected hero image. Working drafts may stay incomplete while being developed."
+  ],
+  "household_recipe_standard": {
+    "required_before_household_approval": true,
+    "required_fields": [
+      "title",
+      "subtitle",
+      "cuisine",
+      "servings",
+      "minutes",
+      "difficulty",
+      "mealStyle",
+      "methodLabel",
+      "ingredients",
+      "method",
+      "allergens",
+      "storage",
+      "leftovers"
+    ],
+    "selected_hero_images": 1,
+    "canonical_recipe_catalogue": "remains_separate",
+    "approval_gate": "server_and_ui"
+  }
 }
