@@ -66,7 +66,7 @@ export type StoredDraft={id:string;title:string;status:"idea"|"draft"|"cooked"|"
 
 export async function ensureConversation(person:HouseholdPerson,conversationId?:string|null){
  await ensureSchema();const sql=db();
- if(conversationId){const rows=await sql<StoredConversation[]>`select id,person,title,summary,created_at::text as created_at,updated_at::text as updated_at from home_meals_conversations where id=${conversationId} and household_id=${HOUSEHOLD_ID} limit 1`;if(rows[0])return rows[0]}
+ if(conversationId){const rows=await sql<StoredConversation[]>`select id,person,title,summary,created_at::text as created_at,updated_at::text as updated_at from home_meals_conversations where id=${conversationId} and household_id=${HOUSEHOLD_ID} and person=${person} limit 1`;if(rows[0])return rows[0]}
  const id=randomUUID();const rows=await sql<StoredConversation[]>`insert into home_meals_conversations (id,household_id,person,title,summary) values (${id},${HOUSEHOLD_ID},${person},null,null) returning id,person,title,summary,created_at::text as created_at,updated_at::text as updated_at`;return rows[0];
 }
 
