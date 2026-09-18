@@ -1,8 +1,10 @@
 {
   "version": 20,
   "name": "Josh Conversation + Memory",
-  "status": "in_progress",
+  "status": "production_complete",
+  "acceptance_status": "software_complete_real_phone_acceptance_pending",
   "base_sha": "8b8edcf5789c096b91e65271b47c049553ff5119",
+  "implementation_sha": "cbdd398410a2fee27a533e7887c5ddc471bf18bf",
   "branch": "home-meals-v20-conversation-memory",
   "principles": [
     "josh_not_generic_ai",
@@ -29,59 +31,100 @@
       ]
     },
     "v20_1_personality_contract": {
-      "status": "in_progress",
+      "status": "complete",
       "tasks": {
-        "person_aware_ask": "pending",
-        "ask_josh_naming": "pending",
-        "persona_prompt": "pending",
-        "truth_level_contract": "pending",
-        "response_type_contract": "pending",
-        "style_regression_audit": "pending"
+        "person_aware_ask": "complete",
+        "ask_josh_naming": "complete",
+        "persona_prompt": "complete",
+        "truth_level_contract": "complete",
+        "response_type_contract": "complete",
+        "style_regression_audit": "complete"
       }
     },
     "v20_2_structured_responses": {
-      "status": "pending",
+      "status": "complete",
       "tasks": {
-        "sections_schema": "pending",
-        "contextual_recipe_cards": "pending",
-        "prep_plan_ui": "pending",
-        "comparison_ui": "pending",
-        "action_label_semantics": "pending"
+        "sections_schema": "complete",
+        "contextual_recipe_cards": "complete",
+        "prep_plan_ui": "complete",
+        "comparison_ui": "complete_shared_semantic_sections",
+        "action_label_semantics": "complete"
       }
     },
     "v20_3_memory": {
-      "status": "pending",
+      "status": "complete",
       "tasks": {
-        "postgres_schema": "pending",
-        "conversation_api": "pending",
-        "persistent_thread": "pending",
-        "memory_candidates": "pending",
-        "memory_retrieval": "pending",
-        "memory_review_surface": "pending"
+        "postgres_schema": "complete",
+        "conversation_api": "complete",
+        "persistent_thread": "complete_with_running_summary",
+        "memory_candidates": "complete_with_confirmation",
+        "memory_retrieval": "complete_confirmed_only",
+        "memory_review_surface": "complete",
+        "person_specific_preferences": "complete"
       }
     },
     "v20_4_off_catalog_drafts": {
-      "status": "pending",
+      "status": "complete",
       "tasks": {
-        "off_catalog_contract": "pending",
-        "draft_recipe_schema": "pending",
-        "save_draft": "pending",
-        "cook_from_draft": "pending",
-        "revise_after_cook": "pending",
-        "approve_as_ours": "pending"
+        "off_catalog_contract": "complete",
+        "draft_recipe_schema": "complete",
+        "save_draft": "complete",
+        "cook_from_draft": "complete_without_silent_kitchen_mutation",
+        "rate_and_note_draft_cook": "complete",
+        "revise_after_cook": "complete",
+        "approve_as_ours": "complete_household_status_only_no_auto_canonical_promotion"
       }
     },
     "v20_5_voice_vision_qa": {
-      "status": "pending",
+      "status": "complete_except_real_phone_acceptance",
       "tasks": {
-        "shared_persona_voice": "pending",
-        "structured_voice_handoff": "pending",
-        "vision_conversation_handoff": "pending",
-        "scenario_benchmark": "pending",
-        "playwright": "pending",
-        "higgsfield_visual_qa": "pending",
-        "real_phone_acceptance": "pending"
+        "shared_persona_voice": "complete",
+        "structured_voice_handoff": "complete",
+        "vision_conversation_handoff": "complete",
+        "scenario_benchmark": "complete_38_scenarios",
+        "playwright": "complete_180_of_180",
+        "higgsfield_visual_qa": "complete",
+        "production_visual_smoke": "complete",
+        "real_phone_acceptance": "pending_user"
       }
+    }
+  },
+  "release_evidence": {
+    "qa_deployment_id": "3ed2244d-07a9-4eab-9ffe-658fe31d4913",
+    "qa_status": "SUCCESS",
+    "qa_playwright": "180/180 passed",
+    "qa_v20_audit": "passed",
+    "qa_domain": "home-meals-v20-qa-production.up.railway.app",
+    "higgsfield_checks": {
+      "viewports": [
+        "390x844",
+        "360x640"
+      ],
+      "document_overflow_px": 0,
+      "max_visible_josh_heads": 1,
+      "ask_over_vision_layer": "1600>1500",
+      "ask_recipe_actions_min_height_px": 44,
+      "draft_rating_targets_px": "44x44",
+      "draft_cooking_dock_clearance_px": {
+        "390x844": 200.3125,
+        "360x640": 256.3125
+      }
+    },
+    "main_fast_forward_sha": "cbdd398410a2fee27a533e7887c5ddc471bf18bf",
+    "production_deployment_id": "d678d0cf-0cbd-45a8-8543-c017a2b672b9",
+    "production_status": "SUCCESS",
+    "production_domain": "meals.josh-gier.com",
+    "production_smoke": {
+      "routes": [
+        "/",
+        "/cook",
+        "/learn",
+        "/cook/drafts/d1",
+        "/scan?mode=Fridge"
+      ],
+      "document_overflow_px": 0,
+      "max_visible_josh_heads": 1,
+      "vision_to_ask_handoff": "passed"
     }
   },
   "release_rules": {
@@ -91,5 +134,11 @@
     "no_silent_mutation": true,
     "no_auto_draft_promotion": true,
     "max_visible_josh_heads": 1
-  }
+  },
+  "remaining_acceptance": [
+    "Josh/G real-phone conversations with live household data",
+    "real-device voice interruption and memory recall",
+    "real-device draft recipe cook/revise flow"
+  ],
+  "production_next": []
 }
