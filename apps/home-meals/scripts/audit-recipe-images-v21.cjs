@@ -1,6 +1,6 @@
 const fs=require("node:fs"),path=require("node:path");
 const root=path.resolve(__dirname,".."),errors=[];const read=p=>fs.readFileSync(path.join(root,p),"utf8"),must=(ok,msg)=>{if(!ok)errors.push(msg)};
-const helper=read("lib/recipe-image.ts"),memory=read("lib/server-memory.ts"),route=read("app/api/recipe-image/route.ts"),binary=read("app/api/recipe-image/[id]/route.ts"),ask=read("app/api/ask-home/route.ts"),smart=read("components/SmartAskRuntime.tsx"),draft=read("components/DraftRecipe.tsx"),shelf=read("components/DraftRecipeShelf.tsx"),css=read("app/styles/josh-conversation.css"),tracker=read("V21_EXECUTION_TRACKER.json"),brief=read("V21_PRODUCT_BRIEF.md");
+const helper=read("lib/recipe-image.ts"),standard=read("lib/household-recipe-standard.ts"),draftApi=read("app/api/recipe-drafts/route.ts"),memory=read("lib/server-memory.ts"),route=read("app/api/recipe-image/route.ts"),binary=read("app/api/recipe-image/[id]/route.ts"),ask=read("app/api/ask-home/route.ts"),smart=read("components/SmartAskRuntime.tsx"),draft=read("components/DraftRecipe.tsx"),shelf=read("components/DraftRecipeShelf.tsx"),css=read("app/styles/josh-conversation.css"),tracker=read("V21_EXECUTION_TRACKER.json"),brief=read("V21_PRODUCT_BRIEF.md");
 must(helper.includes('"gpt-image-2.5-sunburst"')&&helper.includes('"max"')&&helper.includes('"1536x1024"')&&helper.includes('"webp"'),"best-quality GPT Image 2.5 default contract is missing");
 must(helper.includes("No text, labels, typography, logos, packaging, people or hands")&&helper.includes("exact dish identity"),"recipe-image prompt guardrails are incomplete");
 must(route.includes("https://api.openai.com/v1/images/generations")&&route.includes("output_format:RECIPE_IMAGE_FORMAT")&&route.includes("output_compression:88"),"OpenAI image generation endpoint is not wired correctly");
@@ -18,6 +18,11 @@ must(draft.includes("AI-generated illustration")&&brief.includes("never represen
 must(shelf.includes("hm-draft-shelf-thumb")&&shelf.includes("/api/recipe-image?draftId="),"Cook shelf does not surface the selected working-recipe image");
 must(css.includes("hm-draft-hero")&&css.includes("hm-ask-generated")&&css.includes("hm-draft-shelf-thumb"),"V21 image UI styles are missing");
 must(tracker.includes('"version": 21')&&tracker.includes('"no_auto_canonical_promotion": true')&&tracker.includes('"private_image_bytes": true'),"V21 tracker lost release invariants");
+must(standard.includes("subtitle")&&standard.includes("cuisine")&&standard.includes("difficulty")&&standard.includes("mealStyle")&&standard.includes("storage")&&standard.includes("leftovers"),"household recipe standard is incomplete");
+must(draftApi.includes('status==="household_approved"')&&draftApi.includes("householdRecipeStandardIssues")&&draftApi.includes("selectedRecipeImage"),"household approval is not server-gated on recipe structure plus one selected hero");
+must(ask.includes("HOUSEHOLD RECIPE STANDARD")&&ask.includes("standardSchema"),"Josh is not required to return the standard recipe structure");
+must(draft.includes("Finish for our library")&&draft.includes("standardReady")&&draft.includes("hm-draft-stats"),"working recipe UI does not converge onto the normal recipe structure before approval");
+must(css.includes(".hm-draft-hero{position:relative;overflow:hidden;height:420px"),"working recipe hero does not match the canonical recipe hero height");
 must(!route.includes("allLiveRecipes")&&!route.includes("recipe-catalog")&&!memory.includes("allLiveRecipes"),"working recipe imagery must not mutate the canonical recipe catalogue");
 if(errors.length){console.error(`\nHome Meals Working Recipe Images V21 audit FAILED (${errors.length})`);for(const e of errors)console.error(` - ${e}`);process.exit(1)}
 console.log("\nHome Meals Working Recipe Images V21 audit passed · GPT Image 2.5 Sunburst · max quality · private Postgres bytes · Josh image actions · non-destructive alternates · working recipe heroes");
