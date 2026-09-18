@@ -1,8 +1,10 @@
 {
   "version": 21,
   "name": "Working Recipe Images + Household Recipe Standard",
-  "status": "qa_pending",
+  "status": "production_complete",
+  "acceptance_status": "software_complete_real_phone_acceptance_pending",
   "base_sha": "cb269ba9fbdb2ab2234cd043ac7109bb085b45fb",
+  "implementation_sha": "9e22e52723ca99ee19e15194e603e00b64afd6b6",
   "branch": "home-meals-v21-recipe-images",
   "model_contract": {
     "default_model": "gpt-image-2.5-sunburst",
@@ -23,38 +25,40 @@
     "backend": {
       "status": "complete",
       "tasks": [
-        "complete",
-        "complete",
-        "complete",
-        "complete",
-        "complete"
+        "postgres_image_store",
+        "generation_endpoint",
+        "private_binary_endpoint",
+        "selection_endpoint",
+        "prompt_builder"
       ]
     },
     "josh": {
       "status": "complete",
       "tasks": [
-        "complete",
-        "complete",
-        "complete",
-        "complete"
+        "structured_image_action",
+        "explicit_request_execution",
+        "suggestion_flow",
+        "ask_preview"
       ]
     },
     "ui": {
       "status": "complete",
       "tasks": [
-        "complete",
-        "complete",
-        "complete",
-        "complete",
-        "complete",
-        "complete"
+        "working_recipe_hero",
+        "generate",
+        "regenerate",
+        "alternate_candidate",
+        "select_candidate",
+        "cook_shelf_image",
+        "canonical_recipe_stat_cards",
+        "approval_standard_gate"
       ]
     },
     "qa": {
-      "status": "in_progress",
+      "status": "complete",
       "tasks": [
         "v21_audit",
-        "playwright",
+        "playwright_183_of_183",
         "visual_qa",
         "exact_head_qa_deploy",
         "main_fast_forward",
@@ -72,14 +76,6 @@
     "recipe_structure_parity_before_approval": true,
     "exactly_one_selected_hero": true
   },
-  "qa_notes": [
-    "V21 audits and TypeScript passed on first exact branch gate.",
-    "Initial browser gate was blocked by the production-style household connect scrim because QA inherits production sync variables.",
-    "QA build command now clears sync credentials only for Playwright. Runtime QA remains household-authenticated.",
-    "V20 browser compatibility restored with the legacy Save as draft accessibility name while keeping the V21 visible Save working recipe copy.",
-    "Playwright webserver isolation now clears DATABASE_URL as well as sync credentials, so repo browser tests cannot touch the shared household database.",
-    "Household recipe standard added before main: approved household recipes require complete presentation metadata plus exactly one selected hero image. Working drafts may stay incomplete while being developed."
-  ],
   "household_recipe_standard": {
     "required_before_household_approval": true,
     "required_fields": [
@@ -100,5 +96,56 @@
     "selected_hero_images": 1,
     "canonical_recipe_catalogue": "remains_separate",
     "approval_gate": "server_and_ui"
-  }
+  },
+  "release_evidence": {
+    "qa_service_id": "2c12977b-7193-4747-8284-28917a7285d6",
+    "qa_deployment_id": "28b30c4e-1fac-4faa-97d2-03da7093551e",
+    "qa_status": "SUCCESS",
+    "qa_playwright": "183/183 passed",
+    "qa_v21_audit": "passed",
+    "visual_qa": {
+      "viewports": [
+        "360x640",
+        "390x844",
+        "430x844"
+      ],
+      "document_overflow_px": 0,
+      "max_visible_josh_heads": 1,
+      "canonical_hero_height_px": {
+        "360x640": 380,
+        "390x844": 420,
+        "430x844": 420
+      },
+      "generated_image_disclosure": "AI-generated illustration · not a real photo",
+      "incomplete_recipe_approval_hidden": true,
+      "complete_recipe_approval_visible": true
+    },
+    "main_fast_forward_sha": "9e22e52723ca99ee19e15194e603e00b64afd6b6",
+    "production_deployment_id": "2e04b331-cc5f-4c0f-9e09-096d0406cf19",
+    "production_status": "SUCCESS",
+    "production_domain": "meals.josh-gier.com",
+    "production_smoke": {
+      "routes": [
+        "/",
+        "/cook",
+        "/learn",
+        "/cook/drafts/smoke"
+      ],
+      "document_overflow_px": 0,
+      "working_recipe_hero_height_px": 420,
+      "working_recipe_standard_stat_cards": 4,
+      "generated_image_disclosure": true,
+      "unauthenticated_recipe_image_metadata_status": 401
+    }
+  },
+  "qa_notes": [
+    "V21 audits and TypeScript pass on the exact release head.",
+    "Playwright passed 183/183 with DATABASE_URL and household sync credentials cleared only for the isolated test webserver.",
+    "Higgsfield visual QA caught and fixed Ask image-result scrolling and a 360px stat-card overflow before main.",
+    "Approved household recipes require complete presentation metadata plus exactly one selected hero image. Working drafts may stay incomplete while being developed.",
+    "Generated imagery stays presentation-only and separate from Home Meals verified research truth."
+  ],
+  "remaining_acceptance": [
+    "Josh/G real-phone use of one generated off-catalog recipe end to end"
+  ]
 }
