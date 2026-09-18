@@ -13,6 +13,7 @@ must(memory.includes('postgres from "postgres"')&&!/pinecone|mem0|zep/i.test(mem
 must(memory.includes("status='confirmed'")&&memory.includes('relevantMemories'),'memory retrieval no longer restricts to confirmed memories');
 must(memory.includes("lower(subject)=lower")&&memory.includes('update home_meals_memories'),'memory deduplication/update guard is missing');
 must(conversationApi.includes('latestConversation')&&conversationApi.includes('conversationMessages'),'persistent conversation API is incomplete');
+must(memory.includes('and person=${person}')&&askApi.includes('conversationSummary')&&askApi.includes('updateConversationSummary'),'conversation continuity must stay person-bound and carry a compact running summary');
 must(memoryApi.includes('saveMemory')&&memoryApi.includes('deleteMemory'),'memory review/write API is incomplete');
 must(draftApi.includes('household_approved')&&draftApi.includes('saveDraft')&&draftApi.includes('updateDraft'),'draft recipe lifecycle API is incomplete');
 must(!draftApi.includes('recipe-catalog')&&!draftApi.includes('allLiveRecipes'),'draft API must not auto-promote drafts into the canonical recipe catalogue');
