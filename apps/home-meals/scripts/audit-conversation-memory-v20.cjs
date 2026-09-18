@@ -29,6 +29,7 @@ must(smart.includes('getHouseholdPerson')&&smart.includes('person,style,conversa
 must(smart.includes('Remember this')&&smart.includes('Save as draft'),'memory/draft confirmation controls are missing');
 must(view.includes('hm-ask-sections')&&view.includes('hm-ask-draft')&&view.includes('Open</Link>')&&view.includes('Skip</button>'),'Ask Josh structured UI or honest card actions are missing');
 must(css.includes('.hm-ask-picks .hm-tile .acts .yes,.hm-ask-picks .hm-tile .acts .nah{min-height:44px'),'Ask Josh recipe actions must keep the 44px touch target');
+must(css.includes('.hm-ask{z-index:1600}')&&css.includes('.hm-ask-action{min-height:44px'),'Ask Josh must stay above photo review and keep 44px action targets');
 must(view.includes('cardContext')&&view.includes('prepForRecipeAtCookScaleV7')&&view.includes('days since last'),'contextual recommendation-card metadata is missing');
 must(settings.includes('Normal')&&settings.includes('Shorter')&&settings.includes('More chatty'),'Josh personality controls are incomplete');
 must(settings.includes('Things I remember')&&settings.includes('Forget')&&settings.includes('Working recipes'),'memory/draft review surface is incomplete');
