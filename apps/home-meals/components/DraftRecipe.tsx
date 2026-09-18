@@ -2,11 +2,12 @@
 import Link from "next/link";
 import {useEffect,useMemo,useState} from "react";
 import {feedback} from "@/lib/feedback";
+import {getHouseholdPerson,type HouseholdPerson} from "@/lib/device-profile";
 import {JoshPresenceAnchor} from "./JoshPresence";
 
 type DraftStatus="idea"|"draft"|"cooked"|"revised"|"household_approved";
 type Ingredient={name:string;quantity:number|null;unit:string|null};
-type DraftPayload={title?:string;servings?:number|null;ingredients?:Ingredient[];method?:string[];notes?:string[];postCookNotes?:string[];lastCookedAt?:string};
+type DraftPayload={title?:string;servings?:number|null;ingredients?:Ingredient[];method?:string[];notes?:string[];postCookNotes?:string[];lastCookedAt?:string;ratings?:Partial<Record<HouseholdPerson,number>>;cookLog?:{at:string;by:HouseholdPerson}[]};
 type Draft={id:string;title:string;status:DraftStatus;payload:DraftPayload;provenance:Record<string,unknown>;updated_at:string};
 const labels:Record<DraftStatus,string>={idea:"Idea",draft:"Working draft",cooked:"Cooked once",revised:"Revised",household_approved:"One of ours"};
 
@@ -23,7 +24,9 @@ function cleanPayload(value:unknown,title:string):DraftPayload{
   ingredients:Array.isArray(x.ingredients)?x.ingredients.filter(i=>i&&typeof i.name==="string").slice(0,50):[],
   method:Array.isArray(x.method)?x.method.filter(s=>typeof s==="string"&&s.trim()).slice(0,30):[],
   notes:Array.isArray(x.notes)?x.notes.filter(s=>typeof s==="string"&&s.trim()).slice(0,20):[],
-  postCookNotes:Array.isArray(x.postCookNotes)?x.postCookNotes.filter(s=>typeof s==="string"&&s.trim()).slice(0,20):[]
+  postCookNotes:Array.isArray(x.postCookNotes)?x.postCookNotes.filter(s=>typeof s==="string"&&s.trim()).slice(0,20):[],
+  ratings:x.ratings&&typeof x.ratings==="object"?x.ratings:{},
+  cookLog:Array.isArray(x.cookLog)?x.cookLog.filter(e=>e&&typeof e.at==="string"&&(e.by==="josh"||e.by==="g")).slice(0,30):[]
  };
 }
 
@@ -35,7 +38,9 @@ export function DraftRecipe({id}:{id:string}){
  const[step,setStep]=useState(0);
  const[note,setNote]=useState("");
  const[saving,setSaving]=useState(false);
+ const[person,setPerson]=useState<HouseholdPerson>("josh");
 
+ useEffect(()=>{setPerson(getHouseholdPerson()??"josh")},[]);
  useEffect(()=>{
   let live=true;
   const refresh=(initial=false)=>{if(initial)setLoading(true);return fetch("/api/recipe-drafts?id="+encodeURIComponent(id),{cache:"no-store"}).then(async r=>{if(!r.ok)throw new Error("draft");return r.json()}).then(x=>{if(live)setDraft(x.draft??null)}).catch(()=>{if(live)setError("I couldn’t open that working recipe.")}).finally(()=>{if(live&&initial)setLoading(false)})};
@@ -67,7 +72,8 @@ export function DraftRecipe({id}:{id:string}){
  const start=()=>{setStep(0);setCooking(true);feedback("tap")};
  const finish=async()=>{
   if(!payload)return;
-  const next={...payload,lastCookedAt:new Date().toISOString()};
+  const at=new Date().toISOString();
+  const next={...payload,lastCookedAt:at,cookLog:[{at,by:person},...(payload.cookLog??[])].slice(0,30)};
   const saved=await patch("cooked",next);
   if(saved){setCooking(false);setStep(0)}
  };
@@ -85,6 +91,7 @@ export function DraftRecipe({id}:{id:string}){
   }}));
   feedback("tap");
  };
+ const rate=async(value:number)=>{if(!payload)return;await patch(draft?.status==="draft"?"cooked":draft?.status,{...payload,ratings:{...(payload.ratings??{}),[person]:value}})};
  const approve=()=>void patch("household_approved",payload??undefined);
 
  if(loading)return <div className="hm-screen hm-draft-recipe"><div className="hm-state"><div className="center"><JoshPresenceAnchor priority={20} expression="thinking" size={72}/><h1>Opening our recipe…</h1></div></div></div>;
@@ -115,7 +122,7 @@ export function DraftRecipe({id}:{id:string}){
   {(payload.notes?.length??0)>0&&<section className="hm-card lg hm-draft-detail"><h2>Notes</h2>{payload.notes!.map((line,index)=><p key={index}>{line}</p>)}</section>}
   {(payload.postCookNotes?.length??0)>0&&<section className="hm-card lg hm-draft-detail"><h2>After cooking</h2>{payload.postCookNotes!.map((line,index)=><p key={index}>{line}</p>)}</section>}
   <div className="hm-draft-actions"><button className="hm-btn primary" onClick={start} disabled={!method.length}>Start cooking</button><button className="hm-btn ghost" onClick={askRevise}>{draft.status==="cooked"?"Improve it with Josh":"Revise with Josh"}</button>{draft.status!=="household_approved"&&(draft.status==="cooked"||draft.status==="revised")&&<button className="hm-btn ghost" disabled={saving} onClick={approve}>{saving?"Saving…":"Make this one of ours"}</button>}</div>
-  {(draft.status==="cooked"||draft.status==="revised"||draft.status==="household_approved")&&<section className="hm-card lg hm-draft-feedback"><label htmlFor="draft-note">Next time</label><textarea id="draft-note" value={note} onChange={e=>setNote(e.target.value)} placeholder="More chilli. Less wine. Cook the clams a little less."/><button className="hm-btn primary sm" disabled={!note.trim()||saving} onClick={()=>void saveNote()}>Save note</button></section>}
+  {(draft.status==="cooked"||draft.status==="revised"||draft.status==="household_approved")&&<section className="hm-card lg hm-draft-feedback"><div className="hm-draft-rating"><span><b>{person==="g"?"G":"Josh"}’s rating</b><small>{payload.cookLog?.length?"Cooked "+payload.cookLog.length+" "+(payload.cookLog.length===1?"time":"times"):"First cook"}</small></span><div aria-label={(person==="g"?"G":"Josh")+" rating"}>{[1,2,3,4,5].map(n=><button key={n} aria-label={"Rate "+n+" stars"} aria-pressed={(payload.ratings?.[person]??0)===n} className={(payload.ratings?.[person]??0)>=n?"on":""} onClick={()=>void rate(n)}>★</button>)}</div></div><label htmlFor="draft-note">Next time</label><textarea id="draft-note" value={note} onChange={e=>setNote(e.target.value)} placeholder="More chilli. Less wine. Cook the clams a little less."/><button className="hm-btn primary sm" disabled={!note.trim()||saving} onClick={()=>void saveNote()}>Save note</button></section>}
   {error&&<p className="hm-note">{error}</p>}
  </div>;
 }
