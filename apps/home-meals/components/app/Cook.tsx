@@ -10,6 +10,7 @@ import {mealHistorySummaryV7,recentPenaltyV7} from "@/data/meal-history-v7";
 import {recipeSubtitle,recipeTitle} from "@/data/recipe-display";
 import {kcalReferenceForV3,type MealWeightV3} from "@/data/recipe-kcal-reference-v3";
 import {feedback} from "@/lib/feedback";
+import {DraftRecipeShelf} from "../DraftRecipeShelf";
 import {Orb} from "./Orb";
 import {useReadiness} from "./Primitives";
 
@@ -31,6 +32,7 @@ export function Cook(){
  return <div className="hm-screen">
   <div className="hm-cook-head"><h1 className="hm-h1">Our recipes</h1><Link href="/history" className="hm-note">History ›</Link></div>
   <label className="hm-search"><input value={q} onChange={e=>{setQ(e.target.value);setShowAll(false)}} placeholder="Search or say “something with prawns”" aria-label="Search recipes"/>{q?<button type="button" className="clear" aria-label="Clear search" onClick={()=>{setQ("");feedback("tap")}}>×</button>:<button type="button" onClick={openAsk} aria-label="Ask Josh" style={{display:"grid",placeItems:"center"}}><Orb size={40}/></button>}</label>
+  <DraftRecipeShelf/>
   <div className="hm-chips" style={{marginTop:14}} aria-label="Browse recipes">{modes.map(m=><button key={m} className={`hm-chip ${mode===m?"on":""}`} aria-pressed={mode===m} onClick={()=>pick(m)}>{m}</button>)}</div>
   {secondary.length>0&&<div className="hm-chips" style={{marginTop:10}} aria-label={mode}>{secondary.map(x=><button key={x.id} className={`hm-chip ${sub===x.id?"on":""}`} aria-pressed={sub===x.id} onClick={()=>{setSub(v=>v===x.id?"":x.id);setShowAll(false);feedback("tap")}}>{x.label}</button>)}</div>}
   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:14}}><span className="hm-note">{list.length} {list.length===1?"dish":"dishes"}</span>{mode==="For us"&&<span className="hm-note">ratings · our prep · what we had lately</span>}</div>
