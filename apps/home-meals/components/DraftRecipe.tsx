@@ -9,6 +9,8 @@ type DraftStatus="idea"|"draft"|"cooked"|"revised"|"household_approved";
 type Ingredient={name:string;quantity:number|null;unit:string|null};
 type DraftPayload={title?:string;servings?:number|null;ingredients?:Ingredient[];method?:string[];notes?:string[];postCookNotes?:string[];lastCookedAt?:string;ratings?:Partial<Record<HouseholdPerson,number>>;cookLog?:{at:string;by:HouseholdPerson}[]};
 type Draft={id:string;title:string;status:DraftStatus;payload:DraftPayload;provenance:Record<string,unknown>;updated_at:string};
+type RecipeImage={id:string;draft_id:string;url:string;mime_type:string;model:string;quality:string;look:string|null;selected:boolean;created_at:string};
+type RecipeImageState={configured:boolean;selected:RecipeImage|null;images:RecipeImage[]};
 const labels:Record<DraftStatus,string>={idea:"Idea",draft:"Working draft",cooked:"Cooked once",revised:"Revised",household_approved:"One of ours"};
 
 function quantityLabel(item:Ingredient){
@@ -39,8 +41,10 @@ export function DraftRecipe({id}:{id:string}){
  const[note,setNote]=useState("");
  const[saving,setSaving]=useState(false);
  const[person,setPerson]=useState<HouseholdPerson>("josh");
+ const[imageState,setImageState]=useState<RecipeImageState|null>(null),[candidate,setCandidate]=useState<RecipeImage|null>(null),[imageBusy,setImageBusy]=useState(false),[imageError,setImageError]=useState("");
 
  useEffect(()=>{setPerson(getHouseholdPerson()??"josh")},[]);
+ useEffect(()=>{let live=true;const refresh=()=>fetch("/api/recipe-image?draftId="+encodeURIComponent(id),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(x=>{if(live&&x)setImageState(x as RecipeImageState)}).catch(()=>{});void refresh();const handler=()=>void refresh();window.addEventListener("home-meals:recipe-image-changed",handler);return()=>{live=false;window.removeEventListener("home-meals:recipe-image-changed",handler)}},[id]);
  useEffect(()=>{
   let live=true;
   const refresh=(initial=false)=>{if(initial)setLoading(true);return fetch("/api/recipe-drafts?id="+encodeURIComponent(id),{cache:"no-store"}).then(async r=>{if(!r.ok)throw new Error("draft");return r.json()}).then(x=>{if(live)setDraft(x.draft??null)}).catch(()=>{if(live)setError("I couldn’t open that working recipe.")}).finally(()=>{if(live&&initial)setLoading(false)})};
@@ -92,7 +96,9 @@ export function DraftRecipe({id}:{id:string}){
   feedback("tap");
  };
  const rate=async(value:number)=>{if(!payload)return;await patch(draft?.status==="draft"?"cooked":draft?.status,{...payload,ratings:{...(payload.ratings??{}),[person]:value}})};
- const approve=()=>void patch("household_approved",payload??undefined);
+ const generateImage=async(mode:"initial"|"replace"|"candidate",lookHint?:string)=>{if(imageBusy)return;setImageBusy(true);setImageError("");try{const res=await fetch("/api/recipe-image",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({draftId:id,mode,lookHint:lookHint??null})});if(!res.ok)throw new Error("image");const x=await res.json() as {image:RecipeImage};if(mode==="candidate")setCandidate(x.image);else{setCandidate(null);setImageState(v=>v?{...v,selected:x.image,images:[x.image,...v.images.filter(i=>i.id!==x.image.id)]}:{configured:true,selected:x.image,images:[x.image]})}window.dispatchEvent(new Event("home-meals:recipe-image-changed"));window.dispatchEvent(new Event("home-meals:drafts-changed"));feedback("success")}catch{setImageError("Couldn’t make that image just now. Try again.")}finally{setImageBusy(false)}};
+ const useCandidate=async()=>{if(!candidate||imageBusy)return;setImageBusy(true);setImageError("");try{const res=await fetch("/api/recipe-image",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({draftId:id,imageId:candidate.id})});if(!res.ok)throw new Error("select");const x=await res.json() as {image:RecipeImage};setImageState(v=>v?{...v,selected:x.image,images:v.images.map(i=>({...i,selected:i.id===x.image.id}))}:{configured:true,selected:x.image,images:[x.image]});setCandidate(null);window.dispatchEvent(new Event("home-meals:recipe-image-changed"));window.dispatchEvent(new Event("home-meals:drafts-changed"));feedback("success")}catch{setImageError("Couldn’t keep that image. Try again.")}finally{setImageBusy(false)}};
+  const approve=()=>void patch("household_approved",payload??undefined);
 
  if(loading)return <div className="hm-screen hm-draft-recipe"><div className="hm-state"><div className="center"><JoshPresenceAnchor priority={20} expression="thinking" size={72}/><h1>Opening our recipe…</h1></div></div></div>;
  if(error&&!draft)return <div className="hm-screen hm-draft-recipe"><Link href="/cook" className="hm-round" aria-label="Back to recipes">‹</Link><div className="hm-empty"><strong>{error}</strong><br/><Link href="/cook">Back to our recipes ›</Link></div></div>;
@@ -115,6 +121,9 @@ export function DraftRecipe({id}:{id:string}){
 
  return <div className="hm-screen hm-draft-recipe">
   <div className="hm-title-row"><Link href="/cook" className="hm-round" aria-label="Back to recipes">‹</Link><div><span className="hm-kicker">OUR WORKING RECIPE</span><h1 className="hm-h1">{draft.title}</h1></div></div>
+  <section className={`hm-draft-hero ${candidate?"candidate":""}`}>{(candidate??imageState?.selected)?<img src={(candidate??imageState?.selected)!.url} alt={draft.title+" generated recipe illustration"}/>:<div className="hm-draft-hero-empty"><JoshPresenceAnchor priority={18} expression="thinking" size={74}/><span>NO IMAGE YET</span><strong>Want me to picture this one?</strong></div>}<div className="hm-draft-hero-label"><span>{candidate?"NEW LOOK":imageState?.selected?"GENERATED PREVIEW":"WORKING RECIPE"}</span><small>{candidate||imageState?.selected?"AI-generated illustration · not a real photo":"Built from our recipe draft"}</small></div></section>
+  <div className="hm-draft-image-actions">{candidate?<><button className="hm-btn primary" disabled={imageBusy} onClick={()=>void useCandidate()}>{imageBusy?"Keeping…":"Use this image"}</button><button className="hm-btn ghost" disabled={imageBusy} onClick={()=>setCandidate(null)}>Keep current</button></>:imageState?.selected?<><button className="hm-btn ghost" disabled={imageBusy} onClick={()=>void generateImage("replace")}>{imageBusy?"Generating…":"Regenerate"}</button><button className="hm-btn ghost" disabled={imageBusy} onClick={()=>void generateImage("candidate","A distinctly different camera angle and plating composition, while keeping the same dish.")}>Try another look</button></>:<button className="hm-btn primary" disabled={imageBusy||imageState?.configured===false} onClick={()=>void generateImage("initial")}>{imageBusy?"Generating image…":imageState?.configured===false?"Image generation unavailable":"Generate image"}</button>}</div>
+  {imageError&&<p className="hm-draft-image-error">{imageError}</p>}
   <div className="hm-draft-status"><span>{labels[draft.status]}</span><small>{draft.status==="household_approved"?"We chose to keep this one. It still stays separate from Home’s verified recipe library.":"Discussion and edits stay here until we deliberately keep them."}</small></div>
   {payload.servings&&<p className="hm-note">{payload.servings} servings</p>}
   <section className="hm-card lg hm-draft-detail"><h2>Ingredients</h2>{ingredients.length?ingredients.map((item,index)=><div key={index}><span>{item.name}</span><strong>{quantityLabel(item)}</strong></div>):<p>No amounts written down yet.</p>}</section>
