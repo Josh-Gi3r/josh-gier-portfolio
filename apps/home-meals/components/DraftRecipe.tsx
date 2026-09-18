@@ -38,13 +38,11 @@ export function DraftRecipe({id}:{id:string}){
 
  useEffect(()=>{
   let live=true;
-  setLoading(true);
-  fetch("/api/recipe-drafts?id="+encodeURIComponent(id),{cache:"no-store"})
-   .then(async r=>{if(!r.ok)throw new Error("draft");return r.json()})
-   .then(x=>{if(live)setDraft(x.draft??null)})
-   .catch(()=>{if(live)setError("I couldn’t open that working recipe.")})
-   .finally(()=>{if(live)setLoading(false)});
-  return()=>{live=false};
+  const refresh=(initial=false)=>{if(initial)setLoading(true);return fetch("/api/recipe-drafts?id="+encodeURIComponent(id),{cache:"no-store"}).then(async r=>{if(!r.ok)throw new Error("draft");return r.json()}).then(x=>{if(live)setDraft(x.draft??null)}).catch(()=>{if(live)setError("I couldn’t open that working recipe.")}).finally(()=>{if(live&&initial)setLoading(false)})};
+  void refresh(true);
+  const handler=()=>{void refresh(false)};
+  window.addEventListener("home-meals:drafts-changed",handler);
+  return()=>{live=false;window.removeEventListener("home-meals:drafts-changed",handler)};
  },[id]);
 
  const payload=useMemo(()=>draft?cleanPayload(draft.payload,draft.title):null,[draft]);
