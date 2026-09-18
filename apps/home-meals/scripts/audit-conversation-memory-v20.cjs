@@ -29,7 +29,7 @@ must(askApi.includes('joshCoreInstructions(person,style)')&&askApi.includes('con
 must(askApi.includes('responseType')&&askApi.includes('truthLevel')&&askApi.includes('sections')&&askApi.includes('recipeDraft')&&askApi.includes('memoryCandidates'),'structured V20 response contract is incomplete');
 must(askApi.includes('Off-catalog dishes')&&askApi.includes('must never be given a fake saved mealId'),'off-catalog saved-ID boundary is missing');
 must(smart.includes('getHouseholdPerson')&&smart.includes('person,style,conversationId'),'client no longer sends person/style/conversation context');
-must(smart.includes('Remember this')&&smart.includes('Save as draft'),'memory/draft confirmation controls are missing');
+must(smart.includes('Remember this')&&(smart.includes('Save as draft')||smart.includes('Save working recipe')),'memory/draft confirmation controls are missing');
 must(view.includes('hm-ask-sections')&&view.includes('hm-ask-draft')&&view.includes('Open</Link>')&&view.includes('Skip</button>'),'Ask Josh structured UI or honest card actions are missing');
 must(css.includes('.hm-ask-picks .hm-tile .acts .yes,.hm-ask-picks .hm-tile .acts .nah{min-height:44px'),'Ask Josh recipe actions must keep the 44px touch target');
 must(css.includes('.hm-ask{z-index:1600}')&&css.includes('.hm-ask-action{min-height:44px'),'Ask Josh must stay above photo review and keep 44px action targets');
