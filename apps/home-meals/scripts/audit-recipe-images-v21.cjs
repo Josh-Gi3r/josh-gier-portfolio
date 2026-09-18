@@ -1,0 +1,23 @@
+const fs=require("node:fs"),path=require("node:path");
+const root=path.resolve(__dirname,".."),errors=[];const read=p=>fs.readFileSync(path.join(root,p),"utf8"),must=(ok,msg)=>{if(!ok)errors.push(msg)};
+const helper=read("lib/recipe-image.ts"),memory=read("lib/server-memory.ts"),route=read("app/api/recipe-image/route.ts"),binary=read("app/api/recipe-image/[id]/route.ts"),ask=read("app/api/ask-home/route.ts"),smart=read("components/SmartAskRuntime.tsx"),draft=read("components/DraftRecipe.tsx"),shelf=read("components/DraftRecipeShelf.tsx"),css=read("app/styles/josh-conversation.css"),tracker=read("V21_EXECUTION_TRACKER.json"),brief=read("V21_PRODUCT_BRIEF.md");
+must(helper.includes('"gpt-image-2.5-sunburst"')&&helper.includes('"max"')&&helper.includes('"1536x1024"')&&helper.includes('"webp"'),"best-quality GPT Image 2.5 default contract is missing");
+must(helper.includes("No text, labels, typography, logos, packaging, people or hands")&&helper.includes("exact dish identity"),"recipe-image prompt guardrails are incomplete");
+must(route.includes("https://api.openai.com/v1/images/generations")&&route.includes("output_format:RECIPE_IMAGE_FORMAT")&&route.includes("output_compression:88"),"OpenAI image generation endpoint is not wired correctly");
+must(route.includes("consumeRateLimit")&&route.includes("12,60*60*1000"),"costly image generation is missing a rate limit");
+must(route.includes("SESSION_COOKIE")&&route.includes("verifySessionToken")&&route.includes('error:"unauthorized"'),"recipe image generation is not private");
+must(binary.includes("SESSION_COOKIE")&&binary.includes("verifySessionToken")&&binary.includes('"Cache-Control":"private, max-age=300"'),"private image bytes are not household-session protected");
+must(memory.includes("home_meals_recipe_images")&&memory.includes("image_bytes bytea")&&memory.includes("one_selected")&&memory.includes("selectRecipeImage"),"Postgres recipe-image store is incomplete");
+must(!memory.includes("data:image")&&!memory.includes("base64"),"recipe images must not be stored as base64 in draft JSON");
+for(const action of ["suggest_generate_recipe_image","generate_recipe_image","regenerate_recipe_image"])must(ask.includes(action),`Josh image action missing: ${action}`);
+must(ask.includes('explicitly asks to generate, make, show or create an image')&&ask.includes("Image generation is presentation only"),"Josh image-action reasoning boundaries are missing");
+must(smart.includes("generateRecipeImage")&&smart.includes('recipeImageAction?.type==="generate_recipe_image"')&&smart.includes('"Use this image"')&&smart.includes('"Try another look"'),"Ask Josh cannot execute or review image actions");
+for(const label of ["Generate image","Regenerate","Try another look","Use this image","Keep current"])must(draft.includes(label),`working recipe image control missing: ${label}`);
+must(draft.includes('mode:"candidate"')||draft.includes('generateImage("candidate"'),"alternate image must be generated as a non-destructive candidate");
+must(draft.includes("AI-generated illustration")&&brief.includes("never represented as a real photo"),"generated imagery is not clearly distinguished from real photography");
+must(shelf.includes("hm-draft-shelf-thumb")&&shelf.includes("/api/recipe-image?draftId="),"Cook shelf does not surface the selected working-recipe image");
+must(css.includes("hm-draft-hero")&&css.includes("hm-ask-generated")&&css.includes("hm-draft-shelf-thumb"),"V21 image UI styles are missing");
+must(tracker.includes('"version": 21')&&tracker.includes('"no_auto_canonical_promotion": true')&&tracker.includes('"private_image_bytes": true'),"V21 tracker lost release invariants");
+must(!route.includes("allLiveRecipes")&&!route.includes("recipe-catalog")&&!memory.includes("allLiveRecipes"),"working recipe imagery must not mutate the canonical recipe catalogue");
+if(errors.length){console.error(`\nHome Meals Working Recipe Images V21 audit FAILED (${errors.length})`);for(const e of errors)console.error(` - ${e}`);process.exit(1)}
+console.log("\nHome Meals Working Recipe Images V21 audit passed · GPT Image 2.5 Sunburst · max quality · private Postgres bytes · Josh image actions · non-destructive alternates · working recipe heroes");
