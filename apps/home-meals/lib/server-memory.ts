@@ -56,6 +56,23 @@ async function ensureSchema(){
    updated_at timestamptz not null default now()
  )`;
  await sql`create index if not exists home_meals_recipe_drafts_household_updated_idx on home_meals_recipe_drafts (household_id,updated_at desc)`;
+ await sql`create table if not exists home_meals_recipe_images (
+   id text primary key,
+   household_id text not null,
+   draft_id text not null references home_meals_recipe_drafts(id) on delete cascade,
+   mime_type text not null,
+   image_bytes bytea not null,
+   prompt text not null,
+   model text not null,
+   quality text not null,
+   width integer not null,
+   height integer not null,
+   look text,
+   selected boolean not null default false,
+   created_at timestamptz not null default now()
+ )`;
+ await sql`create index if not exists home_meals_recipe_images_draft_created_idx on home_meals_recipe_images (household_id,draft_id,created_at desc)`;
+ await sql`create unique index if not exists home_meals_recipe_images_one_selected_idx on home_meals_recipe_images (household_id,draft_id) where selected`;
  initialized=true;
 }
 
@@ -63,6 +80,8 @@ export type StoredConversation={id:string;person:HouseholdPerson;title:string|nu
 export type StoredMessage={id:number;role:"user"|"assistant";content:string;structured:Record<string,unknown>|null;created_at:string};
 export type StoredMemory={id:string;subject:string;kind:MemoryKind;text:string;source_person:HouseholdPerson|null;status:"suggested"|"confirmed"|"rejected";provenance:Record<string,unknown>;created_at:string;updated_at:string};
 export type StoredDraft={id:string;title:string;status:"idea"|"draft"|"cooked"|"revised"|"household_approved";payload:Record<string,unknown>;provenance:Record<string,unknown>;created_at:string;updated_at:string};
+export type StoredRecipeImage={id:string;draft_id:string;mime_type:string;prompt:string;model:string;quality:string;width:number;height:number;look:string|null;selected:boolean;created_at:string};
+export type StoredRecipeImageBytes=StoredRecipeImage&{image_bytes:Buffer};
 
 export async function ensureConversation(person:HouseholdPerson,conversationId?:string|null){
  await ensureSchema();const sql=db();
@@ -85,3 +104,10 @@ export async function saveDraft(input:{title:string;status?:StoredDraft["status"
 export async function listDrafts(){await ensureSchema();const sql=db();return sql<StoredDraft[]>`select id,title,status,payload,provenance,created_at::text as created_at,updated_at::text as updated_at from home_meals_recipe_drafts where household_id=${HOUSEHOLD_ID} order by updated_at desc limit 50`}
 export async function getDraft(id:string){await ensureSchema();const sql=db();const rows=await sql<StoredDraft[]>`select id,title,status,payload,provenance,created_at::text as created_at,updated_at::text as updated_at from home_meals_recipe_drafts where id=${id} and household_id=${HOUSEHOLD_ID} limit 1`;return rows[0]??null}
 export async function updateDraft(id:string,input:{status?:StoredDraft["status"];payload?:Record<string,unknown>}){await ensureSchema();const sql=db();const existing=(await sql<StoredDraft[]>`select id,title,status,payload,provenance,created_at::text as created_at,updated_at::text as updated_at from home_meals_recipe_drafts where id=${id} and household_id=${HOUSEHOLD_ID} limit 1`)[0];if(!existing)return null;const status=input.status??existing.status,payload=input.payload??existing.payload;const rows=await sql<StoredDraft[]>`update home_meals_recipe_drafts set status=${status},payload=${sql.json(payload as any)},updated_at=now() where id=${id} and household_id=${HOUSEHOLD_ID} returning id,title,status,payload,provenance,created_at::text as created_at,updated_at::text as updated_at`;return rows[0]??null}
+
+export async function listRecipeImages(draftId:string){await ensureSchema();const sql=db();return sql<StoredRecipeImage[]>`select id,draft_id,mime_type,prompt,model,quality,width,height,look,selected,created_at::text as created_at from home_meals_recipe_images where household_id=${HOUSEHOLD_ID} and draft_id=${draftId} order by created_at desc limit 20`}
+export async function selectedRecipeImage(draftId:string){await ensureSchema();const sql=db();const rows=await sql<StoredRecipeImage[]>`select id,draft_id,mime_type,prompt,model,quality,width,height,look,selected,created_at::text as created_at from home_meals_recipe_images where household_id=${HOUSEHOLD_ID} and draft_id=${draftId} and selected=true order by created_at desc limit 1`;return rows[0]??null}
+export async function getRecipeImage(id:string){await ensureSchema();const sql=db();const rows=await sql<StoredRecipeImageBytes[]>`select id,draft_id,mime_type,image_bytes,prompt,model,quality,width,height,look,selected,created_at::text as created_at from home_meals_recipe_images where household_id=${HOUSEHOLD_ID} and id=${id} limit 1`;return rows[0]??null}
+export async function saveRecipeImage(input:{draftId:string;mimeType:string;bytes:Buffer;prompt:string;model:string;quality:string;width:number;height:number;look?:string|null;selected:boolean}){await ensureSchema();const sql=db(),id=randomUUID();return sql.begin(async tx=>{if(input.selected)await tx`update home_meals_recipe_images set selected=false where household_id=${HOUSEHOLD_ID} and draft_id=${input.draftId} and selected=true`;const rows=await tx`insert into home_meals_recipe_images (id,household_id,draft_id,mime_type,image_bytes,prompt,model,quality,width,height,look,selected) values (${id},${HOUSEHOLD_ID},${input.draftId},${input.mimeType},${input.bytes},${input.prompt.slice(0,12000)},${input.model},${input.quality},${input.width},${input.height},${input.look??null},${input.selected}) returning id,draft_id,mime_type,prompt,model,quality,width,height,look,selected,created_at::text as created_at`;return rows[0] as unknown as StoredRecipeImage})}
+export async function selectRecipeImage(draftId:string,id:string){await ensureSchema();const sql=db();return sql.begin(async tx=>{const found=await tx`select id from home_meals_recipe_images where household_id=${HOUSEHOLD_ID} and draft_id=${draftId} and id=${id} limit 1`;if(!found[0])return null;await tx`update home_meals_recipe_images set selected=false where household_id=${HOUSEHOLD_ID} and draft_id=${draftId} and selected=true`;const rows=await tx`update home_meals_recipe_images set selected=true where household_id=${HOUSEHOLD_ID} and draft_id=${draftId} and id=${id} returning id,draft_id,mime_type,prompt,model,quality,width,height,look,selected,created_at::text as created_at`;return rows[0] as unknown as StoredRecipeImage})}
+
