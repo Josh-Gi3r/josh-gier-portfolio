@@ -19,7 +19,7 @@ must(memoryApi.includes('saveMemory')&&memoryApi.includes('deleteMemory'),'memor
 must(draftApi.includes('household_approved')&&draftApi.includes('saveDraft')&&draftApi.includes('updateDraft'),'draft recipe lifecycle API is incomplete');
 must(memory.includes('getDraft')&&draftApi.includes('getDraft'),'working recipe detail lookup is missing');
 must(draftView.includes('Start cooking')&&draftView.includes('Cooked it')&&draftView.includes('Improve it with Josh')&&draftView.includes('Make this one of ours'),'working recipe cook/revise/approve lifecycle is incomplete');
-must(draftView.includes('cookLog')&&draftView.includes('ratings')&&draftView.includes('Rate '+''),'working recipe cook history or ratings are missing');
+must(draftView.includes('cookLog')&&draftView.includes('ratings')&&draftView.includes('Rate '),'working recipe cook history or ratings are missing');
 must(draftView.includes('This cook won’t change Kitchen')&&draftView.includes('not food safety'),'working recipe truth/safety boundary is missing');
 must(smart.includes('draftContext')&&smart.includes('Update draft')&&askApi.includes('cleanDraftContext')&&askApi.includes('WORKING RECIPE CONTEXT'),'Josh can no longer revise the active working recipe safely');
 must(draftShelf.includes('Our working recipes')&&cook.includes('DraftRecipeShelf')&&settings.includes('/cook/drafts/'),'working recipes are not discoverable from Cook and More');
