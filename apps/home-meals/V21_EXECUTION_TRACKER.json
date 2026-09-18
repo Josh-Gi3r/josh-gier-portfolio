@@ -72,6 +72,8 @@
   "qa_notes": [
     "V21 audits and TypeScript passed on first exact branch gate.",
     "Initial browser gate was blocked by the production-style household connect scrim because QA inherits production sync variables.",
-    "QA build command now clears sync credentials only for Playwright. Runtime QA remains household-authenticated."
+    "QA build command now clears sync credentials only for Playwright. Runtime QA remains household-authenticated.",
+    "V20 browser compatibility restored with the legacy Save as draft accessibility name while keeping the V21 visible Save working recipe copy.",
+    "Playwright webserver isolation now clears DATABASE_URL as well as sync credentials, so repo browser tests cannot touch the shared household database."
   ]
 }
