@@ -11,7 +11,7 @@ must(memory.includes("home_meals_recipe_images")&&memory.includes("image_bytes b
 must(!memory.includes("data:image")&&!memory.includes("base64"),"recipe images must not be stored as base64 in draft JSON");
 for(const action of ["suggest_generate_recipe_image","generate_recipe_image","regenerate_recipe_image"])must(ask.includes(action),`Josh image action missing: ${action}`);
 must(ask.includes('explicitly asks to generate, make, show or create an image')&&ask.includes("Image generation is presentation only"),"Josh image-action reasoning boundaries are missing");
-must(smart.includes("generateRecipeImage")&&smart.includes('recipeImageAction?.type==="generate_recipe_image"')&&smart.includes('"Use this image"')&&smart.includes('"Try another look"'),"Ask Josh cannot execute or review image actions");
+must(smart.includes("generateRecipeImage")&&smart.includes('recipeImageAction?.type==="generate_recipe_image"')&&smart.includes('Use this image')&&smart.includes('Try another look'),"Ask Josh cannot execute or review image actions");
 for(const label of ["Generate image","Regenerate","Try another look","Use this image","Keep current"])must(draft.includes(label),`working recipe image control missing: ${label}`);
 must(draft.includes('mode:"candidate"')||draft.includes('generateImage("candidate"'),"alternate image must be generated as a non-destructive candidate");
 must(draft.includes("AI-generated illustration")&&brief.includes("never represented as a real photo"),"generated imagery is not clearly distinguished from real photography");
