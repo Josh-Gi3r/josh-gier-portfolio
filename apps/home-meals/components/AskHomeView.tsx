@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import {useMemo,useState,type FormEvent,type ReactNode} from "react";
+import {useEffect,useMemo,useRef,useState,type FormEvent,type ReactNode} from "react";
 import {getLiveRecipeV7} from "@/data/recipe-catalog-v7";
 import {prepForRecipeAtCookScaleV7} from "@/data/food-engine-v7";
 import {mealHistorySummaryV7} from "@/data/meal-history-v7";
@@ -22,9 +22,10 @@ type Quick={label:string;text:string};
 function qty(q:number|null,u:string|null){if(q==null)return"";return `${Number.isInteger(q)?q:Math.round(q*10)/10}${u?` ${u}`:""}`}
 
 // Full-screen Ask Josh. Josh is the single visible assistant presence; semantic answers render as product UI instead of Markdown walls.
-export function AskHomeView({messages,q,setQ,onSend,onClose,cameraHref,quick,loading=false,status="Ask Josh"}:{messages:AskMessage[];q:string;setQ:(v:string)=>void;onSend:(text?:string)=>void;onClose:()=>void;cameraHref:string;quick:Quick[];loading?:boolean;status?:string}){
- const[dismissed,setDismissed]=useState<Record<string,boolean>>({}),h=useHousehold(),ready=useReadiness();
+export function AskHomeView({messages,q,setQ,onSend,onClose,cameraHref,quick,loading=false,status="Ask Josh",scrollSignal=""}:{messages:AskMessage[];q:string;setQ:(v:string)=>void;onSend:(text?:string)=>void;onClose:()=>void;cameraHref:string;quick:Quick[];loading?:boolean;status?:string;scrollSignal?:string}){
+ const[dismissed,setDismissed]=useState<Record<string,boolean>>({}),scrollRef=useRef<HTMLDivElement|null>(null),h=useHousehold(),ready=useReadiness();
  const history=useMemo(()=>mealHistorySummaryV7({history:h.history,favourites:h.favourites,ratings:h.ratings}),[h.history,h.favourites,h.ratings]);
+ useEffect(()=>{const id=window.requestAnimationFrame(()=>{const el=scrollRef.current;if(el)el.scrollTop=el.scrollHeight});return()=>window.cancelAnimationFrame(id)},[messages.length,loading,scrollSignal]);
  const conversation=messages.some(m=>m.who==="you");
  const submit=(e:FormEvent)=>{e.preventDefault();onSend()};
  const showGuide=()=>{onClose();window.setTimeout(()=>window.dispatchEvent(new Event("home-meals:guide")),90)};
@@ -37,7 +38,7 @@ export function AskHomeView({messages,q,setQ,onSend,onClose,cameraHref,quick,loa
     <Link href={cameraHref} className="hm-round green" aria-label="Show Josh with camera" onClick={onClose}><Icon name="camera" size={20}/></Link>
    </div>
    <div className={`hm-ask-stage ${conversation?"conversation":""}`}><JoshPresenceAnchor priority={80} expression={loading?"thinking":conversation?"talk":"affectionate"} size={conversation?72:132} observeVisibility={false}/></div>
-   <div className="hm-ask-scroll" aria-live="polite">
+   <div className="hm-ask-scroll" aria-live="polite" ref={scrollRef}>
     {messages.map((m,i)=>{
      if(m.who==="you")return <div key={i} className="hm-ask-msg you"><div>{m.text}</div></div>;
      const picks=(m.mealIds??[]).filter(id=>!dismissed[`${i}:${id}`]).slice(0,4),offCatalog=m.truthLevel==="general_culinary"||m.truthLevel==="household_draft";
