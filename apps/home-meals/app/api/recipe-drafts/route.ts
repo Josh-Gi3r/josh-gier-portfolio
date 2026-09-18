@@ -1,6 +1,6 @@
 import {NextRequest,NextResponse} from "next/server";
 import {SESSION_COOKIE,syncConfigured,verifySessionToken} from "@/lib/server-household";
-import {listDrafts,memoryConfigured,saveDraft,updateDraft,type StoredDraft} from "@/lib/server-memory";
+import {getDraft,listDrafts,memoryConfigured,saveDraft,updateDraft,type StoredDraft} from "@/lib/server-memory";
 
 export const dynamic="force-dynamic";
 function noStore(body:unknown,status=200){return NextResponse.json(body,{status,headers:{"Cache-Control":"no-store"}})}
@@ -10,6 +10,7 @@ const statuses=new Set<StoredDraft["status"]>(["idea","draft","cooked","revised"
 export async function GET(req:NextRequest){
  if(!auth(req))return noStore({error:"unauthorized"},401);
  if(!memoryConfigured())return noStore({configured:false,drafts:[]});
+ const id=new URL(req.url).searchParams.get("id");if(id){const draft=await getDraft(id);return draft?noStore({configured:true,draft}):noStore({error:"not_found"},404)}
  return noStore({configured:true,drafts:await listDrafts()});
 }
 
