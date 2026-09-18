@@ -45,7 +45,7 @@ export function Scan(){
  const manualLabel=mode==="Meal"?"Our recipes":mode==="Prep"?"Open the cues":"Add it myself";
  const says=(()=>{if(error)return<>{error} Try another photo — nothing has changed.</>;if(mode==="Receipt")return h.shoppingNeeds.length?<>Tick anything from this week’s list that you can see. You decide what gets added.</>:<>The week’s list is already clear. Anything extra can go in through Kitchen.</>;if(mode==="Prep")return<>I can compare colour and texture, but a photo can’t prove food-safe temperature.</>;if(mode==="Meal")return targetMeal?<>Keep this with <b>{recipeTitle(targetMeal.id,targetMeal.title)}</b>?</>:<>Log a dinner first, then we can keep its photo.</>;return<>Use the photo as a reference and tap anything that needs changing{confirmed?` — ${confirmed} changed so far.`:"."}</>})();
  return <div className="hm-scan hm-show-josh">
-  <header className="hm-show-top"><Link href={back} className="hm-round" aria-label="Close camera">×</Link><div><span>SHOW ME</span><strong>{current.title}</strong></div><button className="hm-show-ask" aria-label="Ask Home" onClick={()=>window.dispatchEvent(new Event("home-meals:ask"))}>✦</button></header>
+  <header className="hm-show-top"><Link href={back} className="hm-round" aria-label="Close camera">×</Link><div><span>SHOW ME</span><strong>{current.title}</strong></div><button className="hm-show-ask" aria-label="Ask Josh" onClick={()=>window.dispatchEvent(new Event("home-meals:ask"))}>✦</button></header>
   {!preview?<main className="hm-show-launcher">
    <JoshPresenceAnchor priority={70} expression={error?"sheepish":"affectionate"} size={104} observeVisibility={false} className="hm-show-head"/>
    <h1>{current.title}</h1><p>{current.hint}</p>
