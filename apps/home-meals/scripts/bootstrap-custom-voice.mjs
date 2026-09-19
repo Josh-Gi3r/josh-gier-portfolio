@@ -21,7 +21,7 @@ try{
     const form=new FormData();
     form.append("name","Josh Home Meals consent");
     form.append("language","en");
-    form.append("recording",new Blob([consentAudio],{type:"audio/webm"}),"josh_voice_consent.webm");
+    form.append("recording",new Blob([consentAudio],{type:"audio/ogg"}),"josh_voice_consent.ogg");
     const result=await postForm("/audio/voice_consents",form);
     consentId=String(result.id||result.consent_id||"");
     if(!consentId)throw new Error("consent response missing id");
@@ -29,7 +29,7 @@ try{
   }
   const voiceForm=new FormData();
   voiceForm.append("name","Josh Home Meals");
-  voiceForm.append("audio_sample",new Blob([sampleAudio],{type:"audio/webm"}),"josh_voice_sample.webm");
+  voiceForm.append("audio_sample",new Blob([sampleAudio],{type:"audio/ogg"}),"josh_voice_sample.ogg");
   voiceForm.append("consent",consentId);
   const voice=await postForm("/audio/voices",voiceForm);
   const voiceId=String(voice.id||voice.voice_id||"");
