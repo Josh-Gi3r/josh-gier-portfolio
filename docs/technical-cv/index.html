@@ -455,7 +455,7 @@ html.jgi-lock,html.jgi-lock body{overflow:hidden}
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23171913'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia' font-size='40' fill='%23efd7a7'%3Ejg%3C/text%3E%3C/svg%3E">
 </head>
 <body>
-<div class="jgi" id="jgi" role="dialog" aria-modal="true" aria-labelledby="jgi-hello">
+<div class="jgi" id="jgi" hidden role="dialog" aria-modal="true" aria-labelledby="jgi-hello">
   <div class="jgi-card">
     <div class="jgi-glow" aria-hidden="true"></div>
     <div class="jgi-head">
@@ -1406,6 +1406,9 @@ sustained utilisation → self-host / colo / owned</pre><div class="formula">TCO
 (() => {
   const root = document.getElementById('jgi');
   if (!root) return;
+  // Intro overlay disabled: keep the markup available for future reuse, but never open or lock page scrolling.
+  root.hidden = true;
+  return;
   const html = document.documentElement;
   // Opened from josh-gier.com: no intro letter. Drop the marker so a copied URL still shows it.
   if (html.classList.contains('jgi-skip')) {
