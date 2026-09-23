@@ -3,7 +3,6 @@ import {installSound} from './sound.js?v=6';
 import {deviceFrame,installScreenGeometry} from './screens.js';
 import {campaigns,products} from './catalog.js?v=7';
 import {brandLogo,campaignArt,campaignCollection,productCardArt,renderShowcase,handleDemoClick} from './showcases.js?v=6';
-import {renderRealEstateShowcase,handleRealEstateClick} from './real-estate-showcase.js?v=1';
 const view=document.querySelector('#view');
 const home=document.querySelector('#home');
 const plane=document.querySelector('#room-plane');
@@ -28,7 +27,7 @@ function renderRoute(route){
   else if(route==='products')renderComputer();
   else if(route==='work')renderIndex();
   else if(route==='about')renderAbout();
-  else if(route==='real-estate'||route.startsWith('real-estate/'))renderRealEstateShowcase(view,route);
+  else if(route==='real-estate')renderRealEstate();
   else if(route==='contact')renderContact();
   else if(route.startsWith('case/'))renderCase(campaigns.find(p=>p.id===route.split('/')[1]));
   else if(route.startsWith('product/'))renderProduct(products.find(p=>p.id===route.split('/')[1]));
@@ -53,6 +52,112 @@ function renderCase(p){
  view.innerHTML=`${back('campaigns','Back to the television')}<article class="case-paper" style="--project:${p.color}"><header class="case-header"><div class="case-kicker"><span>${esc(p.category)}</span><span>JOSH GIER / SELECTED WORK</span></div><div class="case-brand">${brandLogo(p)}${p.id==='cbre'?'<img class="brand-logo" src="/assets/ntt-logo.svg" alt="NTT">':''}</div><h1>${esc(p.title)}</h1><p class="case-intro">${esc(p.summary)}</p><div class="pills">${p.channels.map(pill).join('')}</div></header><div class="case-outcomes">${metrics(p)}</div>${p.art?campaignArt(p):p.image?`<figure class="case-hero">${img(p.hero||p.image,p.brand+' portfolio presentation','',true)}</figure>`:''}<div class="case-body"><div class="case-two-col"><section><p class="eyebrow">01 / THE BRIEF</p><h2>The objective.</h2><p>${esc(p.brief)}</p><h3>The audience</h3><p>${esc(p.audience)}</p></section><section class="role-panel"><p class="eyebrow">02 / MY CONTRIBUTION</p><h2>My responsibilities.</h2><p>${esc(p.role)}</p></section></div><section class="strategy-section"><p class="eyebrow">03 / THE STRATEGY</p><h2>${esc(p.strategy)}</h2></section><section><p class="eyebrow">04 / EXECUTION</p><div class="execution-grid">${p.execution.map(([t,d],i)=>`<div><span class="execution-number">0${i+1}</span><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join('')}</div></section><div class="commercial-section"><section><p class="eyebrow">05 / COMMERCIAL SCOPE</p><p>${esc(p.commercial)}</p>${p.budget?`<div class="budget-scope"><strong>${p.budget[0]}</strong><span>${p.budget[1]}</span></div>`:''}</section><section><p class="eyebrow">MEASUREMENT FOCUS</p><ul>${p.measurement.map(m=>`<li>${esc(m)}</li>`).join('')}</ul></section></div>${p.art?campaignCollection(p):''}${p.gallery.length>1?`<section class="creative-section"><div class="section-top"><div><p class="eyebrow">THE CREATIVE COLLECTION</p><h2>Campaign creative.</h2></div></div><div class="creative-grid">${p.gallery.map((n,i)=>`<button class="creative-tile ${n.endsWith('board')?'wide':''}" data-enlarge="${n}" data-caption="${esc(p.brand)} · ${n.endsWith('board')?'Campaign overview':'Campaign creative '+String(i+1).padStart(2,'0')}" aria-label="Enlarge ${esc(p.brand)} creative ${i+1}">${img(n,p.brand+' campaign creative '+(i+1))}<span>${String(i+1).padStart(2,'0')} <b>View ${arrow}</b></span></button>`).join('')}</div></section>`:''}<footer class="case-credit">${p.credit?`<p>${esc(p.credit)}</p>`:''}${p.source?`<a href="${esc(p.source)}" target="_blank" rel="noopener noreferrer">Campaign / company source ${arrow}</a>`:''}</footer></div></article><a class="next-project" href="#case/${next.id}"><span class="eyebrow">NEXT PROJECT</span><strong>${esc(next.brand)}</strong><span>${arrow}</span></a>`;
 }
 function renderProduct(p){if(!p){renderRoute('missing');return;}view.innerHTML=renderShowcase(p,products[(products.indexOf(p)+1)%products.length]);}
+function renderRealEstate(){
+ view.innerHTML=`${back()}<article class="re-page">
+  <header class="re-hero">
+    <p class="eyebrow">REAL ESTATE & PROPTECH</p>
+    <h1>13 years across real estate,<br>workplace and technology.</h1>
+    <p class="re-lead">I started in commercial interiors and workplace in Singapore in 2013. At CBRE I moved through Strategy & Consulting, Advisory & Transactions and APAC technology leadership. Since 2021 I’ve built software and data products for owners, operators, investors and brokers.</p>
+    <div class="re-metrics">
+      <div><strong>US$35M+</strong><span>Client business secured at D’Perception</span></div>
+      <div><strong>18</strong><span>Enterprise real-estate products commercialised at CBRE</span></div>
+      <div><strong>US$100M</strong><span>Annual CBRE revenue originated across wider service lines</span></div>
+      <div><strong>US$1B</strong><span>NTT global GWS contract personally originated & closed</span></div>
+    </div>
+  </header>
+
+  <section class="re-career">
+    <div class="re-section-head"><p class="eyebrow">EXPERIENCE</p><h2>D’Perception → CBRE → Aier Studios.</h2></div>
+
+    <div class="re-career-row">
+      <div class="re-year">2013<br>— 2016</div>
+      <div>
+        <h3>D’Perception Singapore</h3>
+        <p class="re-role">Commercial interior design · Workplace strategy · PropTech</p>
+        <p>Led enterprise sales, go-to-market and technology-led propositions across workplace, commercial interiors and PropTech. Secured more than US$35M in client business and helped build the technology-consulting division’s commercial and delivery framework, including BI for tender outcomes, conversion and account development.</p>
+      </div>
+    </div>
+
+    <div class="re-career-row">
+      <div class="re-year">2016<br>— 2021</div>
+      <div>
+        <h3>CBRE Asia Pacific</h3>
+        <p class="re-role">Strategy & Consulting → Advisory & Transactions → Regional Technology Lead, APAC</p>
+        <p>Built the regional technology capability from two people to 50+ direct staff and a 250+ consulting and delivery organisation across seven markets.</p>
+        <p>Commercialised 18 enterprise products across portfolio and location intelligence, workforce analytics, workplace planning, employee experience, lease administration, facilities and capital projects. Technology and workplace mandates originated approximately US$100M in annual revenue across CBRE service lines.</p>
+        <p>Personally originated and closed the US$1B NTT global GWS contract, using a tailored utilisation, cost and location application as the entry point.</p>
+        <a class="re-text-link" href="#case/cbre">CBRE / NTT case ${arrow}</a>
+      </div>
+    </div>
+
+    <div class="re-career-row">
+      <div class="re-year">2021<br>— NOW</div>
+      <div>
+        <h3>Aier Studios</h3>
+        <p class="re-role">Real-estate technology · Investment & asset intelligence · MarTech · SalesTech</p>
+        <p>Built software, data and AI for real-estate owners, operators and advisory firms. Work includes acquisition screening, transaction analysis, underwriting, asset business plans, spatial planning, refurbishment, facilities, investor and property CRM, and marketing and sales systems around property demand.</p>
+        <p>Aier reached approximately US$1.2M ARR in its first year, scaled to 25 people and was acquired by the Kerria-AM / Jerikho IM group.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="re-stack">
+    <div class="re-section-head"><p class="eyebrow">AREAS OF WORK</p><h2>Real estate from investment to operations.</h2></div>
+    <div class="re-domain-grid">
+      <div><span>01</span><h3>Investment & asset management</h3><p>Acquisition screening, transaction analysis, underwriting, NOI, CapEx, IRR/MOIC, leverage, refinancing, exit assumptions and asset business plans.</p></div>
+      <div><span>02</span><h3>Workplace & interiors</h3><p>Occupancy requirements, workplace programming, design scenarios, employee experience, refurbishment, adaptive reuse, heritage rehabilitation and capital projects.</p></div>
+      <div><span>03</span><h3>Portfolio & location intelligence</h3><p>Property and location data, workforce analytics, utilisation, portfolio modelling, cost scenarios, market evidence and geospatial context.</p></div>
+      <div><span>04</span><h3>Property operations</h3><p>Lease administration, facilities, vendors, procurement, programme tracking and project delivery.</p></div>
+      <div><span>05</span><h3>Property & investor CRM</h3><p>Landlord, occupier and investor relationships, enquiry qualification, account development, opportunity management and sales automation.</p></div>
+      <div><span>06</span><h3>Spatial intelligence & AI</h3><p>Property data models, geospatial systems, floor plans, 3D environments, constraint-based planning, deterministic models and grounded AI.</p></div>
+    </div>
+  </section>
+
+  <section class="re-work">
+    <div class="re-section-head"><p class="eyebrow">SELECTED PRODUCTS</p><h2>Current real-estate technology work.</h2></div>
+    <div class="re-project-grid">
+      <div class="re-project-card re-project-rd">
+        <span>PROPERTY INTELLIGENCE</span>
+        <h3>OPERATION-RE</h3>
+        <p>Commercial-property data infrastructure that resolves listings and source observations to canonical buildings, floors and spaces, while retaining ownership, occupancy, leases, availability, transactions, rents, geometry, history and provenance.</p>
+        <b>Property data + market intelligence</b>
+      </div>
+
+      <a class="re-project-card" href="#product/atlas">
+        <span>WORKPLACE</span>
+        <h3>ATLAS</h3>
+        <p>A deterministic space-programming and workplace transformation system. A written brief becomes a reproducible space programme with scenario comparison, zoning, evidence and spatial decision support.</p>
+        <b>Open product ${arrow}</b>
+      </a>
+
+      <a class="re-project-card" href="#product/savills-os">
+        <span>BROKERAGE</span>
+        <h3>Savills OS</h3>
+        <p>A 38-surface commercial brokerage workspace covering market intelligence, landlord and occupier records, property work, CRM, viewings, valuation, campaigns, enquiries, transactions and team workflows.</p>
+        <b>Open product ${arrow}</b>
+      </a>
+
+      <div class="re-project-card">
+        <span>INVESTMENT & ASSET MANAGEMENT</span>
+        <h3>Property Intelligence</h3>
+        <p>Market intelligence, acquisition screening, underwriting, deal pipeline, fund economics, portfolio scaling and asset-level execution in one investment workflow.</p>
+        <b>Investment & asset-management system</b>
+      </div>
+    </div>
+  </section>
+
+  <section class="re-close">
+    <p class="eyebrow">MORE DETAIL</p>
+    <h2>Technical architecture, products and selected commercial work.</h2>
+    <div class="re-close-links">
+      <a href="https://technical-cv.josh-gier.com/?ref=real-estate" target="_blank" rel="noopener">Technical CV ${arrow}</a>
+      <a href="#products">Products & software ${arrow}</a>
+      <a href="#case/cbre">CBRE / NTT case ${arrow}</a>
+    </div>
+  </section>
+ </article>`;
+}
+
 function renderIndex(){
  const all=[...campaigns.map(p=>({...p,name:p.brand,kind:p.category,href:'case/'+p.id})),...products.map(p=>({...p,kind:p.collection==='Open source'?'Open source':p.collection==='Experiments'?'Experiments':'Products & websites',href:'product/'+p.id}))];
  const filters=['All','Brand campaigns','Growth & launches','Enterprise & commercial','Products & websites','Open source','Experiments'];
@@ -69,7 +174,6 @@ function enlarge(name,caption){
  const d=document.createElement('dialog');d.className='image-dialog';d.innerHTML=`<div class="image-dialog-top"><span>${esc(caption)}</span><button aria-label="Close image">Close ×</button></div>${img(name,caption,'',true)}`;document.body.append(d);d.querySelector('button').onclick=()=>d.close();d.addEventListener('click',e=>{if(e.target===d)d.close();});d.addEventListener('close',()=>d.remove());d.showModal();
 }
 view.addEventListener('click',e=>{
- if(handleRealEstateClick(e))return;
  if(handleDemoClick(e,products))return;
  const library=e.target.closest('[data-library-filter]');if(library){productFilter=library.dataset.libraryFilter;renderComputer();view.querySelector('#project-directory').scrollIntoView({block:'start'});view.querySelector(`[data-library-filter="${productFilter}"]`)?.focus({preventScroll:true});return;}
  if(e.target.closest('[data-directory]')){e.preventDefault();view.querySelector('#project-directory')?.scrollIntoView({behavior:reduced?'instant':'smooth'});return;}
@@ -89,7 +193,7 @@ if(!reduced&&!navigator.connection?.saveData){if('requestIdleCallback' in window
 document.querySelector('#motion-toggle').addEventListener('click',()=>{if(!document.body.classList.contains('paused'))loadAtmosphere();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)video.pause();else if(active==='room'&&!document.body.classList.contains('paused')&&video.getAttribute('src'))video.play().catch(()=>{});});
 window.addEventListener('hashchange',navigate);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.querySelector('dialog[open]')&&active!=='room')location.hash=active.startsWith('case/')?'campaigns':active.startsWith('product/')?'products':active.startsWith('real-estate/')?'real-estate':'room';});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.querySelector('dialog[open]')&&active!=='room')location.hash=active.startsWith('case/')?'campaigns':active.startsWith('product/')?'products':'room';});
 navigate();
 
 /* Portrait phones: suggest landscape once. Never block - iOS Safari cannot lock
