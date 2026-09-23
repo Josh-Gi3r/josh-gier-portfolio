@@ -41,9 +41,10 @@ if(header&&!header.querySelector('.mobile-menu-toggle')){
       <a href="${portfolioRoute('#work')}"><span>01</span><strong>Work index</strong></a>
       <a href="${portfolioRoute('#campaigns')}"><span>02</span><strong>Campaigns</strong></a>
       <a href="${portfolioRoute('#products')}"><span>03</span><strong>Products</strong></a>
-      <a href="/games.html"><span>04</span><strong>Games</strong></a>
-      <a href="${portfolioRoute('#about')}"><span>05</span><strong>About & CV</strong></a>
-      <a href="${portfolioRoute('#contact')}"><span>06</span><strong>Get in touch</strong></a>
+      <a href="${portfolioRoute('#real-estate')}"><span>04</span><strong>Real Estate & PropTech</strong></a>
+      <a href="/games.html"><span>05</span><strong>Games</strong></a>
+      <a href="${portfolioRoute('#about')}"><span>06</span><strong>About & CV</strong></a>
+      <a href="${portfolioRoute('#contact')}"><span>07</span><strong>Get in touch</strong></a>
     </nav>
     <div class="mobile-menu-section">
       <span class="mobile-menu-label">Documents</span>

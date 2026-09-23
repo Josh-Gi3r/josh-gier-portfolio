@@ -14,7 +14,7 @@ let active='room',navigationToken=0;
 let selectedChannel=0,selectedProduct=null,indexFilter='All',productFilter='All';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const back=(href='room',label='Back to the room')=>`<a class="back-link" href="#${href}"><span>←</span> ${label}</a>`;
-function zoomTo(destination){if(destination.startsWith('case/'))destination='campaigns';if(destination.startsWith('product/'))destination='products';if(!['campaigns','products','about'].includes(destination))return;const target=destination==='campaigns'?[.773,.54,3.15]:destination==='products'?[.54,.33,4.3]:[.5,.18,2.6];const w=plane.offsetWidth,h=plane.offsetHeight,rect=plane.getBoundingClientRect(),offsetX=rect.left+rect.width/2-innerWidth/2,offsetY=rect.top+rect.height/2-innerHeight/2;plane.style.transform=`translate(-50%,-50%) translate(${(.5-target[0])*w*target[2]-offsetX}px,${(.5-target[1])*h*target[2]-offsetY}px) scale(${target[2]})`;}
+function zoomTo(destination){if(destination.startsWith('case/'))destination='campaigns';if(destination.startsWith('product/'))destination='products';if(!['campaigns','products','about','real-estate'].includes(destination))return;const target=destination==='campaigns'?[.773,.54,3.15]:destination==='products'?[.54,.33,4.3]:destination==='real-estate'?[.505,.79,2.65]:[.5,.18,2.6];const w=plane.offsetWidth,h=plane.offsetHeight,rect=plane.getBoundingClientRect(),offsetX=rect.left+rect.width/2-innerWidth/2,offsetY=rect.top+rect.height/2-innerHeight/2;plane.style.transform=`translate(-50%,-50%) translate(${(.5-target[0])*w*target[2]-offsetX}px,${(.5-target[1])*h*target[2]-offsetY}px) scale(${target[2]})`;}
 async function navigate(){const token=++navigationToken;let route;try{route=decodeURIComponent(location.hash.slice(1)||'room')}catch{route='missing'}if(route===active&&route==='room')return;const wasRoom=active==='room';active=route;document.querySelector('#room').inert=route!=='room';document.title=route==='room'?'Josh Gier — After Hours':`${route.split('/')[0].replace(/^./,s=>s.toUpperCase())} — Josh Gier`;if(route==='room'){view.hidden=true;view.innerHTML='';home.hidden=false;document.body.dataset.view='room';document.body.classList.remove('away','transitioning');plane.style.transform='translate(-50%,-50%)';window.scrollTo(0,0);if(!document.body.classList.contains('paused'))document.querySelector('#room-video').play().catch(()=>{});return;}document.querySelector('#room-video').pause();if(wasRoom){zoomTo(route);home.hidden=true;document.body.classList.add('transitioning');await new Promise(r=>setTimeout(r,reduced?0:1050));if(token!==navigationToken)return;}document.body.classList.add('away');document.body.classList.remove('transitioning');home.hidden=true;view.hidden=false;renderRoute(route);window.scrollTo(0,0);document.querySelector('#announcer').textContent=`${route.split('/')[0]} opened`;const title=view.querySelector('h1');if(title){title.setAttribute('tabindex','-1');title.focus({preventScroll:true});}}
 const img=(name,alt,cls='',eager=false)=>`<img src="/assets/${esc(name)}${/\.(png|webp|jpe?g)$/.test(name)?'':'.webp'}" alt="${esc(alt)}" class="${cls}" ${eager?'fetchpriority="high"':'loading="lazy"'} decoding="async">`;
 const arrow='↗';
@@ -27,6 +27,7 @@ function renderRoute(route){
   else if(route==='products')renderComputer();
   else if(route==='work')renderIndex();
   else if(route==='about')renderAbout();
+  else if(route==='real-estate')renderRealEstate();
   else if(route==='contact')renderContact();
   else if(route.startsWith('case/'))renderCase(campaigns.find(p=>p.id===route.split('/')[1]));
   else if(route.startsWith('product/'))renderProduct(products.find(p=>p.id===route.split('/')[1]));
@@ -51,6 +52,77 @@ function renderCase(p){
  view.innerHTML=`${back('campaigns','Back to the television')}<article class="case-paper" style="--project:${p.color}"><header class="case-header"><div class="case-kicker"><span>${esc(p.category)}</span><span>JOSH GIER / SELECTED WORK</span></div><div class="case-brand">${brandLogo(p)}${p.id==='cbre'?'<img class="brand-logo" src="/assets/ntt-logo.svg" alt="NTT">':''}</div><h1>${esc(p.title)}</h1><p class="case-intro">${esc(p.summary)}</p><div class="pills">${p.channels.map(pill).join('')}</div></header><div class="case-outcomes">${metrics(p)}</div>${p.art?campaignArt(p):p.image?`<figure class="case-hero">${img(p.hero||p.image,p.brand+' portfolio presentation','',true)}</figure>`:''}<div class="case-body"><div class="case-two-col"><section><p class="eyebrow">01 / THE BRIEF</p><h2>The objective.</h2><p>${esc(p.brief)}</p><h3>The audience</h3><p>${esc(p.audience)}</p></section><section class="role-panel"><p class="eyebrow">02 / MY CONTRIBUTION</p><h2>My responsibilities.</h2><p>${esc(p.role)}</p></section></div><section class="strategy-section"><p class="eyebrow">03 / THE STRATEGY</p><h2>${esc(p.strategy)}</h2></section><section><p class="eyebrow">04 / EXECUTION</p><div class="execution-grid">${p.execution.map(([t,d],i)=>`<div><span class="execution-number">0${i+1}</span><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join('')}</div></section><div class="commercial-section"><section><p class="eyebrow">05 / COMMERCIAL SCOPE</p><p>${esc(p.commercial)}</p>${p.budget?`<div class="budget-scope"><strong>${p.budget[0]}</strong><span>${p.budget[1]}</span></div>`:''}</section><section><p class="eyebrow">MEASUREMENT FOCUS</p><ul>${p.measurement.map(m=>`<li>${esc(m)}</li>`).join('')}</ul></section></div>${p.art?campaignCollection(p):''}${p.gallery.length>1?`<section class="creative-section"><div class="section-top"><div><p class="eyebrow">THE CREATIVE COLLECTION</p><h2>Campaign creative.</h2></div></div><div class="creative-grid">${p.gallery.map((n,i)=>`<button class="creative-tile ${n.endsWith('board')?'wide':''}" data-enlarge="${n}" data-caption="${esc(p.brand)} · ${n.endsWith('board')?'Campaign overview':'Campaign creative '+String(i+1).padStart(2,'0')}" aria-label="Enlarge ${esc(p.brand)} creative ${i+1}">${img(n,p.brand+' campaign creative '+(i+1))}<span>${String(i+1).padStart(2,'0')} <b>View ${arrow}</b></span></button>`).join('')}</div></section>`:''}<footer class="case-credit">${p.credit?`<p>${esc(p.credit)}</p>`:''}${p.source?`<a href="${esc(p.source)}" target="_blank" rel="noopener noreferrer">Campaign / company source ${arrow}</a>`:''}</footer></div></article><a class="next-project" href="#case/${next.id}"><span class="eyebrow">NEXT PROJECT</span><strong>${esc(next.brand)}</strong><span>${arrow}</span></a>`;
 }
 function renderProduct(p){if(!p){renderRoute('missing');return;}view.innerHTML=renderShowcase(p,products[(products.indexOf(p)+1)%products.length]);}
+function renderRealEstate(){
+ view.innerHTML=`${back()}<article class="re-page">
+  <header class="re-hero">
+    <p class="eyebrow">REAL ESTATE & PROPTECH</p>
+    <h1>Built in property.<br>Building the software around it.</h1>
+    <p class="re-lead">My real-estate work spans regional technology businesses, enterprise transformation, brokerage operating systems, workplace intelligence and spatial computing.</p>
+    <div class="re-metrics">
+      <div><strong>2013–21</strong><span>CBRE Asia Pacific</span></div>
+      <div><strong>7</strong><span>APAC markets</span></div>
+      <div><strong>US$100M</strong><span>Annual technology revenue</span></div>
+      <div><strong>US$1B</strong><span>NTT relationship originated & closed</span></div>
+    </div>
+  </header>
+
+  <section class="re-career">
+    <div class="re-section-head"><p class="eyebrow">THE OPERATING BACKGROUND</p><h2>Real estate before proptech.</h2></div>
+    <div class="re-career-grid">
+      <div class="re-year">2013<br>— 2021</div>
+      <div>
+        <h3>CBRE Asia Pacific</h3>
+        <p class="re-role">Regional Technology Lead, APAC · Earlier: Strategy & Consulting</p>
+        <p>Built and ran CBRE’s APAC enterprise SaaS, data and analytics business from two people to 50+ direct staff and 250+ delivery across seven markets, with full P&L responsibility and US$100M annual revenue.</p>
+        <p>Product development and commercialisation sat beside enterprise sales, consulting and delivery. The portfolio served global banks, technology companies and government clients across workplace, portfolio, data and transformation programmes.</p>
+        <a class="re-text-link" href="#case/cbre">Open the CBRE / NTT commercial case ${arrow}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="re-work">
+    <div class="re-section-head"><p class="eyebrow">PROPTECH & SPATIAL INTELLIGENCE</p><h2>The systems around the property.</h2><p>Three different layers of the real-estate stack: operating the enterprise business, rebuilding brokerage workflows, and giving software a structured model of physical space.</p></div>
+    <div class="re-project-grid">
+      <a class="re-project-card" href="#case/cbre">
+        <span>ENTERPRISE REAL ESTATE TECHNOLOGY</span>
+        <h3>CBRE / NTT</h3>
+        <p>Regional SaaS, data, analytics and transformation tied directly to complex enterprise buying decisions.</p>
+        <b>Commercial case ${arrow}</b>
+      </a>
+      <a class="re-project-card" href="#product/savills-os">
+        <span>BROKERAGE OPERATING SYSTEM</span>
+        <h3>Savills OS</h3>
+        <p>A 38-surface brokerage operating system connecting market intelligence, property work, content, CRM, enquiries, deals and people workflows.</p>
+        <b>Product case ${arrow}</b>
+      </a>
+      <a class="re-project-card" href="#product/atlas">
+        <span>WORKPLACE INTELLIGENCE</span>
+        <h3>ATLAS</h3>
+        <p>A deterministic space-programming engine and consultant cockpit that turns a written workplace brief into reproducible scenarios and spatial decisions.</p>
+        <b>Product case ${arrow}</b>
+      </a>
+      <div class="re-project-card re-project-rd">
+        <span>CURRENT R&D</span>
+        <h3>Spatial intelligence</h3>
+        <p>Canonical property identity, geospatial data, building geometry, floor plans, 3D worlds, evidence and natural-language intent combined into a single decision layer.</p>
+        <a class="re-inline-link" href="https://technical-cv.josh-gier.com/?ref=real-estate" target="_blank" rel="noopener">Technical architecture ${arrow}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="re-capabilities">
+    <div class="re-section-head"><p class="eyebrow">THE THROUGH-LINE</p><h2>Property, product and revenue in one career.</h2></div>
+    <div class="re-capability-grid">
+      <div><strong>Commercial real estate</strong><p>Portfolio, workplace and transformation programmes for major occupiers across Asia Pacific.</p></div>
+      <div><strong>Enterprise proptech</strong><p>Product strategy, P&L, commercialisation, regional GTM and complex enterprise sales.</p></div>
+      <div><strong>Brokerage systems</strong><p>Market intelligence, property content, CRM, enquiries, pipeline and operational workflows connected end to end.</p></div>
+      <div><strong>Spatial intelligence</strong><p>Geometry, floor plans, scenario modelling, 3D context and evidence-aware decision systems.</p></div>
+    </div>
+  </section>
+
+  <a class="re-cta" href="#products"><span>See the wider product portfolio</span><strong>Products & software ${arrow}</strong></a>
+ </article>`;
+}
 function renderIndex(){
  const all=[...campaigns.map(p=>({...p,name:p.brand,kind:p.category,href:'case/'+p.id})),...products.map(p=>({...p,kind:p.collection==='Open source'?'Open source':p.collection==='Experiments'?'Experiments':'Products & websites',href:'product/'+p.id}))];
  const filters=['All','Brand campaigns','Growth & launches','Enterprise & commercial','Products & websites','Open source','Experiments'];

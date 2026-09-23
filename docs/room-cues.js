@@ -1,6 +1,6 @@
 const plane=document.querySelector('#room-plane');
 if(plane){
-  const selectors=['.hotspot-tv','.hotspot-computer','.hotspot-board','.hotspot-games'];
+  const selectors=['.hotspot-tv','.hotspot-computer','.hotspot-board','.hotspot-real-estate','.hotspot-games'];
   const introDelay=120;
   const overviewLength=1900;
   const reminderDelay=6000;
@@ -99,7 +99,7 @@ if(plane){
   };
 
   // The visitor should understand every destination immediately. Hover/focus
-  // remains instant confirmation once the short four-label overview is gone.
+  // remains instant confirmation once the short five-label overview is gone.
   plane.addEventListener('pointerover',e=>{
     if(e.target.closest('.hotspot')){
       clearCue();

@@ -6,6 +6,7 @@
 .hotspot-tv .marker-label,
 .hotspot-computer .marker-label,
 .hotspot-board .marker-label,
+.hotspot-real-estate .marker-label,
 .hotspot-games .marker-label{
   display:block !important;
   visibility:hidden;
@@ -19,6 +20,7 @@
 .hotspot-tv .marker-ring,
 .hotspot-computer .marker-ring,
 .hotspot-board .marker-ring,
+.hotspot-real-estate .marker-ring,
 .hotspot-games .marker-ring{
   opacity:.78;
   transform:scale(1);
@@ -183,3 +185,10 @@
   .room-cue-overview .hotspot .marker-ring{animation:none;}
   .marker-label{transition:none;}
 }
+
+/* Floor model label opens upward so it stays clear of the miniature city. */
+.hotspot-real-estate .marker-label{top:auto;bottom:calc(100% + 7px);left:50%;transform:translate(-50%,4px)}
+.hotspot-real-estate.is-cued .marker-label,
+.hotspot-real-estate:hover .marker-label,
+.hotspot-real-estate:focus-visible .marker-label,
+.room-cue-overview .hotspot-real-estate .marker-label{transform:translate(-50%,0)}

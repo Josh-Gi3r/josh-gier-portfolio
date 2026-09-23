@@ -44,6 +44,8 @@
   .marker-ring{animation:mobile-hotspot-ring 1.8s ease-in-out infinite}
   .hotspot-computer .marker-ring,.hotspot-computer .interaction-marker::after{animation-delay:.55s}
   .hotspot-board .marker-ring,.hotspot-board .interaction-marker::after{animation-delay:1.1s}
+  .hotspot-real-estate .marker-ring,.hotspot-real-estate .interaction-marker::after{animation-delay:1.65s}
+  .hotspot-games .marker-ring,.hotspot-games .interaction-marker::after{animation-delay:2.2s}
   .hotspot:hover .marker-ring,.hotspot:focus-visible .marker-ring{animation-play-state:paused}
 
   /* The screens and board remind the visitor that the room is interactive. */

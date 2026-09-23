@@ -10,6 +10,17 @@
 .hotspot-computer { --marker-x:79%; --marker-y:73%; }
 /* The board spans x=661..1005, y=53..253 in the 1672×941 photograph. */
 .hotspot-board { left:39.53%; top:5.63%; width:20.58%; height:21.9%; --marker-x:17%; --marker-y:67%; }
+/* Architectural model on the rug: the fifth room destination. */
+.hotspot-real-estate { left:34.2%; top:67.4%; width:33.5%; height:24.5%; --marker-x:52%; --marker-y:31%; }
+.hotspot-real-estate::before { content:''; position:absolute; left:9%; right:8%; top:4%; bottom:9%; border-radius:50%; background:radial-gradient(ellipse at 50% 48%,rgba(238,199,119,.14),rgba(238,199,119,0) 68%); opacity:0; transition:opacity .25s ease; pointer-events:none; }
+.hotspot-real-estate:hover::before,.hotspot-real-estate:focus-visible::before,.hotspot-real-estate.is-cued::before,.room-cue-overview .hotspot-real-estate::before { opacity:1; }
+.hotspot-real-estate .marker-label { top:auto; bottom:calc(100% + 7px); left:50%; transform:translate(-50%,4px); }
+.hotspot-real-estate:hover .marker-label,.hotspot-real-estate:focus-visible .marker-label,.hotspot-real-estate.is-cued .marker-label,.room-cue-overview .hotspot-real-estate .marker-label { transform:translate(-50%,0); }
+@media(max-width:760px){
+  .hotspot-real-estate { min-width:88px; min-height:58px; --marker-x:52%; --marker-y:24%; }
+  .hotspot-real-estate .marker-label { font-size:13px; }
+}
+
 .interaction-marker { position:absolute; left:var(--marker-x); top:var(--marker-y); width:20px; height:20px; transform:translate(-50%,-50%); pointer-events:none; }
 .marker-ring { display:block; position:absolute; inset:1px; border:1.5px solid #f4efdb; border-radius:50%; background:#151a1820; box-shadow:0 0 10px #fff4d52b; transition:transform .2s ease,background .2s ease,box-shadow .2s ease; }
 .hotspot:hover .marker-ring,.hotspot:focus-visible .marker-ring { transform:scale(1.18); background:#ebc47b; box-shadow:0 0 0 4px #fff0c226,0 0 18px #f6d79169; }
