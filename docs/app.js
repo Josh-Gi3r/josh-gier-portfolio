@@ -55,74 +55,109 @@ function renderProduct(p){if(!p){renderRoute('missing');return;}view.innerHTML=r
 function renderRealEstate(){
  view.innerHTML=`${back()}<article class="re-page">
   <header class="re-hero">
-    <p class="eyebrow">REAL ESTATE & PROPTECH</p>
-    <h1>Built in property.<br>Building the software around it.</h1>
-    <p class="re-lead">My real-estate work spans regional technology businesses, enterprise transformation, brokerage operating systems, workplace intelligence and spatial computing.</p>
+    <p class="eyebrow">REAL ESTATE / PROPTECH / SPATIAL INTELLIGENCE</p>
+    <h1>I didn’t come to proptech<br>from software.</h1>
+    <p class="re-kicker">I came to software from real estate.</p>
+    <p class="re-lead">I started in commercial interiors and workplace, spent six years at CBRE building and selling enterprise real-estate technology across Asia Pacific, then built software for owners, operators, investors and brokers. The work now runs from underwriting and asset plans to CRM, workplace, property operations, 3D and AI.</p>
     <div class="re-metrics">
-      <div><strong>2013–21</strong><span>CBRE Asia Pacific</span></div>
-      <div><strong>7</strong><span>APAC markets</span></div>
-      <div><strong>US$100M</strong><span>Annual technology revenue</span></div>
-      <div><strong>US$1B</strong><span>NTT relationship originated & closed</span></div>
+      <div><strong>US$35M+</strong><span>Workplace, consulting & technology-led client business</span></div>
+      <div><strong>18</strong><span>Enterprise real-estate products commercialised at CBRE</span></div>
+      <div><strong>US$100M</strong><span>Annual CBRE revenue originated across wider service lines</span></div>
+      <div><strong>US$1B</strong><span>NTT global GWS contract personally originated & closed</span></div>
     </div>
   </header>
 
   <section class="re-career">
-    <div class="re-section-head"><p class="eyebrow">THE OPERATING BACKGROUND</p><h2>Real estate before proptech.</h2></div>
-    <div class="re-career-grid">
-      <div class="re-year">2013<br>— 2021</div>
+    <div class="re-section-head"><p class="eyebrow">THE CAREER</p><h2>Thirteen years inside the industry.</h2><p>Not one proptech role. A progression through interiors, workplace, advisory, enterprise technology, investment and asset systems.</p></div>
+
+    <div class="re-career-row">
+      <div class="re-year">2013<br>— 2016</div>
+      <div>
+        <h3>D’Perception Singapore</h3>
+        <p class="re-role">Commercial interior design · Workplace strategy · PropTech</p>
+        <p>Led enterprise sales, GTM and technology-led propositions across workplace, commercial interiors and PropTech. Won more than US$35M in client business and helped build the technology-consulting division’s commercial and delivery framework, including BI for tenders, conversion and account development.</p>
+      </div>
+    </div>
+
+    <div class="re-career-row">
+      <div class="re-year">2016<br>— 2021</div>
       <div>
         <h3>CBRE Asia Pacific</h3>
-        <p class="re-role">Regional Technology Lead, APAC · Earlier: Strategy & Consulting</p>
-        <p>Built and ran CBRE’s APAC enterprise SaaS, data and analytics business from two people to 50+ direct staff and 250+ delivery across seven markets, with full P&L responsibility and US$100M annual revenue.</p>
-        <p>Product development and commercialisation sat beside enterprise sales, consulting and delivery. The portfolio served global banks, technology companies and government clients across workplace, portfolio, data and transformation programmes.</p>
-        <a class="re-text-link" href="#case/cbre">Open the CBRE / NTT commercial case ${arrow}</a>
+        <p class="re-role">Strategy & Consulting → Advisory & Transactions → Regional Technology Lead, APAC</p>
+        <p>Built the regional technology capability from two people to 50+ direct staff and a 250+ delivery organisation across seven markets. Commercialised 18 products spanning portfolio and location intelligence, workforce analytics, workplace planning, employee experience, lease administration, facilities and capital projects.</p>
+        <p>Technology and workplace mandates originated approximately US$100M in annual revenue across CBRE service lines. I personally originated and closed the US$1B NTT global GWS mandate, using a tailored utilisation, cost and location application as the entry point.</p>
+        <a class="re-text-link" href="#case/cbre">CBRE / NTT commercial case ${arrow}</a>
       </div>
+    </div>
+
+    <div class="re-career-row">
+      <div class="re-year">2021<br>— NOW</div>
+      <div>
+        <h3>Aier Studios</h3>
+        <p class="re-role">Real-estate technology · Investment & asset intelligence · MarTech · SalesTech</p>
+        <p>Built software, data and AI for real-estate owners, operators and advisory firms. The real-estate work covers acquisition screening, transaction analysis, underwriting, asset business plans, spatial planning, refurbishment, facilities, investor and property CRM, and the commercial systems around property demand.</p>
+        <p>The studio reached approximately US$1.2M ARR in its first year, scaled to 25 people and was acquired by the Kerria-AM / Jerikho IM group.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="re-stack">
+    <div class="re-section-head"><p class="eyebrow">WHAT THAT ACTUALLY COVERS</p><h2>From the floor plan to the fund model.</h2></div>
+    <div class="re-domain-grid">
+      <div><span>01</span><h3>Investment & asset management</h3><p>Acquisition screening, transaction analysis, underwriting, NOI, CapEx, IRR/MOIC, leverage, refinancing, exit assumptions and asset business plans.</p></div>
+      <div><span>02</span><h3>Workplace & interiors</h3><p>Occupancy requirements, workplace programming, design scenarios, employee experience, refurbishment, adaptive reuse, heritage rehabilitation and capital projects.</p></div>
+      <div><span>03</span><h3>Portfolio & location intelligence</h3><p>Property and location data, workforce analytics, utilisation, portfolio modelling, cost scenarios, market evidence and geospatial context.</p></div>
+      <div><span>04</span><h3>Property operations</h3><p>Lease administration, facilities, vendors, procurement, programme tracking, project delivery and the operating layer around the asset.</p></div>
+      <div><span>05</span><h3>Property & investor CRM</h3><p>Landlord, occupier and investor relationships; enquiry qualification; account development; opportunity management; content, demand and sales automation.</p></div>
+      <div><span>06</span><h3>Spatial intelligence & AI</h3><p>Canonical property data, geospatial systems, floor plans, 3D environments, constraint-based planning, evidence, deterministic models and grounded AI.</p></div>
     </div>
   </section>
 
   <section class="re-work">
-    <div class="re-section-head"><p class="eyebrow">PROPTECH & SPATIAL INTELLIGENCE</p><h2>The systems around the property.</h2><p>Three different layers of the real-estate stack: operating the enterprise business, rebuilding brokerage workflows, and giving software a structured model of physical space.</p></div>
+    <div class="re-section-head"><p class="eyebrow">WHAT I’M BUILDING NOW</p><h2>Real-estate systems, not feature demos.</h2><p>Each project attacks a different part of the same industry: property truth, brokerage operations, workplace decisions and investment management.</p></div>
     <div class="re-project-grid">
-      <a class="re-project-card" href="#case/cbre">
-        <span>ENTERPRISE REAL ESTATE TECHNOLOGY</span>
-        <h3>CBRE / NTT</h3>
-        <p>Regional SaaS, data, analytics and transformation tied directly to complex enterprise buying decisions.</p>
-        <b>Commercial case ${arrow}</b>
-      </a>
-      <a class="re-project-card" href="#product/savills-os">
-        <span>BROKERAGE OPERATING SYSTEM</span>
-        <h3>Savills OS</h3>
-        <p>A 38-surface brokerage operating system connecting market intelligence, property work, content, CRM, enquiries, deals and people workflows.</p>
-        <b>Product case ${arrow}</b>
-      </a>
-      <a class="re-project-card" href="#product/atlas">
-        <span>WORKPLACE INTELLIGENCE</span>
-        <h3>ATLAS</h3>
-        <p>A deterministic space-programming engine and consultant cockpit that turns a written workplace brief into reproducible scenarios and spatial decisions.</p>
-        <b>Product case ${arrow}</b>
-      </a>
       <div class="re-project-card re-project-rd">
-        <span>CURRENT R&D</span>
-        <h3>Spatial intelligence</h3>
-        <p>Canonical property identity, geospatial data, building geometry, floor plans, 3D worlds, evidence and natural-language intent combined into a single decision layer.</p>
-        <a class="re-inline-link" href="https://technical-cv.josh-gier.com/?ref=real-estate" target="_blank" rel="noopener">Technical architecture ${arrow}</a>
+        <span>PROPERTY INTELLIGENCE INFRASTRUCTURE</span>
+        <h3>OPERATION-RE</h3>
+        <p>A canonical commercial-property intelligence layer that separates listings from physical space and preserves evidence, ownership, occupancy, leases, availability, transactions, achieved rents, geometry and history.</p>
+        <b>Property truth + market intelligence</b>
+      </div>
+
+      <a class="re-project-card" href="#product/atlas">
+        <span>WORKPLACE TRANSFORMATION</span>
+        <h3>ATLAS</h3>
+        <p>A deterministic workplace brain: a written brief becomes a reproducible space programme, with scenario comparison, zoning, evidence and a professional spatial workbench around it.</p>
+        <b>Open product case ${arrow}</b>
+      </a>
+
+      <a class="re-project-card" href="#product/savills-os">
+        <span>COMMERCIAL BROKERAGE</span>
+        <h3>Savills OS</h3>
+        <p>A 38-surface brokerage workspace joining market intelligence, landlord and occupier records, property work, CRM, viewings, valuation, campaigns, enquiries, transactions and team workflows.</p>
+        <b>Open product case ${arrow}</b>
+      </a>
+
+      <div class="re-project-card">
+        <span>INVESTMENT & ASSET MANAGEMENT</span>
+        <h3>Property Intelligence</h3>
+        <p>An investment workflow connecting market intelligence, acquisition screening, underwriting, deal pipeline, fund economics, portfolio scaling and asset-level execution.</p>
+        <b>Investment / asset-management system</b>
       </div>
     </div>
   </section>
 
-  <section class="re-capabilities">
-    <div class="re-section-head"><p class="eyebrow">THE THROUGH-LINE</p><h2>Property, product and revenue in one career.</h2></div>
-    <div class="re-capability-grid">
-      <div><strong>Commercial real estate</strong><p>Portfolio, workplace and transformation programmes for major occupiers across Asia Pacific.</p></div>
-      <div><strong>Enterprise proptech</strong><p>Product strategy, P&L, commercialisation, regional GTM and complex enterprise sales.</p></div>
-      <div><strong>Brokerage systems</strong><p>Market intelligence, property content, CRM, enquiries, pipeline and operational workflows connected end to end.</p></div>
-      <div><strong>Spatial intelligence</strong><p>Geometry, floor plans, scenario modelling, 3D context and evidence-aware decision systems.</p></div>
+  <section class="re-close">
+    <p class="eyebrow">WHY THE RANGE MATTERS</p>
+    <h2>I can work the same problem from the asset, the occupier, the investor, the broker or the software.</h2>
+    <p>That is the through-line: commercial real estate first, technology as the operating leverage. I know the people making the decision, the numbers behind it, the physical space being changed and the systems needed to run it.</p>
+    <div class="re-close-links">
+      <a href="https://technical-cv.josh-gier.com/?ref=real-estate" target="_blank" rel="noopener">Technical architecture ${arrow}</a>
+      <a href="#products">Products & software ${arrow}</a>
     </div>
   </section>
-
-  <a class="re-cta" href="#products"><span>See the wider product portfolio</span><strong>Products & software ${arrow}</strong></a>
  </article>`;
 }
+
 function renderIndex(){
  const all=[...campaigns.map(p=>({...p,name:p.brand,kind:p.category,href:'case/'+p.id})),...products.map(p=>({...p,kind:p.collection==='Open source'?'Open source':p.collection==='Experiments'?'Experiments':'Products & websites',href:'product/'+p.id}))];
  const filters=['All','Brand campaigns','Growth & launches','Enterprise & commercial','Products & websites','Open source','Experiments'];
