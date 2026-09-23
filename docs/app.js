@@ -55,12 +55,11 @@ function renderProduct(p){if(!p){renderRoute('missing');return;}view.innerHTML=r
 function renderRealEstate(){
  view.innerHTML=`${back()}<article class="re-page">
   <header class="re-hero">
-    <p class="eyebrow">REAL ESTATE / PROPTECH / SPATIAL INTELLIGENCE</p>
-    <h1>I didn’t come to proptech<br>from software.</h1>
-    <p class="re-kicker">I came to software from real estate.</p>
-    <p class="re-lead">I started in commercial interiors and workplace, spent six years at CBRE building and selling enterprise real-estate technology across Asia Pacific, then built software for owners, operators, investors and brokers. The work now runs from underwriting and asset plans to CRM, workplace, property operations, 3D and AI.</p>
+    <p class="eyebrow">REAL ESTATE & PROPTECH</p>
+    <h1>13 years across real estate,<br>workplace and technology.</h1>
+    <p class="re-lead">I started in commercial interiors and workplace in Singapore in 2013. At CBRE I moved through Strategy & Consulting, Advisory & Transactions and APAC technology leadership. Since 2021 I’ve built software and data products for owners, operators, investors and brokers.</p>
     <div class="re-metrics">
-      <div><strong>US$35M+</strong><span>Workplace, consulting & technology-led client business</span></div>
+      <div><strong>US$35M+</strong><span>Client business secured at D’Perception</span></div>
       <div><strong>18</strong><span>Enterprise real-estate products commercialised at CBRE</span></div>
       <div><strong>US$100M</strong><span>Annual CBRE revenue originated across wider service lines</span></div>
       <div><strong>US$1B</strong><span>NTT global GWS contract personally originated & closed</span></div>
@@ -68,14 +67,14 @@ function renderRealEstate(){
   </header>
 
   <section class="re-career">
-    <div class="re-section-head"><p class="eyebrow">THE CAREER</p><h2>Thirteen years inside the industry.</h2><p>Not one proptech role. A progression through interiors, workplace, advisory, enterprise technology, investment and asset systems.</p></div>
+    <div class="re-section-head"><p class="eyebrow">EXPERIENCE</p><h2>D’Perception → CBRE → Aier Studios.</h2></div>
 
     <div class="re-career-row">
       <div class="re-year">2013<br>— 2016</div>
       <div>
         <h3>D’Perception Singapore</h3>
         <p class="re-role">Commercial interior design · Workplace strategy · PropTech</p>
-        <p>Led enterprise sales, GTM and technology-led propositions across workplace, commercial interiors and PropTech. Won more than US$35M in client business and helped build the technology-consulting division’s commercial and delivery framework, including BI for tenders, conversion and account development.</p>
+        <p>Led enterprise sales, go-to-market and technology-led propositions across workplace, commercial interiors and PropTech. Secured more than US$35M in client business and helped build the technology-consulting division’s commercial and delivery framework, including BI for tender outcomes, conversion and account development.</p>
       </div>
     </div>
 
@@ -84,9 +83,10 @@ function renderRealEstate(){
       <div>
         <h3>CBRE Asia Pacific</h3>
         <p class="re-role">Strategy & Consulting → Advisory & Transactions → Regional Technology Lead, APAC</p>
-        <p>Built the regional technology capability from two people to 50+ direct staff and a 250+ delivery organisation across seven markets. Commercialised 18 products spanning portfolio and location intelligence, workforce analytics, workplace planning, employee experience, lease administration, facilities and capital projects.</p>
-        <p>Technology and workplace mandates originated approximately US$100M in annual revenue across CBRE service lines. I personally originated and closed the US$1B NTT global GWS mandate, using a tailored utilisation, cost and location application as the entry point.</p>
-        <a class="re-text-link" href="#case/cbre">CBRE / NTT commercial case ${arrow}</a>
+        <p>Built the regional technology capability from two people to 50+ direct staff and a 250+ consulting and delivery organisation across seven markets.</p>
+        <p>Commercialised 18 enterprise products across portfolio and location intelligence, workforce analytics, workplace planning, employee experience, lease administration, facilities and capital projects. Technology and workplace mandates originated approximately US$100M in annual revenue across CBRE service lines.</p>
+        <p>Personally originated and closed the US$1B NTT global GWS contract, using a tailored utilisation, cost and location application as the entry point.</p>
+        <a class="re-text-link" href="#case/cbre">CBRE / NTT case ${arrow}</a>
       </div>
     </div>
 
@@ -95,64 +95,64 @@ function renderRealEstate(){
       <div>
         <h3>Aier Studios</h3>
         <p class="re-role">Real-estate technology · Investment & asset intelligence · MarTech · SalesTech</p>
-        <p>Built software, data and AI for real-estate owners, operators and advisory firms. The real-estate work covers acquisition screening, transaction analysis, underwriting, asset business plans, spatial planning, refurbishment, facilities, investor and property CRM, and the commercial systems around property demand.</p>
-        <p>The studio reached approximately US$1.2M ARR in its first year, scaled to 25 people and was acquired by the Kerria-AM / Jerikho IM group.</p>
+        <p>Built software, data and AI for real-estate owners, operators and advisory firms. Work includes acquisition screening, transaction analysis, underwriting, asset business plans, spatial planning, refurbishment, facilities, investor and property CRM, and marketing and sales systems around property demand.</p>
+        <p>Aier reached approximately US$1.2M ARR in its first year, scaled to 25 people and was acquired by the Kerria-AM / Jerikho IM group.</p>
       </div>
     </div>
   </section>
 
   <section class="re-stack">
-    <div class="re-section-head"><p class="eyebrow">WHAT THAT ACTUALLY COVERS</p><h2>From the floor plan to the fund model.</h2></div>
+    <div class="re-section-head"><p class="eyebrow">AREAS OF WORK</p><h2>Real estate from investment to operations.</h2></div>
     <div class="re-domain-grid">
       <div><span>01</span><h3>Investment & asset management</h3><p>Acquisition screening, transaction analysis, underwriting, NOI, CapEx, IRR/MOIC, leverage, refinancing, exit assumptions and asset business plans.</p></div>
       <div><span>02</span><h3>Workplace & interiors</h3><p>Occupancy requirements, workplace programming, design scenarios, employee experience, refurbishment, adaptive reuse, heritage rehabilitation and capital projects.</p></div>
       <div><span>03</span><h3>Portfolio & location intelligence</h3><p>Property and location data, workforce analytics, utilisation, portfolio modelling, cost scenarios, market evidence and geospatial context.</p></div>
-      <div><span>04</span><h3>Property operations</h3><p>Lease administration, facilities, vendors, procurement, programme tracking, project delivery and the operating layer around the asset.</p></div>
-      <div><span>05</span><h3>Property & investor CRM</h3><p>Landlord, occupier and investor relationships; enquiry qualification; account development; opportunity management; content, demand and sales automation.</p></div>
-      <div><span>06</span><h3>Spatial intelligence & AI</h3><p>Canonical property data, geospatial systems, floor plans, 3D environments, constraint-based planning, evidence, deterministic models and grounded AI.</p></div>
+      <div><span>04</span><h3>Property operations</h3><p>Lease administration, facilities, vendors, procurement, programme tracking and project delivery.</p></div>
+      <div><span>05</span><h3>Property & investor CRM</h3><p>Landlord, occupier and investor relationships, enquiry qualification, account development, opportunity management and sales automation.</p></div>
+      <div><span>06</span><h3>Spatial intelligence & AI</h3><p>Property data models, geospatial systems, floor plans, 3D environments, constraint-based planning, deterministic models and grounded AI.</p></div>
     </div>
   </section>
 
   <section class="re-work">
-    <div class="re-section-head"><p class="eyebrow">WHAT I’M BUILDING NOW</p><h2>Real-estate systems, not feature demos.</h2><p>Each project attacks a different part of the same industry: property truth, brokerage operations, workplace decisions and investment management.</p></div>
+    <div class="re-section-head"><p class="eyebrow">SELECTED PRODUCTS</p><h2>Current real-estate technology work.</h2></div>
     <div class="re-project-grid">
       <div class="re-project-card re-project-rd">
-        <span>PROPERTY INTELLIGENCE INFRASTRUCTURE</span>
+        <span>PROPERTY INTELLIGENCE</span>
         <h3>OPERATION-RE</h3>
-        <p>A canonical commercial-property intelligence layer that separates listings from physical space and preserves evidence, ownership, occupancy, leases, availability, transactions, achieved rents, geometry and history.</p>
-        <b>Property truth + market intelligence</b>
+        <p>Commercial-property data infrastructure that resolves listings and source observations to canonical buildings, floors and spaces, while retaining ownership, occupancy, leases, availability, transactions, rents, geometry, history and provenance.</p>
+        <b>Property data + market intelligence</b>
       </div>
 
       <a class="re-project-card" href="#product/atlas">
-        <span>WORKPLACE TRANSFORMATION</span>
+        <span>WORKPLACE</span>
         <h3>ATLAS</h3>
-        <p>A deterministic workplace brain: a written brief becomes a reproducible space programme, with scenario comparison, zoning, evidence and a professional spatial workbench around it.</p>
-        <b>Open product case ${arrow}</b>
+        <p>A deterministic space-programming and workplace transformation system. A written brief becomes a reproducible space programme with scenario comparison, zoning, evidence and spatial decision support.</p>
+        <b>Open product ${arrow}</b>
       </a>
 
       <a class="re-project-card" href="#product/savills-os">
-        <span>COMMERCIAL BROKERAGE</span>
+        <span>BROKERAGE</span>
         <h3>Savills OS</h3>
-        <p>A 38-surface brokerage workspace joining market intelligence, landlord and occupier records, property work, CRM, viewings, valuation, campaigns, enquiries, transactions and team workflows.</p>
-        <b>Open product case ${arrow}</b>
+        <p>A 38-surface commercial brokerage workspace covering market intelligence, landlord and occupier records, property work, CRM, viewings, valuation, campaigns, enquiries, transactions and team workflows.</p>
+        <b>Open product ${arrow}</b>
       </a>
 
       <div class="re-project-card">
         <span>INVESTMENT & ASSET MANAGEMENT</span>
         <h3>Property Intelligence</h3>
-        <p>An investment workflow connecting market intelligence, acquisition screening, underwriting, deal pipeline, fund economics, portfolio scaling and asset-level execution.</p>
-        <b>Investment / asset-management system</b>
+        <p>Market intelligence, acquisition screening, underwriting, deal pipeline, fund economics, portfolio scaling and asset-level execution in one investment workflow.</p>
+        <b>Investment & asset-management system</b>
       </div>
     </div>
   </section>
 
   <section class="re-close">
-    <p class="eyebrow">WHY THE RANGE MATTERS</p>
-    <h2>I can work the same problem from the asset, the occupier, the investor, the broker or the software.</h2>
-    <p>That is the through-line: commercial real estate first, technology as the operating leverage. I know the people making the decision, the numbers behind it, the physical space being changed and the systems needed to run it.</p>
+    <p class="eyebrow">MORE DETAIL</p>
+    <h2>Technical architecture, products and selected commercial work.</h2>
     <div class="re-close-links">
-      <a href="https://technical-cv.josh-gier.com/?ref=real-estate" target="_blank" rel="noopener">Technical architecture ${arrow}</a>
+      <a href="https://technical-cv.josh-gier.com/?ref=real-estate" target="_blank" rel="noopener">Technical CV ${arrow}</a>
       <a href="#products">Products & software ${arrow}</a>
+      <a href="#case/cbre">CBRE / NTT case ${arrow}</a>
     </div>
   </section>
  </article>`;
