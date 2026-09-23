@@ -1,4 +1,4 @@
-import {campaignCopy,productCopy} from './editorial.js?v=4';
+import {campaignCopy,productCopy} from './editorial.js?v=5';
 import {campaigns as originalCampaigns, products as originalProducts} from './data.js';
 import {productDetails} from './product-details.js';
 import {openSource} from './open-source.js';
@@ -75,7 +75,7 @@ const changes={
   budget:['US$1M+','Operating budget across Asia Pacific, Europe, the United States and Latin America'],
   metrics:[['200K','Active users from 4M members'],['US$1.20 → US$0.40','Member acquisition cost'],['90%','Onboarding friction removed'],['US$15M','Raised']]},
  cbre:{logo:'cbre-logo',image:'cbre-cover',hero:'cbre-cover',gallery:['cbre-pipeline','cbre-research','cbre-studio'],
-  metrics:[['2 → 50+','Team growth'],['7','APAC markets'],['US$100M','Annual revenue line'],['US$1B','NTT transaction']]},
+  metrics:[['2 → 50+','Regional capability'],['7','APAC markets'],['250+','Wider delivery organisation'],['9-figure','Revenue impact across wider service lines']]},
  sera:{image:'sera-cover',hero:'sera-cover',gallery:['sera-corridor','sera-desk','sera-treasury','sera-board'],
   metrics:[['30','Signed agreements in year one'],['70+','Issuer and counterparty relationships'],['15','Liquidity counterparties'],['US$6M','Institutional and investor funds committed']]},
  aier:{image:'aier-cover',hero:'aier-cover',gallery:['aier-production','aier-review','aier-team','aier-board'],
