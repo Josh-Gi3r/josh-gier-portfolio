@@ -98,8 +98,6 @@ const exact = new Map([
   ['Readers and covered companies are matched against Sera’s target-account map and passed into CRM with scoring and first-touch attribution.','Readers and companies are matched to Sera’s target-account list. Qualified matches go into CRM with the first article they read recorded as the source.'],
   ['Media sponsorship plus an owned acquisition and intelligence channel for Sera’s issuer, bank and PSP pipeline.','Sponsorship revenue plus qualified issuer, bank and PSP leads for Sera.'],
   ['I owned the French-market acquisition scope from creative through funded account, as AI-native activation partner to the lead agency.','I owned the French acquisition programme from creative and media through KYC and funded account.'],
-  ['Aier Studios owned the French-market acquisition scope from creative through funded account, as AI-native activation partner to the lead agency.','Aier Studios owned the French acquisition programme from creative and media through KYC and funded account.'],
-  ['Founded an AI-native marketing and technology studio, built the platform that ran every client account, and sold it to Coliseum for US$3M.','Founded a marketing and technology studio, built the platform that ran every client account, and sold the business to Coliseum for US$3M.']
 ]);
 
 const regex = [
