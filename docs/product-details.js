@@ -11,6 +11,32 @@ const openSourceDetail=Object.fromEntries(
 
 export const productDetails={
  ...openSourceDetail,
+ 'operation-re':{
+  state:'R&D platform · canonical property intelligence infrastructure',
+  summary:'Canonical property intelligence infrastructure that preserves source evidence, resolves it to real-world buildings, floors and spaces, keeps material history and projects deterministic market intelligence.',
+  problem:'Listings and source feeds are observations, not truth. Without canonical identity, provenance and temporal history, duplicates, stale availability and contradictory ownership or occupancy data become impossible to reason about safely.',
+  approach:'Preserve raw evidence first, resolve identity and relationships second, then attach versioned claims to canonical property entities and compute intelligence from that evidence.',
+  features:['Place → site → development → building → floor → space identity','Immutable source observations and provenance','Temporal ownership, occupancy, lease and availability history','Transaction, asking-rent and achieved-rent evidence kept distinct','Geometry and floorplan lineage with rights and accuracy metadata','Deterministic market and workplace analytics'],
+  role:'Defined the property model, evidence rules, entity-resolution workflow, temporal history and deterministic intelligence layer.',
+  commercial:'Designed as the data and evidence layer beneath commercial-property discovery, market intelligence and later professional workflows.',
+  how:[['Preserve the evidence','Every source observation is retained before it can influence a canonical property record.'],['Resolve the real asset','Observations are reconciled to canonical buildings, floors and spaces rather than trusting portal IDs.'],['Keep the history','Availability, occupancy, ownership, leases and transactions retain material history instead of overwriting the past.'],['Compute intelligence','Market and workplace analytics run over versioned evidence so a result can be reproduced and challenged.']],
+  craft:['PostgreSQL + PostGIS','Entity resolution','Evidence graph','Temporal history','Geometry lineage','Deterministic analytics'],
+  stack:['PostgreSQL','PostGIS','JSONB provenance','Temporal data','Spatial joins','Deterministic services'],
+  evidence:['Canonical property hierarchy','Evidence-before-truth rule','Temporal market state','Geometry provenance and rights']
+ },
+ 'spotnook':{
+  state:'R&D / prototype · AI-native spatial property platform',
+  summary:'AI-native property exploration that turns a natural-language brief into a persistent spatial decision state across search, map, evidence and 3D.',
+  problem:'Property search separates the brief, listings, market data, floor plans, maps and professional analysis. Context is repeatedly lost as the user moves between them.',
+  approach:'Compile intent into typed hard, soft and open constraints over canonical property entities, then keep selected buildings, spaces, evidence and scenarios in one shared state across text, map and 3D.',
+  features:['Natural-language property brief compiled into typed constraints','Canonical building / floor / space identity','Map and 3D exploration over the same property state','Evidence-backed comparison and explanation','Spatial fit, adjacency and scenario tools','Persistent NOOK assistant across text, voice, map and 3D'],
+  role:'Defined the product, spatial architecture, canonical property context, agent/tool boundaries and decision-state model.',
+  commercial:'Designed for occupier discovery, brokerage and professional property decisions where the search experience and analytical workflow need to share one state.',
+  how:[['Describe the requirement','Turn natural language into a typed brief without silently dropping explicit constraints.'],['Explore the world','Resolve candidates to canonical properties and inspect them on map and in 3D.'],['Compare with evidence','Market, finance, commute, fit and spatial tools return typed evidence against the same shortlist.'],['Keep the decision state','Selections, scenarios and evidence persist as the user moves between conversation, map and spatial views.']],
+  craft:['PostgreSQL + PostGIS','Cesium / 3D Tiles','React + TypeScript','Canonical property graph','Agent tool contracts','Spatial decision state'],
+  stack:['PostgreSQL','PostGIS','React','TypeScript','Cesium','3D Tiles','WebRTC'],
+  evidence:['Typed constraint graph','Canonical property identity','Shared map / 3D / agent context','Deterministic spatial and market tools']
+ },
  '4sight':{
   name:'4Sight',
   kind:'Consumer finance & prediction markets',
