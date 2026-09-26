@@ -11,7 +11,7 @@
 .re-metrics>div:last-child{border-right:0}
 .re-metrics strong{display:block;font:500 clamp(30px,3.55vw,48px)/1 var(--serif);color:var(--amber)}
 .re-metrics span{display:block;margin-top:8px;font:11px/1.48 var(--mono);letter-spacing:.35px;color:#98a38f}
-.re-section-head{max-width:870px;margin-bottom:33px}
+.re-section-head{max-width:870px;margin-bottom:33px}.re-career .re-section-head{max-width:none}
 .re-section-head h2,.re-close h2{margin:8px 0 13px;font:500 clamp(36px,4.2vw,58px)/1 var(--serif);letter-spacing:-1.5px;color:#e9e6d6}
 .re-section-head>p:last-child{max-width:780px;font-size:16px;line-height:1.65;color:#aeb8a7}
 .re-career,.re-stack,.re-work,.re-close{padding:66px 0;border-bottom:1px solid var(--line)}
@@ -26,7 +26,7 @@
 .re-domain-grid span{font:11px var(--mono);color:var(--amber)}
 .re-domain-grid h3{margin:27px 0 12px;font:500 25px/1.05 var(--serif);color:#e4e4d3}
 .re-domain-grid p{margin:0;font-size:14px;line-height:1.62;color:#9fae9b}
-.re-project-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.re-project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .re-project-card{min-height:280px;padding:27px;display:flex;flex-direction:column;border:1px solid var(--line);background:linear-gradient(145deg,#ffffff08,#ffffff02);transition:transform .22s ease,border-color .22s ease,background .22s ease}
 a.re-project-card:hover{transform:translateY(-3px);border-color:#d8b87399;background:#ffffff0b}
 .re-project-card>span{font:11px/1.4 var(--mono);letter-spacing:1.05px;color:#90a083}
@@ -69,3 +69,6 @@ a.re-project-card:hover{transform:translateY(-3px);border-color:#d8b87399;backgr
  .re-close-links{flex-direction:column;align-items:flex-start;gap:16px}
 }
 @media(prefers-reduced-motion:reduce){.re-project-card{transition:none}a.re-project-card:hover{transform:none}}
+
+@media(min-width:901px){.re-career .re-section-head h2{white-space:nowrap;font-size:clamp(36px,4vw,58px)}}
+@media(max-width:1100px) and (min-width:761px){.re-project-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
