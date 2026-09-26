@@ -498,7 +498,7 @@ html.jgi-lock,html.jgi-lock body{overflow:hidden}
 </div>
 <div class="cv-menu-panel" hidden="" id="cv-contents">
 <nav aria-label="Mobile CV sections" class="cv-menu-links"><a href="#technical-work">Technical work</a><a href="#independent-rd">R&amp;D projects</a><a href="#experience">Experience</a><a href="#systems-decisions">Systems</a><a href="#operating-range">Operating range</a><a href="#education">Education</a></nav>
-<div class="cv-project-select"><label for="cv-project-jump">Jump to a project</label><select id="cv-project-jump"><option value="">Choose a project…</option><option value="project-goku">GOKU</option><option value="project-memento">MEMENTO</option><option value="project-spotnook">SPOTNOOK</option><option value="project-atlas">ATLAS</option><option value="project-operation-re">OPERATION-RE</option><option value="project-blueballs">BLUEBALLS</option><option value="project-pocket-t">Pocket-T</option><option value="project-buzz">Buzz / Preview Studio</option><option value="project-sera-for-agents">Sera for Agents</option><option value="project-4sight">4Sight</option><option value="project-telegram-p2p-fx">Telegram P2P FX</option><option value="project-nextcurrency">NextCurrency</option><option value="project-yours">Aier → Yours</option><option value="project-esportz">KDArena → Coliseum → Esportz.fun</option><option value="project-enterprise-architecture">Enterprise data / automation</option><option value="project-enterprise-portfolio">18-product enterprise portfolio</option></select></div>
+<div class="cv-project-select"><label for="cv-project-jump">Jump to a project</label><select id="cv-project-jump"><option value="">Choose a project…</option><option value="project-goku">GOKU</option><option value="project-memento">MEMENTO</option><option value="project-spotnook">SPOTNOOK</option><option value="project-atlas">ATLAS</option><option value="project-blueballs">BLUEBALLS</option><option value="project-pocket-t">Pocket-T</option><option value="project-buzz">Buzz / Preview Studio</option><option value="project-sera-for-agents">Sera for Agents</option><option value="project-4sight">4Sight</option><option value="project-telegram-p2p-fx">Telegram P2P FX</option><option value="project-nextcurrency">NextCurrency</option><option value="project-yours">Aier → Yours</option><option value="project-esportz">KDArena → Coliseum → Esportz.fun</option><option value="project-enterprise-architecture">Enterprise data / automation</option><option value="project-enterprise-portfolio">18-product enterprise portfolio</option></select></div>
 </div>
 </header>
 <div class="toolbar"><button onclick="window.print()">Print / Save PDF</button></div>
@@ -674,7 +674,7 @@ Memento        = episode → evidence → promote/decay/contest
 </article>
 <article class="card hero" data-card-id="card-14" id="project-spotnook" tabindex="-1">
 <h3>SPOTNOOK · AI-native property exploration + spatial decision system</h3>
-<p class="project-desc"><b>SPOTNOOK is an AI-native property exploration platform that makes search spatial, conversational and executable.</b> Natural-language intent, live property evidence and agentic tools resolve into a persistent 3D world of Singapore buildings, floors and spaces. <b>NOOK</b> is the persistent spatial agent across text, voice, map and 3D: it maintains the brief, selected objects, evidence, scenarios and actions while the user moves between discovery, inspection, comparison and decision.</p>
+<p class="project-desc"><b>SPOTNOOK is the public spatial front door to the OPERATION-RE property intelligence system: one AI-native product that makes property search spatial, conversational and executable.</b> OPERATION-RE is the canonical evidence, identity, history and deterministic-intelligence layer underneath the same system. Natural-language intent, source evidence and agentic tools resolve into a persistent world of Singapore buildings, floors and spaces, while <b>NOOK</b> maintains the brief, selected objects, evidence, scenarios and actions across text, voice, map and 3D.</p>
 <div class="sub">Describe → Spot → Inspect → Compare → Decide. Input modality changes; canonical property identity and decision state do not.</div>
 <div class="tagrow"><span class="tag">Postgres/PostGIS</span><span class="tag">canonical property graph</span><span class="tag">Cesium / 3D Tiles</span><span class="tag">React/TS</span><span class="tag">WebRTC</span><span class="tag">NOOK agent mesh</span><span class="tag">prediction ledger</span><span class="tag">Unreal R&amp;D</span></div>
 <h4>Intent compiler / active search</h4>
@@ -694,7 +694,7 @@ Memento        = episode → evidence → promote/decay/contest
 <li><b>Shared semantic context:</b> “these three”, “same landlord”, “this floor”, a voice command, a map selection and a comparison edit point at the same canonical subjects/scenario.</li>
 <li><b>Specialist-agent mesh:</b> coordinator + geometry/fit + market/history + finance + commute + evidence + decision-brief specialists; capabilities are tool-scoped and outputs mutate typed application state, not chat-only memory.</li>
 </ul>
-<h4>Canonical world model / evidence graph</h4>
+<h4>OPERATION-RE intelligence layer / canonical evidence graph</h4>
 <div class="techline">Place → Parcel → Development → Building/Tower → Floor → Space. Listings, availability episodes, occupiers, leases, transactions, geometry assets, source observations and predictions are separate temporal objects. One provider observation is evidence; identity is resolved across sources before state attaches to the world.</div>
 <pre>source observation → raw snapshot → normalized observation
 → identity / relationship resolution → assertion + provenance
@@ -799,22 +799,6 @@ scenario Δ = rank(vN+1) − rank(vN)</pre>
 → approval / write-back / reconciliation</pre>
 <ul class="tight"><li><b>No LLM in the math path:</b> core calculations are pure Python over finite typed inputs; the browser advisor is a separate grounded surface.</li><li><b>Reproducibility:</b> committed outputs carry the exact policy constants and version hash used to produce them, preventing silent re-render under changed assumptions.</li><li><b>Transformation stack:</b> demand model, scenario engine, bitemporal provenance, cohort benchmarking, reversible write-back, connectors and a versioned furniture/kit-of-parts catalogue.</li><li><b>Spatial handoff:</b> workplace programme, building/location context, floor plan, test-fit and 3D review are designed to share one revisioned decision state rather than diverging copies.</li></ul>
 <div class="rule">space_decision = typed_brief + versioned_policy + deterministic_program + spatial_revision + evidence · AI may explain or assist, but does not own authoritative arithmetic.</div>
-</article>
-<article class="card hero" data-card-id="card-operation-re" id="project-operation-re" tabindex="-1">
-<h3>OPERATION-RE · canonical property intelligence infrastructure</h3>
-<p class="project-desc"><b>OPERATION-RE is the evidence, history and deterministic intelligence layer underneath Singapore commercial-property discovery and later professional workflows.</b> It preserves what every source observed, resolves those observations to canonical real-world property entities, keeps contradictory history and projects public-safe property intelligence without turning advertisements into truth.</p>
-<div class="tagrow"><span class="tag">PostgreSQL / PostGIS</span><span class="tag">evidence graph</span><span class="tag">entity resolution</span><span class="tag">temporal history</span><span class="tag">market intelligence</span><span class="tag">geometry</span></div>
-<pre>source family / instance
-→ immutable retrieval + raw snapshot
-→ normalised observation
-→ identity / relationship resolution
-→ assertion / review decision
-→ canonical property graph
-→ history + availability + market events
-→ deterministic analytics
-→ public-safe Property Intelligence</pre>
-<ul class="tight"><li><b>Physical world:</b> Place → Parcel/Site → Development → Building/Tower → Floor → Space/Unit, with canonical IDs independent of portals and listing IDs.</li><li><b>Evidence law:</b> source observation ≠ canonical fact; advertisement ≠ physical space; registered address ≠ tenancy; asking rent ≠ achieved rent; visual reconstruction ≠ measured geometry.</li><li><b>Temporal state:</b> listing history, availability episodes, ownership, occupancy, lease and transaction evidence retain valid/system time and never overwrite material history.</li><li><b>Market layer:</b> achieved-rent comparables, URA/street context, asking-vs-market, likely-clearing foundations, prediction-vs-actual learning and deterministic occupancy-cost/workplace sizing.</li><li><b>Geometry & rights:</b> floorplans, media and geometry carry subject, source, grade, accuracy, rights and lineage before they can influence spatial decisions.</li></ul>
-<div class="rule">never ingest directly into truth · evidence → resolution → canonical entity → temporal claim → deterministic projection.</div>
 </article>
 <article class="card hero" data-card-id="card-15" id="project-blueballs" tabindex="-1">
 <h3>BLUEBALLS · virtualised JIT liquidity + open financial OS</h3>
