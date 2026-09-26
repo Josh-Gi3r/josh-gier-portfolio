@@ -11,31 +11,39 @@ const openSourceDetail=Object.fromEntries(
 
 export const productDetails={
  ...openSourceDetail,
- 'operation-re':{
-  state:'R&D platform · canonical property intelligence infrastructure',
-  summary:'Canonical property intelligence infrastructure that preserves source evidence, resolves it to real-world buildings, floors and spaces, keeps material history and projects deterministic market intelligence.',
-  problem:'Listings and source feeds are observations, not truth. Without canonical identity, provenance and temporal history, duplicates, stale availability and contradictory ownership or occupancy data become impossible to reason about safely.',
-  approach:'Preserve raw evidence first, resolve identity and relationships second, then attach versioned claims to canonical property entities and compute intelligence from that evidence.',
-  features:['Place → site → development → building → floor → space identity','Immutable source observations and provenance','Temporal ownership, occupancy, lease and availability history','Transaction, asking-rent and achieved-rent evidence kept distinct','Geometry and floorplan lineage with rights and accuracy metadata','Deterministic market and workplace analytics'],
-  role:'Defined the property model, evidence rules, entity-resolution workflow, temporal history and deterministic intelligence layer.',
-  commercial:'Designed as the data and evidence layer beneath commercial-property discovery, market intelligence and later professional workflows.',
-  how:[['Preserve the evidence','Every source observation is retained before it can influence a canonical property record.'],['Resolve the real asset','Observations are reconciled to canonical buildings, floors and spaces rather than trusting portal IDs.'],['Keep the history','Availability, occupancy, ownership, leases and transactions retain material history instead of overwriting the past.'],['Compute intelligence','Market and workplace analytics run over versioned evidence so a result can be reproduced and challenged.']],
-  craft:['PostgreSQL + PostGIS','Entity resolution','Evidence graph','Temporal history','Geometry lineage','Deterministic analytics'],
-  stack:['PostgreSQL','PostGIS','JSONB provenance','Temporal data','Spatial joins','Deterministic services'],
-  evidence:['Canonical property hierarchy','Evidence-before-truth rule','Temporal market state','Geometry provenance and rights']
- },
  'spotnook':{
-  state:'R&D / prototype · AI-native spatial property platform',
-  summary:'AI-native property exploration that turns a natural-language brief into a persistent spatial decision state across search, map, evidence and 3D.',
-  problem:'Property search separates the brief, listings, market data, floor plans, maps and professional analysis. Context is repeatedly lost as the user moves between them.',
-  approach:'Compile intent into typed hard, soft and open constraints over canonical property entities, then keep selected buildings, spaces, evidence and scenarios in one shared state across text, map and 3D.',
-  features:['Natural-language property brief compiled into typed constraints','Canonical building / floor / space identity','Map and 3D exploration over the same property state','Evidence-backed comparison and explanation','Spatial fit, adjacency and scenario tools','Persistent NOOK assistant across text, voice, map and 3D'],
-  role:'Defined the product, spatial architecture, canonical property context, agent/tool boundaries and decision-state model.',
-  commercial:'Designed for occupier discovery, brokerage and professional property decisions where the search experience and analytical workflow need to share one state.',
-  how:[['Describe the requirement','Turn natural language into a typed brief without silently dropping explicit constraints.'],['Explore the world','Resolve candidates to canonical properties and inspect them on map and in 3D.'],['Compare with evidence','Market, finance, commute, fit and spatial tools return typed evidence against the same shortlist.'],['Keep the decision state','Selections, scenarios and evidence persist as the user moves between conversation, map and spatial views.']],
-  craft:['PostgreSQL + PostGIS','Cesium / 3D Tiles','React + TypeScript','Canonical property graph','Agent tool contracts','Spatial decision state'],
-  stack:['PostgreSQL','PostGIS','React','TypeScript','Cesium','3D Tiles','WebRTC'],
-  evidence:['Typed constraint graph','Canonical property identity','Shared map / 3D / agent context','Deterministic spatial and market tools']
+  state:'R&D product · Connected Discovery MVP accepted',
+  summary:'SPOTNOOK is the public spatial front door to the OPERATION-RE property intelligence system: a Singapore-first environment where a natural-language brief, source evidence, buildings, offers, agents, economics, comparison and 3D stay in one decision state.',
+  problem:'Commercial-property decisions are usually split across listing portals, spreadsheets, maps, floorplans, market data and separate advisory workflows. That fragmentation loses context and encourages source observations to be mistaken for property truth.',
+  approach:'SPOTNOOK keeps the user in one Describe → Spot → Inspect → Compare → Decide journey. OPERATION-RE sits underneath as the evidence, identity, history and deterministic-intelligence layer: advertisements remain observations, canonical property entities are resolved before state attaches, and NOOK can orchestrate tools without inventing geometry, rents or arithmetic.',
+  features:[
+   'Natural-language Business Brief that remains editable through the decision',
+   'List, map and 3D exploration over the same canonical property state',
+   'Immersive Building Intelligence with asking, area, evidence, agents, brokerages, companies and spatial context',
+   'OPERATION-RE canonical building / floor / space identity with evidence, provenance and temporal history',
+   'Source-offer histories and dense-building browsing without promoting advertisements into fake physical units',
+   'Comparison, occupancy economics, lease / flex scenarios and Decision Memory',
+   'Persistent NOOK assistant across discovery, inspection and decision'
+  ],
+  role:'Defined the product and spatial experience, the OPERATION-RE property-intelligence model and truth laws, the agent/tool boundary, the decision-state architecture and the current Connected Discovery journey.',
+  commercial:'Designed as a Singapore-first property decision environment for occupiers, brokers and professional real-estate workflows, with the same evidence and decision infrastructure able to support later professional tools.',
+  how:[
+   ['Describe the requirement','Start with team size, location, budget and timing in natural language, then retain and edit the same Business Brief as the search changes.'],
+   ['Spot the market','Retrieve real source advertisements grouped beneath source-building identities and browse the same decision through list, map and 3D.'],
+   ['Inspect Building Intelligence','Open a building without losing context and inspect asking, area, activity, evidence coverage, agents, brokerages, companies, transport, media and spatial context.'],
+   ['Compare and decide','Keep offers and scenarios in Decision Memory, compare alternatives and occupancy economics, then prepare the next action without rebuilding the brief.'],
+   ['Keep evidence separate from truth','OPERATION-RE preserves raw source observations, resolves canonical property identity, retains temporal history and exposes public-safe intelligence without treating an advertisement as a physical space.']
+  ],
+  craft:['PostgreSQL + PostGIS','Canonical property graph','Evidence & provenance','Temporal history','React + TypeScript','Cesium / 3D','NOOK agent tools','Deterministic analytics'],
+  stack:['PostgreSQL','PostGIS','React','TypeScript','Cesium','3D Tiles','Evidence graph','Deterministic services'],
+  evidence:[
+   'Accepted market release: 49,605 source observations across 2,187 source buildings',
+   '4,928 agent records and 4,838 contact records in the accepted market catalogue',
+   'Dense 100+ offer and sparse one-offer Building Intelligence journeys accepted',
+   'Accepted runtime browser suite: 75 passed, 0 failed, 0 runtime errors',
+   'Accepted runtime source tests: 1,178 passed, 0 failed, 16 skipped'
+  ],
+  gallery:['spotnook-city.jpg','spotnook-studio.jpg']
  },
  '4sight':{
   name:'4Sight',
