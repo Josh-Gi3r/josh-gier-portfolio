@@ -5,8 +5,7 @@ export const macProjects={
  'effex-product':{label:'Stablecoin intelligence',icon:'news',color:'#216d51',description:'News and research on stablecoins and the companies moving money. Readers can explore assets, reserve backing and market infrastructure.',screen:'/assets/nextcurrency-supplied.webp'},
  esportz:{label:'Gaming discovery',icon:'game',color:'#227c6c',description:'Discover games, read guides and join competitions. Predictions and quests give players more ways to participate.'},
  lamuse:{label:'Jewellery discovery',icon:'jewel',color:'#ac8054',description:'Discover jewellery and try pieces on virtually. Merchants manage catalogues, content and customer enquiries.',screen:'/assets/lamuse-supplied.webp'},
- 'operation-re':{label:'Property intelligence',icon:'property',color:'#657d76',description:'Resolve property evidence into canonical buildings, floors and spaces, with history, provenance and deterministic market intelligence.'},
- 'spotnook':{label:'3D property',icon:'property',color:'#66885f',description:'Search and compare property through one persistent brief across conversation, map, evidence and a 3D spatial world.'},
+ 'spotnook':{label:'Spatial property intelligence',icon:'property',color:'#66885f',description:'SPOTNOOK is the public spatial front door to OPERATION-RE: one decision state across property evidence, search, Building Intelligence, comparison, map and 3D.',screen:'/assets/spotnook-overview.jpg'},
  'savills-os':{label:'Property marketing',icon:'property',color:'#a26d24',description:'Connect property content to enquiries, opportunities and approvals. A working demo of the content-led real-estate business.'},
  yours:{label:'Marketing workspace',icon:'calendar',color:'#2f8c89',description:'Plan campaigns, produce content and manage approvals in one workspace. Publishing and performance review stay connected to the brief.'},
  blueballs:{label:'Banking software',icon:'bank',color:'#4b66ac',description:'A self-hostable neobank reference with accounts, cards, FX and a double-entry ledger. Developers can inspect and adapt the infrastructure.'},
@@ -24,10 +23,10 @@ export const macProjects={
  'stablecoin-payroll':{name:'Payroll Reference',label:'Payroll software',icon:'payroll',color:'#4b8e84',description:'Open-source HR, payroll and employer-of-record workflows. Country calculations are implemented; payment settlement in this reference is mocked.'},
  linkhub:{label:'Team profiles',icon:'links',color:'#7375a9',description:'Create team link pages, digital business cards and branded QR codes. Track clicks across a self-hosted profile and sharing system.'},
  'tg-dex-miniapp':{name:'Telegram FX',label:'Finance client',icon:'chat',color:'#4797b2',description:'An open-source Telegram client for wallets, currency swaps, transfers and peer-to-peer flows. Settlement is configurable for the deployment.'},
- 'prediction-fx-terminal':{name:'Prediction & FX',label:'Finance terminal',icon:'markets',color:'#526baf',description:'A self-custodial finance reference related to the later 4Sight product. Explore its market, wallet and transaction interfaces in the source.'},
+ 'prediction-fx-terminal':{name:'Prediction & FX',label:'Finance terminal',icon:'markets',color:'#526baf',description:'A self-custodial finance reference related to the later 4Sight product. Explore its market, wallet and transaction interfaces in the source.',screen:'/assets/prediction-fx-hero.jpg'},
  'ambassador-kit':{label:'Community programmes',icon:'community',color:'#9b8050',description:'Manage ambassador applications, contributions, XP, tiers and rewards. A toolkit for running and adapting community programmes.'},
  'creator-storefront':{label:'Service bookings',icon:'creator',color:'#aa7068',description:'Creator profiles, services and booking journeys in a reference marketplace. The fan-token ledger is simulated.'},
- 'stablecoin-intelligence':{name:'Stablecoin Research',label:'Research infrastructure',icon:'research',color:'#447b62',description:'Research stablecoins through asset profiles, reserve data, comparisons and a documented methodology. Includes API and MCP access.'}
+ 'stablecoin-intelligence':{name:'Stablecoin Research',label:'Research infrastructure',icon:'research',color:'#447b62',description:'Research stablecoins through asset profiles, reserve data, comparisons and a documented methodology. Includes API and MCP access.',screen:'/assets/stablecoin-intelligence-preview.png'}
 };
 
 const glyphs={
