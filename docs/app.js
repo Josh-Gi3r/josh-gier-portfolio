@@ -1,7 +1,7 @@
-import {renderMacDesktop,installMacDesktop} from './mac-desktop.js?v=5';
+import {renderMacDesktop,installMacDesktop} from './mac-desktop.js?v=6';
 import {installSound} from './sound.js?v=6';
 import {deviceFrame,installScreenGeometry} from './screens.js';
-import {campaigns,products} from './catalog.js?v=8';
+import {campaigns,products} from './catalog.js?v=9';
 import {brandLogo,campaignArt,campaignCollection,productCardArt,renderShowcase,handleDemoClick} from './showcases.js?v=6';
 const view=document.querySelector('#view');
 const home=document.querySelector('#home');
