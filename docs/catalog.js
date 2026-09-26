@@ -1,6 +1,6 @@
-import {campaignCopy,productCopy} from './editorial.js?v=5';
-import {campaigns as originalCampaigns, products as originalProducts} from './data.js';
-import {productDetails} from './product-details.js';
+import {campaignCopy,productCopy} from './editorial.js?v=6';
+import {campaigns as originalCampaigns, products as originalProducts} from './data.js?v=2';
+import {productDetails} from './product-details.js?v=2';
 import {openSource} from './open-source.js';
 
 const nextCurrencyProduct={
