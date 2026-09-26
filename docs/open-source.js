@@ -313,7 +313,7 @@ export const openSource=[
  {
   id:'prediction-fx-terminal',
   name:'Prediction & FX Terminal',
-  image:null,
+  image:'prediction-fx-hero.jpg',
   color:'#86a5ec',
   kind:'Open-source software',
   collection:'Open source',
@@ -427,7 +427,7 @@ export const openSource=[
  {
   id:'stablecoin-intelligence',
   name:'Stablecoin Intelligence',
-  image:null,
+  image:'stablecoin-intelligence-preview.png',
   color:'#92b5a5',
   kind:'Open-source software',
   collection:'Open source',
