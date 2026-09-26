@@ -1,7 +1,7 @@
 import {campaignCopy,productCopy} from './editorial.js?v=6';
-import {campaigns as originalCampaigns, products as originalProducts} from './data.js?v=2';
-import {productDetails} from './product-details.js?v=2';
-import {openSource} from './open-source.js';
+import {campaigns as originalCampaigns, products as originalProducts} from './data.js?v=3';
+import {productDetails} from './product-details.js?v=3';
+import {openSource} from './open-source.js?v=2';
 
 const nextCurrencyProduct={
   name:'NextCurrency',brand:'NextCurrency',title:'NextCurrency',
@@ -13,7 +13,7 @@ const nextCurrencyProduct={
 
 export const products=[...originalProducts.map(p=>({...p,collection:'Products',...productDetails[p.id]})),...openSource]
   .map(p=>({...p,...productCopy[p.id],...productDetails[p.id],...(p.id==='effex-product'?nextCurrencyProduct:{})}));
-const order=['4sight','effex-product','esportz','lamuse','spotnook','operation-re','atlas','savills-os','yours','blueballs','pocket-t','docshare','buzz'];
+const order=['4sight','effex-product','esportz','lamuse','spotnook','atlas','savills-os','yours','blueballs','pocket-t','docshare','buzz'];
 products.sort((a,b)=>(order.includes(a.id)?order.indexOf(a.id):99)-(order.includes(b.id)?order.indexOf(b.id):99));
 
 const nextCurrencyCampaign={
